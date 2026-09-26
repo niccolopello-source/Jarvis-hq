@@ -1,0 +1,12 @@
+{
+  "name": "jarvis-hq",
+  "version": "0.1.0",
+  "private": true,
+  "description": "JARVIS HQ — AI software house orchestration system",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {}
+}
