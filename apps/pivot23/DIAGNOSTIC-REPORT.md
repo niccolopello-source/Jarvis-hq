@@ -1,11 +1,11 @@
 # PIVOT-23 Complete Diagnostic
 
 Audit updated: 2026-09-27
-Checkout: `demo/pivot23-readiness` (local; not yet published)
+Checkout: `demo/pivot23-readiness` (published as open PR #1; not merged)
 
 ## Executive Summary
 
-PIVOT-23 builds and serves in both Vite development and production-preview modes. Typecheck, lint, and 13 engine/persistence tests pass. The browser smoke test now covers career creation, a first-season simulation, local save, reload/resume, and three mobile viewport sizes, but it could not launch locally because this machine runs macOS 13 and the installed Playwright version has no supported Chromium binary for that OS.
+PIVOT-23 builds and serves in Vite development and production-preview modes. Local lint, typecheck, and all 13 engine/persistence tests pass. GitHub Actions run #2 (ID `36326001307`) passed on the exact PR head SHA `93e0e3dd1ca7ceef6ffa5d8b8ab02da1bf90e767`, including Chromium E2E for career creation, first-season simulation, browser-local save, reload/resume, runtime/console/request errors, and horizontal overflow at three mobile viewport sizes. The configured Chromium cannot run on this local macOS 13 host.
 
 The reported black/white screen could not be reproduced in a browser here, so its root cause remains **UNKNOWN**. Startup and React error fallbacks were added to ensure an entry-module failure or render exception shows feedback instead of an empty root; that mitigation is not evidence that the original incident is resolved.
 
@@ -14,8 +14,9 @@ The reported black/white screen could not be reproduced in a browser here, so it
 - The app is an isolated React/Vite game in `apps/pivot23`; it uses browser storage and does not require an account, database, or AI provider.
 - JARVIS HQ orchestration and the AI Gateway remain specifications, not runtime services. They are not dependencies of the PIVOT-23 demo.
 - `pnpm install --frozen-lockfile`, lint, typecheck, engine tests, and production build pass locally.
-- `demo/pivot23-readiness` exists only in the local checkout. GitHub exposes only `main`; the branch cannot currently be pushed through this session.
-- There is no public deployment URL and no GitHub Actions run for this branch.
+- PR #1 is open and mergeable, targets `main`, has six commits, and is not merged. Its head SHA matches this checkout.
+- GitHub Actions run #2 passed install, Chromium setup, lint, typecheck, unit tests, production build, and browser E2E.
+- There is no public deployment URL.
 
 ## Black/White Screen Root Cause
 
@@ -45,7 +46,7 @@ The client now has two recovery layers: an HTML startup shell remains visible un
 4. `pnpm --dir apps/pivot23 exec vite preview --host 127.0.0.1 --port 4177` and repeat the browser checks against the production bundle.
 5. On a supported Playwright host, run `pnpm --dir apps/pivot23 test:e2e`.
 
-The server/build and HTTP checks in steps 1–4 were completed. Browser steps were blocked locally before the test could launch.
+The server/build and HTTP checks in steps 1–4 were completed. The interactive browser steps passed in GitHub Actions on Linux/Chromium; they remain unavailable locally on macOS 13.
 
 ## Root Cause Classification
 
@@ -63,9 +64,9 @@ These changes improve failure feedback; they do not prove the original incident'
 
 ## Browser Results
 
-**BLOCKED locally.** `pnpm --dir apps/pivot23 test:e2e` stops at browser launch because the Playwright Chromium executable is missing. `pnpm exec playwright install chromium` reports `Playwright does not support chromium on mac13`. The browser test did not execute its assertions. The configured GitHub workflow uses Ubuntu and installs Chromium, but no run exists because the local branch is not published.
+**PASS in GitHub Actions; UNVERIFIED locally.** Run #2 passed `pnpm run test:e2e` using Ubuntu and Chromium. It exercised the home screen, career creation, draft flow, start of a career, first-season simulation, storage save, reload/resume, and asserted no page errors, console errors, failed requests, or HTTP error responses. Local execution remains unavailable because the installed Playwright Chromium is unsupported on macOS 13.
 
-The updated smoke test collects page errors, console errors, failed requests, HTTP error responses, navigation/paint timing entries, and a screenshot attachment on failure. It also exercises a season simulation, save/reload, and 390×844, 375×667, and 393×852 viewports once run on the supported CI host.
+The smoke test collects page errors, console errors, failed requests, HTTP error responses, navigation/paint timing entries, and a screenshot attachment on failure. It passed the season simulation and save/reload flow, and checked horizontal overflow at 390×844, 375×667, and 393×852. A visual/touch review is still outstanding.
 
 ## Play Log Findings
 
@@ -77,16 +78,16 @@ No real browser session log was available for manual review. Engine tests simula
 
 ## Mobile Results
 
-**BLOCKED for visual/touch acceptance.** The Playwright test defines the three requested viewport sizes and checks horizontal document overflow, but could not launch in this environment. No visual inspection, touch gesture, safe-area, or Safari/WebKit result is available.
+**PARTIALLY VERIFIED.** CI passed the three configured viewport sizes and horizontal-overflow assertions. No visual inspection, touch gesture, safe-area, or Safari/WebKit result is available.
 
 ## Deployment Results
 
-**BLOCKED for public demo.** Production build and local Vite preview serve HTML and assets successfully. No deployment provider/configuration or public URL is present. The GitHub repository is reachable for reads, but writes are denied by the connected integration and HTTPS Git has no configured username credential.
+**BLOCKED for public demo.** Production build and local Vite preview serve HTML and assets successfully. No deployment provider/configuration or public URL is present.
 
 ## Remaining Risks
 
 - Original black/white incident and first-paint behavior still need a browser reproduction or a captured failing session.
-- The browser smoke test has not run; mobile visuals and touch interactions remain unverified.
+- The browser smoke test passes in Linux CI; mobile visuals and touch interactions remain unverified.
 - Long-career memory growth and save-size performance have no documented acceptance threshold or browser measurements.
 - EuroLeague data/season structure remains a simplified 16-team/34-game model. The official [2026–27 format](https://mediacentre.euroleague.net/en/app/2/communication/communication/preview/24407) is 20 teams over 38 regular-season rounds, with a play-in, four best-of-five playoff series, and a Final Four. The beta should not be presented as a current-season exact simulation.
 - The production bundle warning has not been assessed with Lighthouse.
@@ -99,6 +100,6 @@ No real browser session log was available for manual review. Engine tests simula
 | Typecheck, lint, unit tests, build | ✓ |  |  | Commands and results recorded in `DEMO-READINESS-REPORT.md`. |
 | Local development/production HTTP | ✓ |  |  | HTML and JS/CSS entry assets returned HTTP 200. |
 | Black/white root cause |  |  | ✓ | Not reproduced in a browser; fallback mitigation is not a causal diagnosis. |
-| Browser smoke and mobile visual checks |  |  | ✓ | Chromium unsupported/missing on local macOS 13; CI has not run. |
+| Browser smoke, save/resume, and viewport overflow checks | ✓ |  |  | GitHub Actions run #2 passed Chromium E2E at the PR head SHA; visual mobile/touch review remains outstanding. |
 | Lighthouse |  |  | ✓ | No supported browser run. |
 | Public deployment |  |  | ✓ | No deploy target or public URL. |
