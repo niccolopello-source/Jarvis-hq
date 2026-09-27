@@ -3,7 +3,7 @@
 Audit updated: 2026-09-27
 Version: `2.11.0-beta`
 Branch: `demo/pivot23-readiness`
-Local HEAD: `52045ac`; branch is not published to GitHub.
+The branch and its readiness commits are local and not published to GitHub.
 
 ## Executive Summary
 
@@ -17,7 +17,7 @@ The beta builds and passes its configured local lint, typecheck, and 13 unit tes
 - Runtime: React 19 + Vite 8, browser-only guest mode.
 - Persistence: local/session storage; no account or backend is required.
 - JARVIS HQ runtime/AI Gateway: documented specification only; not required by this game demo.
-- Git state: two new local commits on `demo/pivot23-readiness`, on top of the local PIVOT-23 beta commit. GitHub currently exposes only `main`.
+- Git state: readiness work is committed on `demo/pivot23-readiness`, on top of the local PIVOT-23 beta commit. GitHub currently exposes only `main`.
 
 ## Gate Status
 

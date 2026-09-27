@@ -1,7 +1,7 @@
 # PIVOT-23 Complete Diagnostic
 
 Audit updated: 2026-09-27
-Checkout: `demo/pivot23-readiness` at `52045ac` (local; not yet published)
+Checkout: `demo/pivot23-readiness` (local; not yet published)
 
 ## Executive Summary
 
