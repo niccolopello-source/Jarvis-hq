@@ -1,0 +1,55 @@
+import { Component, type ErrorInfo, type ReactNode } from "react";
+import { createRoot } from "react-dom/client";
+import { PivotApp } from "@/components/pivot/PivotApp";
+import "./styles.css";
+
+class AppErrorBoundary extends Component<
+  { children: ReactNode },
+  { error: Error | null }
+> {
+  state = { error: null as Error | null };
+
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("PIVOT 23 failed to render", error, info.componentStack);
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <main className="min-h-screen bg-bg text-wood grid place-items-center p-6">
+          <section className="max-w-md rounded-xl border border-line bg-panel p-6 shadow-sm" role="alert">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted">PIVOT 23</p>
+            <h1 className="mt-2 text-2xl font-semibold">La partita si è interrotta</h1>
+            <p className="mt-2 text-sm text-muted">
+              Se hai già iniziato la carriera, il salvataggio automatico nel browser può permetterti di riprendere.
+            </p>
+            <button
+              className="mt-5 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white"
+              onClick={() => window.location.reload()}
+            >
+              Ricarica PIVOT 23
+            </button>
+          </section>
+        </main>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+const root = document.getElementById("app");
+
+if (!root) {
+  throw new Error("PIVOT 23 root element #app is missing.");
+}
+
+createRoot(root).render(
+  <AppErrorBoundary>
+    <PivotApp />
+  </AppErrorBoundary>,
+);

@@ -26,13 +26,15 @@ This document describes where the project currently is.
 
 Primary project:
 
-Basketball Career Simulation Game
+PIVOT 23 — Basketball Career Simulation Game
 
 Status:
 
-Pre-development / Architecture and Infrastructure Setup
+Runnable Beta; end-to-end validation and demo packaging in progress
 
 The basketball career simulation game is the first project managed by JARVIS HQ.
+
+The app lives in `/apps/pivot23`. It contains the career simulator, browser UI, browser-based saves, a deterministic engine test, and a Playwright smoke test. It runs without an account, database, or AI provider.
 
 ---
 
@@ -51,7 +53,7 @@ Completed foundation areas include:
 - system architecture;
 - AI Gateway specification.
 
-The project is currently establishing the organizational and technical foundation before implementation of the core software systems.
+JARVIS HQ's orchestration runtime and AI Gateway remain specifications and foundation work. The PIVOT 23 beta is a standalone game app inside this repository; it does not yet call JARVIS HQ services.
 
 ---
 
@@ -118,13 +120,13 @@ Current documentation areas include:
 - AI Gateway specification;
 - Project state.
 
-Implementation directories such as:
+The repository currently contains:
 
-/src
-/tests
-/config
+- `/docs` — JARVIS HQ specifications and operating process;
+- `/apps/pivot23` — runnable browser game beta;
+- `/.github/workflows/pivot23.yml` — build, engine test, and browser smoke checks.
 
-should be introduced and expanded as the actual software implementation begins.
+The root package exposes commands for starting and verifying PIVOT 23.
 
 ---
 
@@ -132,24 +134,20 @@ should be introduced and expanded as the actual software implementation begins.
 
 Current priority:
 
-Complete and validate the JARVIS HQ foundation before implementing the production software systems.
+Validate the PIVOT 23 beta as a browser demo while keeping JARVIS HQ's platform work explicit and separate.
 
 Immediate objectives:
 
-1. Validate the consistency of the core documentation.
-2. Establish the repository structure.
-3. Define the technical implementation boundaries.
-4. Implement the minimum viable JARVIS HQ runtime.
-5. Establish the AI Gateway foundation.
-6. Connect the first supported AI provider when required.
-7. Implement agent orchestration.
-8. Begin development of the basketball career simulation game.
+1. Run the career start-to-season flow in a browser and fix any runtime or layout defects.
+2. Confirm production build and automated checks in GitHub Actions.
+3. Publish a repeatable demo preview and record its URL.
+4. Implement JARVIS HQ's runtime and provider adapters as a separate follow-up, using the existing specifications.
 
 ---
 
 ## 9. Known Limitations
 
-The current system is still in its foundation phase.
+PIVOT 23 is a runnable beta, not yet a published demo. JARVIS HQ remains in its foundation phase.
 
 The following areas may not yet be implemented:
 
