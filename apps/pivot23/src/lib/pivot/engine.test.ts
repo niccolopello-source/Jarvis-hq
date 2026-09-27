@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { playCareerSim, simulateFullCareer } from "./engine";
+import { ARCHIVE_KEY, isPlayoffSeed, loadArchive, playCareerSim, saveArchive, simulateFullCareer, toArchive } from "./engine";
+import { EURO_TITLE_LINES, playoffSeriesFormat, SERIES_WIN_LINES, seriesWinProbability, simulateSeries } from "./league";
+import { clearLive, loadLive, SAVE_KEY, saveLive } from "./save";
 
 const demoCareer = {
   name: "Giulia Rossi",
@@ -11,6 +13,39 @@ const demoCareer = {
   path: "NCAA" as const,
   seed: 230023,
 };
+
+class MemoryStorage implements Storage {
+  private values = new Map<string, string>();
+  throwOnWrite = false;
+  get length() { return this.values.size; }
+  clear() { this.values.clear(); }
+  getItem(key: string) { return this.values.get(key) ?? null; }
+  key(index: number) { return [...this.values.keys()][index] ?? null; }
+  removeItem(key: string) { this.values.delete(key); }
+  setItem(key: string, value: string) {
+    if (this.throwOnWrite) throw new DOMException("Storage full", "QuotaExceededError");
+    this.values.set(key, String(value));
+  }
+}
+
+function installMemoryStorage() {
+  const localDescriptor = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+  const sessionDescriptor = Object.getOwnPropertyDescriptor(globalThis, "sessionStorage");
+  const local = new MemoryStorage();
+  const session = new MemoryStorage();
+  Object.defineProperty(globalThis, "localStorage", { configurable: true, value: local });
+  Object.defineProperty(globalThis, "sessionStorage", { configurable: true, value: session });
+  return {
+    local,
+    restore() {
+      clearLive();
+      if (localDescriptor) Object.defineProperty(globalThis, "localStorage", localDescriptor);
+      else Reflect.deleteProperty(globalThis, "localStorage");
+      if (sessionDescriptor) Object.defineProperty(globalThis, "sessionStorage", sessionDescriptor);
+      else Reflect.deleteProperty(globalThis, "sessionStorage");
+    },
+  };
+}
 
 test("a seeded career reaches a valid final state", () => {
   const player = playCareerSim(demoCareer);
@@ -31,4 +66,172 @@ test("the same career seed produces the same demo summary", () => {
   const second = simulateFullCareer(demoCareer);
 
   assert.deepEqual(second, first);
+});
+
+test("career simulations stay within valid bounds across all entry paths", () => {
+  for (const path of ["NCAA", "Europa", "G-League"] as const) {
+    for (const seed of [1, 23, 987654321]) {
+      const player = playCareerSim({ ...demoCareer, path, seed });
+      assert.ok(player.seasonHistory.length > 0, `${path} seed ${seed} has no seasons`);
+      assert.ok(player.seasonHistory.length <= 20, `${path} seed ${seed} exceeded career limit`);
+      assert.ok(player.age >= 20 && player.age <= 36, `${path} seed ${seed} has invalid age`);
+      assert.ok(Number.isFinite(player.overall), `${path} seed ${seed} has invalid overall`);
+      for (const [index, season] of player.seasonHistory.entries()) {
+        for (const field of ["age", "overall", "gp", "wins", "losses", "ppg", "rpg", "apg"] as const) {
+          assert.ok(Number.isFinite(season[field]), `${path} seed ${seed} season ${index + 1} has invalid ${field}`);
+        }
+      }
+    }
+  }
+});
+
+test("playoff formats match the league and round", () => {
+  assert.deepEqual(playoffSeriesFormat("NBA", 0), {
+    winsNeeded: 4,
+    maxGames: 7,
+    homeCourtBySeed: true,
+  });
+  assert.deepEqual(playoffSeriesFormat("EuroLega", 0), {
+    winsNeeded: 3,
+    maxGames: 5,
+    homeCourtBySeed: true,
+  });
+  assert.deepEqual(playoffSeriesFormat("EuroLega", 1), {
+    winsNeeded: 1,
+    maxGames: 1,
+    homeCourtBySeed: false,
+  });
+  assert.deepEqual(playoffSeriesFormat("EuroLega", 2), {
+    winsNeeded: 1,
+    maxGames: 1,
+    homeCourtBySeed: false,
+  });
+});
+
+test("playoff qualification requires a valid seed in the bracket", () => {
+  assert.equal(isPlayoffSeed(1), true);
+  assert.equal(isPlayoffSeed(8), true);
+  assert.equal(isPlayoffSeed(9), false);
+  assert.equal(isPlayoffSeed(0), false);
+  assert.equal(isPlayoffSeed(null), false);
+  assert.equal(isPlayoffSeed(undefined), false);
+});
+
+test("playoff series stop as soon as a team reaches the required wins", () => {
+  const sweep = (league: "NBA" | "EuroLega", round: number) =>
+    simulateSeries(playoffSeriesFormat(league, round).winsNeeded, playoffSeriesFormat(league, round), league === "EuroLega", 1, 8, () => 0);
+
+  const nba = sweep("NBA", 0);
+  assert.equal(nba.wins, 4);
+  assert.equal(nba.losses, 0);
+  assert.equal(nba.games.length, 4);
+
+  const euroQuarterfinal = sweep("EuroLega", 0);
+  assert.equal(euroQuarterfinal.wins, 3);
+  assert.equal(euroQuarterfinal.losses, 0);
+  assert.equal(euroQuarterfinal.games.length, 3);
+
+  const euroFinalFour = sweep("EuroLega", 1);
+  assert.equal(euroFinalFour.wins, 1);
+  assert.equal(euroFinalFour.losses, 0);
+  assert.equal(euroFinalFour.games.length, 1);
+});
+
+test("a neutral Final Four game does not receive a seed-based home bonus", () => {
+  const format = playoffSeriesFormat("EuroLega", 2);
+  const result = simulateSeries(0.5, format, true, 1, 8, () => 0.52);
+
+  assert.equal(result.wins, 0);
+  assert.equal(result.losses, 1);
+  assert.equal(result.games.length, 1);
+});
+
+test("series probability respects neutral games, home court and stronger per-game odds", () => {
+  const euroFinal = playoffSeriesFormat("EuroLega", 2);
+  const nba = playoffSeriesFormat("NBA", 0);
+
+  assert.equal(seriesWinProbability(0.37, euroFinal, 1, 8), 0.37);
+  assert.ok(seriesWinProbability(0.5, nba, 1, 8) > 0.5);
+  assert.ok(Math.abs(seriesWinProbability(0.5, nba, 1, 8) + seriesWinProbability(0.5, nba, 8, 1) - 1) < 1e-12);
+  assert.ok(seriesWinProbability(0.5, nba, 1, 8) > seriesWinProbability(0.5, nba, 8, 1));
+  assert.ok(seriesWinProbability(0.6, nba, 4, 5) > seriesWinProbability(0.5, nba, 4, 5));
+});
+
+test("playoff copy does not claim a fixed series length or an NBA ring in EuroLeague", () => {
+  assert.ok(SERIES_WIN_LINES.every((line) => !/quattro vittorie|quattro sere/i.test(line)));
+  assert.ok(EURO_TITLE_LINES.every((line) => !/anello|giugno|sette/i.test(line)));
+});
+
+test("a long career save reloads without losing its final season", () => {
+  const storage = installMemoryStorage();
+  try {
+    clearLive();
+    const player = playCareerSim(demoCareer);
+    assert.equal(saveLive({
+      player,
+      pending: null,
+      log: [],
+      screen: "career",
+      tab: "career",
+      logSeq: player.seasonHistory.length,
+    }), true);
+
+    const raw = storage.local.getItem(SAVE_KEY);
+    assert.ok(raw);
+    const loaded = loadLive();
+    assert.ok(loaded);
+    assert.equal(loaded.screen, "career");
+    assert.equal(loaded.player.seed, player.seed);
+    assert.equal(loaded.player.seasonHistory.length, player.seasonHistory.length);
+    assert.equal(loaded.player.seasonHistory.at(-1)?.season, player.seasonHistory.at(-1)?.season);
+    assert.equal(loaded.player.seasonHistory.at(-1)?.overall, player.seasonHistory.at(-1)?.overall);
+    assert.equal(loaded.player.seasonHistory.at(-1)?.ppg, player.seasonHistory.at(-1)?.ppg);
+  } finally {
+    storage.restore();
+  }
+});
+
+test("a completed long career is archived and duplicate saves are collapsed", () => {
+  const storage = installMemoryStorage();
+  try {
+    clearLive();
+    const entry = toArchive(playCareerSim(demoCareer));
+    saveArchive(entry);
+    const returned = saveArchive(entry);
+    const raw = storage.local.getItem(ARCHIVE_KEY);
+
+    assert.ok(raw);
+    assert.equal(JSON.parse(raw).length, 1);
+    assert.equal(returned.length, 1);
+    assert.equal(loadArchive()[0]?.id, entry.id);
+    assert.equal(loadArchive()[0]?.seasons, entry.seasons);
+  } finally {
+    storage.restore();
+  }
+});
+
+test("finishing a career does not crash when the browser refuses archive writes", () => {
+  const storage = installMemoryStorage();
+  try {
+    clearLive();
+    storage.local.throwOnWrite = true;
+    const entry = toArchive(playCareerSim(demoCareer));
+    const returned = saveArchive(entry);
+
+    assert.equal(returned[0]?.id, entry.id);
+    assert.equal(loadArchive()[0]?.name, entry.name);
+  } finally {
+    storage.restore();
+  }
+});
+
+test("a corrupted browser save is ignored instead of crashing startup", () => {
+  const storage = installMemoryStorage();
+  try {
+    clearLive();
+    storage.local.setItem(SAVE_KEY, "{ broken json");
+    assert.equal(loadLive(), null);
+  } finally {
+    storage.restore();
+  }
 });

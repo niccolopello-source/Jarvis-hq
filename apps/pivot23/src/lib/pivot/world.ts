@@ -564,11 +564,10 @@ function relocateStar(w: LeagueWorld, p: CpuStar, avoid: string, event = true, s
     }
   }
   const destAmb = weakest ? (w.teams[weakest.teamAbbr]?.ambition ?? "competitive") : "competitive";
-  const destWants = weakest ? starAmbitionFit(p, destAmb) - starAmbitionFit(weakest, destAmb) : -99;
+    const destWants = weakest ? starAmbitionFit(p, destAmb) - starAmbitionFit(weakest, destAmb) : -99;
   if (weakest && (p.overall > weakest.overall + 1.5 || destWants > 2)) {
     const dest = weakest.teamAbbr;
     weakest.retired = true;
-    const from = p.teamAbbr;
     p.teamAbbr = dest;
     if (event) {
       pushEvent(

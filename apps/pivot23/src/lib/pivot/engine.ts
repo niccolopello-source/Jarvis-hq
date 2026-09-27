@@ -9,6 +9,7 @@ import {
   NBA_ROUNDS,
   NBA_TEAMS,
   OFFSEASON_FOCUSES,
+  PLAYOFF_SEEDS,
   RIVAL_NAMES,
   ROLES,
   STORY_POOL,
@@ -16,6 +17,9 @@ import {
 import {
   SERIES_LOSS_LINES,
   SERIES_WIN_LINES,
+  SINGLE_GAME_LOSS_LINES,
+  SINGLE_GAME_WIN_LINES,
+  EURO_TITLE_LINES,
   TITLE_LINES,
   advanceBracket,
   buildSeriesResult,
@@ -24,7 +28,8 @@ import {
   initTeamPower,
   opponentAsTeam,
   seedRookieClass,
-  simulateBestOfSeven,
+  playoffSeriesFormat,
+  simulateSeries,
   simulateLeagueSeason,
   standingOf,
   settleYearTitle,
@@ -48,24 +53,17 @@ import { pickSummerDestination, pickSummerEvent } from "./summer";
 import { CHARACTER_ROUNDS } from "./draft-character";
 import {
   MAX_AGE,
-  PEAK_AGE,
   START_OVERALL,
   advancedOf,
-  apexAgeOf,
   clamp,
   clampAttr,
-  computeOverall,
-  displayOverall,
   isCareerOver,
   overallSpine,
-  realizationOf,
-  realizedPeak,
   refreshOverall,
   rollApexAge,
   rollPotential,
   round1,
   round2,
-  shouldOfferExtraYear,
   twilightOf,
   weightedSkill,
 } from "./peak";
@@ -1331,7 +1329,7 @@ function rivalStory(s: PlayerState): StoryEvent {
       {
         label: "Botta e risposta mediatico",
         detail: "Alzi il tono in conferenza.",
-        fx: (p) => {
+        fx: () => {
           const good = rand() < 0.5;
           return {
             rivalry: 20,
@@ -1867,11 +1865,12 @@ export function qualifiesPlayoffs(s: PlayerState, row: SeasonRow) {
       row.seed = mine.seed;
     }
   }
-  if (seed != null && seed <= 8) return true;
-  const games = row.wins + row.losses;
-  const winPct = games ? row.wins / games : 0;
-  if (s.league === "EuroLega") return winPct >= 0.5;
-  return false;
+  return isPlayoffSeed(seed);
+}
+
+/** Un record positivo da solo non assegna un posto: deve esistere un seed nel tabellone. */
+export function isPlayoffSeed(seed: number | null | undefined) {
+  return Number.isInteger(seed) && seed! >= 1 && seed! <= PLAYOFF_SEEDS;
 }
 
 export function playoffRounds(s: PlayerState) {
@@ -1939,6 +1938,27 @@ const EARLY_PLAYOFF: PlayoffChoice[] = [
   },
 ];
 
+const EURO_FINAL_FOUR_CHOICES: PlayoffChoice[] = [
+  {
+    label: "Attacca il mismatch subito",
+    detail: "Una partita sola: scegli il vantaggio e costringili ad aiutare.",
+    bonus: (s) => (s.attrs.handle + s.attrs.shooting - 100) * 0.0028 + (s.hidden.clutch - 50) * 0.002,
+    fx: { form: 0.45, hidden: { clutch: 2, ego: 1 }, attrs: { handle: 0.35, shooting: 0.35 }, flavor: "Il primo vantaggio è tuo. Adesso devono scegliere cosa concedere." },
+  },
+  {
+    label: "Fai la lettura giusta",
+    detail: "Rallenta il possesso, chiama il compagno libero e non forzare il tiro.",
+    bonus: (s) => (s.attrs.passing + s.attrs.iq - 100) * 0.0027 + (s.hidden.chemistry - 50) * 0.0018,
+    fx: { coachTrust: 2, hidden: { chemistry: 2, ego: -1 }, attrs: { passing: 0.4, iq: 0.3 }, flavor: "Il vantaggio arriva dalla lettura. Il passaggio giusto sposta tutta la difesa." },
+  },
+  {
+    label: "Alza il livello in difesa",
+    detail: "Proteggi l'area e obbliga l'avversario a guadagnarsi ogni canestro.",
+    bonus: (s) => (s.attrs.defense + s.hidden.motor - 100) * 0.0028,
+    fx: { injuryRisk: 1, hidden: { motor: 2 }, attrs: { defense: 0.45, rebounding: 0.25 }, flavor: "Ogni rimbalzo è un possesso in più. Ogni arresto, una porta chiusa." },
+  },
+];
+
 const CONF_PLAYOFF: PlayoffChoice[] = [
   {
     label: "Prendi il controllo della serie",
@@ -1982,6 +2002,7 @@ const FINALS_PLAYOFF: PlayoffChoice[] = [
 ];
 
 export function playoffChoicesFor(s: PlayerState, round: number): PlayoffChoice[] {
+  if (s.league === "EuroLega" && round > 0) return EURO_FINAL_FOUR_CHOICES;
   try {
     const d = doorChoices(s, round);
     if (d && d.length >= 3) return d.slice(0, 3);
@@ -2021,13 +2042,15 @@ function resolvePlayoffRoundInner(
     s.currentLeague ? standingOf(s.currentLeague, opponent.abbr) : undefined;
   const oppPower = oppRow?.power ?? opponent.power;
   const chance = playoffWinChance(s, round, bonus + (s.team.power - oppPower) * 0.004);
-  const series = simulateBestOfSeven(
+  const format = playoffSeriesFormat(s.league, round);
+  const series = simulateSeries(
     chance,
+    format,
     s.league === "EuroLega",
     s.playoff?.seed ?? 4,
     oppRow?.seed ?? 5,
   );
-  const win = series.wins >= 4;
+  const win = series.wins >= format.winsNeeded;
   const labels = playoffRounds(s);
   const label = labels[round]!;
   const last = s.seasonHistory[s.seasonHistory.length - 1];
@@ -2056,8 +2079,10 @@ function resolvePlayoffRoundInner(
     starApg: 5,
   };
   const packed = buildSeriesResult(s, round, label, standing, series, win);
-  const userScore = `${series.wins}-${series.losses}`;
-  const oppScore = `${series.losses}-${series.wins}`;
+  const oneGame = format.maxGames === 1;
+  const finalGame = series.games[0];
+  const userScore = oneGame && finalGame ? `${finalGame.us}-${finalGame.them}` : `${series.wins}-${series.losses}`;
+  const oppScore = oneGame && finalGame ? `${finalGame.them}-${finalGame.us}` : `${series.losses}-${series.wins}`;
   if (last) {
     last.seriesLog = [...(last.seriesLog || []), packed];
   }
@@ -2074,12 +2099,18 @@ function resolvePlayoffRoundInner(
       s.publicImage = clamp(s.publicImage + 8, 0, 100);
       s.hidden.clutch = clamp(s.hidden.clutch + 3, 0, 100);
       imprint(s, s.age <= 26 ? 0.42 : 0.28);
-      const line = sayOr(s, TITLE_LINES, { OPP: opponent.name, SCORE: userScore }, `Titolo, $SCORE su $OPP.`);
+      const titleLines = s.league === "EuroLega" ? EURO_TITLE_LINES : TITLE_LINES;
+      const line = sayOr(s, titleLines, { OPP: opponent.name, SCORE: userScore }, `Titolo, $SCORE su $OPP.`);
       settleYearTitle(s, true);
       return { win: true, champion: true, flavor: line, series: packed };
     }
     if (last) last.playoff = label;
-    const line = sayOr(s, SERIES_WIN_LINES, { OPP: opponent.name, SCORE: userScore }, `Serie vinta $SCORE su $OPP.`);
+    const line = sayOr(
+      s,
+      oneGame ? SINGLE_GAME_WIN_LINES : SERIES_WIN_LINES,
+      { OPP: opponent.name, SCORE: userScore },
+      oneGame ? `Partita vinta $SCORE contro $OPP.` : `Serie vinta $SCORE su $OPP.`,
+    );
     imprint(s, 0.14);
     return { win: true, champion: false, flavor: line, series: packed };
   }
@@ -2087,7 +2118,12 @@ function resolvePlayoffRoundInner(
   if (last) last.playoff = `Elim. ${label} ${userScore}`;
   s.form = clamp(s.form - 0.8, -12, 12);
   imprint(s, -0.1);
-  const line = sayOr(s, SERIES_LOSS_LINES, { OPP: opponent.name, SCORE: oppScore }, `Eliminati $SCORE da $OPP.`);
+  const line = sayOr(
+    s,
+    oneGame ? SINGLE_GAME_LOSS_LINES : SERIES_LOSS_LINES,
+    { OPP: opponent.name, SCORE: oppScore },
+    oneGame ? `Sconfitta $SCORE contro $OPP. Stagione finita.` : `Eliminati $SCORE da $OPP.`,
+  );
   settleYearTitle(s, false);
   return { win: false, champion: false, flavor: line, series: packed };
 }
@@ -2860,21 +2896,29 @@ export function toArchive(s: PlayerState): ArchiveCareer {
 
 export const ARCHIVE_KEY = "pivot-v2-archive";
 export const SAVE_KEY = "pivot-v2-save";
+let archiveMemory: ArchiveCareer[] = [];
 
 export function loadArchive(): ArchiveCareer[] {
   try {
     const raw = localStorage.getItem(ARCHIVE_KEY);
-    if (!raw) return [];
+    if (!raw) return [...archiveMemory];
     const parsed = JSON.parse(raw) as ArchiveCareer[];
-    return Array.isArray(parsed) ? parsed.slice(0, 8) : [];
+    if (!Array.isArray(parsed)) return [...archiveMemory];
+    archiveMemory = parsed.slice(0, 8);
+    return [...archiveMemory];
   } catch {
-    return [];
+    return [...archiveMemory];
   }
 }
 
 export function saveArchive(entry: ArchiveCareer) {
   const all = [entry, ...loadArchive().filter((c) => c.id !== entry.id)].slice(0, 8);
-  localStorage.setItem(ARCHIVE_KEY, JSON.stringify(all));
+  archiveMemory = all;
+  try {
+    localStorage.setItem(ARCHIVE_KEY, JSON.stringify(all));
+  } catch {
+    // Mantieni la carriera nella sessione corrente se il browser blocca o ha esaurito lo storage.
+  }
   return all;
 }
 

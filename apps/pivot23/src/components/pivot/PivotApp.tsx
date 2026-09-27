@@ -122,22 +122,43 @@ type Pending =
 
 type Opt = { label: string; detail: string; run: (s: PlayerState) => string };
 
-class CareerGuard extends Component<{ children: ReactNode }, { crashed: boolean }> {
-  state = { crashed: false };
-  static getDerivedStateFromError() {
-    return { crashed: true };
+class CareerGuard extends Component<{ children: ReactNode }, { crashed: boolean; error: Error | null }> {
+  state = { crashed: false, error: null as Error | null };
+  static getDerivedStateFromError(error: Error) {
+    return { crashed: true, error };
+  }
+  componentDidCatch(error: Error, info: import("react").ErrorInfo) {
+    if (import.meta.env.DEV) console.error("PIVOT 23 career view failed to render", error, info.componentStack);
   }
   render() {
     if (this.state.crashed) {
-      return (
-        <div className="log-card">
-          <h3 className="text-[20px] mb-1">Il parquet tiene</h3>
-          <p className="feel-line">La pagina ha inciampato. La vita no. Riprendi da qui, o torna a Storia.</p>
-        </div>
-      );
+      return <CrashFallback error={this.state.error} />;
     }
     return this.props.children;
   }
+}
+
+function CrashFallback({ error }: { error: Error | null }) {
+  return (
+    <main className="min-h-screen bg-bg text-wood grid place-items-center p-6">
+      <section className="max-w-md rounded-xl border border-line bg-panel p-6 shadow-sm" role="alert">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted">PIVOT 23</p>
+        <h1 className="mt-2 text-2xl font-semibold">Si è verificato un problema</h1>
+        <p className="mt-2 text-sm text-muted">Ricarica PIVOT 23 per riprovare. La carriera salvata nel browser resta disponibile.</p>
+        {import.meta.env.DEV && error && (
+          <pre className="mt-4 overflow-auto rounded-lg bg-panel-2 p-3 text-xs text-muted" role="note">
+            {error.message}
+          </pre>
+        )}
+        <button
+          className="mt-5 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white"
+          onClick={() => window.location.reload()}
+        >
+          Ricarica PIVOT 23
+        </button>
+      </section>
+    </main>
+  );
 }
 
 let logId = 1;
@@ -258,7 +279,13 @@ export function PivotApp() {
   const [locked, setLocked] = useState(false);
   const holdTimer = useRef(0);
   const simTimer = useRef(0);
-  const [archive, setArchive] = useState<ArchiveCareer[]>([]);
+  const [archive, setArchive] = useState<ArchiveCareer[]>(() => {
+    try {
+      return loadArchive();
+    } catch {
+      return [];
+    }
+  });
 
   function holdThen(ms: number, fn: () => void) {
     if (holdTimer.current) window.clearTimeout(holdTimer.current);
@@ -281,11 +308,6 @@ export function PivotApp() {
   useLayoutEffect(() => {
     document.documentElement.classList.remove("pivot-live", "pivot-ready");
     initLang();
-    try {
-      setArchive(loadArchive());
-    } catch {
-      setArchive([]);
-    }
   }, []);
 
   useEffect(() => {
@@ -1005,10 +1027,6 @@ function withOvr(text: string, before: number, after: number) {
   return `${text} Overall ${b} → ${a} (${sign}${d}).`;
 }
 
-function round1p(n: number) {
-  return Math.round(n * 10) / 10;
-}
-
 function openPlayoff(s: PlayerState, round: number, opponent: Team): Pending {
   const label = playoffRounds(s)[round] || "Playoff";
   return { kind: "playoff", round, opponent, nerves: withPlayer(s, () => playoffNerves(s, label, opponent.name)) };
@@ -1225,7 +1243,7 @@ function CareerView(props: {
           <SeasonSheet key="season" player={player} />,
           <LeaguePanel key="league" player={player} />,
           <div key="career">
-            <StatsTab player={player} chartData={props.chartData} live={tab === "career"} />
+            <StatsTab player={player} chartData={props.chartData} />
             <ReviewTab player={player} />
           </div>,
         ]}
@@ -1276,10 +1294,12 @@ const LogBlock = memo(function LogBlock({ e }: { e: LogEntry }) {
 });
 
 function SeriesStrip({ series }: { series: SeriesResult }) {
+  const singleGame = series.games.length === 1;
+  const game = series.games[0];
   return (
     <div className="series-strip">
       <div className="series-score">
-        {series.wins}-{series.losses} · {series.won ? "Serie vinta" : "Serie persa"} vs {series.opponent.abbr}
+        {singleGame && game ? `${game.us}-${game.them}` : `${series.wins}-${series.losses}`} · {singleGame ? (series.won ? "Partita vinta" : "Partita persa") : (series.won ? "Serie vinta" : "Serie persa")} vs {series.opponent.abbr}
       </div>
       <div className="series-games">
         {series.games.map((g) => (
@@ -1625,7 +1645,6 @@ function RecapCard({
 }
 
 function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
-  const rec = teamRecord(row);
   return (
     <div className="log-card recap">
       <h3 className="text-xl mb-0.5">
@@ -1777,11 +1796,9 @@ const SeasonSheet = memo(function SeasonSheet({ player }: { player: PlayerState 
 const StatsTab = memo(function StatsTab({
   player,
   chartData,
-  live = true,
 }: {
   player: PlayerState;
   chartData: { age: number; overall?: number; curva: number }[];
-  live?: boolean;
 }) {
   const lang = useLang();
   return (

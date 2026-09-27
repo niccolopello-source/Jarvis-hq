@@ -2,7 +2,7 @@
 import { memo, useState } from "react";
 import { TeamCrest, TeamLabel, TeamMark } from "@/components/pivot/TeamMark";
 import { labelAmbition, labelIdentity } from "@/lib/pivot/world";
-import { awardIt, confIt } from "@/lib/pivot/data";
+import { confIt } from "@/lib/pivot/data";
 import { cpuPer, mvpRaceScore, personalAwardBrief, quintetRaceScore } from "@/lib/pivot/awards-helpers";
 import { awardLabel, t, useLang } from "@/lib/pivot/i18n";
 import type { DpoyCandidate, LeagueSnapshot, PlayerState, RoyCandidate, SeasonRow, StandingRow } from "@/lib/pivot/types";

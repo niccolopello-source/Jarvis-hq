@@ -514,6 +514,18 @@ export function seasonAtmosphere(s: PlayerState, row: SeasonRow): string {
 }
 
 export function playoffNerves(s: PlayerState, roundLabel: string, opponent: string): string {
+  const singleGame = s.league === "EuroLega" && roundLabel !== "Quarti di finale";
+  if (singleGame) {
+    return (
+      say(s, [
+        `$ROUND contro $OPP. Una partita sola, e il primo possesso arriva già pesante.`,
+        `Final Four: $OPP dall'altra parte, una sera sola per tenere aperta la stagione.`,
+        `Niente gara dopo questa. $ROUND comincia con le gambe ferme e la testa sveglia.`,
+        `Il palazzetto è neutro, il rumore no. $OPP aspetta il primo errore.`,
+        `Una semifinale secca, una finale secca. Prima, $ROUND contro $OPP.`,
+      ], { ROUND: roundLabel, OPP: opponent }) || `${roundLabel} contro ${opponent}. Una partita sola.`
+    );
+  }
   return (
     say(
       s,
@@ -915,6 +927,15 @@ export function doorLine(
   if (kind === "in-seed") {
     const place =
       conf === "East" ? "all'Est" : conf === "West" ? "all'Ovest" : "in Eurolega";
+    if (conf === "Euro") {
+      return (
+        say(s, [
+          `$SEED° in Eurolega. Quarti al meglio delle cinque, poi la Final Four.`,
+          `Dentro, $SEED°. Prima una serie al meglio delle cinque, poi una partita sola per turno.`,
+          `$SEED° in Europa: vantaggio del campo nei quarti, Final Four in campo neutro.`,
+        ], { SEED: String(seed ?? "") }) || `${seed ?? ""}° in Eurolega. I playoff partono ora.`
+      );
+    }
     return (
       say(s, [
         `$SEED° $PLACE. I playoff partono ora, serie al meglio delle sette.`,
@@ -924,6 +945,15 @@ export function doorLine(
         `$SEED° $PLACE. La porta è aperta. Dietro, $PLACE, ogni sera vale una settimana.`,
         `Dentro da $SEED°. $PLACE non perdona i possessi pigri, e tu lo sai.`,
       ], { SEED: String(seed ?? ""), PLACE: place }) || `${seed ?? ""}° ${place}. I playoff partono ora.`
+    );
+  }
+  if (conf === "Euro") {
+    return (
+      say(s, [
+        "I risultati sono chiusi. Quarti al meglio delle cinque, poi la Final Four.",
+        "Dentro. Prima la serie, poi una partita secca alla volta.",
+        "La griglia è pronta: i quarti durano fino a tre vittorie; la Final Four no.",
+      ]) || "I playoff partono ora, turno per turno."
     );
   }
   return (

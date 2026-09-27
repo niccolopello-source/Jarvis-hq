@@ -41,7 +41,7 @@ export const NBA_TEAMS: Team[] = [
   t("Utah Jazz", "UTA", "Salt Lake City", "#002B5C", "#F9A01B", "West", "Northwest", 52, "Owen Drake", "Tank e futuro. Lo Jazz aspetta il prossimo ciclo, minuti per tutti."),
   t("Houston Rockets", "HOU", "Houston", "#CE1141", "#000000", "West", "Southwest", 82, "Darius Cole", "Atletismo, lunghezza, un West che li teme di nuovo."),
   t("Dallas Mavericks", "DAL", "Dallas", "#00538C", "#B8C4CA", "West", "Southwest", 78, "Stefan Popovic", "Un palazzetto che chiede l'anello. Talento da copertina, roster da equilibrare."),
-  t("San Antonio Spurs", "SAS", "San Antonio", "#000000", "#C4CED4", "West", "Southwest", 76, "Rafael Mendes", "Il futuro ha già un volto. I Spurs tornano a insegnare e a vincere."),
+  t("San Antonio Spurs", "SAS", "San Antonio", "#000000", "#C4CED4", "West", "Southwest", 76, "Rafael Mendes", "Il futuro ha già un volto. Gli Spurs tornano a insegnare e a vincere."),
   t("Memphis Grizzlies", "MEM", "Memphis", "#5D76A9", "#12173F", "West", "Southwest", 71, "Kwame Rivers", "Grit and grind aggiornato. Quando sono interi, contano."),
   t("New Orleans Pelicans", "NOP", "New Orleans", "#0C2340", "#C8102E", "West", "Southwest", 58, "Etienne Bourg", "Salute e 'se'. Un roster da playoff in una città che aspetta."),
   t("Los Angeles Lakers", "LAL", "Los Angeles", "#552583", "#FDB927", "West", "Pacific", 77, "Miles Navarro", "Il marchio più pesante. Ogni stagione è una vetrina, e una scadenza."),
@@ -54,7 +54,7 @@ export const NBA_TEAMS: Team[] = [
 export const EURO_TEAMS: Team[] = [
   t("Real Madrid", "RMA", "Madrid", "#FFFFFF", "#00529F", "Euro", "Eurolega", 88, "Sergio Varela", "La casa dei titoli. Chi arriva qui impara a vincere, o a uscire."),
   t("FC Barcelona", "BAR", "Barcellona", "#A50044", "#004D98", "Euro", "Eurolega", 84, "Nikola Ristic", "Palau, orgoglio, un ciclo che non accetta secondi posti."),
-  t("Olympiacos", "OLY", "Pireo", "#D21034", "#FFFFFF", "Euro", "Eurolega", 86, "Kostas Elia", "Il Pireo di notte è un'altra sport. Difesa, cuore, Final Four."),
+  t("Olympiacos", "OLY", "Pireo", "#D21034", "#FFFFFF", "Euro", "Eurolega", 86, "Kostas Elia", "Il Pireo di notte è un altro sport. Difesa, cuore, Final Four."),
   t("Panathinaikos", "PAO", "Atene", "#006437", "#FFFFFF", "Euro", "Eurolega", 85, "Dimitris Vlachos", "Il derby come mestiere. Verdi, esigenti, sempre nel giro titolo."),
   t("Fenerbahce", "FNB", "Istanbul", "#FFED00", "#003399", "Euro", "Eurolega", 80, "Can Erdem", "Istanbul non perdona. Un palazzetto che chiede l'Eurolega ogni anno."),
   t("Anadolu Efes", "EFS", "Istanbul", "#002D72", "#CE1126", "Euro", "Eurolega", 78, "Arda Yilmaz", "Scuola di tiro e di letture. Un progetto che sa cos'è un anello."),

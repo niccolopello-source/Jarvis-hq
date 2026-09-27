@@ -7,7 +7,6 @@ import type {
   DraftCard,
   Nationality,
   OffseasonFocus,
-  PlayerState,
   Role,
   StoryEvent,
 } from "./types";
@@ -220,7 +219,7 @@ export const NBA_ROUNDS = [
   "Finali Est/Ovest",
   "Finali NBA",
 ];
-export const EURO_ROUNDS = ["Playoff", "Final Four", "Finale Eurolega"];
+export const EURO_ROUNDS = ["Quarti di finale", "Semifinale Final Four", "Finale Eurolega"];
 
 /** Stagione regolare e tabellone: NBA 82, Eurolega 34, seed playoff 1–8. */
 export const NBA_GAMES = 82;

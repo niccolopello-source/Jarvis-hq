@@ -1,7 +1,7 @@
 
 /** Pager a 4 schede: asse bloccata, scroll verticale nativo, lastra GPU. */
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { CareerTab } from "@/lib/pivot/types";
 
 export const CAREER_TABS: CareerTab[] = ["log", "season", "league", "career"];
@@ -29,15 +29,12 @@ export function SwipeTrack({
   const rafRef = useRef(0);
   const indexRef = useRef(index);
   const onTabRef = useRef(onTab);
-  indexRef.current = index;
-  onTabRef.current = onTab;
   const [swiping, setSwiping] = useState(false);
-  const [warm, setWarm] = useState(() => neighborSet(index));
   const slides = useMemo(() => children.slice(0, 4), [children]);
   const scrollMap = useRef<Partial<Record<CareerTab, number>>>({});
 
-  useEffect(() => {
-    setWarm(neighborSet(index));
+  useLayoutEffect(() => {
+    indexRef.current = index;
     const pager = pagerRef.current;
     const slide = pager?.querySelector(".swipe-slide.on") as HTMLElement | null;
     const id = CAREER_TABS[index];
@@ -46,6 +43,10 @@ export function SwipeTrack({
       if (typeof y === "number") slide.scrollTop = y;
     }
   }, [index]);
+
+  useLayoutEffect(() => {
+    onTabRef.current = onTab;
+  }, [onTab]);
 
   useEffect(() => {
     const el = pagerRef.current;
@@ -86,12 +87,10 @@ export function SwipeTrack({
       if (dx < -8 && i < CAREER_TABS.length - 1) {
         rememberScroll();
         const next = CAREER_TABS[i + 1]!;
-        setWarm(neighborSet(i + 1));
         onTabRef.current(next, "next");
       } else if (dx > 8 && i > 0) {
         rememberScroll();
         const next = CAREER_TABS[i - 1]!;
-        setWarm(neighborSet(i - 1));
         onTabRef.current(next, "prev");
       }
     };
@@ -190,7 +189,7 @@ export function SwipeTrack({
       <div className="swipe-track">
         {CAREER_TABS.map((id, i) => {
           const on = i === index;
-          const ready = warm.has(id) || Math.abs(i - index) <= 1;
+          const ready = Math.abs(i - index) <= 1;
           return (
             <div key={id} className={`swipe-slide${on ? " on" : " off"}`} aria-hidden={!on}>
               {ready ? slides[i] : null}
@@ -200,16 +199,4 @@ export function SwipeTrack({
       </div>
     </div>
   );
-}
-
-function neighborSet(index: number) {
-  const s = new Set<CareerTab>();
-  const add = (i: number) => {
-    const t = CAREER_TABS[i];
-    if (t) s.add(t);
-  };
-  add(index);
-  add(index - 1);
-  add(index + 1);
-  return s;
 }

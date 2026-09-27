@@ -843,11 +843,18 @@ export function settleYearTitle(s: PlayerState, playerChampion: boolean) {
   if (last.league) last.league.champion = entry;
 }
 
-function seriesWinner(a: StandingRow, b: StandingRow): StandingRow {
+function seriesWinner(
+  a: StandingRow,
+  b: StandingRow,
+  league: "NBA" | "EuroLega" = a.conf === "Euro" || b.conf === "Euro" ? "EuroLega" : "NBA",
+  round = 0,
+): StandingRow {
   const pa = Number.isFinite(a.power) ? a.power : 70;
   const pb = Number.isFinite(b.power) ? b.power : 70;
-  const p = pa / (pa + pb + 0.01);
-  return rand() < p ? a : b;
+  const format = playoffSeriesFormat(league, round);
+  const perGame = clamp(pa / (pa + pb + 0.01), SIM.game.winPMin, SIM.game.winPMax);
+  const chance = seriesWinProbability(perGame, format, a.seed ?? 4, b.seed ?? 5);
+  return rand() < chance ? a : b;
 }
 
 const QF_SEEDS: [number, number][] = [
@@ -868,13 +875,17 @@ function seededMap(rows: StandingRow[], excludeAbbr?: string) {
   return m;
 }
 
-function playoffTree(rows: StandingRow[], excludeAbbr?: string): StandingRow | undefined {
+function playoffTree(
+  rows: StandingRow[],
+  excludeAbbr: string | undefined,
+  league: "NBA" | "EuroLega",
+): StandingRow | undefined {
   const m = seededMap(rows, excludeAbbr);
   if (!m.size) return undefined;
   const pair = (sa: number, sb: number) => {
     const a = m.get(sa);
     const b = m.get(sb);
-    if (a && b) return seriesWinner(a, b);
+    if (a && b) return seriesWinner(a, b, league, 0);
     return a ?? b;
   };
   const q: StandingRow[] = [];
@@ -883,23 +894,30 @@ function playoffTree(rows: StandingRow[], excludeAbbr?: string): StandingRow | u
     if (w) q.push(w);
   }
   if (!q.length) return [...m.values()].sort((a, b) => (a.seed ?? 9) - (b.seed ?? 9))[0];
+  let round = 1;
   while (q.length > 1) {
     const next: StandingRow[] = [];
     for (let i = 0; i < q.length; i += 2) {
-      next.push(q[i + 1] ? seriesWinner(q[i]!, q[i + 1]!) : q[i]!);
+      next.push(q[i + 1] ? seriesWinner(q[i]!, q[i + 1]!, league, round) : q[i]!);
     }
     q.length = 0;
     q.push(...next);
+    round += 1;
   }
   return q[0];
 }
 
-function winnerOfPair(pair: BracketPair, excludeAbbr?: string): StandingRow | undefined {
+function winnerOfPair(
+  pair: BracketPair,
+  excludeAbbr: string,
+  league: "NBA" | "EuroLega",
+  round: number,
+): StandingRow | undefined {
   if (pair.winnerAbbr === pair.a.abbr) return pair.a;
   if (pair.winnerAbbr === pair.b.abbr) return pair.b;
   const userIn = pair.a.abbr === excludeAbbr || pair.b.abbr === excludeAbbr;
   if (userIn) return pair.a.abbr === excludeAbbr ? pair.b : pair.a;
-  return seriesWinner(pair.a, pair.b);
+  return seriesWinner(pair.a, pair.b, league, round);
 }
 
 /** Continua il tabellone già giocato: niente re-roll, mai il giocatore se ha perso. */
@@ -913,25 +931,27 @@ function championFromBracket(
   if (p?.pairs?.length) {
     const winners: StandingRow[] = [];
     for (const pair of p.pairs) {
-      const w = winnerOfPair(pair, exclude);
+      const w = winnerOfPair(pair, exclude, league, p.round);
       if (w && w.abbr !== exclude) winners.push(w);
     }
     let live = winners;
+    let round = p.round + 1;
     while (live.length > 1) {
       const next: StandingRow[] = [];
       for (let i = 0; i < live.length; i += 2) {
         const a = live[i]!;
         const b = live[i + 1];
-        next.push(b ? seriesWinner(a, b) : a);
+        next.push(b ? seriesWinner(a, b, league, round) : a);
       }
       live = next;
+      round += 1;
     }
     const confChamp = live[0];
     const other = p.otherChamp;
     const otherIn =
       !!other && p.pairs.some((pair) => pair.a.abbr === other.abbr || pair.b.abbr === other.abbr);
     if (other && other.abbr !== exclude && !otherIn && confChamp && other.abbr !== confChamp.abbr) {
-      return seriesWinner(confChamp, other);
+      return seriesWinner(confChamp, other, league, round);
     }
     if (confChamp && confChamp.abbr !== exclude) return confChamp;
     if (other && other.abbr !== exclude) return other;
@@ -944,10 +964,10 @@ export function pickPlayoffChampion(
   league: "NBA" | "EuroLega",
   excludeAbbr?: string,
 ): StandingRow | undefined {
-  if (league === "EuroLega") return playoffTree(snap.euro, excludeAbbr);
-  const east = playoffTree(snap.east, excludeAbbr);
-  const west = playoffTree(snap.west, excludeAbbr);
-  if (east && west) return seriesWinner(east, west);
+  if (league === "EuroLega") return playoffTree(snap.euro, excludeAbbr, league);
+  const east = playoffTree(snap.east, excludeAbbr, league);
+  const west = playoffTree(snap.west, excludeAbbr, league);
+  if (east && west) return seriesWinner(east, west, league, 3);
   return east ?? west;
 }
 
@@ -973,12 +993,12 @@ export function initPlayoffs(s: PlayerState, snap: LeagueSnapshot): PlayoffState
     pairs.push({
       a: a!,
       b: b!,
-      winnerAbbr: userIn ? undefined : seriesWinner(a!, b!).abbr,
+      winnerAbbr: userIn ? undefined : seriesWinner(a!, b!, s.league, 0).abbr,
     });
   }
   if (!pairs.length) return null;
   const otherConf = s.league === "EuroLega" ? null : s.team.conf === "East" ? snap.west : snap.east;
-  const otherChamp = otherConf ? playoffTree(otherConf) : undefined;
+  const otherChamp = otherConf ? playoffTree(otherConf, undefined, "NBA") : undefined;
   const state: PlayoffState = {
     conf: mine.conf,
     seed: mine.seed,
@@ -1010,17 +1030,83 @@ export function simulateBestOfSeven(
   userSeed = 4,
   oppSeed = 5,
 ): { wins: number; losses: number; games: GameLine[] } {
+  return simulateSeries(winProb, { winsNeeded: 4, maxGames: 7, homeCourtBySeed: true }, euro, userSeed, oppSeed);
+}
+
+export interface PlayoffSeriesFormat {
+  winsNeeded: number;
+  maxGames: number;
+  /** If false, the game is at a neutral venue and seed does not affect home edge. */
+  homeCourtBySeed: boolean;
+}
+
+/** Regole playoff del modello PIVOT: NBA al meglio delle sette; Eurolega con quarti al meglio delle cinque e Final Four secca. */
+export function playoffSeriesFormat(league: "NBA" | "EuroLega", round: number): PlayoffSeriesFormat {
+  if (league === "EuroLega") {
+    return round === 0
+      ? { winsNeeded: 3, maxGames: 5, homeCourtBySeed: true }
+      : { winsNeeded: 1, maxGames: 1, homeCourtBySeed: false };
+  }
+  return { winsNeeded: 4, maxGames: 7, homeCourtBySeed: true };
+}
+
+function gameWinChance(winProb: number, format: PlayoffSeriesFormat, game: number, userSeed: number, oppSeed: number) {
+  const maxGames = Math.max(Math.floor(format.maxGames), Math.floor(format.winsNeeded) * 2 - 1);
+  const better = userSeed <= oppSeed;
+  const favoredHomeGames = maxGames >= 7 ? [1, 2, 5, 7] : maxGames >= 5 ? [1, 2, 5] : [];
+  const favoredHome = favoredHomeGames.includes(game);
+  const userHome = format.homeCourtBySeed && (better ? favoredHome : !favoredHome);
+  return clamp(
+    winProb + (userHome ? SIM.game.homeEdge : format.homeCourtBySeed ? -SIM.game.homeEdge : 0),
+    SIM.game.winPMin,
+    SIM.game.winPMax,
+  );
+}
+
+/** Probabilità esatta di vincere la serie, considerando l'arresto al primo traguardo e il fattore campo. */
+export function seriesWinProbability(
+  winProb: number,
+  format: PlayoffSeriesFormat,
+  userSeed = 4,
+  oppSeed = 5,
+): number {
+  const winsNeeded = Math.max(1, Math.floor(format.winsNeeded));
+  const maxGames = Math.max(winsNeeded * 2 - 1, Math.floor(format.maxGames));
+  const memo = new Map<string, number>();
+  const chanceAt = (game: number, wins: number, losses: number): number => {
+    if (wins >= winsNeeded) return 1;
+    if (losses >= winsNeeded || game > maxGames) return 0;
+    const key = `${game}:${wins}:${losses}`;
+    const known = memo.get(key);
+    if (known !== undefined) return known;
+    const p = gameWinChance(winProb, { ...format, winsNeeded, maxGames }, game, userSeed, oppSeed);
+    const result = p * chanceAt(game + 1, wins + 1, losses) + (1 - p) * chanceAt(game + 1, wins, losses + 1);
+    memo.set(key, result);
+    return result;
+  };
+  return chanceAt(1, 0, 0);
+}
+
+export function simulateSeries(
+  winProb: number,
+  format: PlayoffSeriesFormat,
+  euro = false,
+  userSeed = 4,
+  oppSeed = 5,
+  random: () => number = rand,
+): { wins: number; losses: number; games: GameLine[] } {
+  const winsNeeded = Math.max(1, Math.floor(format.winsNeeded));
+  const maxGames = Math.max(winsNeeded * 2 - 1, Math.floor(format.maxGames));
   let uw = 0;
   let ow = 0;
   const games: GameLine[] = [];
   let n = 1;
-  const better = userSeed <= oppSeed;
-  const home = (g: number) => (better ? [1, 2, 5, 7] : [3, 4, 6]).includes(g);
-  while (uw < 4 && ow < 4 && n <= 7) {
-    const p = clamp(winProb + (home(n) ? SIM.game.homeEdge : -SIM.game.homeEdge), SIM.game.winPMin, SIM.game.winPMax);
-    const win = rand() < p;
-    const us = euro ? randInt(68, 98) : randInt(94, 128);
-    const margin = euro ? randInt(3, 14) : randInt(3, 17);
+  const drawInt = (min: number, max: number) => min + Math.floor(clamp(random(), 0, 0.999999999) * (max - min + 1));
+  while (uw < winsNeeded && ow < winsNeeded && n <= maxGames) {
+    const p = gameWinChance(winProb, { ...format, winsNeeded, maxGames }, n, userSeed, oppSeed);
+    const win = random() < p;
+    const us = euro ? drawInt(68, 98) : drawInt(94, 128);
+    const margin = euro ? drawInt(1, 14) : drawInt(1, 17);
     const them = Math.max(euro ? 58 : 78, win ? us - margin : us + margin);
     games.push({ n, us, them, win });
     if (win) uw += 1;
@@ -1059,7 +1145,7 @@ export function advanceBracket(s: PlayerState, userWon: boolean) {
       next.push({
         a,
         b,
-        winnerAbbr: userIn ? undefined : seriesWinner(a, b).abbr,
+        winnerAbbr: userIn ? undefined : seriesWinner(a, b, s.league, p.round).abbr,
       });
     }
     p.pairs = next;
@@ -1101,16 +1187,32 @@ export const SERIES_WIN_LINES = [
   `Gara dopo gara, $SCORE. $OPP esce a testa bassa.`,
   `$SCORE e via. $OPP ha lottato; tu hai chiuso.`,
   `La serie finisce $SCORE. In tunnel, stavolta, il rumore è tuo.`,
-  `$SCORE. Quattro vittorie, una porta che si chiude alle loro spalle.`,
+  `$SCORE. La porta della serie si chiude alle loro spalle.`,
   `Li mandi a casa $SCORE. Nessun discorso: il tabellone basta.`,
   `$OPP cede $SCORE. La serie, alla fine, aveva il tuo passo.`,
   `Chiusa $SCORE. Il fiato torna, $OPP no.`,
-  `$SCORE. Quattro sere tue, e $OPP che guarda il tabellone spento.`,
+  `Una vittoria dopo l'altra, $SCORE. $OPP guarda il tabellone spento.`,
   `Li superi $SCORE. Non è stata fortuna: è stato un piano tenuto.`,
   `Serie vinta $SCORE. Il tunnel, all'uscita, ha il tuo respiro.`,
   `$OPP esce $SCORE. Tu resti, e questo basta come discorso.`,
-  `Quattro sere, $SCORE. $OPP ha avuto le sue. Voi avete avuto l'ultima.`,
+  `La serie si chiude $SCORE. $OPP ha avuto le sue occasioni; voi avete tenuto l'ultimo possesso.`,
   `$SCORE. Il tunnel, all'uscita, ha il tuo respiro e il loro silenzio.`,
+];
+
+export const SINGLE_GAME_WIN_LINES = [
+  `Partita chiusa $SCORE. $OPP non ha più risposte.`,
+  `Una sera sola, $SCORE: il palazzetto canta il tuo nome.`,
+  `Final Four superata. $SCORE, e il tabellone resta aperto.`,
+  `$SCORE contro $OPP. Hai tenuto l'ultimo possesso.`,
+  `Una partita, nessun domani per loro. $SCORE e si va avanti.`,
+];
+
+export const SINGLE_GAME_LOSS_LINES = [
+  `Finisce $SCORE. Una partita sola, e $OPP va avanti.`,
+  `$SCORE contro $OPP. La Final Four finisce qui.`,
+  `Il tabellone non concede un'altra sera: $SCORE, stagione finita.`,
+  `Una partita decisa in pochi possessi. $OPP ha tenuto l'ultimo.`,
+  `$OPP passa dopo una partita sola. Il parquet si svuota in fretta.`,
 ];
 
 export const SERIES_LOSS_LINES = [
@@ -1152,4 +1254,13 @@ export const TITLE_LINES = [
   `Campioni. $SCORE. Il resto, a casa, senza microfoni.`,
   `$SCORE. Per una notte la città non ha altre domande. Poi sì, e tu ci sei.`,
   `Anello. $SCORE su $OPP. Si tiene, e si tace un poco.`,
+];
+
+export const EURO_TITLE_LINES = [
+  `Eurolega tua. $SCORE contro $OPP, e il trofeo sale con te.`,
+  `Una partita per il titolo, $SCORE contro $OPP. Sei campione d'Europa.`,
+  `Ultimo possesso, ultima sirena: $SCORE contro $OPP. Il trofeo è tuo.`,
+  `Final Four, ultima pagina: campioni d'Europa, $SCORE contro $OPP.`,
+  `Una sola finale, e basta così: $SCORE contro $OPP. La coppa è tua.`,
+  `$OPP si ferma qui. La finale finisce $SCORE, la coppa parte con te.`,
 ];

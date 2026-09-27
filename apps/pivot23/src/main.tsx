@@ -14,7 +14,9 @@ class AppErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("PIVOT 23 failed to render", error, info.componentStack);
+    if (import.meta.env.DEV) {
+      console.error("PIVOT 23 failed to render", error, info.componentStack);
+    }
   }
 
   render() {
@@ -23,10 +25,15 @@ class AppErrorBoundary extends Component<
         <main className="min-h-screen bg-bg text-wood grid place-items-center p-6">
           <section className="max-w-md rounded-xl border border-line bg-panel p-6 shadow-sm" role="alert">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted">PIVOT 23</p>
-            <h1 className="mt-2 text-2xl font-semibold">La partita si è interrotta</h1>
+            <h1 className="mt-2 text-2xl font-semibold">Si è verificato un problema</h1>
             <p className="mt-2 text-sm text-muted">
-              Se hai già iniziato la carriera, il salvataggio automatico nel browser può permetterti di riprendere.
+              Ricarica PIVOT 23 per riprovare. La carriera salvata nel browser resta disponibile.
             </p>
+            {import.meta.env.DEV && (
+              <pre className="mt-4 overflow-auto rounded-lg bg-panel-2 p-3 text-xs text-muted" role="note">
+                {this.state.error?.message}
+              </pre>
+            )}
             <button
               className="mt-5 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white"
               onClick={() => window.location.reload()}

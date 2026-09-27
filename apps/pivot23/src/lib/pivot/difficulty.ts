@@ -1,5 +1,5 @@
 
-import type { PlayerState, TeamTier } from "./types";
+import type { TeamTier } from "./types";
 
 export type DifficultyId = "esordio" | "pro" | "allstar" | "leggenda";
 
