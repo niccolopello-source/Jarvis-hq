@@ -29,7 +29,7 @@ The client now has two recovery layers: an HTML startup shell remains visible un
 |---|---|---|
 | Development server | PASS | Started on `127.0.0.1:4176`; HTML and `/src/main.tsx` returned HTTP 200. |
 | Production preview | PASS | Built preview on `127.0.0.1:4177`; HTML, JS bundle, and CSS returned HTTP 200. |
-| Local fetch timings | Observed, not paint timings | One Node fetch measured preview HTML at 48 ms, JS at 53 ms, CSS at 8 ms; dev HTML at 113 ms and entry module at 27 ms. These are single local HTTP measurements, not browser FCP/LCP or app-interactive measurements. |
+| Local fetch timings | Observed, not paint timings | Latest one-shot Node fetch measured preview HTML at 39 ms, JS at 50 ms, CSS at 8 ms; dev HTML at 143 ms and entry module at 25 ms. These are single local HTTP measurements, not browser FCP/LCP or app-interactive measurements. |
 | Root and entry fallback | Static review | `index.html` keeps a visible startup/reload shell in `#app`; `main.tsx` wraps `PivotApp` in an error boundary. |
 | Lazy chart | Static/build review | `CareerChart` is lazy-loaded under a visible Suspense fallback; its generated asset was requested successfully from production preview. |
 | Storage bootstrap | Static/unit review | Save reads guard unavailable, corrupt, or quota-limited browser storage; archive writes fall back to memory for the current session. |
