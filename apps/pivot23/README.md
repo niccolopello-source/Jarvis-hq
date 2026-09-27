@@ -12,3 +12,8 @@ The game stores its career in the browser (`localStorage` and `sessionStorage`).
 ## Current demo scope
 
 The included dump contains the game engine, UI, styles, career chart, and browser save logic. It did not include the original build configuration, public assets, authentication provider, preview bridge, or the scripts named by its original `package.json`. This app therefore uses a small standalone Vite setup and does not depend on those missing services.
+
+## Readiness audits
+
+- [Complete diagnostic](DIAGNOSTIC-REPORT.md)
+- [Demo readiness report](DEMO-READINESS-REPORT.md)
