@@ -31,6 +31,7 @@ jobs:
           cache-dependency-path: apps/pivot23/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm run lint
       - run: pnpm run typecheck
       - run: pnpm run test
       - run: pnpm run build

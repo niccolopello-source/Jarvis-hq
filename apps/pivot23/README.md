@@ -5,7 +5,7 @@ Browser-based basketball career simulation extracted from the supplied PIVOT 23 
 ## Run locally
 
 Install dependencies with `pnpm install`, then use `pnpm dev` and open `http://localhost:8080`.
-Run `pnpm build` for a production bundle and `pnpm preview` to serve that bundle locally.
+Run `pnpm lint`, `pnpm typecheck`, and `pnpm test` before `pnpm build` for a production bundle. Use `pnpm preview` to serve that bundle locally and `pnpm test:e2e` for the browser smoke flow.
 
 The game stores its career in the browser (`localStorage` and `sessionStorage`). Clearing site data deletes that save. No account, database, or AI provider is required by this demo.
 

@@ -11,6 +11,6 @@ pnpm --dir apps/pivot23 install
 pnpm run pivot:dev
 ```
 
-Open `http://localhost:8080`. Build and verify the app with `pnpm run pivot:build`, `pnpm run pivot:test`, and `pnpm run pivot:test:e2e` (the browser test requires Playwright Chromium).
+Open `http://localhost:8080`. Check the app with `pnpm run pivot:lint`, `pnpm run pivot:build`, `pnpm run pivot:test`, and `pnpm run pivot:test:e2e` (the browser test requires Playwright Chromium).
 
 PIVOT 23 stores careers in the browser. No API key, AI provider, database, or account is needed for the demo. See the [app README](apps/pivot23/README.md) for the included scope and known setup differences from the original source dump.
