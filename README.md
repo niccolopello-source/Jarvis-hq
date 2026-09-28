@@ -2,7 +2,9 @@
 
 AI software house orchestration platform for multi-model agents, project memory, tools and development workflows.
 
-The repository now includes the first runnable beta of its basketball career simulation project, PIVOT 23, in [`apps/pivot23`](apps/pivot23/README.md). The app uses the supplied game source dump and keeps the JARVIS HQ foundation documents at the repository root.
+The repository includes the basketball career simulation PIVOT 23 in [`apps/pivot23`](apps/pivot23/README.md).
+
+Agent roles are defined only in [`docs/AGENT-REGISTRY.md`](docs/AGENT-REGISTRY.md). Models are not roles.
 
 ## Shared project memory
 
