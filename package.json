@@ -5,8 +5,11 @@
   "description": "JARVIS HQ — AI software house orchestration system",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js"
+    "pivot:dev": "pnpm --dir apps/pivot23 dev",
+    "pivot:build": "pnpm --dir apps/pivot23 build",
+    "pivot:lint": "pnpm --dir apps/pivot23 lint",
+    "pivot:test": "pnpm --dir apps/pivot23 test",
+    "pivot:test:e2e": "pnpm --dir apps/pivot23 test:e2e"
   },
   "dependencies": {}
 }
