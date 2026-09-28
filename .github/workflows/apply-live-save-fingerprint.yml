@@ -1,0 +1,26 @@
+name: apply live save fingerprint
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/live-save-fingerprint
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: apply and drop the helper
+        run: |
+          git apply --check .github/live-save-fingerprint.patch
+          git apply .github/live-save-fingerprint.patch
+          rm -f .github/live-save-fingerprint.patch .github/workflows/apply-live-save-fingerprint.yml
+          git config user.email "niccolo.pello@gmail.com"
+          git config user.name "niccolopello-source"
+          git add -A
+          git commit -m "fix: do not reopen a live save that has no fingerprint"
+          git push origin HEAD:fix/live-save-fingerprint
