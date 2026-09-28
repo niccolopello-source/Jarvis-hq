@@ -7,10 +7,25 @@ The owner decision D-001 stands: a player who continues must be able to reach 36
 | ID | Status | Owner | Support | Objective | Acceptance | Do not |
 |---|---|---|---|---|---|---|
 | P0-LIFE | open | John | James | A career can end before 36 when minutes collapse or a serious injury lands. The offer to continue to 36 remains available when the career is still alive. | On 1,000 Pro careers from `main`, retirement age is not a single value, at least 15% end before 34, and at least some careers still end at 36. Peak ages stay inside 26–28 in this task. | Delete `MAX_AGE` or make 36 unreachable. |
-| P0-REPEAT | open | John | James | An MVP or a title already won reduces the chance of the next one. | On 2,000 Esordio careers from `main`, the maximum MVP count is at most 6, and the share with at least 6 titles is under 2%. The test must fail on the code from before the change. | Special-case one difficulty with a hard clamp that the others do not use. |
+| P0-REPEAT | closed | John | James | An MVP or a title already won reduces the chance of the next one. | Met on `main` `8bd1464`. Evidence is below. The test failed on the code from before the change. | Special-case one difficulty with a hard clamp that the others do not use. |
 | P1-BUST | open | James | John | High potential can miss. | Among Pro careers on `main` with potential at least 85, a measured share peaks at least 8 points under that potential. Record the share. Do not pick the share first and tune to it. | Force a bust rate copied from a chat. |
 | P1-WORLD | open | John | James | Title concentration comes from team state that can change, not from a power number that never moves. | Across 1,000 independent worlds from `main`, no franchise keeps about 15% of titles merely because its power constant says so. | Subtract points from Boston in `teams.ts` and call it done. |
 | P1-ROLE | open | James | Rebecca | Show whether role weights change the box score. | Same seeds, table of PPG, RPG and APG by role. If they separate, write that equal peak overall is intended. If they do not, the weights are dead. | Change peak overall by role inside this task. |
+
+## P0-REPEAT evidence
+
+Closed only after the fix was on `main` and the same test was run there.
+
+- Fix commit `d8c589ab`. Merge of pull request #3: `e19516b`. Tree verified: `main` `8bd1464` (that tip also contains the docs merge of pull request #4; it does not change the engine).
+- Blobs: `league.ts` `121a063`, `engine.ts` `bb5faf6`, `engine.test.ts` `5c9f1fc`.
+- Before the change, the committed test failed with `max MVP 12` (2,000 Esordio careers).
+- On `8bd1464`, 2026-09-28, `node --import=tsx --test src/lib/pivot/engine.test.ts` in `apps/pivot23`: 14 pass, 0 fail. The Esordio test passed in about 138 seconds.
+- Same seeds, counted again on that tree: max MVP 2, at least 6 titles 18/2000 (0.009), MVP mean 0.135, at least one MVP 223/2000, age 36 is 2000/2000. Histogram: 0 → 1777, 1 → 176, 2 → 47.
+- CI on `d8c589ab`: [run 36441494112](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/36441494112), success. Lint, typecheck, unit, build and e2e.
+
+Balance, recorded and not retuned: 1777 of 2000 Esordio careers win zero MVP. `INVARIANTS.md` and this table do not set a minimum MVP share. P-002 is still proposed and does not set that floor. Do not change the constants to raise the rate unless the owner asks.
+
+P0-LIFE stays open. No new retirement rule was added.
 
 ## Already done, not these tasks
 
