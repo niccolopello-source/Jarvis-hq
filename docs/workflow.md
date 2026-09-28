@@ -6,27 +6,15 @@ This document defines the standard development workflow of JARVIS HQ.
 
 JARVIS HQ operates as a coordinated virtual software house.
 
-JARVIS is responsible for coordinating the development process, while Al, Rebecca, John, and James operate as specialized members of the organization according to their defined responsibilities.
+JARVIS coordinates. The specialists are the five names in [AGENT-REGISTRY.md](AGENT-REGISTRY.md).
 
-The workflow ensures that significant tasks are:
+This workflow does not define their roles. If a sentence here disagrees with the registry, the registry wins and this sentence is wrong.
 
-- understood correctly;
-- planned appropriately;
-- assigned to the correct specialist;
-- executed within the established project constraints;
-- reviewed;
-- validated;
-- integrated;
-- documented;
-- verified.
-
-The workflow is designed to maintain consistency, traceability, reliability, and clear responsibility throughout the development process.
+The workflow ensures that significant tasks are understood, planned, assigned, executed, reviewed, validated, integrated and documented.
 
 ---
 
 ## 2. Development Lifecycle
-
-A significant development task should normally follow this lifecycle:
 
 1. Request
 2. Analysis
@@ -34,551 +22,242 @@ A significant development task should normally follow this lifecycle:
 4. Delegation
 5. Execution
 6. Review
-7. Validation
-8. Integration
-9. Documentation
-10. Final Verification
+7. Cross-agent review, when the task crosses domains
+8. Validation
+9. Acceptance
+10. Integration, through a pull request into `main`
+11. Documentation
+12. Final verification
 
-Additional steps may be introduced when required by the complexity, risk, or scope of the task.
-
-Minor tasks may use a simplified version of the workflow when the full process is unnecessary.
-
----
-
-## 3. Stage 1 — Request
-
-A task begins with a requirement, problem, idea, change request, bug, improvement, or other project need.
-
-A request may originate from:
-
-- the human project owner;
-- JARVIS;
-- a specialist agent;
-- testing;
-- a detected defect;
-- project analysis;
-- an external requirement.
-
-Before assigning or implementing the task, JARVIS must determine the actual objective of the request.
-
-JARVIS should distinguish between:
-
-- the requested action;
-- the underlying objective;
-- the expected result;
-- the relevant constraints;
-- the potential impact on the project.
-
-JARVIS should not begin implementation simply because a request has been received.
+Minor tasks may skip stages that do not apply. A defect does not skip the test named in its task.
 
 ---
 
-## 4. Stage 2 — Analysis
+## 3. Request
 
-JARVIS analyzes the request and the current project state.
+A task begins with a requirement, a defect, or a decision already accepted.
 
-The analysis should consider:
+A proposal in [memory/DECISIONS.md](memory/DECISIONS.md) is not a request to implement.
 
-- project objective;
-- current repository state;
-- existing implementation;
-- relevant documentation;
-- affected systems;
-- responsible specialist;
-- supporting specialists;
-- dependencies;
-- technical constraints;
-- design constraints;
-- potential risks;
-- required tools;
-- testing requirements;
-- integration requirements.
-
-JARVIS must determine whether the task affects:
-
-- one system;
-- multiple systems;
-- an existing feature;
-- a new feature;
-- an architectural component;
-- project-wide behaviour.
-
-If essential information is missing, ambiguous, or contradictory, JARVIS should resolve the issue before delegating implementation work.
+Jarvis distinguishes the requested action, the objective, the expected result and the constraint. Jarvis does not start implementation only because a sentence arrived in a chat.
 
 ---
 
-## 5. Stage 3 — Planning
+## 4. Analysis
 
-After analysis, JARVIS converts the request into one or more concrete tasks.
+Jarvis reads, in order:
 
-A significant task should define:
+1. [memory/FACTS.md](memory/FACTS.md)
+2. [memory/DECISIONS.md](memory/DECISIONS.md)
+3. [memory/TASKS.md](memory/TASKS.md)
+4. [AGENT-REGISTRY.md](AGENT-REGISTRY.md)
+5. The code the task names
 
-- Task ID;
-- Project;
-- Objective;
-- Responsible Agent;
-- Supporting Agents;
-- Context;
-- Requirements;
-- Constraints;
-- Dependencies;
-- Relevant Files;
-- Expected Output;
-- Acceptance Criteria;
-- Validation Method;
-- Integration Requirements.
-
-Tasks should be divided into clear units of work whenever practical.
-
-When a task affects multiple domains, JARVIS must clearly identify the responsibility of each involved specialist.
+If those disagree, Jarvis stops and names the disagreement. Jarvis does not pick the convenient document.
 
 ---
 
-## 6. Stage 4 — Delegation
+## 5. Planning
 
-JARVIS assigns the task according to the official Agent Registry.
+A significant task defines the fields in [AGENT-OPERATING-MANUAL.md](AGENT-OPERATING-MANUAL.md), section 3.
 
-The primary responsibility map is:
-
-- JARVIS → orchestration, architecture, coordination, integration, and technical oversight;
-- Al → Frontend / UI / UX;
-- Rebecca → Game Design / Narrative;
-- John → Backend / Systems;
-- James → QA / Simulation / Balancing.
-
-The specialist whose domain primarily owns the task becomes the responsible agent.
-
-Other specialists may be involved when their domain is affected.
-
-JARVIS should avoid involving unnecessary agents.
-
-The purpose of delegation is not to maximize the number of agents involved.
-
-The purpose is to assign the right responsibility to the right specialist while maintaining efficient coordination.
-
-Every delegated task must preserve the receiving agent's identity, role, responsibilities, constraints, dependencies, expected output, and acceptance criteria.
+The agent in that list is Al, Rebecca, John or James. Not a model.
 
 ---
 
-## 7. Stage 5 — Execution
+## 6. Delegation
 
-The responsible specialist performs the assigned work within the defined scope.
+Jarvis assigns the task from the registry.
 
-The specialist must respect:
+This workflow does not keep a second map.
 
-- its permanent identity;
-- its defined responsibilities;
-- the assigned objective;
-- project documentation;
-- established constraints;
-- dependencies;
-- acceptance criteria;
-- decisions already established by JARVIS.
+For the current game, implementation of `apps/pivot23`, including the React interface, is John's. Al is consulted for product intent. Rebecca is consulted for narrative and player-facing experience. James validates.
 
-The resulting work may include:
+An older copy of this section assigned Al to frontend and Rebecca to game design. That assignment is withdrawn.
 
-- code;
-- architecture;
-- technical specifications;
-- game-design specifications;
-- narrative content;
-- frontend implementation;
-- backend implementation;
-- tests;
-- simulations;
-- analysis;
-- documentation.
-
-If the specialist encounters:
-
-- missing information;
-- conflicting requirements;
-- an important dependency;
-- an architectural conflict;
-- a decision outside its authority;
-
-it must escalate the issue to JARVIS rather than silently inventing a project decision.
+Codex, Claude, Grok and OpenAI are not delegation targets. One of them may execute the specialist's task. The specialist remains the owner.
 
 ---
 
-## 8. Stage 6 — Review
+## 7. Execution
 
-After execution, JARVIS reviews the result.
+The specialist works inside the task.
 
-The review should evaluate:
+The work is committed on a branch taken from `main`. It is not committed directly to `main`.
 
-- original objective;
-- requirements;
-- constraints;
-- project architecture;
-- existing functionality;
-- relevant documentation;
-- agent responsibilities;
-- dependencies;
-- acceptance criteria.
-
-JARVIS determines whether the result is:
-
-- complete;
-- partially complete;
-- incorrect;
-- inconsistent;
-- incompatible;
-- ready for validation;
-- or requires revision.
-
-Producing an output does not automatically mean that the task is complete.
-
-JARVIS may return the task to the responsible specialist for correction or clarification.
+If the specialist meets a missing decision, a conflict with an accepted decision, or a change that would promote a proposal to accepted, it stops and escalates. It does not invent the decision.
 
 ---
 
-## 9. Stage 7 — Cross-Agent Review
+## 8. Review
 
-For significant or cross-domain tasks, JARVIS may request review or collaboration from additional specialists.
+Jarvis reviews the result against the objective, the accepted decisions, the registry and the acceptance criteria.
 
-The additional specialist does not automatically become responsible for the original task.
-
-Examples:
-
-### Frontend Feature
-
-Al is responsible for the frontend implementation.
-
-John may provide backend or API support when required.
-
-James may validate behaviour, edge cases, and regressions.
-
-### Game Design Feature
-
-Rebecca is responsible for the game-design requirements.
-
-John may implement the required technical systems.
-
-Al may implement the player-facing interface.
-
-James may test and evaluate behaviour, simulation, and balance.
-
-### Narrative Feature
-
-Rebecca is responsible for narrative and content.
-
-Al may implement the corresponding user-facing presentation.
-
-James may validate behaviour and relevant edge cases.
-
-### Backend Feature
-
-John is responsible for backend and systems implementation.
-
-Al may handle frontend integration.
-
-James may test and validate the resulting system.
-
-JARVIS coordinates the collaboration and determines the final integration approach.
+Producing an output does not close the task.
 
 ---
 
-## 10. Stage 8 — Validation
+## 9. Cross-agent review
 
-Validation determines whether the implemented result satisfies its requirements.
+When a task crosses domains:
 
-Validation may include:
+- Al owns the product and game-design statement.
+- Rebecca owns the narrative and the player-facing experience.
+- John owns the implementation, including the interface in `apps/pivot23`.
+- James owns the validation.
 
-- automated tests;
-- manual tests;
-- unit tests;
-- integration tests;
-- regression tests;
-- simulations;
-- statistical validation;
-- numerical validation;
-- performance checks;
-- UI verification;
-- API verification;
-- data validation;
-- edge-case testing.
+The extra specialist does not become the owner of the task.
 
-James is the primary QA / Simulation / Balancing specialist.
-
-However, every specialist remains responsible for identifying problems relevant to their own domain.
-
-JARVIS determines the appropriate level of validation according to the complexity, risk, and project impact of the task.
+An older copy of this section said Al implements the interface. That sentence is withdrawn.
 
 ---
 
-## 11. Stage 9 — Acceptance
+## 10. Validation
 
-A task is accepted only when its defined acceptance criteria have been satisfied.
+Validation is the method written on the task.
 
-JARVIS should verify:
+For an open P0, the method is the one in [memory/TASKS.md](memory/TASKS.md). A reading of the code is not that method.
 
-- required functionality is present;
-- requirements are satisfied;
-- constraints are respected;
-- dependencies are resolved;
-- required tests have been completed;
-- known critical issues have been addressed;
-- the implementation is compatible with the existing project;
-- documentation is updated when required.
-
-If the acceptance criteria are not satisfied, JARVIS may:
-
-- request revisions;
-- request additional testing;
-- delegate part of the problem to another specialist;
-- request cross-agent collaboration;
-- modify the task;
-- reject the proposed implementation.
+James is the validation specialist. Every specialist still reports defects in their own domain.
 
 ---
 
-## 12. Stage 10 — Integration
+## 11. Acceptance
 
-After acceptance, JARVIS coordinates integration into the project.
+A task is accepted only when its acceptance criteria are satisfied.
 
-Integration must verify:
+A P0 becomes closed only when:
 
-- affected files;
-- dependencies;
-- compatibility;
-- architecture;
-- tests;
-- documentation;
-- configuration;
-- unintended side effects;
-- regression risks;
-- repository state.
+- the previous behaviour was reproduced, or an equivalent proof is in the pull request;
+- the test fails on the code from before the change, or the regression is shown;
+- the test passes after the change;
+- CI passes;
+- the behaviour is on the branch of the pull request.
 
-A feature is not considered integrated simply because its implementation exists.
-
-The integrated result must function correctly within the existing project.
-
-JARVIS is responsible for coordinating the final integration.
+This workflow does not close P0-LIFE, P0-REPEAT, P1-BUST, P1-WORLD or P1-ROLE.
 
 ---
 
-## 13. Stage 11 — Git Workflow
+## 12. Integration
 
-The repository is the persistent technical source of truth.
+Integration is a pull request into `main`.
 
-Changes should follow a controlled version-control process:
+A document-only pull request has no diff under `apps/pivot23`.
 
-1. Create or modify the required files.
-2. Review the changes.
-3. Test the changes.
-4. Verify the affected functionality.
-5. Commit the changes.
-6. Use a meaningful commit message.
-7. Push the changes when appropriate.
-8. Verify the resulting repository state.
+A game pull request waits for `.github/workflows/pivot23.yml`.
 
-Commit messages should clearly describe the purpose of the change.
+Jarvis does not merge the pull request when the owner has reserved the merge.
 
-Examples:
-
-```text
-feat: add player progression system
-fix: correct career simulation calculation
-test: add regression tests for draft logic
-docs: update architecture specification
+A feature is not integrated because its branch exists.
 
 ---
 
-## 14. Stage 12 — Documentation
+## 13. Git
 
-Important development changes must be reflected in the appropriate project documentation.
+1. Branch from `main`.
+2. Change only the files the task names.
+3. Review the diff.
+4. Open a pull request.
+5. Wait for the required check.
+6. Merge only when the owner has not asked to hold the merge.
 
-Documentation should describe, when relevant:
+Commit messages name the purpose.
 
-- what changed;
-- why it changed;
-- important architectural decisions;
-- new dependencies;
-- configuration requirements;
-- testing requirements;
-- operational changes;
-- known limitations.
-
-Critical project knowledge should not exist only within an AI conversation.
-
-The repository should remain understandable to both the human project owner and future AI agents.
-
-Documentation must remain consistent with the actual project state.
+`src/` is not edited in order to «keep the copies in sync». It is an old copy. It is removed only in a later pull request, after references are checked.
 
 ---
 
-## 15. Failure Handling
+## 14. Documentation
 
-When an implementation fails, JARVIS must treat the failure as actionable engineering information.
+A fact that changes (URL, SHA, merge) is written to [memory/FACTS.md](memory/FACTS.md) and to [project-state.md](project-state.md) in the same change.
 
-The process should be:
+A decision is appended to [memory/DECISIONS.md](memory/DECISIONS.md). The old entry stays.
 
-1. Identify the failure.
-2. Preserve relevant error information.
-3. Determine the likely cause.
-4. Identify the responsible specialist.
-5. Correct the problem.
-6. Re-test the implementation.
-7. Validate the correction.
-8. Document important recurring failures.
+A role change is made in the registry, then the other documents are reduced to pointers. The role is not copied out again.
 
-Possible causes include:
-
-- code;
-- architecture;
-- configuration;
-- external services;
-- data;
-- dependencies;
-- AI model behaviour;
-- integration;
-- incorrect assumptions.
-
-JARVIS must not hide relevant failures from the human project owner.
+Critical knowledge does not live only in a conversation.
 
 ---
 
-## 16. Human Approval
+## 15. Failure handling
 
-The human project owner retains final authority over the project.
-
-Explicit approval is required for sensitive or irreversible operations, including:
-
-- production deployment;
-- financial operations;
-- publication;
-- deletion of critical project data;
-- exposure of credentials;
-- major irreversible architectural changes;
-- other actions with significant irreversible consequences.
-
-JARVIS may prepare and coordinate such operations but must not assume approval when explicit authorization is required.
+1. Keep the error.
+2. Name the likely cause.
+3. Name the specialist.
+4. Correct on the branch.
+5. Re-run the test that failed.
+6. Do not hide the failure from the owner.
 
 ---
 
-## 17. Priority Management
+## 16. Human approval
 
-When multiple tasks are active, JARVIS should generally prioritize according to:
+The owner retains final authority.
 
-1. Security and critical failures;
-2. Blocking technical problems;
-3. Core functionality;
-4. High-impact bugs;
-5. Required integrations;
-6. Testing and validation;
-7. Important improvements;
-8. Optional features.
+Explicit approval is required for production deployment settings, publication, deletion of project data, credentials, and a change that cannot be reverted.
 
-Priority may change according to:
-
-- current project phase;
-- dependencies;
-- deadlines;
-- project requirements;
-- instructions from the human project owner.
-
-JARVIS should communicate material priority changes when they affect ongoing work.
+Changing Vercel's ignored build step is one of those settings. It is not part of a document pull request.
 
 ---
 
-## 18. Dependency Management
+## 17. Priority
 
-JARVIS is responsible for coordinating dependencies between tasks, systems, documents, and specialists.
+1. Security and critical failures.
+2. Blocking defects.
+3. Core behaviour.
+4. Accepted decisions that the code does not yet do.
+5. Tests.
+6. Optional work.
 
-A dependency may involve:
-
-- another agent;
-- another task;
-- a project document;
-- an API;
-- a database;
-- an external service;
-- a software package;
-- configuration;
-- testing;
-- human approval.
-
-If a required dependency is missing, ambiguous, unavailable, or contradictory, JARVIS must identify the problem before allowing the dependent work to proceed in a way that could compromise the project.
-
-Agents may propose solutions.
-
-JARVIS remains responsible for decisions that affect multiple domains.
+A proposed item does not outrank an accepted decision.
 
 ---
 
-## 19. Continuous Improvement
+## 18. Dependencies
 
-After major milestones, JARVIS should evaluate the development process.
+Jarvis names a missing dependency before the dependent work starts.
 
-The review should consider:
+The registry depends on nothing else for roles.
 
-- what worked;
-- what failed;
-- duplicated work;
-- communication problems;
-- unclear responsibilities;
-- unnecessary complexity;
-- repeated failures;
-- automation opportunities;
-- documentation gaps;
-- workflow improvements.
+DNA, this workflow, the architecture and the operating manual depend on the registry.
 
-The workflow may evolve as JARVIS HQ gains operational experience.
-
-Changes to permanent agent identities or responsibility boundaries must be reflected in the Agent Registry and the related documentation.
+Tasks depend on accepted decisions. They do not depend on proposals.
 
 ---
 
-## 20. Final Verification
+## 19. After a milestone
 
-Before declaring a significant task complete, JARVIS performs a final verification.
+Jarvis records what was duplicated, what conflicted, and what was left open.
 
-JARVIS verifies:
-
-- objective satisfied;
-- acceptance criteria satisfied;
-- implementation integrated;
-- tests completed;
-- dependencies resolved;
-- documentation updated where necessary;
-- no known critical regressions;
-- repository state consistent;
-- project architecture preserved;
-- resulting behaviour remains coherent.
-
-Only after final verification should a significant task be considered complete.
+A change to a role is a registry change, not a sentence in a chat.
 
 ---
 
-## 21. Core Principle
+## 20. Final verification
 
-JARVIS HQ follows one fundamental principle:
+Before a significant task is called complete:
 
-**Understand first.**
+- the objective is met;
+- the acceptance criteria are met;
+- the pull request is the integration, not a direct commit to `main`;
+- tests required by the task have run;
+- documents that would contradict the change have been updated;
+- no P0 was closed without its proof.
 
-**Plan second.**
+---
 
-**Delegate third.**
+## 21. Core principle
 
-**Build fourth.**
+Understand first.
 
-**Test fifth.**
+Plan second.
 
-**Integrate sixth.**
+Delegate third, from the registry.
 
-**Verify continuously.**
+Build on a branch.
 
-The workflow exists to provide structure without unnecessary bureaucracy.
+Test.
 
-Every important change should have:
+Integrate through a pull request.
 
-- a clear objective;
-- a responsible specialist;
-- defined constraints;
-- explicit acceptance criteria;
-- appropriate validation;
-- controlled integration;
-- a traceable project history.
-
-JARVIS remains responsible for maintaining coordination throughout the entire development lifecycle.
+Do not promote a proposal by implementing it.
