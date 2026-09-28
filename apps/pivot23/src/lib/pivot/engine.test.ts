@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { ARCHIVE_KEY, isPlayoffSeed, loadArchive, playCareerSim, saveArchive, simulateFullCareer, toArchive } from "./engine";
 import { EURO_TITLE_LINES, playoffSeriesFormat, SERIES_WIN_LINES, seriesWinProbability, simulateSeries } from "./league";
-import { clearLive, loadLive, SAVE_KEY, saveLive } from "./save";
+import { clearLive, loadLive, SAVE_KEY, saveLive, buildLiveSave } from "./save";
 
 const demoCareer = {
   name: "Giulia Rossi",
@@ -230,6 +230,38 @@ test("a corrupted browser save is ignored instead of crashing startup", () => {
   try {
     clearLive();
     storage.local.setItem(SAVE_KEY, "{ broken json");
+    assert.equal(loadLive(), null);
+  } finally {
+    storage.restore();
+  }
+});
+
+test("a live save without a valid fingerprint is not reopened", () => {
+  const storage = installMemoryStorage();
+  try {
+    clearLive();
+    const player = playCareerSim(demoCareer);
+    const payload = buildLiveSave(player, null, [], "career", "career", player.seasonHistory.length);
+    const good = JSON.stringify(payload);
+    storage.local.setItem(SAVE_KEY, good);
+    globalThis.sessionStorage.setItem(SAVE_KEY, good);
+    const loaded = loadLive();
+    assert.ok(loaded);
+    assert.equal(loaded.player.seed, player.seed);
+
+    clearLive();
+    const stripped = JSON.parse(good) as { c?: string };
+    delete stripped.c;
+    const missing = JSON.stringify(stripped);
+    storage.local.setItem(SAVE_KEY, missing);
+    globalThis.sessionStorage.setItem(SAVE_KEY, missing);
+    assert.equal(loadLive(), null);
+
+    clearLive();
+    stripped.c = "ffffffffffffffff";
+    const wrong = JSON.stringify(stripped);
+    storage.local.setItem(SAVE_KEY, wrong);
+    globalThis.sessionStorage.setItem(SAVE_KEY, wrong);
     assert.equal(loadLive(), null);
   } finally {
     storage.restore();
