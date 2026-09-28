@@ -268,6 +268,30 @@ test("a live save without a valid fingerprint is not reopened", () => {
   }
 });
 
+test("the simulator offers the same scripted seasons as the game", () => {
+  const player = playCareerSim(demoCareer);
+  const titleAt = (season: number) => player.choiceLog.find((c) => c.season === season)?.title ?? "";
+  assert.equal(titleAt(1), "La corsa alla matricola dell'anno");
+  assert.match(titleAt(6), /^Lo scontro con /);
+  assert.equal(titleAt(8), "Un infortunio serio");
+  assert.equal(titleAt(10), "Convocazione internazionale");
+});
+
+test("the same seed replays the same career", () => {
+  const opts = { ...demoCareer, seed: 884122, role: "C" as const, path: "Europa" as const, difficulty: "leggenda" as const };
+  const a = playCareerSim(opts);
+  const b = playCareerSim(opts);
+  const line = (c: { season: number; title: string; pick: string }) => `${c.season}:${c.title}:${c.pick}`;
+  assert.deepEqual(a.choiceLog.map(line), b.choiceLog.map(line));
+  assert.deepEqual(
+    a.seasonHistory.map((r) => r.gp),
+    b.seasonHistory.map((r) => r.gp),
+  );
+  assert.equal(a.mvpCount, b.mvpCount);
+  assert.equal(a.titleCount, b.titleCount);
+  assert.equal(a.injuryDrag, b.injuryDrag);
+});
+
 test("an already-won MVP or title makes the next one less common on Esordio", () => {
   const n = 2000;
   let maxMvp = 0;

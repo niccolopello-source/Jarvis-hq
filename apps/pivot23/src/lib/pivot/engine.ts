@@ -3002,11 +3002,13 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
     const n = job.n;
     const s = job.s;
     s.season = n;
-    const ev = n === 1 ? rookieStory() : pickStoryEvent(s, n);
+    const scripted = scriptedSeasonEvent(s, n);
+    const ev = scripted ?? pickStoryEvent(s, n);
+    if (scripted && !s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
     const ch = pick(ev.choices);
     applyFx(s, ch.fx(s));
     s.choiceLog.push({ season: n, title: ev.title, pick: ch.label });
-    if (shouldOfferTrade(s, n) && rand() < 0.22) {
+    if (!scripted && shouldOfferTrade(s, n) && rand() < 0.22) {
       const t = buildTradeOffer(s);
       acceptTrade(s, t.team);
       s.choiceLog.push({ season: n, title: "Scambio", pick: t.team.name });
