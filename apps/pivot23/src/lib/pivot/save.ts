@@ -500,11 +500,10 @@ function isLiveSave(value: unknown): value is LiveSave {
   if (overall !== undefined && (typeof overall !== "number" || !Number.isFinite(overall))) return false;
   const rng = (player as { rngState?: unknown }).rngState;
   const seq = rec.logSeq;
-  if (typeof rec.c === "string") {
-    const state = typeof rng === "number" && Number.isFinite(rng) ? rng : seed;
-    const n = typeof seq === "number" && Number.isFinite(seq) ? seq : 0;
-    if (rec.c !== sha256(`${seed}:${n}:${state}`).slice(0, 16)) return false;
-  }
+  if (typeof rec.c !== "string") return false;
+  const state = typeof rng === "number" && Number.isFinite(rng) ? rng : seed;
+  const n = typeof seq === "number" && Number.isFinite(seq) ? seq : 0;
+  if (rec.c !== sha256(`${seed}:${n}:${state}`).slice(0, 16)) return false;
   return true;
 }
 
