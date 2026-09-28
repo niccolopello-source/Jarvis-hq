@@ -57,7 +57,7 @@ Completed foundation areas include:
 
 JARVIS HQ does not orchestrate agents at runtime. Coordination is the repository, the memory, branches, pull requests and CI.
 
-The normalization of the role documents is on branch `docs/hq-normalize-v1` until that pull request is merged. Until then, `main` still has the older role text in the files that branch changes.
+The role documents on `main` were aligned with the registry in pull request #2, merged as `916c92e`. `src/agents.md` and `src/architecture.md` were not in that pull request and still carry the older text. They are not a role source.
 
 ---
 
@@ -93,7 +93,7 @@ The repository is the project's technical source of truth.
 
 `main` is the verified line. Work enters it through a pull request.
 
-`src/` is an old copy of some foundation documents. It is not a role source. It is not deleted by the normalization branch.
+`src/` is an old copy of some foundation documents. It is not a role source. It was not deleted by pull request #2.
 
 The root package exposes commands for starting and verifying PIVOT 23. It is not a house runtime.
 
@@ -103,16 +103,15 @@ The root package exposes commands for starting and verifying PIVOT 23. It is not
 
 Current priority:
 
-Finish the document normalization, then the open simulation tasks in [`memory/TASKS.md`](memory/TASKS.md). Do not treat the deploy as a launch.
+The document normalization is on `main`. The open simulation tasks are in [`memory/TASKS.md`](memory/TASKS.md). Do not treat the deploy as a launch.
 
 Immediate objectives:
 
-1. Merge the normalization pull request only after review. Do not merge it from the agent that opened it, if the owner asked to review first.
+1. Review pull request #3 (P0-REPEAT). CI on that branch is green. The task stays open in TASKS.md until the fix is on `main`.
 2. Re-measure career distributions on `main`, not on the sandbox tree.
 3. Resolve P0-LIFE without making age 36 unreachable. The task is open.
-4. Resolve P0-REPEAT so award streaks are not the normal Esordio career. The task is open.
-5. Decide P-005 (franchise names) before any launch presentation. The owner has not accepted a rename. It stays proposed.
-6. Do not implement the gateway until a task requires two providers.
+4. Decide P-005 (franchise names) before any launch presentation. The owner has not accepted a rename. It stays proposed.
+5. Do not implement the gateway until a task requires two providers.
 
 ---
 
@@ -146,7 +145,7 @@ The following are not implemented:
 
 The next milestone for the game is a demo whose documents match the URL and whose careers are not all the same length.
 
-The next milestone for the house is not a runtime. It is a `main` whose governance documents agree with the registry.
+The next milestone for the house is not a runtime. The governance documents on `main` now point at the registry. The older copies under `src/` are still there and are not a source.
 
 A minimum runtime remains future work. It is not started.
 
