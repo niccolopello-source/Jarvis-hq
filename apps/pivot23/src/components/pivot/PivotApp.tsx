@@ -42,6 +42,7 @@ import {
 
   pickPlayoffOpponent,
   pickStoryEvent,
+  eventAfterMarket,
   openCareerSim,
   advanceCareerSim,
   playoffChoicesFor,
@@ -754,13 +755,8 @@ export function PivotApp() {
     }
     setPlayer(s);
     const nextPending = withPlayer(s, () => {
-      const ev = pickStoryEvent(s, s.season);
-      const script: SavedStoryScript = ev.id.startsWith("late-")
-        ? "late"
-        : ev.id.startsWith("quiet-")
-          ? "quiet"
-          : "pool";
-      return pendingFromEvent(ev, script, s);
+      const { event, script } = eventAfterMarket(s);
+      return pendingFromEvent(event, script, s);
     });
     setPending(null);
     holdThen(HOLD_MARKET_MS, () => setPending(nextPending));
@@ -776,14 +772,9 @@ export function PivotApp() {
       resolved: true,
       extraClass: "market-move",
     });
-    const ev = withPlayer(s, () => pickStoryEvent(s, s.season));
-    const script: SavedStoryScript = ev.id.startsWith("late-")
-      ? "late"
-      : ev.id.startsWith("quiet-")
-        ? "quiet"
-        : "pool";
+    const { event, script } = withPlayer(s, () => eventAfterMarket(s));
     setPlayer(s);
-    setPending(pendingFromEvent(ev, script, s));
+    setPending(pendingFromEvent(event, script, s));
   }
 
   function onStory(opt: Opt) {

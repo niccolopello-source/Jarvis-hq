@@ -1460,6 +1460,23 @@ function nationStory(s: PlayerState): StoryEvent {
   };
 }
 
+export function eventAfterMarket(s: PlayerState): { event: StoryEvent; script: SavedStoryScript } {
+  const scripted = scriptedSeasonEvent(s, s.season);
+  if (scripted) {
+    if (!s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
+    const script: SavedStoryScript =
+      s.season === 1 ? "rookie" : s.season === 6 ? "rival" : s.season === 8 ? "injury" : s.season === 10 ? "nation" : "pool";
+    return { event: scripted, script };
+  }
+  const event = pickStoryEvent(s, s.season);
+  const script: SavedStoryScript = event.id.startsWith("late-")
+    ? "late"
+    : event.id.startsWith("quiet-")
+      ? "quiet"
+      : "pool";
+  return { event, script };
+}
+
 export function scriptedSeasonEvent(s: PlayerState, n: number): StoryEvent | null {
   if (n === 1) return rookieStory();
   if (n === 6) return rivalStory(s);
@@ -3008,7 +3025,7 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
     const ch = pick(ev.choices);
     applyFx(s, ch.fx(s));
     s.choiceLog.push({ season: n, title: ev.title, pick: ch.label });
-    if (!scripted && shouldOfferTrade(s, n) && rand() < 0.22) {
+    if (!scripted && n !== 12 && shouldOfferTrade(s, n) && rand() < 0.22) {
       const t = buildTradeOffer(s);
       acceptTrade(s, t.team);
       s.choiceLog.push({ season: n, title: "Scambio", pick: t.team.name });
@@ -3035,13 +3052,9 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
     }
     if (!isCareerOver(s)) {
       const summer = applyAutoOffseason(s, n);
-      if (summer.tradeDest && (summer.tradeForced || rand() < 0.42) && s.contract.yearsRemaining > 1) {
-        const from = s.team.name;
-        acceptTrade(s, summer.tradeDest);
-        s.choiceLog.push({ season: n, title: "Scambio estivo", pick: `${from} → ${summer.tradeDest.name}` });
-      }
       tickContract(s);
-      if (isContractYear(s, n + 1) || s.contract.yearsRemaining <= 0) {
+      const freeAgent = isContractYear(s, n + 1) || s.contract.yearsRemaining <= 0;
+      if (freeAgent) {
         const offers = buildFaOffers(s);
         if (offers.length) {
           const ranked = [...offers].sort((a, b) => b.annualM - a.annualM);
@@ -3053,6 +3066,10 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
             pick: `${offer.team.name} · ${offer.years}×$${offer.annualM}M`,
           });
         }
+      } else if (summer.tradeDest && (summer.tradeForced || rand() < 0.42)) {
+        const from = s.team.name;
+        acceptTrade(s, summer.tradeDest);
+        s.choiceLog.push({ season: n, title: "Scambio estivo", pick: `${from} → ${summer.tradeDest.name}` });
       }
     }
     job.n = n + 1;

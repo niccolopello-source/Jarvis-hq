@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { ARCHIVE_KEY, isPlayoffSeed, loadArchive, playCareerSim, saveArchive, simulateFullCareer, toArchive } from "./engine";
+import { ARCHIVE_KEY, eventAfterMarket, isPlayoffSeed, loadArchive, openCareerSim, playCareerSim, saveArchive, simulateFullCareer, toArchive, withPlayer } from "./engine";
 import { EURO_TITLE_LINES, playoffSeriesFormat, SERIES_WIN_LINES, seriesWinProbability, simulateSeries } from "./league";
 import { clearLive, loadLive, SAVE_KEY, saveLive, buildLiveSave } from "./save";
 
@@ -275,6 +275,38 @@ test("the simulator offers the same scripted seasons as the game", () => {
   assert.match(titleAt(6), /^Lo scontro con /);
   assert.equal(titleAt(8), "Un infortunio serio");
   assert.equal(titleAt(10), "Convocazione internazionale");
+});
+
+test("a trade follow-up keeps the scripted card of that season", () => {
+  const job = openCareerSim({ ...demoCareer, seed: 3017, role: "SF", path: "G-League" });
+  job.s.season = 8;
+  const followed = withPlayer(job.s, () => eventAfterMarket(job.s));
+  assert.equal(followed.script, "injury");
+  assert.equal(followed.event.title, "Un infortunio serio");
+  job.s.season = 5;
+  const pool = withPlayer(job.s, () => eventAfterMarket(job.s));
+  assert.equal(pool.script === "injury" || pool.script === "rival" || pool.script === "nation", false);
+});
+
+test("season 12 does not open with a preseason trade", () => {
+  const player = playCareerSim({ ...demoCareer, seed: 3017, role: "SF", path: "G-League" });
+  assert.equal(
+    player.choiceLog.some((c) => c.season === 12 && c.title === "Scambio"),
+    false,
+  );
+});
+
+test("a free-agent summer does not also force a trade", () => {
+  const player = playCareerSim({ ...demoCareer, seed: 3017, role: "SF", path: "G-League" });
+  const by = new Map<number, string[]>();
+  for (const c of player.choiceLog) {
+    const bag = by.get(c.season) ?? [];
+    bag.push(c.title);
+    by.set(c.season, bag);
+  }
+  for (const titles of by.values()) {
+    assert.equal(titles.includes("Agenzia libera") && titles.includes("Scambio estivo"), false);
+  }
 });
 
 test("the same seed replays the same career", () => {
