@@ -50,105 +50,27 @@ Jarvis is the operational and technical coordinator of the entire AI software ho
 - John
 - James
 
-Each specialist has a defined area of responsibility.
+What each one is responsible for is defined only in [AGENT-REGISTRY.md](AGENT-REGISTRY.md). This document does not restate it.
 
 ---
 
 # 4. Jarvis — Lead Technical Engineer
 
-Jarvis is responsible for:
+The responsibilities of Jarvis are defined in [AGENT-REGISTRY.md](AGENT-REGISTRY.md).
 
-- technical architecture;
-- project orchestration;
-- task decomposition;
-- agent coordination;
-- priority management;
-- dependency management;
-- integration;
-- code coordination;
-- conflict resolution;
-- quality control;
-- testing coordination;
-- project memory;
-- documentation;
-- selecting the appropriate AI model or specialist for each task.
-
-Jarvis must maintain a complete understanding of the current project state.
-
-Jarvis is responsible for transforming high-level objectives into executable technical work.
+This document does not keep a second list.
 
 ---
 
 # 5. Specialist Agents
 
-## Al — Frontend / UI / UX Specialist
+The roles of Al, Rebecca, John and James are defined only in [AGENT-REGISTRY.md](AGENT-REGISTRY.md).
 
-Primary responsibility:
+This document does not restate them.
 
-- frontend development;
-- interface architecture;
-- UI implementation;
-- UX;
-- visual interaction systems;
-- responsive interfaces;
-- frontend performance;
-- interface consistency.
+An older copy of this document assigned Al to frontend and Rebecca to game design. That assignment is withdrawn.
 
-Al should be primarily activated for tasks involving the user-facing experience and frontend implementation.
-
----
-
-## Rebecca — Narrative / Game Design Specialist
-
-Primary responsibility:
-
-- narrative systems;
-- game design;
-- player experience;
-- events;
-- story structures;
-- dialogue;
-- career progression design;
-- narrative consistency;
-- game content.
-
-Rebecca should be primarily activated for tasks involving game design, narrative and player experience.
-
----
-
-## John — Backend / Systems Specialist
-
-Primary responsibility:
-
-- backend architecture;
-- data systems;
-- APIs;
-- business logic;
-- game systems;
-- databases;
-- integrations;
-- server-side functionality;
-- system architecture.
-
-John should be primarily activated for backend and systemic implementation.
-
----
-
-## James — QA / Simulation / Balancing Specialist
-
-Primary responsibility:
-
-- quality assurance;
-- automated testing;
-- simulations;
-- balancing;
-- statistical validation;
-- regression testing;
-- edge-case detection;
-- performance validation;
-- numerical consistency.
-
-James should be primarily activated for testing, simulation and balancing.
+John implements `apps/pivot23`, including its React interface, because the registry says so and because no frontend specialist is active.
 
 ---
 
@@ -160,19 +82,9 @@ Whenever Jarvis activates, assigns, delegates or prepares a task for Al, Rebecca
 
 Jarvis must never rely exclusively on conversational memory to know who an agent is.
 
-The system must maintain a persistent machine-readable Agent Registry containing, at minimum:
+The persistent source is [AGENT-REGISTRY.md](AGENT-REGISTRY.md), including its machine-readable block.
 
-- agent name;
-- role;
-- responsibilities;
-- capabilities;
-- limitations;
-- tools;
-- preferred tasks;
-- dependencies;
-- current workload.
-
-Every generated task prompt must be constructed using this registry.
+Every generated task prompt must be constructed using that registry.
 
 ---
 
@@ -182,15 +94,18 @@ Jarvis HQ must support multiple AI providers.
 
 Initial providers:
 
-- OpenAI / ChatGPT
+- OpenAI
 - xAI / Grok
 - Anthropic / Claude
+- Codex, when used, as an execution resource
 
 Additional providers may be added later.
 
 AI models are execution resources.
 
 They are not the organizational authority.
+
+They are not roles. They are not listed in the agent registry as agents.
 
 Jarvis remains the orchestration layer.
 
@@ -200,7 +115,11 @@ Jarvis remains the orchestration layer.
 
 External AI providers should eventually be accessed through a common AI Gateway.
 
-Conceptual architecture:
+The gateway is specified in [../AI-GATEWAY-SPEC.md](../AI-GATEWAY-SPEC.md).
+
+It is not implemented. No runtime calls a provider. Do not treat the specification as a running system.
+
+Conceptual architecture, for when a task actually requires it:
 
 Human
   ↓
@@ -214,45 +133,35 @@ Provider Adapter
   ├── Anthropic
   └── Future providers
 
-The Gateway should eventually manage:
-
-- authentication;
-- provider selection;
-- request normalization;
-- response normalization;
-- error handling;
-- usage tracking;
-- model selection;
-- security;
-- logging.
-
 Provider-specific implementation must remain isolated from the rest of Jarvis HQ.
 
 ---
 
 # 9. Project Memory
 
-Jarvis HQ must eventually maintain structured project memory.
+Shared project memory for the current game lives in [memory/README.md](memory/README.md).
 
-Memory should distinguish between:
+Memory distinguishes between:
 
 ### Project Facts
-Stable information about projects.
+
+Stable verified information. File: [memory/FACTS.md](memory/FACTS.md).
 
 ### Decisions
-Approved architectural and product decisions.
+
+Accepted decisions, append-only. File: [memory/DECISIONS.md](memory/DECISIONS.md). A proposal is not a decision.
 
 ### Tasks
-Current and historical work.
+
+Open work. File: [memory/TASKS.md](memory/TASKS.md).
 
 ### Agent Knowledge
-Roles, capabilities and operating instructions.
+
+Roles. File: [AGENT-REGISTRY.md](AGENT-REGISTRY.md). Not a second copy of the roles inside this document.
 
 ### Temporary Context
-Short-lived information required for individual tasks.
 
-### External Knowledge
-Information obtained through tools or external services.
+A chat, a sandbox, an untracked file. Not memory.
 
 Temporary context must not silently overwrite stable project facts.
 
@@ -270,7 +179,7 @@ Secrets should eventually be provided through:
 - deployment secrets;
 - secure secret-management systems.
 
-Example configuration files may contain placeholders but never real credentials.
+No process in this repository reads a provider key today. An `.env.example` file is not required until such a process exists.
 
 ---
 
@@ -296,11 +205,13 @@ The architecture should evolve according to real requirements.
 
 Current primary project:
 
-Basketball Career Simulation Game.
+Basketball Career Simulation Game, PIVOT 23, in `apps/pivot23`.
 
 The game is the first project managed by Jarvis HQ.
 
 Jarvis HQ itself must remain independent from the basketball game's implementation so that the same infrastructure can manage future projects.
+
+The house does not yet have a runtime. Coordination is the repository, the memory, the tasks, branches, pull requests and CI.
 
 ---
 

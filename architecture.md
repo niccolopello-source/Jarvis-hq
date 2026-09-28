@@ -2,25 +2,15 @@
 
 ## 1. Purpose
 
-JARVIS HQ is a multi-model AI software house designed to coordinate multiple specialized AI agents and external AI models.
+JARVIS HQ is a multi-model AI software house designed to coordinate specialized agents and external AI models.
 
-The system is designed around:
+The agents and their roles are defined only in [docs/AGENT-REGISTRY.md](docs/AGENT-REGISTRY.md).
 
-- Jarvis — orchestration and technical leadership
-- Al — product, game design and systems design
-- Rebecca — narrative, UX, content and player experience
-- John — engineering, algorithms, backend and infrastructure
-- James — QA, testing, balancing and validation
+This document does not restate them.
 
-External AI models may be connected when they provide a specific capability that improves the project.
+Models are execution resources. They are not roles. OpenAI, Claude, Grok and Codex may be used. None of them owns a kind of work.
 
-Initial external models:
-
-- Grok — development, coding and long-context technical work
-- Claude — analysis, architecture, reasoning and code review
-- OpenAI — orchestration, reasoning, planning and integration
-
-The architecture must remain modular so that models can be added, removed or replaced without redesigning the entire system.
+The architecture must remain modular so that a model can be added, removed or replaced without redesigning the house.
 
 ---
 
@@ -28,13 +18,11 @@ The architecture must remain modular so that models can be added, removed or rep
 
 Jarvis is the operational coordinator.
 
-Jarvis does not simply delegate tasks.
-
 Jarvis must:
 
 1. Understand the current project state.
 2. Identify the objective.
-3. Determine which agent or model is best suited for each task.
+3. Determine which agent is responsible, from the registry.
 4. Prepare the correct context for that agent.
 5. Send the task.
 6. Receive and evaluate the result.
@@ -43,88 +31,27 @@ Jarvis must:
 9. Integrate approved work into the project.
 10. Record important decisions and project state.
 
+Choosing a model is step 3's tool, not a second organization chart.
+
 ---
 
 ## 3. Agent Identity Protocol
 
-Whenever an agent is activated, Jarvis MUST explicitly preserve the identity and responsibility of every other agent.
+When an agent is activated, the identity comes from [docs/AGENT-REGISTRY.md](docs/AGENT-REGISTRY.md).
 
-### Jarvis
-Lead Technical Engineer / Lead Programmer.
-
-Responsible for:
-- orchestration
-- technical direction
-- priorities
-- dependencies
-- integration
-- architecture
-- coordination between agents
-- final technical validation
-
-### Al
-Game Director / Systems Designer.
-
-Responsible for:
-- game design
-- gameplay systems
-- progression
-- simulation mechanics
-- player choices
-- economy
-- game loops
-- systemic design
-
-### Rebecca
-Narrative & Experience Director.
-
-Responsible for:
-- narrative
-- dialogue
-- events
-- player experience
-- UX logic
-- tone
-- storytelling
-- contextual content
-
-### John
-Senior Software Engineer / Backend & Algorithms.
-
-Responsible for:
-- implementation
-- backend
-- algorithms
-- data models
-- APIs
-- simulation systems
-- performance
-- infrastructure
-
-### James
-QA, Balance & Validation Director.
-
-Responsible for:
-- testing
-- automated testing
-- simulations
-- balancing
-- edge cases
-- regression detection
-- numerical validation
-- acceptance criteria
+This file used to repeat the five roles, and it used to assign Grok to coding, Claude to review and OpenAI to orchestration. Those assignments are withdrawn.
 
 ---
 
 ## 4. Hierarchy
 
+The human project owner is the final authority.
+
 Jarvis is the operational lead.
 
-The other agents are specialized departments.
+The other agents are specialized departments, as named in the registry.
 
 Jarvis coordinates them but must not unnecessarily duplicate their responsibilities.
-
-Agents may collaborate directly through Jarvis.
 
 No agent should silently overwrite another agent's decisions.
 
@@ -136,7 +63,7 @@ Conflicts must be surfaced and resolved through Jarvis.
 
 The system must not assume that one AI model is optimal for every task.
 
-Each external model is treated as a capability provider.
+Each external model is a capability provider, not a role.
 
 The orchestration layer determines:
 
@@ -144,36 +71,49 @@ The orchestration layer determines:
 - required context
 - complexity
 - expected output
-- model specialization
+- which existing agent is responsible
+- which model, if any, executes that agent's task
 - cost
 - latency
 - reliability
 
 The selected model receives only the context necessary for its task.
 
+There is no gateway runtime. The specification is [AI-GATEWAY-SPEC.md](AI-GATEWAY-SPEC.md). It stays a specification until a task requires a process that calls more than one provider.
+
 ---
 
-## 6. Shared Project Context
+## 6. What the repository actually contains
 
-All agents must work from a shared source of truth.
+Verified on `main` before this branch, and still the layout this branch is allowed to change only in documents:
 
-Important project information should be stored in the repository rather than relying exclusively on conversational memory.
+```text
+docs/AGENT-REGISTRY.md          roles, the only copy
+docs/PROJECT-DNA.md             house principles; points at the registry
+docs/workflow.md               how work moves; points at the registry
+docs/AGENT-OPERATING-MANUAL.md how a task is delegated
+docs/agents.md                  stub; the text is the operating manual
+docs/agent-protocol.md          stub; it was the same file as the manual
+docs/project-state.md           where the house stands
+docs/memory/                   facts, decisions, tasks
+docs/pivot23/                  invariants, audit, voice
+apps/pivot23/                   the game
+.github/workflows/pivot23.yml   lint, typecheck, unit test, build, first-season smoke
+AI-GATEWAY-SPEC.md              specification only
+architecture.md                 this file
+agents.md                       pointer; not a second roster
+src/                            old copies; not a role source; not deleted on this branch
+```
 
-The repository should eventually contain:
+Not in the repository, and not implied by this document:
 
-/docs
-  architecture.md
-  agents.md
-  project-state.md
-  decisions.md
-  game-design.md
-  technical-spec.md
-  narrative.md
-  testing.md
+- `apps/hq`
+- a gateway process
+- `game-design.md`, `technical-spec.md`, `narrative.md`, `testing.md` as separate canon files
+- `/tests` or `/config` at the root
+- `.env.example`
 
-/src
-/tests
-/config
+Planned, and not built: a gateway runtime, only if a future task must call two providers from code. A Vercel ignored-build step so a document-only commit does not redeploy production. That setting is not in git. The document-only deploy of `228a748` is the evidence that it is still missing.
 
 Sensitive credentials must NEVER be stored in Git.
 
@@ -183,9 +123,9 @@ Sensitive credentials must NEVER be stored in Git.
 
 API keys, passwords, tokens and private credentials must never be committed to the repository.
 
-Secrets must be stored through environment variables or a dedicated secret-management system.
+Secrets must be stored through environment variables or a dedicated secret-management system, when a process needs them.
 
-The repository must contain an `.env.example` file showing required variables without containing real credentials.
+No process in this repository reads a provider key. `.env.example` is not required until that process exists.
 
 ---
 
@@ -204,12 +144,16 @@ No major architectural component should be introduced without:
 
 The architecture should remain simple during the beta phase and become more sophisticated only when justified by real project requirements.
 
+Work lands on a branch and enters `main` through a pull request. A document-only change does not change the game.
+
 ---
 
 ## 9. Long-Term Goal
 
 JARVIS HQ should evolve into a reusable AI software-house platform capable of managing multiple projects.
 
-The basketball career game is the first project.
+The basketball career game is the first project. It lives in `apps/pivot23`.
 
 The architecture should eventually allow other games, applications and products to use the same orchestration infrastructure.
+
+That infrastructure is not a running service today.

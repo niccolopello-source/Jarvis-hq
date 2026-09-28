@@ -1,8 +1,10 @@
 # Shared project memory
 
-This folder is the memory JARVIS HQ, Claude, Codex and Grok read before changing PIVOT 23.
+This folder is the memory JARVIS HQ reads before changing PIVOT 23.
 
 A chat is not memory. A statement becomes memory only when it is written here and marked with a status.
+
+Roles are not in this folder. They are only in [../AGENT-REGISTRY.md](../AGENT-REGISTRY.md).
 
 ## Read order
 
@@ -19,19 +21,21 @@ A chat is not memory. A statement becomes memory only when it is written here an
 |---|---|---|
 | Fact | FACTS.md | Describes the repository and the live site. Replace it when the fact changes. Do not leave the old sentence beside the new one. |
 | Decision | DECISIONS.md | Append only. `accepted` means the human owner asked for it. `proposed` means an agent recommended it and the owner has not accepted it. |
-| Task | TASKS.md | Open work. Do not retune numbers until the named test fails on the current code. |
+| Task | TASKS.md | Open work. Do not retune numbers until the named test fails on the current code. Do not close a P0 without the proof named in the task. |
 | Temporary | a chat, a sandbox, an untracked file | Not memory. The sandbox branch `demo/readiness` at `160b109` is a different git history from GitHub `main`. |
 
-## Who does what
+## Models
 
-The stable roster is in [../AGENT-REGISTRY.md](../AGENT-REGISTRY.md) and [../PROJECT-DNA.md](../PROJECT-DNA.md): Jarvis coordinates; Al, Rebecca, John and James execute.
+OpenAI, Claude, Grok and Codex are execution resources.
 
-Models are resources, not a second roster. When a model is used:
+They are not roles. They are not a second roster.
 
-- Codex implements.
-- Claude reviews product, architecture and acceptance.
-- Grok audits, simulates and contests. Grok does not promote a proposal to an accepted decision.
+Codex may carry out an implementation task. The responsible agent remains the specialist named in the task, from the registry. For implementation of `apps/pivot23`, including the React interface, that specialist is John.
 
-Do not edit `src/` at the repository root. Those files are copies of the foundation documents. Edit `docs/` and `apps/pivot23/`.
+Using Codex does not add an agent.
 
-`docs/project-state.md` and the two reports in `apps/pivot23/` are corrected by FACTS.md when they disagree. FACTS.md wins on current status.
+## Where not to read roles
+
+Do not edit `src/` at the repository root. Those files are old copies. They are not deleted on the normalization branch, and they are not a role source.
+
+`docs/project-state.md` and the two reports in `apps/pivot23/` are corrected by FACTS.md when they disagree about a URL, a SHA or a merge. FACTS.md wins on current status.
