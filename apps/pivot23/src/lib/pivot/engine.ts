@@ -1904,8 +1904,9 @@ export function playoffWinChance(s: PlayerState, round: number, choiceBonus: num
   const roundPen = pens[round] ?? 0.21;
   const clutch = (s.hidden.clutch - 50) * 0.0024;
   const chem = (s.hidden.chemistry - 50) * 0.0014;
+  const repeatCost = s.titleCount * 0.045 + s.mvpCount * 0.012;
   return clamp(
-    0.4 + ovrAdj + teamAdj + clutch + chem + s.form * 0.005 + choiceBonus - roundPen + diffOf(s).playoff,
+    0.4 + ovrAdj + teamAdj + clutch + chem + s.form * 0.005 + choiceBonus - roundPen + diffOf(s).playoff - repeatCost,
     0.06,
     0.94,
   );

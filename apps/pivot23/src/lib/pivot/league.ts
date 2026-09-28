@@ -482,11 +482,14 @@ function buildAwards(
   const playerProd = clamp(box.ppg * 2.4 + box.rpg * 0.9 + box.apg * 1.2 + box.per * 0.8, 0, 140);
   const playerEff = clamp(box.ts * 100 + box.per * 1.2, 0, 140);
   const playerImpact = clamp(s.overall + pm * 1.4, 0, 130);
-  const playerNar = clamp(s.publicImage * 0.5 + s.hidden.mediaSavvy * 0.5 + s.titleCount * 4, 0, 100);
+  const playerNar = clamp(s.publicImage * 0.5 + s.hidden.mediaSavvy * 0.5, 0, 100);
+  // Un premio già vinto pesa sull'anno dopo. Vale per ogni difficoltà.
+  const repeatCost = s.mvpCount * 7 + s.titleCount * 2.5;
   const pScore =
     mvpScore(playerProd, box.wins, playerEff, playerImpact, box.gp, games, s.hidden.consistency, playerNar) +
     (rand() - 0.5) * SIM.awards.noise -
-    d.awardOvr * 0.8;
+    d.awardOvr * 0.8 -
+    repeatCost;
 
   const cpu = [...table]
     .filter((r) => r.abbr !== s.team.abbr)

@@ -235,3 +235,33 @@ test("a corrupted browser save is ignored instead of crashing startup", () => {
     storage.restore();
   }
 });
+
+test("an already-won MVP or title makes the next one less common on Esordio", () => {
+  const n = 2000;
+  let maxMvp = 0;
+  let titles6 = 0;
+  let anyMvp = 0;
+  let still36 = 0;
+  for (let i = 0; i < n; i++) {
+    const role = (["PG", "SG", "SF", "PF", "C"] as const)[i % 5];
+    const path = (["NCAA", "Europa", "G-League"] as const)[i % 3];
+    const player = playCareerSim({
+      name: "Repro",
+      role,
+      nationality: "ITA",
+      number: 23,
+      difficulty: "esordio",
+      path,
+      seed: (i + 1) * 1000 + 3,
+      draft: "random",
+    });
+    maxMvp = Math.max(maxMvp, player.mvpCount);
+    if (player.titleCount >= 6) titles6 += 1;
+    if (player.mvpCount > 0) anyMvp += 1;
+    if (player.age >= 36) still36 += 1;
+  }
+  assert.ok(maxMvp <= 6, `max MVP ${maxMvp}`);
+  assert.ok(titles6 / n < 0.02, `six-title share ${titles6 / n}`);
+  assert.ok(anyMvp > 0, "MVP disappeared");
+  assert.ok(still36 === n, "age-36 path was removed");
+});
