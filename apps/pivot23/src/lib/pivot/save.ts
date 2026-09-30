@@ -26,6 +26,14 @@ export const FA_OFFER_KEEP = 3;
 /** Giornale compact: più stretto del cap mondo. */
 const SAVE_EVENT_KEEP = 10;
 
+function payloadChecksum(payload: object): string {
+  return sha256(JSON.stringify(payload)).slice(0, 16);
+}
+
+function legacyChecksum(seed: number, seq: number, state: number): string {
+  return sha256(`${seed}:${seq}:${state}`).slice(0, 16);
+}
+
 export type SwipePersist = {
   tab: CareerTab;
   dir: "next" | "prev";
@@ -424,7 +432,7 @@ export function buildLiveSave(
     log: shrinkLog(cloneJson(log), true, level >= 2),
     logSeq,
   };
-  const c = sha256(`${s.seed}:${logSeq}:${s.rngState ?? s.seed}`).slice(0, 16);
+  const c = payloadChecksum(payload);
   return { ...payload, c };
 }
 
@@ -494,16 +502,73 @@ function isLiveSave(value: unknown): value is LiveSave {
   if (rec.screen !== "draft" && rec.screen !== "career") return false;
   const player = rec.player;
   if (!player || typeof player !== "object" || Array.isArray(player)) return false;
-  const seed = (player as { seed?: unknown }).seed;
-  if (typeof seed !== "number" || !Number.isFinite(seed)) return false;
-  const overall = (player as { overall?: unknown }).overall;
-  if (overall !== undefined && (typeof overall !== "number" || !Number.isFinite(overall))) return false;
-  const rng = (player as { rngState?: unknown }).rngState;
-  const seq = rec.logSeq;
-  if (typeof rec.c !== "string") return false;
-  const state = typeof rng === "number" && Number.isFinite(rng) ? rng : seed;
-  const n = typeof seq === "number" && Number.isFinite(seq) ? seq : 0;
-  if (rec.c !== sha256(`${seed}:${n}:${state}`).slice(0, 16)) return false;
+  const state = player as Record<string, unknown>;
+  const finite = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v);
+  const object = (v: unknown): v is Record<string, unknown> =>
+    typeof v === "object" && v !== null && !Array.isArray(v);
+  const numericFields = [
+    "number", "age", "talent", "development", "form", "injuryRisk", "injuryDrag", "gamesPenalty",
+    "publicImage", "coachTrust", "rivalry", "morale", "overall", "peakOverall", "apexAge", "draftPick",
+    "rookReady", "choiceOvr", "season", "allStarCount", "mvpCount", "allNbaCount", "dpoyCount",
+    "titleCount", "fmvpCount", "careerPoints", "careerRebounds", "careerAssists", "careerSteals",
+    "careerBlocks", "yearsOnTeam", "potential", "startAge", "seed",
+  ];
+  if (!numericFields.every((key) => finite(state[key]))) return false;
+  if (state.rngState !== undefined && !finite(state.rngState)) return false;
+  if (state.draftEdge !== undefined && !finite(state.draftEdge)) return false;
+  if (!["name", "nationality", "originPath", "rivalName", "coachName", "lastOffseasonId", "engineVersion"]
+    .every((key) => typeof state[key] === "string")) return false;
+  if (!["PG", "SG", "SF", "PF", "C"].includes(String(state.role))) return false;
+  if (!["esordio", "pro", "allstar", "leggenda"].includes(String(state.difficulty))) return false;
+  if (state.league !== "NBA" && state.league !== "EuroLega") return false;
+  if (!["extraSeason", "international", "medal", "roy", "simulated"]
+    .every((key) => typeof state[key] === "boolean")) return false;
+  const attrs = ["shooting", "handle", "passing", "defense", "rebounding", "athleticism", "strength", "iq"];
+  const hidden = ["clutch", "durability", "workEthic", "ego", "chemistry", "consistency", "motor", "mediaSavvy"];
+  const stateAttrs = state.attrs;
+  const stateHidden = state.hidden;
+  if (!object(stateAttrs) || !attrs.every((key) => finite(stateAttrs[key]))) return false;
+  if (!object(stateHidden) || !hidden.every((key) => finite(stateHidden[key]))) return false;
+  if (!object(state.team) || typeof state.team.name !== "string" || typeof state.team.abbr !== "string") return false;
+  const stateContract = state.contract;
+  if (!object(stateContract)
+    || typeof stateContract.teamName !== "string"
+    || !["years", "yearsRemaining", "annualM"].every((key) => finite(stateContract[key]))) return false;
+  const arrays = ["draftHand", "seasonHistory", "milestones", "devLog", "usedEventIds", "heardLines", "choiceLog", "championLog", "royClass"];
+  if (!arrays.every((key) => Array.isArray(state[key]))) return false;
+  const seasonHistory = state.seasonHistory as unknown[];
+  const seasonNumbers = ["season", "age", "overall", "gp", "min", "ppg", "rpg", "apg"];
+  if (!seasonHistory.every((row) => object(row)
+    && seasonNumbers.every((key) => finite(row[key]))
+    && typeof row.yearLabel === "string"
+    && typeof row.team === "string"
+    && typeof row.teamAbbr === "string")) return false;
+  if (!(state.choiceLog as unknown[]).every((choice) => object(choice)
+    && finite(choice.season)
+    && typeof choice.title === "string"
+    && typeof choice.pick === "string")) return false;
+  if (!(state.milestones as unknown[]).every((milestone) => object(milestone)
+    && finite(milestone.season)
+    && typeof milestone.label === "string")) return false;
+  if (!(state.usedEventIds as unknown[]).every((id) => typeof id === "string")) return false;
+  if (!(state.heardLines as unknown[]).every((line) => typeof line === "string")) return false;
+  if (!object(state.teamPower) || !Object.values(state.teamPower).every(finite)) return false;
+  if (!(state.currentLeague === null || object(state.currentLeague))) return false;
+  if (!(state.playoff === null || object(state.playoff))) return false;
+  if (state.world !== undefined && !object(state.world)) return false;
+  if (!Array.isArray(rec.log) || !rec.log.every((entry) => object(entry)
+    && typeof entry.id === "string"
+    && typeof entry.kind === "string")) return false;
+  if (!(rec.pending === null || object(rec.pending))) return false;
+  if (rec.logSeq !== undefined && !finite(rec.logSeq)) return false;
+  if (rec.tab !== undefined && (typeof rec.tab !== "string" || !TABS.includes(rec.tab as CareerTab))) return false;
+  if (rec.c !== undefined && typeof rec.c !== "string") return false;
+
+  const { c, ...body } = rec;
+  const seq = finite(rec.logSeq) ? rec.logSeq : 0;
+  const rng = finite(state.rngState) ? state.rngState : state.seed as number;
+  const validLegacy = c === legacyChecksum(state.seed as number, seq, rng);
+  if (c !== undefined && c !== payloadChecksum(body) && !validLegacy) return false;
   return true;
 }
 
@@ -569,8 +634,21 @@ export function loadLive(): LiveSave | null {
       for (let i = 1; i < found.length; i++) parsed = fresher(found[i]!, parsed);
     }
     if (parsed) {
+      const { c, ...body } = parsed as unknown as Record<string, unknown>;
+      const needsChecksumUpgrade = c !== payloadChecksum(body);
       const live = revive(parsed);
       MEM = live;
+      if (needsChecksumUpgrade) {
+        saveLive({
+          player: live.player,
+          pending: live.pending,
+          log: live.log,
+          screen: live.screen,
+          tab: live.tab,
+          logSeq: live.logSeq,
+        });
+        return MEM ?? live;
+      }
       return live;
     }
   } catch {

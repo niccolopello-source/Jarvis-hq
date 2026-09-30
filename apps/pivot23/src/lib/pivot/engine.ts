@@ -55,6 +55,7 @@ import {
   MAX_AGE,
   START_OVERALL,
   advancedOf,
+  careerEndAge,
   clamp,
   clampAttr,
   isCareerOver,
@@ -93,6 +94,7 @@ export {
   PEAK_AGE,
   START_OVERALL,
   apexAgeOf,
+  careerEndAge,
   clamp,
   clampAttr,
   computeOverall,
@@ -2860,18 +2862,18 @@ export function verdictOf(s: PlayerState) {
   return { score, verdict, closing, card };
 }
 
-export function toArchive(s: PlayerState): ArchiveCareer {
+export function careerCardOf(s: PlayerState): CareerCard {
   const v = verdictOf(s);
   const seasons = s.seasonHistory.length || 1;
   const avg = (pick: (r: SeasonRow) => number) =>
     round1(s.seasonHistory.reduce((a, r) => a + pick(r), 0) / seasons);
-  const card: CareerCard = {
+  return {
     id: `${s.seed}:${SAVE_VERSION}`,
     playerName: s.name,
     role: ROLES[s.role].label,
     nationality: s.nationality,
     ageStart: s.startAge || s.seasonHistory[0]?.age || s.age,
-    ageEnd: s.age,
+    ageEnd: careerEndAge(s),
     seasons,
     peakOverall: s.peakOverall,
     ppg: avg((r) => r.ppg),
@@ -2885,9 +2887,16 @@ export function toArchive(s: PlayerState): ArchiveCareer {
     milestones: s.milestones.map((m) => m.label),
     engineVersion: s.engineVersion,
   };
+}
+
+export function toArchive(s: PlayerState): ArchiveCareer {
+  const v = verdictOf(s);
+  const card = careerCardOf(s);
+  const seasons = card.seasons;
+  const savedAt = Date.now();
   return {
-    id: `${Date.now()}`,
-    savedAt: Date.now(),
+    id: archiveId(savedAt),
+    savedAt,
     version: SAVE_VERSION,
     name: s.name,
     role: card.role,
@@ -2912,32 +2921,147 @@ export function toArchive(s: PlayerState): ArchiveCareer {
   };
 }
 
+let archiveIdSequence = 0;
+
+function archiveId(timestamp: number) {
+  const uuid = globalThis.crypto?.randomUUID?.();
+  if (uuid) return uuid;
+  archiveIdSequence += 1;
+  return `${timestamp}-${archiveIdSequence}`;
+}
+
 export const ARCHIVE_KEY = "pivot-v2-archive";
 export const SAVE_KEY = "pivot-v2-save";
 let archiveMemory: ArchiveCareer[] = [];
 
-export function loadArchive(): ArchiveCareer[] {
-  try {
-    const raw = localStorage.getItem(ARCHIVE_KEY);
-    if (!raw) return [...archiveMemory];
-    const parsed = JSON.parse(raw) as ArchiveCareer[];
-    if (!Array.isArray(parsed)) return [...archiveMemory];
-    archiveMemory = parsed.slice(0, 8);
-    return [...archiveMemory];
-  } catch {
-    return [...archiveMemory];
+function archiveStores(): Storage[] {
+  const found: Storage[] = [];
+  for (const key of ["localStorage", "sessionStorage"] as const) {
+    try {
+      const store = globalThis[key];
+      if (store && !found.includes(store)) found.push(store);
+    } catch {
+      // Some browser privacy modes throw while resolving the Storage property.
+    }
   }
+  return found;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function isValidCareerCard(value: unknown): value is CareerCard {
+  if (!isRecord(value)) return false;
+  const stringFields = ["id", "playerName", "role", "nationality", "verdict", "legacyTier", "engineVersion"];
+  const numberFields = ["ageStart", "ageEnd", "seasons", "peakOverall", "ppg", "rpg", "apg", "championships", "allStars", "mvps"];
+  return stringFields.every((key) => typeof value[key] === "string")
+    && numberFields.every((key) => isFiniteNumber(value[key]))
+    && Array.isArray(value.milestones)
+    && value.milestones.every((label) => typeof label === "string");
+}
+
+function normalizeArchiveEntry(value: unknown): ArchiveCareer | null {
+  if (!isRecord(value)) return null;
+  const requiredStrings = ["id", "name", "role", "verdict", "closing"];
+  const requiredNumbers = ["savedAt", "version", "seasons", "peak", "titles", "ppg"];
+  if (!requiredStrings.every((key) => typeof value[key] === "string")
+    || !requiredNumbers.every((key) => isFiniteNumber(value[key]))) return null;
+
+  const history = Array.isArray(value.history)
+    ? value.history.filter((row) => isRecord(row)
+      && isFiniteNumber(row.season)
+      && isFiniteNumber(row.age)
+      && typeof row.yearLabel === "string"
+      && typeof row.teamAbbr === "string"
+      && [row.ppg, row.rpg, row.apg].every(isFiniteNumber))
+      .map((row) => ({
+        ...row,
+        awards: Array.isArray(row.awards)
+          ? row.awards.filter((award: unknown): award is string => typeof award === "string")
+          : [],
+      }))
+    : [];
+  const milestones = Array.isArray(value.milestones)
+    ? value.milestones.filter((item) => isRecord(item) && isFiniteNumber(item.season) && typeof item.label === "string")
+    : [];
+  const choices = Array.isArray(value.choices)
+    ? value.choices.filter((item) => isRecord(item)
+      && isFiniteNumber(item.season)
+      && typeof item.title === "string"
+      && typeof item.pick === "string")
+    : [];
+  const normalized = { ...value, history, milestones, choices } as unknown as ArchiveCareer;
+
+  // A broken optional card must not hide an otherwise readable legacy career.
+  if (!isValidCareerCard(value.card)) {
+    delete normalized.card;
+  } else if (typeof value.fingerprint === "string" && value.fingerprint !== fingerprintOf(value.card)) {
+    delete normalized.card;
+  } else {
+    const lastAge = history.at(-1)?.age;
+    if (isFiniteNumber(lastAge) && value.card.ageEnd !== lastAge) {
+      normalized.card = { ...value.card, ageEnd: lastAge };
+      normalized.fingerprint = fingerprintOf(normalized.card);
+    }
+  }
+  return normalized;
+}
+
+export function loadArchive(): ArchiveCareer[] {
+  const stored: ArchiveCareer[][] = [];
+  let readable = false;
+  for (const store of archiveStores()) {
+    try {
+      const raw = store.getItem(ARCHIVE_KEY);
+      if (raw === null) continue;
+      const parsed: unknown = JSON.parse(raw);
+      if (!Array.isArray(parsed)) continue;
+      readable = true;
+      stored.push(parsed.map(normalizeArchiveEntry).filter((entry): entry is ArchiveCareer => entry !== null));
+    } catch {
+      // Keep trying the other browser store before falling back to memory.
+    }
+  }
+  if (!readable) return [...archiveMemory];
+  const unique = new Map<string, ArchiveCareer>();
+  for (const entry of [...archiveMemory, ...stored.flat()]) if (!unique.has(entry.id)) unique.set(entry.id, entry);
+  archiveMemory = [...unique.values()].sort((a, b) => b.savedAt - a.savedAt).slice(0, 8);
+  return [...archiveMemory];
 }
 
 export function saveArchive(entry: ArchiveCareer) {
   const all = [entry, ...loadArchive().filter((c) => c.id !== entry.id)].slice(0, 8);
   archiveMemory = all;
-  try {
-    localStorage.setItem(ARCHIVE_KEY, JSON.stringify(all));
-  } catch {
-    // Mantieni la carriera nella sessione corrente se il browser blocca o ha esaurito lo storage.
+  const serialized = JSON.stringify(all);
+  for (const store of archiveStores()) {
+    try {
+      store.setItem(ARCHIVE_KEY, serialized);
+    } catch {
+      // Try the other store; the in-memory copy survives for the current session.
+    }
   }
   return all;
+}
+
+/** True only when a completed career reached browser storage, not just session memory. */
+export function isArchivePersisted(id: string) {
+  return archiveStores().some((store) => {
+    try {
+      const raw = store.getItem(ARCHIVE_KEY);
+      if (!raw) return false;
+      const parsed: unknown = JSON.parse(raw);
+      return Array.isArray(parsed) && parsed.some((entry) =>
+        !!entry && typeof entry === "object" && !Array.isArray(entry) && (entry as { id?: unknown }).id === id,
+      );
+    } catch {
+      return false;
+    }
+  });
 }
 
 export interface SimOpts {
@@ -3098,7 +3222,7 @@ export function simulateFullCareer(opts: SimOpts = {}) {
     hit90: s.peakOverall >= 90,
     titles: s.titleCount,
     potential: s.potential,
-    ageEnd: s.age,
+    ageEnd: careerEndAge(s),
     seasons: s.seasonHistory.length,
     difficulty: s.difficulty,
     hof: hofTier(s),

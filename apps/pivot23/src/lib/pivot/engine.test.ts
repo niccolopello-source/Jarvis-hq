@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { ARCHIVE_KEY, eventAfterMarket, isPlayoffSeed, loadArchive, openCareerSim, playCareerSim, saveArchive, simulateFullCareer, toArchive, withPlayer } from "./engine";
+import { ARCHIVE_KEY, careerEndAge, eventAfterMarket, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, openCareerSim, playCareerSim, saveArchive, shouldOfferExtraYear, simulateFullCareer, toArchive, withPlayer } from "./engine";
+import { fingerprintOf, sha256 } from "./card";
 import { EURO_TITLE_LINES, playoffSeriesFormat, SERIES_WIN_LINES, seriesWinProbability, simulateSeries } from "./league";
 import { clearLive, loadLive, SAVE_KEY, saveLive, buildLiveSave } from "./save";
 
@@ -37,6 +38,7 @@ function installMemoryStorage() {
   Object.defineProperty(globalThis, "sessionStorage", { configurable: true, value: session });
   return {
     local,
+    session,
     restore() {
       clearLive();
       if (localDescriptor) Object.defineProperty(globalThis, "localStorage", localDescriptor);
@@ -45,6 +47,12 @@ function installMemoryStorage() {
       else Reflect.deleteProperty(globalThis, "sessionStorage");
     },
   };
+}
+
+function resetArchive(storage: ReturnType<typeof installMemoryStorage>) {
+  storage.local.setItem(ARCHIVE_KEY, "[]");
+  storage.session.setItem(ARCHIVE_KEY, "[]");
+  loadArchive();
 }
 
 test("a seeded career reaches a valid final state", () => {
@@ -59,13 +67,71 @@ test("a seeded career reaches a valid final state", () => {
   assert.ok(Number.isFinite(player.overall));
   assert.ok(player.overall >= 48 && player.overall <= 99);
   assert.ok(player.team.name.length > 0);
+  assert.equal(simulateFullCareer(demoCareer).ageEnd, careerEndAge(player));
 });
 
 test("the same career seed produces the same demo summary", () => {
   const first = simulateFullCareer(demoCareer);
   const second = simulateFullCareer(demoCareer);
+  const otherSeed = simulateFullCareer({ ...demoCareer, seed: demoCareer.seed + 1 });
 
   assert.deepEqual(second, first);
+  assert.notDeepEqual(otherSeed, first, "different seeds should be able to produce different career outcomes");
+});
+
+test("late viability loss or serious injury ends a career while an eligible age-35 player can continue to a recorded age-36 season", () => {
+  const healthy = playCareerSim({ ...demoCareer, seed: 73117 });
+  const at33 = {
+    ...healthy,
+    age: 33,
+    injuryDrag: 0,
+    seasonHistory: [...healthy.seasonHistory.slice(0, -1), { ...healthy.seasonHistory.at(-1)!, age: 33, min: 18 }],
+  };
+  assert.equal(isCareerOver(at33), false);
+  assert.equal(isCareerOver({ ...at33, injuryDrag: 2.5 }), true);
+  assert.equal(isCareerOver({
+    ...at33,
+    seasonHistory: [...at33.seasonHistory.slice(0, -1), { ...at33.seasonHistory.at(-1)!, min: 11.5 }],
+  }), true);
+
+  const healthyAt35 = {
+    ...at33,
+    age: 35,
+    seasonHistory: [...at33.seasonHistory.slice(0, -1), { ...at33.seasonHistory.at(-1)!, age: 35, min: 18 }],
+  };
+  assert.equal(isCareerOver(healthyAt35), false);
+  assert.equal(shouldOfferExtraYear(healthyAt35), true);
+  const enteringFinalSeason = { ...healthyAt35, age: 36, extraSeason: true };
+  assert.equal(isCareerOver(enteringFinalSeason), false);
+  assert.equal(isCareerOver({
+    ...enteringFinalSeason,
+    seasonHistory: [...enteringFinalSeason.seasonHistory, { ...enteringFinalSeason.seasonHistory.at(-1)!, age: 36 }],
+  }), true);
+});
+
+test("1,000 Pro careers meet the P0-LIFE age distribution without changing the peak window", () => {
+  const careers = Array.from({ length: 1000 }, (_, i) =>
+    playCareerSim({
+      name: "P0-LIFE",
+      role: (["PG", "SG", "SF", "PF", "C"] as const)[i % 5],
+      nationality: "ITA",
+      number: 23,
+      difficulty: "pro",
+      path: (["NCAA", "Europa", "G-League"] as const)[i % 3],
+      seed: (i + 1) * 1000 + 17,
+      draft: "random",
+    }),
+  );
+  const endingAges = careers.map(careerEndAge);
+  const early = careers.filter((career) => careerEndAge(career) < 34);
+
+  assert.ok(early.length >= 150, `${early.length}/1000 ended before age 34`);
+  assert.ok(endingAges.some((age) => age === 36), "no career reached age 36");
+  assert.ok(endingAges.every((age, i) => age === careers[i]?.seasonHistory.at(-1)?.age),
+    "career ending age differs from the last recorded season");
+  assert.ok(new Set(endingAges).size > 1, `all careers ended at age ${endingAges[0]}`);
+  assert.ok(careers.every((career) => career.apexAge >= 26 && career.apexAge <= 28), "peak age left 26–28");
+  assert.ok(early.every((career) => career.injuryDrag >= 2.5 || (career.seasonHistory.at(-1)?.min ?? Number.POSITIVE_INFINITY) <= 11.5));
 });
 
 test("career simulations stay within valid bounds across all entry paths", () => {
@@ -137,6 +203,23 @@ test("playoff series stop as soon as a team reaches the required wins", () => {
   assert.equal(euroFinalFour.games.length, 1);
 });
 
+test("an NBA best-of-seven series completes Game 7 and records a 4–3 result", () => {
+  const outcomes = [true, false, true, false, true, false, true];
+  let draw = 0;
+  const result = simulateSeries(0.5, playoffSeriesFormat("NBA", 0), false, 1, 8, () => {
+    const slot = draw++ % 3;
+    const game = Math.floor((draw - 1) / 3);
+    if (slot !== 0) return 0.5;
+    return outcomes[game] ? 0 : 0.99;
+  });
+
+  assert.equal(result.games.length, 7);
+  assert.equal(result.wins, 4);
+  assert.equal(result.losses, 3);
+  assert.equal(result.games.at(-1)?.n, 7);
+  assert.equal(result.games.at(-1)?.win, true);
+});
+
 test("a neutral Final Four game does not receive a seed-based home bonus", () => {
   const format = playoffSeriesFormat("EuroLega", 2);
   const result = simulateSeries(0.5, format, true, 1, 8, () => 0.52);
@@ -191,20 +274,151 @@ test("a long career save reloads without losing its final season", () => {
   }
 });
 
+test("same-seed legacy checksums cannot hide an incomplete PlayerState", () => {
+  const storage = installMemoryStorage();
+  try {
+    clearLive();
+    const player = playCareerSim(demoCareer);
+    const payload = buildLiveSave(player, null, [], "career", "career", player.seasonHistory.length);
+    const partial = JSON.parse(JSON.stringify(payload)) as { player: Record<string, unknown>; c?: string };
+    delete partial.player.attrs;
+    partial.c = sha256(`${payload.player.seed}:${payload.logSeq}:${payload.player.rngState}`).slice(0, 16);
+    const encoded = JSON.stringify(partial);
+    storage.local.setItem(SAVE_KEY, encoded);
+    globalThis.sessionStorage.setItem(SAVE_KEY, encoded);
+
+    assert.equal(loadLive(), null);
+  } finally {
+    storage.restore();
+  }
+});
+
+test("new live-save checksum covers gameplay payload fields", () => {
+  const storage = installMemoryStorage();
+  try {
+    clearLive();
+    const player = playCareerSim(demoCareer);
+    const payload = buildLiveSave(player, null, [], "career", "career", player.seasonHistory.length);
+    const changed = { ...payload, player: { ...payload.player, overall: payload.player.overall + 1 } };
+    const encoded = JSON.stringify(changed);
+    storage.local.setItem(SAVE_KEY, encoded);
+    globalThis.sessionStorage.setItem(SAVE_KEY, encoded);
+
+    assert.equal(loadLive(), null);
+  } finally {
+    storage.restore();
+  }
+});
+
 test("a completed long career is archived and duplicate saves are collapsed", () => {
   const storage = installMemoryStorage();
   try {
     clearLive();
+    resetArchive(storage);
     const entry = toArchive(playCareerSim(demoCareer));
     saveArchive(entry);
     const returned = saveArchive(entry);
     const raw = storage.local.getItem(ARCHIVE_KEY);
 
     assert.ok(raw);
-    assert.equal(JSON.parse(raw).length, 1);
-    assert.equal(returned.length, 1);
+    assert.equal(JSON.parse(raw).filter((item: { id: string }) => item.id === entry.id).length, 1);
+    assert.equal(returned.filter((item) => item.id === entry.id).length, 1);
     assert.equal(loadArchive()[0]?.id, entry.id);
     assert.equal(loadArchive()[0]?.seasons, entry.seasons);
+    assert.equal(loadArchive()[0]?.card?.playerName, entry.card?.playerName);
+    assert.equal(loadArchive()[0]?.card?.ageEnd, loadArchive()[0]?.history.at(-1)?.age);
+    assert.equal(loadArchive()[0]?.fingerprint, entry.fingerprint);
+  } finally {
+    storage.restore();
+  }
+});
+
+test("archive load skips incomplete rows and omits a corrupted optional card", () => {
+  const storage = installMemoryStorage();
+  try {
+    resetArchive(storage);
+    const career = toArchive(playCareerSim(demoCareer));
+    const legacy = { ...career, id: "legacy-without-card", card: undefined, fingerprint: undefined };
+    const corruptCard = { ...career, id: "corrupt-card", card: { playerName: "incomplete" } };
+    const staleAgeCard = {
+      ...career,
+      id: "stale-age-card",
+      card: { ...career.card!, ageEnd: career.card!.ageEnd + 1 },
+    };
+    staleAgeCard.fingerprint = fingerprintOf(staleAgeCard.card);
+    storage.local.setItem(ARCHIVE_KEY, JSON.stringify([null, { id: "incomplete" }, legacy, corruptCard, staleAgeCard]));
+
+    const loaded = loadArchive();
+    assert.equal(loaded.some((entry) => entry.id === "incomplete"), false);
+    assert.ok(loaded.some((entry) => entry.id === "legacy-without-card" && entry.card === undefined));
+    assert.ok(loaded.some((entry) => entry.id === "corrupt-card" && entry.card === undefined));
+    const migratedCard = loaded.find((entry) => entry.id === "stale-age-card");
+    assert.equal(migratedCard?.card?.ageEnd, migratedCard?.history.at(-1)?.age);
+    assert.equal(migratedCard?.fingerprint, fingerprintOf(migratedCard!.card!));
+  } finally {
+    storage.restore();
+  }
+});
+
+test("distinct careers completed in the same millisecond remain separate archive entries", () => {
+  const storage = installMemoryStorage();
+  const originalNow = Date.now;
+  try {
+    resetArchive(storage);
+    Date.now = () => 1_700_000_000_000;
+    const first = toArchive(playCareerSim({ ...demoCareer, seed: 230023 }));
+    const second = toArchive(playCareerSim({ ...demoCareer, seed: 230024 }));
+    saveArchive(first);
+    const archived = saveArchive(second);
+
+    assert.notEqual(first.id, second.id);
+    assert.ok(archived.some((entry) => entry.id === first.id));
+    assert.ok(archived.some((entry) => entry.id === second.id));
+  } finally {
+    Date.now = originalNow;
+    storage.restore();
+  }
+});
+
+test("archive storage failure preserves the last persisted live save", () => {
+  const storage = installMemoryStorage();
+  try {
+    clearLive();
+    const player = playCareerSim(demoCareer);
+    assert.equal(saveLive({
+      player,
+      pending: null,
+      log: [],
+      screen: "career",
+      tab: "career",
+      logSeq: player.seasonHistory.length,
+    }), true);
+    const liveSave = storage.local.getItem(SAVE_KEY);
+    assert.ok(liveSave);
+
+    storage.local.throwOnWrite = true;
+    storage.session.throwOnWrite = true;
+    const archive = toArchive(player);
+    saveArchive(archive);
+
+    assert.equal(isArchivePersisted(archive.id), false);
+    assert.equal(storage.local.getItem(SAVE_KEY), liveSave);
+  } finally {
+    storage.restore();
+  }
+});
+
+test("archive writes fall back from localStorage to sessionStorage", () => {
+  const storage = installMemoryStorage();
+  try {
+    resetArchive(storage);
+    storage.local.throwOnWrite = true;
+    const entry = toArchive(playCareerSim(demoCareer));
+    saveArchive(entry);
+
+    assert.equal(isArchivePersisted(entry.id), true);
+    assert.ok(storage.session.getItem(ARCHIVE_KEY));
+    assert.equal(loadArchive()[0]?.id, entry.id);
   } finally {
     storage.restore();
   }
@@ -214,7 +428,9 @@ test("finishing a career does not crash when the browser refuses archive writes"
   const storage = installMemoryStorage();
   try {
     clearLive();
+    resetArchive(storage);
     storage.local.throwOnWrite = true;
+    storage.session.throwOnWrite = true;
     const entry = toArchive(playCareerSim(demoCareer));
     const returned = saveArchive(entry);
 
@@ -236,7 +452,7 @@ test("a corrupted browser save is ignored instead of crashing startup", () => {
   }
 });
 
-test("a live save without a valid fingerprint is not reopened", () => {
+test("valid checksum-free v2 saves migrate and invalid fingerprints are rejected", () => {
   const storage = installMemoryStorage();
   try {
     clearLive();
@@ -255,7 +471,8 @@ test("a live save without a valid fingerprint is not reopened", () => {
     const missing = JSON.stringify(stripped);
     storage.local.setItem(SAVE_KEY, missing);
     globalThis.sessionStorage.setItem(SAVE_KEY, missing);
-    assert.equal(loadLive(), null);
+    assert.equal(loadLive()?.player.seed, player.seed);
+    assert.ok(JSON.parse(storage.local.getItem(SAVE_KEY)!).c);
 
     clearLive();
     stripped.c = "ffffffffffffffff";
@@ -263,6 +480,28 @@ test("a live save without a valid fingerprint is not reopened", () => {
     storage.local.setItem(SAVE_KEY, wrong);
     globalThis.sessionStorage.setItem(SAVE_KEY, wrong);
     assert.equal(loadLive(), null);
+  } finally {
+    storage.restore();
+  }
+});
+
+test("valid legacy metadata checksums migrate to the full-payload checksum", () => {
+  const storage = installMemoryStorage();
+  try {
+    clearLive();
+    const player = playCareerSim(demoCareer);
+    const payload = buildLiveSave(player, null, [], "career", "career", player.seasonHistory.length);
+    const legacy = {
+      ...payload,
+      c: sha256(`${player.seed}:${payload.logSeq}:${player.rngState}`).slice(0, 16),
+    };
+    storage.local.setItem(SAVE_KEY, JSON.stringify(legacy));
+    globalThis.sessionStorage.setItem(SAVE_KEY, JSON.stringify(legacy));
+
+    assert.equal(loadLive()?.player.seed, player.seed);
+    const migrated = JSON.parse(storage.local.getItem(SAVE_KEY)!) as { c?: string };
+    assert.ok(migrated.c);
+    assert.notEqual(migrated.c, legacy.c);
   } finally {
     storage.restore();
   }
@@ -329,7 +568,6 @@ test("an already-won MVP or title makes the next one less common on Esordio", ()
   let maxMvp = 0;
   let titles6 = 0;
   let anyMvp = 0;
-  let still36 = 0;
   for (let i = 0; i < n; i++) {
     const role = (["PG", "SG", "SF", "PF", "C"] as const)[i % 5];
     const path = (["NCAA", "Europa", "G-League"] as const)[i % 3];
@@ -346,10 +584,10 @@ test("an already-won MVP or title makes the next one less common on Esordio", ()
     maxMvp = Math.max(maxMvp, player.mvpCount);
     if (player.titleCount >= 6) titles6 += 1;
     if (player.mvpCount > 0) anyMvp += 1;
-    if (player.age >= 36) still36 += 1;
   }
   assert.ok(maxMvp <= 6, `max MVP ${maxMvp}`);
   assert.ok(titles6 / n < 0.02, `six-title share ${titles6 / n}`);
   assert.ok(anyMvp > 0, "MVP disappeared");
-  assert.ok(still36 === n, "age-36 path was removed");
+  // P0-LIFE permits early retirement. The Pro distribution test separately
+  // verifies that viable careers still reach the age-36 final season.
 });

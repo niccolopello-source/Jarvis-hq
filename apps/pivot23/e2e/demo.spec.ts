@@ -49,7 +49,7 @@ test("a player can start a career, finish a season and resume the saved recap", 
   await expect(page.locator("[data-pending]").first()).toBeVisible();
   await expect(page.getByText("Giulia Rossi").first()).toBeVisible();
   await expect(page.getByText("La partita si è interrotta")).toHaveCount(0);
-  await page.locator("[data-pending] .choice-btn").first().click();
+  await page.locator("[data-pending] .choice-btn").first().dblclick();
   const seasonRecap = page.getByRole("heading", { name: /Stagione 1 ·/ });
   await expect(seasonRecap).toBeVisible({ timeout: 15_000 });
   await expect.poll(() => page.evaluate(() => localStorage.getItem("pivot-v2-save"))).not.toBeNull();
@@ -85,4 +85,28 @@ test("a player can start a career, finish a season and resume the saved recap", 
     body: JSON.stringify({ url: page.url(), runtimeErrors, consoleErrors, failedRequests, badResponses, navigation }, null, 2),
     contentType: "application/json",
   });
+});
+
+test("a completed simulated career keeps its Career Card through archive reload on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Inizia", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Chi sei sul parquet" })).toBeVisible();
+  await page.getByPlaceholder("Es. Marco Ferrara").fill("Career Card E2E");
+  await page.getByRole("button", { name: /Simula la carriera/ }).click();
+
+  const card = page.getByRole("region", { name: "Career Card" });
+  await expect(card).toBeVisible({ timeout: 30_000 });
+  await expect(card).toContainText("Career Card E2E");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+  await page.getByRole("button", { name: "Archivio", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Archivio" })).toBeVisible();
+  await page.getByRole("button", { name: /Career Card E2E/ }).click();
+  await expect(page.getByRole("region", { name: "Career Card" })).toBeVisible();
+  await page.reload();
+  await page.getByRole("button", { name: "Inizia", exact: true }).click();
+  await page.getByRole("button", { name: "Archivio", exact: true }).click();
+  await page.getByRole("button", { name: /Career Card E2E/ }).click();
+  await expect(page.getByRole("region", { name: "Career Card" })).toContainText("Career Card E2E");
 });

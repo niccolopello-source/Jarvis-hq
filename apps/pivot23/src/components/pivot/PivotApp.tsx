@@ -27,6 +27,7 @@ import {
   beginPlayoffs,
   buildFaOffers,
   buildTradeOffer,
+  careerCardOf,
   displayOverall,
   fillTemplate,
   finishDraft,
@@ -37,6 +38,7 @@ import {
   isContractYear,
   shouldOfferExtraYear,
   loadArchive,
+  isArchivePersisted,
   pick,
 
 
@@ -437,7 +439,8 @@ export function PivotApp() {
           window.setTimeout(pump, 0);
           return;
         }
-        const all = saveArchive(toArchive(job.s));
+        const entry = toArchive(job.s);
+        const all = saveArchive(entry);
         simJob.current = null;
         setArchive(all);
         setPlayer(job.s);
@@ -446,7 +449,7 @@ export function PivotApp() {
         setSimBusy(false);
         setSimShow(false);
         setSimSlow(false);
-        clearLive();
+        if (isArchivePersisted(entry.id)) clearLive();
         setScreen("result");
       } catch {
         cancelSim();
@@ -817,7 +820,7 @@ export function PivotApp() {
     setArchive(all);
     setPlayer(s);
     setPending(null);
-    clearLive();
+    if (isArchivePersisted(entry.id)) clearLive();
     setScreen("result");
   }
 
@@ -2018,6 +2021,7 @@ function ResultView({
         )}
         <p className="feel-line">{comment}</p>
       </div>
+      <CareerCardPanel card={careerCardOf(player)} history={player.seasonHistory} choices={player.choiceLog} />
       <h4 className="stats-heading">Gli inverni</h4>
       {years.map((r) => (
         <div
@@ -2094,6 +2098,7 @@ function ArchiveView({
           {viewing.difficulty ? ` · ${DIFFICULTIES.find((d) => d.id === viewing.difficulty)?.label ?? ""}` : ""}
         </p>
         <p className="italic text-muted text-[14px] mb-4">{viewing.closing}</p>
+        <CareerCardPanel card={viewing.card} history={viewing.history} choices={viewing.choices} />
         {viewing.history.map((r) => (
           <div key={r.season} className="flex justify-between py-2 border-b border-line text-[13px]">
             <span>
@@ -2131,6 +2136,63 @@ function ArchiveView({
           </span>
         </button>
       ))}
+    </section>
+  );
+}
+
+function CareerCardPanel({
+  card,
+  history,
+  choices,
+}: {
+  card: ReturnType<typeof careerCardOf> | undefined;
+  history: ArchiveCareer["history"];
+  choices: ArchiveCareer["choices"];
+}) {
+  if (!card) return null;
+  const draft = choices.find((choice) => choice.title === "Chiamata");
+  const teams = [...new Set(history.map((season) => season.team))];
+  const awards = new Map<string, number>();
+  for (const season of history) {
+    for (const award of season.awards || []) awards.set(award, (awards.get(award) ?? 0) + 1);
+  }
+
+  return (
+    <section className={`result-card ${card.legacyTier}`} data-career-card role="region" aria-label="Career Card">
+      <div className="eyebrow">Career Card · {card.engineVersion}</div>
+      <h3 className="page-title text-chalk">{card.playerName}</h3>
+      <p className="result-name">{card.role} · {card.nationality}</p>
+      <p className="result-span">
+        Età {card.ageStart}–{card.ageEnd} · {card.seasons} stagioni · picco {displayOverall(card.peakOverall)}
+      </p>
+      <div className="result-stats">
+        {[
+          [card.ppg.toFixed(1), "PPG"],
+          [card.rpg.toFixed(1), "RPG"],
+          [card.apg.toFixed(1), "APG"],
+          [card.championships, "Titoli"],
+          [card.allStars, "All-Star"],
+          [card.mvps, "MVP"],
+        ].map(([value, label]) => (
+          <div key={String(label)} className="result-stat">
+            <div className="tv">{value}</div>
+            <div className="tl">{label}</div>
+          </div>
+        ))}
+      </div>
+      <p className="feel-line">Draft: {draft?.pick ?? "dato non disponibile"}</p>
+      <p className="feel-line">Squadre: {teams.length ? teams.join(" → ") : "dato non disponibile"}</p>
+      {awards.size > 0 && (
+        <p className="feel-line">
+          Premi stagionali: {[...awards].map(([name, count]) => `${count}× ${name}`).join(" · ")}
+        </p>
+      )}
+      {card.milestones.length > 0 && (
+        <div className="result-chips" aria-label="Traguardi">
+          {card.milestones.map((milestone) => <span key={milestone} className="result-chip">{milestone}</span>)}
+        </div>
+      )}
+      <p className="result-close">{card.verdict} · Legacy {card.legacyTier}</p>
     </section>
   );
 }
