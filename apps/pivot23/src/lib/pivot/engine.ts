@@ -2383,6 +2383,20 @@ export function acceptTrade(s: PlayerState, team: Team) {
   return old;
 }
 
+export function acceptForcedSummerTrade(s: PlayerState, team: Team, season = s.season) {
+  const from = acceptTrade(s, team);
+  s.choiceLog.push({ season, title: "Scambio estivo", pick: `${from} → ${team.name}` });
+  return from;
+}
+
+export function recordRetirementChoice(s: PlayerState, continueTo36: boolean) {
+  s.choiceLog.push({
+    season: s.season,
+    title: "Ritiro",
+    pick: continueTo36 ? "Gioca a 36 anni" : "Chiudi ora",
+  });
+}
+
 export function refuseTrade(s: PlayerState) {
   s.coachTrust = clamp(s.coachTrust + 5, 0, 100);
   s.hidden.chemistry = clamp(s.hidden.chemistry + 3, 0, 100);
@@ -3191,9 +3205,7 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
           });
         }
       } else if (summer.tradeDest && (summer.tradeForced || rand() < 0.42)) {
-        const from = s.team.name;
-        acceptTrade(s, summer.tradeDest);
-        s.choiceLog.push({ season: n, title: "Scambio estivo", pick: `${from} → ${summer.tradeDest.name}` });
+        acceptForcedSummerTrade(s, summer.tradeDest, n);
       }
     }
     job.n = n + 1;

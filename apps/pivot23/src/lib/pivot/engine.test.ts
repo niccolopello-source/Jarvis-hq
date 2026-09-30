@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { ARCHIVE_KEY, careerEndAge, eventAfterMarket, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, openCareerSim, playCareerSim, saveArchive, shouldOfferExtraYear, simulateFullCareer, toArchive, withPlayer } from "./engine";
+import { acceptForcedSummerTrade, ARCHIVE_KEY, buildTradeOffer, careerEndAge, eventAfterMarket, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, openCareerSim, playCareerSim, recordRetirementChoice, saveArchive, shouldOfferExtraYear, simulateFullCareer, toArchive, withPlayer } from "./engine";
 import { fingerprintOf, sha256 } from "./card";
 import { EURO_TITLE_LINES, playoffSeriesFormat, SERIES_WIN_LINES, seriesWinProbability, simulateSeries } from "./league";
 import { clearLive, loadLive, SAVE_KEY, saveLive, buildLiveSave } from "./save";
@@ -107,6 +107,29 @@ test("late viability loss or serious injury ends a career while an eligible age-
     ...enteringFinalSeason,
     seasonHistory: [...enteringFinalSeason.seasonHistory, { ...enteringFinalSeason.seasonHistory.at(-1)!, age: 36 }],
   }), true);
+});
+
+test("retirement and forced summer-trade transitions preserve their visible action in choiceLog", () => {
+  const player = playCareerSim(demoCareer);
+  player.age = 35;
+  player.season = 15;
+  const retirementChoice = structuredClone(player);
+  recordRetirementChoice(retirementChoice, false);
+  assert.deepEqual(retirementChoice.choiceLog.at(-1), { season: 15, title: "Ritiro", pick: "Chiudi ora" });
+  const extraSeasonChoice = structuredClone(player);
+  recordRetirementChoice(extraSeasonChoice, true);
+  assert.deepEqual(extraSeasonChoice.choiceLog.at(-1), { season: 15, title: "Ritiro", pick: "Gioca a 36 anni" });
+
+  const tradeOffer = withPlayer(player, () => buildTradeOffer(player));
+  const from = player.team.name;
+  const tradedFrom = acceptForcedSummerTrade(player, tradeOffer.team, 15);
+  assert.equal(tradedFrom, from);
+  assert.equal(player.team.name, tradeOffer.team.name);
+  assert.deepEqual(player.choiceLog.at(-1), {
+    season: 15,
+    title: "Scambio estivo",
+    pick: `${from} → ${tradeOffer.team.name}`,
+  });
 });
 
 test("1,000 Pro careers meet the P0-LIFE age distribution without changing the peak window", () => {

@@ -18,6 +18,7 @@ import {
   awardIt,
 } from "@/lib/pivot/data";
 import {
+  acceptForcedSummerTrade,
   acceptOffer,
   acceptTrade,
   allDraftRounds,
@@ -52,6 +53,7 @@ import {
   qualifiesPlayoffs,
   refreshOverall,
   refuseTrade,
+  recordRetirementChoice,
   resolvePlayoffRound,
   revealDraftLanding,
   saveArchive,
@@ -672,11 +674,11 @@ export function PivotApp() {
       return;
     }
     if (row.tradeDest) {
-      s.season = s.season + 1;
+      const completedSeason = s.season;
+      s.season = completedSeason + 1;
       if (row.tradeForced) {
-        const from = s.team.name;
         const dest = row.tradeDest;
-        acceptTrade(s, dest);
+        const from = acceptForcedSummerTrade(s, dest, completedSeason);
         setPlayer(s);
         setPending({
           kind: "trade-notice",
@@ -803,10 +805,10 @@ export function PivotApp() {
   function onRetire(extra: boolean) {
     if (!player) return;
     const s = structuredClone(player);
+    recordRetirementChoice(s, extra);
     if (extra) {
       s.extraSeason = true;
       withPlayer(s, () => applyFx(s, { development: 0.4, form: 1, flavor: "Un'altra stagione." }));
-      s.choiceLog.push({ season: s.season, title: "Ritiro", pick: "Un'altra stagione" });
       setPlayer(s);
       continueAfterSummer(s);
       return;
