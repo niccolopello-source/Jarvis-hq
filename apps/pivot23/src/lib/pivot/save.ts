@@ -30,10 +30,6 @@ function payloadChecksum(payload: object): string {
   return sha256(JSON.stringify(payload)).slice(0, 16);
 }
 
-function legacyChecksum(seed: number, seq: number, state: number): string {
-  return sha256(`${seed}:${seq}:${state}`).slice(0, 16);
-}
-
 export type SwipePersist = {
   tab: CareerTab;
   dir: "next" | "prev";
@@ -562,13 +558,10 @@ function isLiveSave(value: unknown): value is LiveSave {
   if (!(rec.pending === null || object(rec.pending))) return false;
   if (rec.logSeq !== undefined && !finite(rec.logSeq)) return false;
   if (rec.tab !== undefined && (typeof rec.tab !== "string" || !TABS.includes(rec.tab as CareerTab))) return false;
-  if (rec.c !== undefined && typeof rec.c !== "string") return false;
+  if (typeof rec.c !== "string" || rec.c.length === 0) return false;
 
   const { c, ...body } = rec;
-  const seq = finite(rec.logSeq) ? rec.logSeq : 0;
-  const rng = finite(state.rngState) ? state.rngState : state.seed as number;
-  const validLegacy = c === legacyChecksum(state.seed as number, seq, rng);
-  if (c !== undefined && c !== payloadChecksum(body) && !validLegacy) return false;
+  if (c !== payloadChecksum(body)) return false;
   return true;
 }
 
@@ -634,21 +627,8 @@ export function loadLive(): LiveSave | null {
       for (let i = 1; i < found.length; i++) parsed = fresher(found[i]!, parsed);
     }
     if (parsed) {
-      const { c, ...body } = parsed as unknown as Record<string, unknown>;
-      const needsChecksumUpgrade = c !== payloadChecksum(body);
       const live = revive(parsed);
       MEM = live;
-      if (needsChecksumUpgrade) {
-        saveLive({
-          player: live.player,
-          pending: live.pending,
-          log: live.log,
-          screen: live.screen,
-          tab: live.tab,
-          logSeq: live.logSeq,
-        });
-        return MEM ?? live;
-      }
       return live;
     }
   } catch {

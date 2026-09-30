@@ -105,8 +105,23 @@ test("a completed simulated career keeps its Career Card through archive reload 
   await page.getByRole("button", { name: /Career Card E2E/ }).click();
   await expect(page.getByRole("region", { name: "Career Card" })).toBeVisible();
   await page.reload();
-  await page.getByRole("button", { name: "Inizia", exact: true }).click();
-  await page.getByRole("button", { name: "Archivio", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "PIVOT" })).toBeVisible();
+  await page.getByRole("button", { name: /Archivio/ }).click();
   await page.getByRole("button", { name: /Career Card E2E/ }).click();
   await expect(page.getByRole("region", { name: "Career Card" })).toContainText("Career Card E2E");
+});
+
+test("a double or triple click in the draft consumes one round", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Inizia", exact: true }).click();
+  await page.getByPlaceholder("Es. Marco Ferrara").fill("Draft Lock");
+  await page.getByRole("button", { name: "Gioca il Draft" }).click();
+  await expect(page.getByText("Round 1 di")).toBeVisible();
+  const card = page.locator(".draft-card").first();
+  await card.click();
+  await card.click({ force: true });
+  await card.click({ force: true });
+  await expect(page.getByText("Round 2 di")).toBeVisible();
+  await expect(page.getByText("Round 3 di")).toHaveCount(0);
 });

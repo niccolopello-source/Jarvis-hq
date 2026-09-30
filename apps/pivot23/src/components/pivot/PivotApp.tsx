@@ -18,6 +18,7 @@ import {
   awardIt,
 } from "@/lib/pivot/data";
 import {
+  acceptForcedPreseasonTrade,
   acceptForcedSummerTrade,
   acceptOffer,
   acceptTrade,
@@ -35,11 +36,10 @@ import {
   freshPlayer,
   hiddenHints,
   idealCurveSeries,
-  isCareerOver,
-  isContractYear,
-  shouldOfferExtraYear,
-  loadArchive,
   isArchivePersisted,
+  isContractYear,
+  loadArchive,
+  offseasonStep,
   pick,
 
 
@@ -283,6 +283,9 @@ export function PivotApp() {
   const [log, setLog] = useState<LogEntry[]>(boot?.log || []);
   const [locked, setLocked] = useState(false);
   const holdTimer = useRef(0);
+  const gestureUntil = useRef(0);
+  const consumedDraftRound = useRef<number | null>(null);
+  const finishedCareerKey = useRef<string | null>(null);
   const simTimer = useRef(0);
   const [archive, setArchive] = useState<ArchiveCareer[]>(() => {
     try {
@@ -379,6 +382,13 @@ export function PivotApp() {
     };
   }, [player, pending, log, screen]);
 
+  function takeGesture() {
+    const now = performance.now();
+    if (now < gestureUntil.current) return false;
+    gestureUntil.current = now + 600;
+    return true;
+  }
+
   function pushLog(e: Omit<LogEntry, "id">) {
     setLog((prev) => [...prev, { ...e, id: nid() }]);
   }
@@ -461,7 +471,9 @@ export function PivotApp() {
   }
 
   function chooseDraft(cardIndex: number) {
-    if (!player) return;
+    if (!player || !takeGesture()) return;
+    if (consumedDraftRound.current === player.round) return;
+    consumedDraftRound.current = player.round;
     const s = structuredClone(player);
     applyDraftCard(s, s.round, cardIndex);
     if (s.round >= allDraftRounds().length) finishDraft(s);
@@ -469,7 +481,7 @@ export function PivotApp() {
   }
 
   function beginCareer() {
-    if (!player) return;
+    if (!player || !takeGesture()) return;
     const s = structuredClone(player);
     s.overall = START_OVERALL;
     s.peakOverall = START_OVERALL;
@@ -485,7 +497,7 @@ export function PivotApp() {
   }
 
   function afterPath(path: "NCAA" | "Europa" | "G-League") {
-    if (!player) return;
+    if (!player || !takeGesture()) return;
     const s = structuredClone(player);
     const beforeTeam = s.overall;
     const landed = withPlayer(s, () => {
@@ -505,7 +517,7 @@ export function PivotApp() {
   }
 
   function afterCall() {
-    if (!player) return;
+    if (!player || !takeGesture()) return;
     const s = structuredClone(player);
     s.season = 1;
     setPlayer(s);
@@ -530,10 +542,10 @@ export function PivotApp() {
     if (shouldOfferTrade(s, n) && n !== 12) {
       const t = buildTradeOffer(s);
       if (shouldForceTrade(s)) {
-        const from = s.team.name;
-        acceptTrade(s, t.team);
+        const dest = t.team;
+        const from = acceptForcedPreseasonTrade(s, dest, n);
         setPlayer(s);
-        setPending({ kind: "trade-notice", team: t.team, from, pitch: t.pitch });
+        setPending({ kind: "trade-notice", team: dest, from, pitch: t.pitch });
         return;
       }
       setPending({ kind: "trade", team: t.team, pitch: t.pitch });
@@ -566,7 +578,7 @@ export function PivotApp() {
   }
 
   function continueAfterRecap(qualified: boolean) {
-    if (!player) return;
+    if (!player || !takeGesture()) return;
     holdThen(HOLD_RECAP_MS, () => continueAfterRecapInner(qualified));
   }
 
@@ -600,7 +612,7 @@ export function PivotApp() {
   }
 
   function pickPlayoff(choiceIndex: number) {
-    if (!player || pending?.kind !== "playoff") return;
+    if (!player || pending?.kind !== "playoff" || !takeGesture()) return;
     const s = structuredClone(player);
     const { round, opponent } = pending;
     const before = s.overall;
@@ -638,19 +650,37 @@ export function PivotApp() {
   }
 
   function goOffseasonOrEnd(s: PlayerState) {
-    if (shouldOfferExtraYear(s)) {
+    const step = offseasonStep(s);
+    if (step === "finish") {
+      finish(s);
+      return;
+    }
+    if (step === "offer") {
       setPlayer(s);
       setPending({ kind: "retire" });
       return;
     }
-    if (isCareerOver(s)) {
-      finish(s);
+    if (step === "play-final") {
+      const next = s.season + 1;
+      queuePreseason(s, next);
+      setPlayer({ ...s, season: next });
       return;
     }
     continueAfterSummer(s);
   }
 
   function continueAfterSummer(s: PlayerState) {
+    const step = offseasonStep(s);
+    if (step === "finish") {
+      finish(s);
+      return;
+    }
+    if (step === "play-final") {
+      const next = s.season + 1;
+      queuePreseason(s, next);
+      setPlayer({ ...s, season: next });
+      return;
+    }
     const row = applyAutoOffseason(s, s.season);
     const feel = withPlayer(s, () => summerFeel(s, row.label));
     pushLog({
@@ -702,7 +732,7 @@ export function PivotApp() {
   }
 
   function pickOffer(offer: MarketOffer) {
-    if (!player) return;
+    if (!player || !takeGesture()) return;
     const s = structuredClone(player);
     const before = s.overall;
     const old = acceptOffer(s, offer);
@@ -731,7 +761,7 @@ export function PivotApp() {
   }
 
   function onTrade(go: boolean) {
-    if (!player || pending?.kind !== "trade") return;
+    if (!player || pending?.kind !== "trade" || !takeGesture()) return;
     const s = structuredClone(player);
     const before = s.overall;
     if (go) {
@@ -768,7 +798,7 @@ export function PivotApp() {
   }
 
   function onForcedTradeAck() {
-    if (!player || pending?.kind !== "trade-notice") return;
+    if (!player || pending?.kind !== "trade-notice" || !takeGesture()) return;
     const s = structuredClone(player);
     pushLog({
       kind: "market",
@@ -783,7 +813,7 @@ export function PivotApp() {
   }
 
   function onStory(opt: Opt) {
-    if (!player) return;
+    if (!player || !takeGesture()) return;
     const s = structuredClone(player);
     const before = s.overall;
     const flavor = withPlayer(s, () => opt.run(s));
@@ -803,7 +833,7 @@ export function PivotApp() {
   }
 
   function onRetire(extra: boolean) {
-    if (!player) return;
+    if (!player || pending?.kind !== "retire" || !takeGesture()) return;
     const s = structuredClone(player);
     recordRetirementChoice(s, extra);
     if (extra) {
@@ -817,6 +847,9 @@ export function PivotApp() {
   }
 
   function finish(s: PlayerState) {
+    const key = `${s.seed}:${s.seasonHistory.length}:${s.age}`;
+    if (finishedCareerKey.current === key) return;
+    finishedCareerKey.current = key;
     const entry = toArchive(s);
     const all = saveArchive(entry);
     setArchive(all);

@@ -100,6 +100,7 @@ export {
   computeOverall,
   displayOverall,
   isCareerOver,
+  offseasonStep,
   overallSpine,
   realizationOf,
   realizedPeak,
@@ -2292,6 +2293,7 @@ function buildFaOffersInner(s: PlayerState): MarketOffer[] {
 }
 
 export function acceptOffer(s: PlayerState, offer: MarketOffer) {
+  return withPlayer(s, () => {
   const old = s.team.name;
   const same = old === offer.team.name;
   s.team = offer.team;
@@ -2326,6 +2328,7 @@ export function acceptOffer(s: PlayerState, offer: MarketOffer) {
   imprint(s, clamp((moneyGap * 0.28 + (fit - 1) * 0.22 + (same ? 0.08 : 0.04)) * ageW, -0.4, 0.5));
   occupyTeamSlot(s);
   return old;
+  });
 }
 
 export function buildTradeOffer(s: PlayerState): { team: Team; pitch: string; bump: number } {
@@ -2369,6 +2372,7 @@ function buildTradeOfferInner(s: PlayerState): { team: Team; pitch: string; bump
 }
 
 export function acceptTrade(s: PlayerState, team: Team) {
+  return withPlayer(s, () => {
   const old = s.team.name;
   s.team = team;
   s.contract = { ...s.contract, teamName: team.name };
@@ -2381,6 +2385,13 @@ export function acceptTrade(s: PlayerState, team: Team) {
   imprint(s, 0.12);
   occupyTeamSlot(s);
   return old;
+  });
+}
+
+export function acceptForcedPreseasonTrade(s: PlayerState, team: Team, season = s.season) {
+  const from = acceptTrade(s, team);
+  s.choiceLog.push({ season, title: "Scambio", pick: `${from} → ${team.name}` });
+  return from;
 }
 
 export function acceptForcedSummerTrade(s: PlayerState, team: Team, season = s.season) {
@@ -2985,6 +2996,9 @@ function normalizeArchiveEntry(value: unknown): ArchiveCareer | null {
   const requiredNumbers = ["savedAt", "version", "seasons", "peak", "titles", "ppg"];
   if (!requiredStrings.every((key) => typeof value[key] === "string")
     || !requiredNumbers.every((key) => isFiniteNumber(value[key]))) return null;
+  if (!Number.isInteger(value.version) || (value.version as number) < 1 || (value.version as number) > SAVE_VERSION) {
+    return null;
+  }
 
   const history = Array.isArray(value.history)
     ? value.history.filter((row) => isRecord(row)

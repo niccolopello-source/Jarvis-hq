@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { acceptForcedSummerTrade, ARCHIVE_KEY, buildTradeOffer, careerEndAge, eventAfterMarket, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, openCareerSim, playCareerSim, recordRetirementChoice, saveArchive, shouldOfferExtraYear, simulateFullCareer, toArchive, withPlayer } from "./engine";
+import { acceptForcedPreseasonTrade, acceptForcedSummerTrade, acceptTrade, allDraftRounds, applyAutoOffseason, applyDraftCard, ARCHIVE_KEY, buildTradeOffer, careerEndAge, eventAfterMarket, finishDraft, freshPlayer, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, offseasonStep, openCareerSim, playCareerSim, recordRetirementChoice, revealDraftLanding, saveArchive, shouldOfferExtraYear, simulateFullCareer, simulateRegularSeason, startProPath, toArchive, withPlayer } from "./engine";
+import { COACH_NAMES, RIVAL_NAMES } from "./data";
+import { pick, rand } from "./rng";
+import { NBA_TEAMS } from "./teams";
 import { fingerprintOf, sha256 } from "./card";
 import { EURO_TITLE_LINES, playoffSeriesFormat, SERIES_WIN_LINES, seriesWinProbability, simulateSeries } from "./league";
 import { clearLive, loadLive, SAVE_KEY, saveLive, buildLiveSave } from "./save";
@@ -130,6 +133,96 @@ test("retirement and forced summer-trade transitions preserve their visible acti
     title: "Scambio estivo",
     pick: `${from} → ${tradeOffer.team.name}`,
   });
+
+  const preseason = structuredClone(playCareerSim({ ...demoCareer, seed: 230024 }));
+  const preFrom = preseason.team.name;
+  const preOffer = withPlayer(preseason, () => buildTradeOffer(preseason));
+  acceptForcedPreseasonTrade(preseason, preOffer.team, 4);
+  assert.deepEqual(preseason.choiceLog.at(-1), {
+    season: 4,
+    title: "Scambio",
+    pick: `${preFrom} → ${preOffer.team.name}`,
+  });
+});
+
+test("the final season is played once and then the career closes", () => {
+  const player = playCareerSim({ ...demoCareer, seed: 73117 });
+  const last = player.seasonHistory.at(-1)!;
+  const at35 = {
+    ...player,
+    age: 35,
+    extraSeason: false,
+    injuryDrag: 0,
+    seasonHistory: [...player.seasonHistory.slice(0, -1), { ...last, age: 35, min: 18 }],
+  };
+  assert.equal(offseasonStep(at35), "offer");
+  const accepted = { ...at35, extraSeason: true };
+  assert.equal(offseasonStep(accepted), "summer");
+  applyAutoOffseason(accepted, accepted.season);
+  assert.equal(accepted.age, 36);
+  assert.equal(offseasonStep(accepted), "play-final");
+  simulateRegularSeason(accepted, accepted.season + 1);
+  assert.equal(accepted.seasonHistory.at(-1)?.age, 36);
+  assert.equal(offseasonStep(accepted), "finish");
+  assert.equal(isCareerOver(accepted), true);
+});
+
+test("the same seed and the same draft picks open the same career", () => {
+  const open = (seed: number) => {
+    const player = freshPlayer("Stesso", "PG", "ITA", 23, "pro", seed);
+    withPlayer(player, () => {
+      player.rivalName = pick(RIVAL_NAMES);
+      player.coachName = pick(COACH_NAMES);
+    });
+    while (player.round < allDraftRounds().length) applyDraftCard(player, player.round, 0);
+    finishDraft(player);
+    const landed = withPlayer(player, () => {
+      startProPath(player, "NCAA");
+      return revealDraftLanding(player);
+    });
+    return {
+      team: player.team.abbr,
+      pick: landed.pick,
+      rival: player.rivalName,
+      coach: player.coachName,
+      overall: player.overall,
+      rng: player.rngState,
+    };
+  };
+  assert.deepEqual(open(884122), open(884122));
+  assert.notDeepEqual(open(884122), open(884123));
+});
+
+test("a market move stays on the career seed even if the fallback RNG was used", () => {
+  const boot = (seed: number) => {
+    const player = freshPlayer("Market", "SF", "USA", 7, "pro", seed);
+    withPlayer(player, () => {
+      player.rivalName = pick(RIVAL_NAMES);
+      player.coachName = pick(COACH_NAMES);
+    });
+    while (player.round < allDraftRounds().length) applyDraftCard(player, player.round, 0);
+    finishDraft(player);
+    withPlayer(player, () => {
+      startProPath(player, "NCAA");
+      revealDraftLanding(player);
+    });
+    return player;
+  };
+  const left = boot(44110);
+  const right = boot(44110);
+  const dest = NBA_TEAMS.find((team) => team.abbr !== left.team.abbr);
+  assert.ok(dest);
+  rand();
+  acceptTrade(left, dest);
+  rand();
+  rand();
+  acceptTrade(right, dest);
+  assert.equal(left.team.abbr, right.team.abbr);
+  assert.equal(left.rngState, right.rngState);
+  assert.deepEqual(
+    left.world?.stars.map((star) => `${star.name}:${star.teamAbbr}:${star.retired}`),
+    right.world?.stars.map((star) => `${star.name}:${star.teamAbbr}:${star.retired}`),
+  );
 });
 
 test("1,000 Pro careers meet the P0-LIFE age distribution without changing the peak window", () => {
@@ -378,6 +471,13 @@ test("archive load skips incomplete rows and omits a corrupted optional card", (
     const migratedCard = loaded.find((entry) => entry.id === "stale-age-card");
     assert.equal(migratedCard?.card?.ageEnd, migratedCard?.history.at(-1)?.age);
     assert.equal(migratedCard?.fingerprint, fingerprintOf(migratedCard!.card!));
+
+    const future = { ...career, id: "future-version", version: 99 };
+    const current = { ...career, id: "current-version" };
+    storage.local.setItem(ARCHIVE_KEY, JSON.stringify([future, current, { id: "broken" }]));
+    const mixed = loadArchive();
+    assert.equal(mixed.some((entry) => entry.id === "future-version"), false);
+    assert.equal(mixed.some((entry) => entry.id === "current-version"), true);
   } finally {
     storage.restore();
   }
@@ -489,13 +589,14 @@ test("valid checksum-free v2 saves migrate and invalid fingerprints are rejected
     assert.equal(loaded.player.seed, player.seed);
 
     clearLive();
-    const stripped = JSON.parse(good) as { c?: string };
+    const stripped = JSON.parse(good) as { c?: string; player: { overall: number } };
     delete stripped.c;
+    stripped.player.overall = 99;
     const missing = JSON.stringify(stripped);
     storage.local.setItem(SAVE_KEY, missing);
     globalThis.sessionStorage.setItem(SAVE_KEY, missing);
-    assert.equal(loadLive()?.player.seed, player.seed);
-    assert.ok(JSON.parse(storage.local.getItem(SAVE_KEY)!).c);
+    assert.equal(loadLive(), null);
+    assert.equal(storage.local.getItem(SAVE_KEY), missing);
 
     clearLive();
     stripped.c = "ffffffffffffffff";
@@ -508,7 +609,7 @@ test("valid checksum-free v2 saves migrate and invalid fingerprints are rejected
   }
 });
 
-test("valid legacy metadata checksums migrate to the full-payload checksum", () => {
+test("a legacy metadata checksum cannot validate a rewritten career", () => {
   const storage = installMemoryStorage();
   try {
     clearLive();
@@ -516,15 +617,15 @@ test("valid legacy metadata checksums migrate to the full-payload checksum", () 
     const payload = buildLiveSave(player, null, [], "career", "career", player.seasonHistory.length);
     const legacy = {
       ...payload,
+      player: { ...payload.player, overall: 99, age: 22 },
       c: sha256(`${player.seed}:${payload.logSeq}:${player.rngState}`).slice(0, 16),
     };
-    storage.local.setItem(SAVE_KEY, JSON.stringify(legacy));
-    globalThis.sessionStorage.setItem(SAVE_KEY, JSON.stringify(legacy));
+    const raw = JSON.stringify(legacy);
+    storage.local.setItem(SAVE_KEY, raw);
+    globalThis.sessionStorage.setItem(SAVE_KEY, raw);
 
-    assert.equal(loadLive()?.player.seed, player.seed);
-    const migrated = JSON.parse(storage.local.getItem(SAVE_KEY)!) as { c?: string };
-    assert.ok(migrated.c);
-    assert.notEqual(migrated.c, legacy.c);
+    assert.equal(loadLive(), null);
+    assert.equal(storage.local.getItem(SAVE_KEY), raw);
   } finally {
     storage.restore();
   }

@@ -60,6 +60,16 @@ export function shouldOfferExtraYear(s: PlayerState) {
   return s.age === MAX_AGE - 1 && !s.extraSeason && careerEndingSignal(s) === null;
 }
 
+/** Cosa può fare l'estate. Il 36 si gioca una volta, poi si chiude. */
+export type OffseasonStep = "finish" | "offer" | "play-final" | "summer";
+
+export function offseasonStep(s: PlayerState): OffseasonStep {
+  if (s.age > MAX_AGE || isCareerOver(s)) return "finish";
+  if (s.age === MAX_AGE && s.seasonHistory.at(-1)?.age !== MAX_AGE) return "play-final";
+  if (shouldOfferExtraYear(s)) return "offer";
+  return "summer";
+}
+
 /** Pesi su 26 / 27 / 28: guardie prima, lunghi dopo. */
 const ROLE_PEAK_W: Record<Role, [number, number, number]> = {
   PG: [0.52, 0.36, 0.12],
