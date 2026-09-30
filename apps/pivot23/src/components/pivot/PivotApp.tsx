@@ -284,6 +284,7 @@ export function PivotApp() {
   const [locked, setLocked] = useState(false);
   const holdTimer = useRef(0);
   const gestureUntil = useRef(0);
+  const gestureToken = useRef("");
   const consumedDraftRound = useRef<number | null>(null);
   const finishedCareerKey = useRef<string | null>(null);
   const simTimer = useRef(0);
@@ -382,9 +383,10 @@ export function PivotApp() {
     };
   }, [player, pending, log, screen]);
 
-  function takeGesture() {
+  function takeGesture(token: string) {
     const now = performance.now();
-    if (now < gestureUntil.current) return false;
+    if (gestureToken.current === token && now < gestureUntil.current) return false;
+    gestureToken.current = token;
     gestureUntil.current = now + 600;
     return true;
   }
@@ -471,7 +473,7 @@ export function PivotApp() {
   }
 
   function chooseDraft(cardIndex: number) {
-    if (!player || !takeGesture()) return;
+    if (!player || !takeGesture("draft")) return;
     if (consumedDraftRound.current === player.round) return;
     consumedDraftRound.current = player.round;
     const s = structuredClone(player);
@@ -481,7 +483,7 @@ export function PivotApp() {
   }
 
   function beginCareer() {
-    if (!player || !takeGesture()) return;
+    if (!player || !takeGesture("begin")) return;
     const s = structuredClone(player);
     s.overall = START_OVERALL;
     s.peakOverall = START_OVERALL;
@@ -497,7 +499,7 @@ export function PivotApp() {
   }
 
   function afterPath(path: "NCAA" | "Europa" | "G-League") {
-    if (!player || !takeGesture()) return;
+    if (!player || !takeGesture("path")) return;
     const s = structuredClone(player);
     const beforeTeam = s.overall;
     const landed = withPlayer(s, () => {
@@ -517,7 +519,7 @@ export function PivotApp() {
   }
 
   function afterCall() {
-    if (!player || !takeGesture()) return;
+    if (!player || !takeGesture("call")) return;
     const s = structuredClone(player);
     s.season = 1;
     setPlayer(s);
@@ -578,7 +580,7 @@ export function PivotApp() {
   }
 
   function continueAfterRecap(qualified: boolean) {
-    if (!player || !takeGesture()) return;
+    if (!player || !takeGesture("recap")) return;
     holdThen(HOLD_RECAP_MS, () => continueAfterRecapInner(qualified));
   }
 
@@ -612,7 +614,7 @@ export function PivotApp() {
   }
 
   function pickPlayoff(choiceIndex: number) {
-    if (!player || pending?.kind !== "playoff" || !takeGesture()) return;
+    if (!player || pending?.kind !== "playoff" || !takeGesture("playoff")) return;
     const s = structuredClone(player);
     const { round, opponent } = pending;
     const before = s.overall;
@@ -732,7 +734,7 @@ export function PivotApp() {
   }
 
   function pickOffer(offer: MarketOffer) {
-    if (!player || !takeGesture()) return;
+    if (!player || !takeGesture("offer")) return;
     const s = structuredClone(player);
     const before = s.overall;
     const old = acceptOffer(s, offer);
@@ -761,7 +763,7 @@ export function PivotApp() {
   }
 
   function onTrade(go: boolean) {
-    if (!player || pending?.kind !== "trade" || !takeGesture()) return;
+    if (!player || pending?.kind !== "trade" || !takeGesture("trade")) return;
     const s = structuredClone(player);
     const before = s.overall;
     if (go) {
@@ -798,7 +800,7 @@ export function PivotApp() {
   }
 
   function onForcedTradeAck() {
-    if (!player || pending?.kind !== "trade-notice" || !takeGesture()) return;
+    if (!player || pending?.kind !== "trade-notice" || !takeGesture("trade-ack")) return;
     const s = structuredClone(player);
     pushLog({
       kind: "market",
@@ -813,7 +815,7 @@ export function PivotApp() {
   }
 
   function onStory(opt: Opt) {
-    if (!player || !takeGesture()) return;
+    if (!player || !takeGesture("story")) return;
     const s = structuredClone(player);
     const before = s.overall;
     const flavor = withPlayer(s, () => opt.run(s));
@@ -833,7 +835,7 @@ export function PivotApp() {
   }
 
   function onRetire(extra: boolean) {
-    if (!player || pending?.kind !== "retire" || !takeGesture()) return;
+    if (!player || pending?.kind !== "retire" || !takeGesture("retire")) return;
     const s = structuredClone(player);
     recordRetirementChoice(s, extra);
     if (extra) {
@@ -1420,8 +1422,10 @@ function PendingBlock(props: {
       : undefined;
     const seed = player.playoff?.seed;
     const oppSeed = oppRow?.seed;
+    const finals = /Final/i.test(label);
     return (
-      <div className="log-card playoff" data-pending>
+      <div className={`log-card playoff${finals ? " finals" : ""}`} data-pending>
+        {finals && <p className="eyebrow">Serie al meglio delle sette</p>}
         <h3 className="text-xl mb-2">{label}</h3>
         {oppRow ? (
           <TeamDossier row={oppRow} />

@@ -35,8 +35,10 @@ test("a player can start a career, finish a season and resume the saved recap", 
   await page.getByRole("button", { name: "Gioca il Draft" }).click();
 
   const ready = page.getByRole("heading", { name: "Il tuo giocatore è pronto" });
-  for (let round = 0; round < 12 && !(await ready.isVisible().catch(() => false)); round += 1) {
+  for (let round = 0; round < 10 && !(await ready.isVisible().catch(() => false)); round += 1) {
+    await expect(page.getByText(`Round ${round + 1} di`)).toBeVisible();
     await page.locator(".draft-card").first().click();
+    await page.waitForTimeout(650);
   }
   await expect(ready).toBeVisible();
   await page.getByRole("button", { name: "Inizia la carriera" }).click();
@@ -58,6 +60,8 @@ test("a player can start a career, finish a season and resume the saved recap", 
     { width: 390, height: 844 },
     { width: 375, height: 667 },
     { width: 393, height: 852 },
+    { width: 430, height: 932 },
+    { width: 1280, height: 800 },
   ]) {
     await page.setViewportSize(viewport);
     await expect(page.getByRole("heading", { name: /Stagione 1 ·/ })).toBeVisible();
