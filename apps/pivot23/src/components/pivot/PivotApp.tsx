@@ -284,6 +284,7 @@ export function PivotApp() {
   const [locked, setLocked] = useState(false);
   const holdTimer = useRef(0);
   const gestureUntil = useRef(0);
+  const gestureToken = useRef("");
   const consumedDraftRound = useRef<number | null>(null);
   const finishedCareerKey = useRef<string | null>(null);
   const simTimer = useRef(0);
@@ -330,6 +331,24 @@ export function PivotApp() {
     sync();
     document.addEventListener("visibilitychange", sync);
     return () => document.removeEventListener("visibilitychange", sync);
+  }, []);
+
+  useEffect(() => {
+    const last = { t: 0, x: 0, y: 0 };
+    const onClick = (event: MouseEvent) => {
+      const now = performance.now();
+      const dist = Math.hypot(event.clientX - last.x, event.clientY - last.y);
+      if (last.t > 0 && now - last.t < 120 && dist < 12) {
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+      }
+      last.t = now;
+      last.x = event.clientX;
+      last.y = event.clientY;
+    };
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
   }, []);
 
   useEffect(() => () => {
@@ -382,9 +401,10 @@ export function PivotApp() {
     };
   }, [player, pending, log, screen]);
 
-  function takeGesture(_token: string) {
+  function takeGesture(token: string) {
     const now = performance.now();
-    if (now < gestureUntil.current) return false;
+    if (gestureToken.current === token && now < gestureUntil.current) return false;
+    gestureToken.current = token;
     gestureUntil.current = now + 600;
     return true;
   }
