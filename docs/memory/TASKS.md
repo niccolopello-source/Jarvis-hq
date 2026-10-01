@@ -27,6 +27,17 @@ Balance, recorded and not retuned: 1777 of 2000 Esordio careers win zero MVP. `I
 
 P0-LIFE stays open. No new retirement rule was added.
 
+## P0-LIFE candidate evidence — `codex/demo-hardening`
+
+This is an unmerged candidate, not closure evidence. The accepted thresholds in P0-LIFE were implemented without changing the gameplay constants. `ageEnd` in a Career Card/summary now means the age on the last recorded season row; after offseason, `PlayerState.age` may instead be the age for the next season. Legacy archive cards with a valid local fingerprint are normalized to the last recorded season age and receive a matching fingerprint.
+
+- Fixed sample: 1,000 Pro careers using seeds `(i + 1) * 1000 + 17`, cycling PG/SG/SF/PF/C and NCAA/Europa/G-League, random draft. Recorded age histogram: 32 → 336, 34 → 50, 35 → 19, 36 → 595. 336/1,000 (33.6%) ended before age 34; 595 recorded an age-36 season. All 1,000 assigned peak ages were 26–28.
+- End signals in that sample: 404 serious-injury signals, 1 minutes-collapse signal, 595 completed age-36 seasons; no career had both signals. Early endings were 404 injury and 1 minutes.
+- Representative fixed-seed sample: 30 Pro careers, seeds 82000 through 110913 in steps of 997. Ages, reason and serious-injury flags were emitted during the implementation pass; results included both early exits and complete age-36 seasons.
+- `pnpm --dir apps/pivot23 test`: 30 passed, 0 failed on the candidate after the `ageEnd` correction.
+- Local E2E was attempted with a fresh configured server but could not launch because Playwright's Chromium headless executable is not installed. `.github/workflows/pivot23.yml` installs Chromium on Ubuntu and runs E2E; CI evidence is still required after PR publication.
+- Performance sample (seeded simulator, after GC): 1 career 144 ms / +1.50 MB heap; 10 careers 1,076 ms / +1.08 MB; 100 careers 9,227 ms / +1.42 MB; 1,000 careers 87,241 ms / +1.51 MB. Zero simulation errors. These synchronous batch timings do not measure browser UI responsiveness.
+
 ## Already done, not these tasks
 
 Codex, on the branch merged in PR #1, hardened save quota behaviour, EuroLeague series shape, a real playoff seed, an error boundary, lint, and a first-season browser smoke. That work is on `main`. It does not close the table above.

@@ -18,6 +18,8 @@ import {
   awardIt,
 } from "@/lib/pivot/data";
 import {
+  acceptForcedPreseasonTrade,
+  acceptForcedSummerTrade,
   acceptOffer,
   acceptTrade,
   allDraftRounds,
@@ -27,16 +29,17 @@ import {
   beginPlayoffs,
   buildFaOffers,
   buildTradeOffer,
+  careerCardOf,
   displayOverall,
   fillTemplate,
   finishDraft,
   freshPlayer,
   hiddenHints,
   idealCurveSeries,
-  isCareerOver,
+  isArchivePersisted,
   isContractYear,
-  shouldOfferExtraYear,
   loadArchive,
+  offseasonStep,
   pick,
 
 
@@ -50,6 +53,7 @@ import {
   qualifiesPlayoffs,
   refreshOverall,
   refuseTrade,
+  recordRetirementChoice,
   resolvePlayoffRound,
   revealDraftLanding,
   saveArchive,
@@ -279,6 +283,10 @@ export function PivotApp() {
   const [log, setLog] = useState<LogEntry[]>(boot?.log || []);
   const [locked, setLocked] = useState(false);
   const holdTimer = useRef(0);
+  const gestureUntil = useRef(0);
+  const gestureToken = useRef("");
+  const consumedDraftRound = useRef<number | null>(null);
+  const finishedCareerKey = useRef<string | null>(null);
   const simTimer = useRef(0);
   const [archive, setArchive] = useState<ArchiveCareer[]>(() => {
     try {
@@ -323,6 +331,24 @@ export function PivotApp() {
     sync();
     document.addEventListener("visibilitychange", sync);
     return () => document.removeEventListener("visibilitychange", sync);
+  }, []);
+
+  useEffect(() => {
+    const last = { t: 0, x: 0, y: 0 };
+    const onClick = (event: MouseEvent) => {
+      const now = performance.now();
+      const dist = Math.hypot(event.clientX - last.x, event.clientY - last.y);
+      if (last.t > 0 && now - last.t < 120 && dist < 12) {
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+      }
+      last.t = now;
+      last.x = event.clientX;
+      last.y = event.clientY;
+    };
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
   }, []);
 
   useEffect(() => () => {
@@ -374,6 +400,14 @@ export function PivotApp() {
       if (idle && w.cancelIdleCallback) w.cancelIdleCallback(idle);
     };
   }, [player, pending, log, screen]);
+
+  function takeGesture(token: string) {
+    const now = performance.now();
+    if (gestureToken.current === token && now < gestureUntil.current) return false;
+    gestureToken.current = token;
+    gestureUntil.current = now + 600;
+    return true;
+  }
 
   function pushLog(e: Omit<LogEntry, "id">) {
     setLog((prev) => [...prev, { ...e, id: nid() }]);
@@ -437,7 +471,8 @@ export function PivotApp() {
           window.setTimeout(pump, 0);
           return;
         }
-        const all = saveArchive(toArchive(job.s));
+        const entry = toArchive(job.s);
+        const all = saveArchive(entry);
         simJob.current = null;
         setArchive(all);
         setPlayer(job.s);
@@ -446,7 +481,7 @@ export function PivotApp() {
         setSimBusy(false);
         setSimShow(false);
         setSimSlow(false);
-        clearLive();
+        if (isArchivePersisted(entry.id)) clearLive();
         setScreen("result");
       } catch {
         cancelSim();
@@ -456,7 +491,9 @@ export function PivotApp() {
   }
 
   function chooseDraft(cardIndex: number) {
-    if (!player) return;
+    if (!player || !takeGesture("draft")) return;
+    if (consumedDraftRound.current === player.round) return;
+    consumedDraftRound.current = player.round;
     const s = structuredClone(player);
     applyDraftCard(s, s.round, cardIndex);
     if (s.round >= allDraftRounds().length) finishDraft(s);
@@ -464,7 +501,7 @@ export function PivotApp() {
   }
 
   function beginCareer() {
-    if (!player) return;
+    if (!player || !takeGesture("begin")) return;
     const s = structuredClone(player);
     s.overall = START_OVERALL;
     s.peakOverall = START_OVERALL;
@@ -480,7 +517,7 @@ export function PivotApp() {
   }
 
   function afterPath(path: "NCAA" | "Europa" | "G-League") {
-    if (!player) return;
+    if (!player || !takeGesture("path")) return;
     const s = structuredClone(player);
     const beforeTeam = s.overall;
     const landed = withPlayer(s, () => {
@@ -500,7 +537,7 @@ export function PivotApp() {
   }
 
   function afterCall() {
-    if (!player) return;
+    if (!player || !takeGesture("call")) return;
     const s = structuredClone(player);
     s.season = 1;
     setPlayer(s);
@@ -525,10 +562,10 @@ export function PivotApp() {
     if (shouldOfferTrade(s, n) && n !== 12) {
       const t = buildTradeOffer(s);
       if (shouldForceTrade(s)) {
-        const from = s.team.name;
-        acceptTrade(s, t.team);
+        const dest = t.team;
+        const from = acceptForcedPreseasonTrade(s, dest, n);
         setPlayer(s);
-        setPending({ kind: "trade-notice", team: t.team, from, pitch: t.pitch });
+        setPending({ kind: "trade-notice", team: dest, from, pitch: t.pitch });
         return;
       }
       setPending({ kind: "trade", team: t.team, pitch: t.pitch });
@@ -561,7 +598,7 @@ export function PivotApp() {
   }
 
   function continueAfterRecap(qualified: boolean) {
-    if (!player) return;
+    if (!player || !takeGesture("recap")) return;
     holdThen(HOLD_RECAP_MS, () => continueAfterRecapInner(qualified));
   }
 
@@ -595,7 +632,7 @@ export function PivotApp() {
   }
 
   function pickPlayoff(choiceIndex: number) {
-    if (!player || pending?.kind !== "playoff") return;
+    if (!player || pending?.kind !== "playoff" || !takeGesture("playoff")) return;
     const s = structuredClone(player);
     const { round, opponent } = pending;
     const before = s.overall;
@@ -633,19 +670,37 @@ export function PivotApp() {
   }
 
   function goOffseasonOrEnd(s: PlayerState) {
-    if (shouldOfferExtraYear(s)) {
+    const step = offseasonStep(s);
+    if (step === "finish") {
+      finish(s);
+      return;
+    }
+    if (step === "offer") {
       setPlayer(s);
       setPending({ kind: "retire" });
       return;
     }
-    if (isCareerOver(s)) {
-      finish(s);
+    if (step === "play-final") {
+      const next = s.season + 1;
+      queuePreseason(s, next);
+      setPlayer({ ...s, season: next });
       return;
     }
     continueAfterSummer(s);
   }
 
   function continueAfterSummer(s: PlayerState) {
+    const step = offseasonStep(s);
+    if (step === "finish") {
+      finish(s);
+      return;
+    }
+    if (step === "play-final") {
+      const next = s.season + 1;
+      queuePreseason(s, next);
+      setPlayer({ ...s, season: next });
+      return;
+    }
     const row = applyAutoOffseason(s, s.season);
     const feel = withPlayer(s, () => summerFeel(s, row.label));
     pushLog({
@@ -669,11 +724,11 @@ export function PivotApp() {
       return;
     }
     if (row.tradeDest) {
-      s.season = s.season + 1;
+      const completedSeason = s.season;
+      s.season = completedSeason + 1;
       if (row.tradeForced) {
-        const from = s.team.name;
         const dest = row.tradeDest;
-        acceptTrade(s, dest);
+        const from = acceptForcedSummerTrade(s, dest, completedSeason);
         setPlayer(s);
         setPending({
           kind: "trade-notice",
@@ -697,7 +752,7 @@ export function PivotApp() {
   }
 
   function pickOffer(offer: MarketOffer) {
-    if (!player) return;
+    if (!player || !takeGesture("offer")) return;
     const s = structuredClone(player);
     const before = s.overall;
     const old = acceptOffer(s, offer);
@@ -726,7 +781,7 @@ export function PivotApp() {
   }
 
   function onTrade(go: boolean) {
-    if (!player || pending?.kind !== "trade") return;
+    if (!player || pending?.kind !== "trade" || !takeGesture("trade")) return;
     const s = structuredClone(player);
     const before = s.overall;
     if (go) {
@@ -763,7 +818,7 @@ export function PivotApp() {
   }
 
   function onForcedTradeAck() {
-    if (!player || pending?.kind !== "trade-notice") return;
+    if (!player || pending?.kind !== "trade-notice" || !takeGesture("trade-ack")) return;
     const s = structuredClone(player);
     pushLog({
       kind: "market",
@@ -778,7 +833,7 @@ export function PivotApp() {
   }
 
   function onStory(opt: Opt) {
-    if (!player) return;
+    if (!player || !takeGesture("story")) return;
     const s = structuredClone(player);
     const before = s.overall;
     const flavor = withPlayer(s, () => opt.run(s));
@@ -798,12 +853,12 @@ export function PivotApp() {
   }
 
   function onRetire(extra: boolean) {
-    if (!player) return;
+    if (!player || pending?.kind !== "retire" || !takeGesture("retire")) return;
     const s = structuredClone(player);
+    recordRetirementChoice(s, extra);
     if (extra) {
       s.extraSeason = true;
       withPlayer(s, () => applyFx(s, { development: 0.4, form: 1, flavor: "Un'altra stagione." }));
-      s.choiceLog.push({ season: s.season, title: "Ritiro", pick: "Un'altra stagione" });
       setPlayer(s);
       continueAfterSummer(s);
       return;
@@ -812,12 +867,15 @@ export function PivotApp() {
   }
 
   function finish(s: PlayerState) {
+    const key = `${s.seed}:${s.seasonHistory.length}:${s.age}`;
+    if (finishedCareerKey.current === key) return;
+    finishedCareerKey.current = key;
     const entry = toArchive(s);
     const all = saveArchive(entry);
     setArchive(all);
     setPlayer(s);
     setPending(null);
-    clearLive();
+    if (isArchivePersisted(entry.id)) clearLive();
     setScreen("result");
   }
 
@@ -1382,8 +1440,10 @@ function PendingBlock(props: {
       : undefined;
     const seed = player.playoff?.seed;
     const oppSeed = oppRow?.seed;
+    const finals = /Final/i.test(label);
     return (
-      <div className="log-card playoff" data-pending>
+      <div className={`log-card playoff${finals ? " finals" : ""}`} data-pending>
+        {finals && <p className="eyebrow">Serie al meglio delle sette</p>}
         <h3 className="text-xl mb-2">{label}</h3>
         {oppRow ? (
           <TeamDossier row={oppRow} />
@@ -2018,6 +2078,12 @@ function ResultView({
         )}
         <p className="feel-line">{comment}</p>
       </div>
+      <CareerCardPanel
+        card={careerCardOf(player)}
+        history={player.seasonHistory}
+        choices={player.choiceLog}
+        careerId={player.careerId}
+      />
       <h4 className="stats-heading">Gli inverni</h4>
       {years.map((r) => (
         <div
@@ -2094,6 +2160,12 @@ function ArchiveView({
           {viewing.difficulty ? ` · ${DIFFICULTIES.find((d) => d.id === viewing.difficulty)?.label ?? ""}` : ""}
         </p>
         <p className="italic text-muted text-[14px] mb-4">{viewing.closing}</p>
+        <CareerCardPanel
+          card={viewing.card}
+          history={viewing.history}
+          choices={viewing.choices}
+          careerId={viewing.careerId}
+        />
         {viewing.history.map((r) => (
           <div key={r.season} className="flex justify-between py-2 border-b border-line text-[13px]">
             <span>
@@ -2121,7 +2193,12 @@ function ArchiveView({
       <h2 className="page-title">Archivio</h2>
       {archive.length === 0 && <p className="text-muted">Nessuna carriera salvata su questo dispositivo.</p>}
       {archive.map((c) => (
-        <button key={c.id} className="choice-btn mb-2" onClick={() => setViewing(c)}>
+        <button
+          key={c.id}
+          className="choice-btn mb-2"
+          data-career-id={c.careerId || undefined}
+          onClick={() => setViewing(c)}
+        >
           <span className="font-display text-[18px]">{c.name}</span>
           <span className="text-[12.5px] text-muted">
             {c.role} · {c.verdict} · {c.seasons} stagioni · picco {displayOverall(c.peak)}
@@ -2131,6 +2208,71 @@ function ArchiveView({
           </span>
         </button>
       ))}
+    </section>
+  );
+}
+
+function CareerCardPanel({
+  card,
+  history,
+  choices,
+  careerId,
+}: {
+  card: ReturnType<typeof careerCardOf> | undefined;
+  history: ArchiveCareer["history"];
+  choices: ArchiveCareer["choices"];
+  careerId?: string;
+}) {
+  if (!card) return null;
+  const draft = choices.find((choice) => choice.title === "Chiamata");
+  const teams = [...new Set(history.map((season) => season.team))];
+  const awards = new Map<string, number>();
+  for (const season of history) {
+    for (const award of season.awards || []) awards.set(award, (awards.get(award) ?? 0) + 1);
+  }
+
+  return (
+    <section
+      className={`result-card ${card.legacyTier}`}
+      data-career-card
+      data-career-id={careerId || undefined}
+      role="region"
+      aria-label="Career Card"
+    >
+      <div className="eyebrow">Career Card · {card.engineVersion}</div>
+      <h3 className="page-title text-chalk">{card.playerName}</h3>
+      <p className="result-name">{card.role} · {card.nationality}</p>
+      <p className="result-span">
+        Età {card.ageStart}–{card.ageEnd} · {card.seasons} stagioni · picco {displayOverall(card.peakOverall)}
+      </p>
+      <div className="result-stats">
+        {[
+          [card.ppg.toFixed(1), "PPG"],
+          [card.rpg.toFixed(1), "RPG"],
+          [card.apg.toFixed(1), "APG"],
+          [card.championships, "Titoli"],
+          [card.allStars, "All-Star"],
+          [card.mvps, "MVP"],
+        ].map(([value, label]) => (
+          <div key={String(label)} className="result-stat">
+            <div className="tv">{value}</div>
+            <div className="tl">{label}</div>
+          </div>
+        ))}
+      </div>
+      <p className="feel-line">Draft: {draft?.pick ?? "dato non disponibile"}</p>
+      <p className="feel-line">Squadre: {teams.length ? teams.join(" → ") : "dato non disponibile"}</p>
+      {awards.size > 0 && (
+        <p className="feel-line">
+          Premi stagionali: {[...awards].map(([name, count]) => `${count}× ${name}`).join(" · ")}
+        </p>
+      )}
+      {card.milestones.length > 0 && (
+        <div className="result-chips" aria-label="Traguardi">
+          {card.milestones.map((milestone) => <span key={milestone} className="result-chip">{milestone}</span>)}
+        </div>
+      )}
+      <p className="result-close">{card.verdict} · Legacy {card.legacyTier}</p>
     </section>
   );
 }

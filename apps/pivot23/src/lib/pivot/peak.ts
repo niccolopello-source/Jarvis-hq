@@ -35,12 +35,39 @@ export function displayOverall(n: number) {
   return clamp(Math.round(Number.isFinite(n) ? n : START_OVERALL), SIM.overall.min, SIM.overall.max);
 }
 
+export function careerEndingSignal(s: PlayerState): "minutes" | "injury" | null {
+  if (s.age < MAX_AGE - 3) return null;
+  if (s.injuryDrag >= 2.5) return "injury";
+  const lastSeason = s.seasonHistory.at(-1);
+  if (lastSeason && lastSeason.min <= 11.5) return "minutes";
+  return null;
+}
+
 export function isCareerOver(s: PlayerState) {
-  return s.age >= MAX_AGE;
+  if (careerEndingSignal(s) !== null || s.age > MAX_AGE) return true;
+  if (s.age < MAX_AGE) return false;
+
+  // Age 36 is the final playable season. Close only after its row is recorded.
+  return s.seasonHistory.at(-1)?.age === MAX_AGE;
+}
+
+/** Ultima età realmente giocata; `age` può già indicare l'anno successivo dopo l'offseason. */
+export function careerEndAge(s: PlayerState) {
+  return s.seasonHistory.at(-1)?.age ?? s.age;
 }
 
 export function shouldOfferExtraYear(s: PlayerState) {
-  return s.age === MAX_AGE - 1 && !s.extraSeason;
+  return s.age === MAX_AGE - 1 && !s.extraSeason && careerEndingSignal(s) === null;
+}
+
+/** Cosa può fare l'estate. Il 36 si gioca una volta, poi si chiude. */
+export type OffseasonStep = "finish" | "offer" | "play-final" | "summer";
+
+export function offseasonStep(s: PlayerState): OffseasonStep {
+  if (s.age > MAX_AGE || isCareerOver(s)) return "finish";
+  if (s.age === MAX_AGE && s.seasonHistory.at(-1)?.age !== MAX_AGE) return "play-final";
+  if (shouldOfferExtraYear(s)) return "offer";
+  return "summer";
 }
 
 /** Pesi su 26 / 27 / 28: guardie prima, lunghi dopo. */
