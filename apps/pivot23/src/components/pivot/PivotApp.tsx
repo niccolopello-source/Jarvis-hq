@@ -284,7 +284,6 @@ export function PivotApp() {
   const [locked, setLocked] = useState(false);
   const holdTimer = useRef(0);
   const gestureUntil = useRef(0);
-  const gestureToken = useRef("");
   const consumedDraftRound = useRef<number | null>(null);
   const finishedCareerKey = useRef<string | null>(null);
   const simTimer = useRef(0);
@@ -383,10 +382,9 @@ export function PivotApp() {
     };
   }, [player, pending, log, screen]);
 
-  function takeGesture(token: string) {
+  function takeGesture(_token: string) {
     const now = performance.now();
-    if (gestureToken.current === token && now < gestureUntil.current) return false;
-    gestureToken.current = token;
+    if (now < gestureUntil.current) return false;
     gestureUntil.current = now + 600;
     return true;
   }
