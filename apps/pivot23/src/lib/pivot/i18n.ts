@@ -3,6 +3,13 @@ import { useSyncExternalStore } from "react";
 
 export type Lang = "it" | "en" | "es";
 
+/** Languages offered in the demo. Spanish stays in the dictionary for a later phase. */
+export const DEMO_LANGS = ["it", "en"] as const;
+
+export function demoLang(stored: string | null | undefined): "it" | "en" {
+  return stored === "en" ? "en" : "it";
+}
+
 const KEY = "pivot-lang";
 
 const DICT = {
@@ -127,8 +134,7 @@ const listeners = new Set<() => void>();
 function readStored(): Lang {
   if (typeof window === "undefined") return "it";
   try {
-    const v = window.localStorage.getItem(KEY);
-    if (v === "en" || v === "es" || v === "it") return v;
+    return demoLang(window.localStorage.getItem(KEY));
   } catch {
     /* lingua di cortesia */
   }
@@ -137,21 +143,17 @@ function readStored(): Lang {
 
 export function initLang() {
   current = readStored();
-  if (typeof document !== "undefined") {
-    document.documentElement.lang = current === "en" ? "en" : current === "es" ? "es" : "it";
-  }
+  if (typeof document !== "undefined") document.documentElement.lang = current;
 }
 
 export function setLang(next: Lang) {
-  current = next;
+  current = demoLang(next);
   try {
-    window.localStorage.setItem(KEY, next);
+    window.localStorage.setItem(KEY, current);
   } catch {
     /* resta in memoria */
   }
-  if (typeof document !== "undefined") {
-    document.documentElement.lang = next === "en" ? "en" : next === "es" ? "es" : "it";
-  }
+  if (typeof document !== "undefined") document.documentElement.lang = current;
   listeners.forEach((fn) => fn());
 }
 

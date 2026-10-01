@@ -2,6 +2,8 @@
 
 These are rules. Where the code on `main` breaks one, the break is a defect, not a new rule.
 
+The section «Broken on the production bundle of `421a4a0`» describes that commit only. `main` is now `89249ef`. Do not apply a retirement change from that section without a failing test on the current tip. P0-LIFE's distribution test is in `engine.test.ts`.
+
 ## Kept on purpose
 
 1. The assigned peak age is 26, 27 or 28. The overall does not rise after that year, and it does not sit on 99 after it.

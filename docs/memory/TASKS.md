@@ -6,7 +6,7 @@ The owner decision D-001 stands: a player who continues must be able to reach 36
 
 | ID | Status | Owner | Support | Objective | Acceptance | Do not |
 |---|---|---|---|---|---|---|
-| P0-LIFE | open | John | James | A career can end before 36 when minutes collapse or a serious injury lands. The offer to continue to 36 remains available when the career is still alive. | On 1,000 Pro careers from `main`, retirement age is not a single value, at least 15% end before 34, and at least some careers still end at 36. Peak ages stay inside 26–28 in this task. | Delete `MAX_AGE` or make 36 unreachable. |
+| P0-LIFE | evidence on `89249ef` | John | James | A career can end before 36 when minutes collapse or a serious injury lands. The offer to continue to 36 remains available when the career is still alive. | The test `1,000 Pro careers meet the P0-LIFE age distribution without changing the peak window` is on `89249ef`. It requires at least 150 of 1,000 Pro careers to end before 34, at least one to end at 36, and every peak inside 26–28. Re-run it on any new commit before calling the task closed again. | Delete `MAX_AGE` or make 36 unreachable. |
 | P0-REPEAT | closed | John | James | An MVP or a title already won reduces the chance of the next one. | Met on `main` `8bd1464`. Evidence is below. The test failed on the code from before the change. | Special-case one difficulty with a hard clamp that the others do not use. |
 | P1-BUST | open | James | John | High potential can miss. | Among Pro careers on `main` with potential at least 85, a measured share peaks at least 8 points under that potential. Record the share. Do not pick the share first and tune to it. | Force a bust rate copied from a chat. |
 | P1-WORLD | open | John | James | Title concentration comes from team state that can change, not from a power number that never moves. | Across 1,000 independent worlds from `main`, no franchise keeps about 15% of titles merely because its power constant says so. | Subtract points from Boston in `teams.ts` and call it done. |
@@ -25,7 +25,7 @@ Closed only after the fix was on `main` and the same test was run there.
 
 Balance, recorded and not retuned: 1777 of 2000 Esordio careers win zero MVP. `INVARIANTS.md` and this table do not set a minimum MVP share. P-002 is still proposed and does not set that floor. Do not change the constants to raise the rate unless the owner asks.
 
-P0-LIFE stays open. No new retirement rule was added.
+P0-LIFE stays a watched invariant. The distribution test passed again on 2026-10-01 in the phase-b run of `engine.test.ts` (36 tests, 0 fail), which includes that 1,000-career case. That run was on the phase-b branch before its commit, starting from `89249ef`. Do not retune retirement from this note.
 
 ## P0-LIFE candidate evidence — `codex/demo-hardening`
 
