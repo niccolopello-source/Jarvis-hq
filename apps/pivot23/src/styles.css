@@ -20,7 +20,7 @@
   --color-silver: #6e6e73;
   --color-gold: #1d1d1f;
   --color-legend: #1d1d1f;
-  --color-accent: #0071e3;
+  --color-accent: #C40018;
   --color-court: #C40018;
   --color-court-soft: #f7e6e8;
   --color-granata: #6C1320;
@@ -52,7 +52,7 @@
     --color-silver: #d2d2d7;
     --color-gold: #f5f5f7;
     --color-legend: #f5f5f7;
-    --color-accent: #0a84ff;
+    --color-accent: #E10600;
     --color-court: #E10600;
     --color-court-soft: #3a1518;
     --color-granata: #A31D2E;
@@ -438,10 +438,10 @@ body,
 .draft-card:active {
   transform: scale(0.96);
 }
-@media (min-width: 720px) {
+@media (min-width: 768px) and (max-width: 1179px) {
   .pivot-app {
-    max-width: 640px;
-    padding-top: 36px;
+    max-width: 700px;
+    padding-top: 40px;
   }
   .leader-row {
     grid-template-columns: repeat(4, 1fr);
@@ -1962,5 +1962,209 @@ img.court-mark-photo {
 @media (prefers-reduced-motion: reduce) {
   .guide-sheet {
     animation: none;
+  }
+}
+
+/* Responsive stage. Side and bottom rails are reserved, empty, and never interactive. */
+.pivot-stage {
+  min-height: 100dvh;
+  background: var(--color-bg);
+}
+.ad-rail,
+.ad-foot {
+  display: none;
+}
+@media (min-width: 1180px) {
+  .pivot-stage {
+    display: grid;
+    grid-template-columns: minmax(72px, 1fr) minmax(0, min(880px, 76vw)) minmax(72px, 1fr);
+    grid-template-rows: minmax(0, 1fr) 72px;
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+  .pivot-stage > .pivot-app {
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    height: 100%;
+    overflow: auto;
+  }
+  .pivot-stage > .pivot-app.career-mode {
+    overflow: hidden;
+    max-height: 100%;
+  }
+  .ad-rail {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 24px 16px 28px;
+    color: color-mix(in oklab, var(--color-muted) 70%, transparent);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border-inline: 1px solid color-mix(in oklab, var(--color-line) 80%, transparent);
+    pointer-events: none;
+    user-select: none;
+  }
+  .ad-rail span {
+    opacity: 0.7;
+  }
+  .ad-foot {
+    display: block;
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--color-line);
+    pointer-events: none;
+  }
+}
+
+.hud-meta,
+.hud-club,
+.hud-line,
+.hud-contract {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.hud-meta,
+.hud-contract {
+  font-size: 11.5px;
+  color: var(--color-muted);
+}
+.hud-club {
+  margin-top: 4px;
+  font-size: 12.5px;
+}
+.hud-meta {
+  flex-wrap: wrap;
+}
+.hud-year {
+  color: var(--color-chalk);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.hud-line {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--color-wood);
+}
+.hud-line span {
+  color: var(--color-muted);
+  font-weight: 400;
+}
+
+.delta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 4px;
+}
+.delta-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--color-court-soft);
+  color: var(--color-court);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  animation: deltaDwell 1.9s var(--ease-out) forwards;
+}
+@keyframes deltaDwell {
+  0% { opacity: 0; transform: translateY(4px); }
+  12% { opacity: 1; transform: none; }
+  74% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.log-card.beat-major {
+  border-color: color-mix(in oklab, var(--color-court) 35%, var(--color-line));
+}
+.log-card.beat-wow,
+.log-card.finale {
+  border-color: color-mix(in oklab, var(--color-court) 55%, var(--color-line));
+  background:
+    radial-gradient(90% 70% at 100% 0%, color-mix(in oklab, var(--color-court) 14%, transparent), transparent 60%),
+    var(--color-panel);
+}
+.log-card.finale h3 {
+  font-size: 28px;
+  letter-spacing: -0.03em;
+}
+.log-card.playoff.finals h3 {
+  font-size: 30px;
+  letter-spacing: -0.04em;
+}
+.log-card.playoff.finals {
+  padding-top: 26px;
+}
+
+.life-timeline {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+.life-node {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 10px;
+  padding: 0 0 12px;
+}
+.life-node i {
+  width: 9px;
+  height: 9px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background: var(--color-court);
+  box-shadow: 0 14px 0 -4px var(--color-line);
+}
+.life-node:last-child i {
+  box-shadow: none;
+}
+.life-node b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+.life-node span {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.finale-sheet {
+  animation: fadeIn 0.45s var(--ease-out);
+}
+.career-collectible {
+  text-align: left;
+  border-color: color-mix(in oklab, var(--color-court) 45%, var(--color-line));
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--color-court) 8%, var(--color-panel)), var(--color-panel) 28%);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-court) 18%, transparent);
+}
+.career-collectible .page-title {
+  font-size: 32px;
+}
+.archive-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .delta-chip,
+  .finale-sheet,
+  .log-card.beat-wow,
+  .log-card.finale {
+    animation: none;
+  }
+  .delta-chip {
+    opacity: 1;
   }
 }
