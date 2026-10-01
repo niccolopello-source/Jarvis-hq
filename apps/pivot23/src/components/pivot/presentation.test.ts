@@ -4,21 +4,46 @@ import { ATTR_LABELS } from "../../lib/pivot/data.ts";
 import {
   DELTA_FADE_MS,
   DELTA_READABLE_MS,
+  UI_SEASON_ORIGIN,
   calendarLabel,
   chipsFromFx,
   chipsFromSnapshot,
+  consequenceSchedule,
+  formatCareerTotal,
+  getSeasonDisplayLabel,
+  isHighStakesPresentation,
 } from "./presentation.ts";
 
-test("season stamp follows the published calendar", () => {
-  assert.equal(calendarLabel(1), "2026–27");
-  assert.equal(calendarLabel(3), "2028–29");
-  assert.equal(calendarLabel(0), "2026–27");
+test("season label starts at the UI origin and advances with the index", () => {
+  assert.equal(UI_SEASON_ORIGIN, 2026);
+  assert.equal(getSeasonDisplayLabel(1), "2026-27");
+  assert.equal(getSeasonDisplayLabel(2), "2027-28");
+  assert.equal(getSeasonDisplayLabel(3), "2028-29");
+  assert.equal(getSeasonDisplayLabel(16), "2041-42");
+  assert.equal(calendarLabel(3), getSeasonDisplayLabel(3));
 });
 
-test("consequence chips stay readable before they fade", () => {
-  assert.ok(DELTA_READABLE_MS >= 1200);
-  assert.ok(DELTA_FADE_MS >= 0);
-  assert.ok(DELTA_READABLE_MS + DELTA_FADE_MS > DELTA_READABLE_MS);
+test("season label boundaries stay on a calendar string", () => {
+  assert.equal(getSeasonDisplayLabel(0), "2026-27");
+  assert.equal(getSeasonDisplayLabel(-4), "2026-27");
+  assert.equal(getSeasonDisplayLabel(Number.NaN), "2026-27");
+  assert.equal(getSeasonDisplayLabel(75), "2100-01");
+});
+
+test("consequence chips stay readable for 1200ms before fade", () => {
+  assert.equal(DELTA_READABLE_MS, 1200);
+  assert.ok(DELTA_FADE_MS > 0);
+  const schedule = consequenceSchedule(0);
+  assert.equal(schedule.fadeStartsAt, 1200);
+  assert.equal(schedule.removeAt, 1200 + DELTA_FADE_MS);
+  assert.ok(schedule.removeAt > schedule.fadeStartsAt);
+});
+
+test("a later consequence schedule does not reuse an earlier removal time", () => {
+  const first = consequenceSchedule(0);
+  const next = consequenceSchedule(first.removeAt);
+  assert.ok(next.fadeStartsAt > first.removeAt);
+  assert.equal(next.fadeStartsAt - next.removeAt, first.fadeStartsAt - first.removeAt);
 });
 
 test("consequence chips show public deltas only", () => {
@@ -49,6 +74,27 @@ test("snapshot chips ignore noise under one point", () => {
   };
   const chips = chipsFromSnapshot(before, after, ATTR_LABELS);
   assert.deepEqual(chips, [`+2 ${ATTR_LABELS.defense}`]);
+});
+
+test("career totals use the active locale thousands separator", () => {
+  assert.equal(formatCareerTotal(999, "en"), "999");
+  assert.equal(formatCareerTotal(999, "it"), "999");
+  assert.equal(formatCareerTotal(999, "es"), "999");
+  assert.equal(formatCareerTotal(1000, "en"), "1,000");
+  assert.equal(formatCareerTotal(1000, "it"), "1.000");
+  assert.equal(formatCareerTotal(1000, "es"), "1.000");
+  assert.equal(formatCareerTotal(25000, "en"), "25,000");
+  assert.equal(formatCareerTotal(25000, "it"), "25.000");
+  assert.equal(formatCareerTotal(25000, "es"), "25.000");
+});
+
+test("gold treatment is limited to Finals and MVP cards", () => {
+  assert.equal(isHighStakesPresentation({ finals: true }), true);
+  assert.equal(isHighStakesPresentation({ title: "Corsa all'MVP" }), true);
+  assert.equal(isHighStakesPresentation({ awards: ["MVP"] }), true);
+  assert.equal(isHighStakesPresentation({ awards: ["FMVP"] }), true);
+  assert.equal(isHighStakesPresentation({ title: "Mercato estivo", awards: ["All-Star"] }), false);
+  assert.equal(isHighStakesPresentation({ finals: false, title: "L'ultimo inverno" }), false);
 });
 
 function blank() {

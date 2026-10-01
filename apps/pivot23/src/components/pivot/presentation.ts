@@ -1,17 +1,62 @@
 import type { AttrKey, Fx, PlayerState } from "../../lib/pivot/types";
+import type { Lang } from "../../lib/pivot/i18n";
 
-/** Readable time before a consequence chip may fade. UI timing only. */
-export const DELTA_READABLE_MS = 1400;
-export const DELTA_FADE_MS = 500;
+/** First simulated season is shown as this calendar year. Display only. */
+export const UI_SEASON_ORIGIN = 2026;
+
+/** Full-opacity time before a consequence chip starts to fade. */
+export const DELTA_READABLE_MS = 1200;
+export const DELTA_FADE_MS = 400;
+
+const LOCALES: Record<Lang, string> = {
+  it: "it-IT",
+  en: "en-US",
+  es: "es-ES",
+};
 
 /**
- * Season stamp for the HUD. Mirrors the published calendar already used
- * when a season row is written (2026 + season − 1). Display only.
+ * Calendar label for a simulated season index.
+ * Index 1 is the opening season. Values below 1 stay on that opening season.
  */
+export function getSeasonDisplayLabel(simulatedSeasonIndex: number): string {
+  const raw = Number.isFinite(simulatedSeasonIndex) ? Math.floor(simulatedSeasonIndex) : 1;
+  const season = Math.max(1, raw);
+  const year = UI_SEASON_ORIGIN + season - 1;
+  const end = String((year + 1) % 100).padStart(2, "0");
+  return `${year}-${end}`;
+}
+
 export function calendarLabel(season: number): string {
-  const n = Math.max(1, Math.floor(season) || 1);
-  const year = 2026 + n - 1;
-  return `${year}–${String((year + 1) % 100).padStart(2, "0")}`;
+  return getSeasonDisplayLabel(season);
+}
+
+export function consequenceSchedule(now = 0) {
+  return {
+    fadeStartsAt: now + DELTA_READABLE_MS,
+    removeAt: now + DELTA_READABLE_MS + DELTA_FADE_MS,
+  };
+}
+
+/** Finals and MVP surfaces only. Not a rarity model. */
+export function isHighStakesPresentation(input: { finals?: boolean; title?: string; awards?: string[] }): boolean {
+  if (input.finals) return true;
+  if (mentionsMvp(input.title ?? "")) return true;
+  return (input.awards ?? []).some((award) => mentionsMvp(award));
+}
+
+function mentionsMvp(value: string) {
+  return value === "MVP" || value === "FMVP" || /\bMVP\b/i.test(value);
+}
+
+export function formatCareerTotal(value: number, lang: Lang): string {
+  const locale = LOCALES[lang] ?? LOCALES.it;
+  const rounded = Math.round(value);
+  const format = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
+  if (format.format(1000) !== "1000") return format.format(rounded);
+  const separator = lang === "en" ? "," : ".";
+  const sign = rounded < 0 ? "-" : "";
+  const digits = String(Math.abs(rounded));
+  return sign + digits.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
 }
 
 function pushChip(chips: string[], delta: number, label: string) {

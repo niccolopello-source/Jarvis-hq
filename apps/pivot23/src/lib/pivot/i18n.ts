@@ -40,6 +40,8 @@ const DICT = {
     yours: "I tuoi premi, quest'anno",
     yearAwards: "Premi di quest'anno",
     lifeAwards: "Premi personali",
+    careerDone: "Carriera conclusa",
+    hofIn: "Nella Hall",
   },
   en: {
     eyebrow: "Career simulator",
@@ -75,6 +77,8 @@ const DICT = {
     yours: "Your awards, this year",
     yearAwards: "This year's awards",
     lifeAwards: "Personal awards",
+    careerDone: "Career Completed",
+    hofIn: "Hall of Fame",
   },
   es: {
     eyebrow: "Simulador de carrera",
@@ -110,6 +114,8 @@ const DICT = {
     yours: "Tus premios, este año",
     yearAwards: "Premios de este año",
     lifeAwards: "Premios personales",
+    careerDone: "Carrera concluida",
+    hofIn: "En el Hall",
   },
 } as const;
 

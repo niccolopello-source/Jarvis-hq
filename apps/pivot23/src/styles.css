@@ -2073,12 +2073,10 @@ img.court-mark-photo {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  animation: deltaDwell 1.9s var(--ease-out) forwards;
+  animation: deltaDwell 1.6s linear forwards;
 }
 @keyframes deltaDwell {
-  0% { opacity: 0; transform: translateY(4px); }
-  12% { opacity: 1; transform: none; }
-  74% { opacity: 1; }
+  0%, 75% { opacity: 1; }
   100% { opacity: 0; }
 }
 
@@ -2102,6 +2100,12 @@ img.court-mark-photo {
 }
 .log-card.playoff.finals {
   padding-top: 26px;
+}
+.log-card.stake-gold {
+  border-color: #E5C158;
+  box-shadow:
+    inset 4px 0 0 #E5C158,
+    0 0 18px color-mix(in oklab, #E5C158 24%, transparent);
 }
 
 .life-timeline {
@@ -2138,6 +2142,24 @@ img.court-mark-photo {
   line-height: 1.35;
 }
 
+.career-complete {
+  margin: 4px 0 8px;
+}
+.career-complete h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 5.2vw, 1.7rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.career-complete p {
+  margin: 4px 0 0;
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
 .finale-sheet {
   animation: fadeIn 0.45s var(--ease-out);
 }
@@ -2163,6 +2185,9 @@ img.court-mark-photo {
   .log-card.beat-wow,
   .log-card.finale {
     animation: none;
+  }
+  .log-card.stake-gold {
+    box-shadow: inset 4px 0 0 #E5C158;
   }
   .delta-chip {
     opacity: 1;

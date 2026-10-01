@@ -3,7 +3,7 @@ import { Component, lazy, memo, Suspense, useEffect, useLayoutEffect, useMemo, u
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
 import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components/pivot/LeaguePanel";
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
-import { calendarLabel, chipsFromFx, chipsFromSnapshot, DELTA_FADE_MS, DELTA_READABLE_MS } from "@/components/pivot/presentation";
+import { chipsFromFx, chipsFromSnapshot, consequenceSchedule, formatCareerTotal, getSeasonDisplayLabel, isHighStakesPresentation } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
 import { pathFeel, playoffNerves, ROLE_ARTICLE, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
@@ -407,6 +407,12 @@ export function PivotApp() {
     };
   }, [player, pending, log, screen]);
 
+  useEffect(() => {
+    if (screen === "career") return;
+    chipTimers.current.forEach((id) => window.clearTimeout(id));
+    chipTimers.current = [];
+  }, [screen]);
+
   function takeGesture(token: string) {
     const now = performance.now();
     if (gestureToken.current === token && now < gestureUntil.current) return false;
@@ -420,6 +426,8 @@ export function PivotApp() {
     setLog((prev) => [...prev, { ...e, id }]);
     if (!chips?.length) return;
     setFxChips((prev) => ({ ...prev, [id]: chips }));
+    const born = performance.now();
+    const schedule = consequenceSchedule(born);
     const timer = window.setTimeout(() => {
       setFxChips((prev) => {
         if (!prev[id]) return prev;
@@ -427,7 +435,7 @@ export function PivotApp() {
         delete next[id];
         return next;
       });
-    }, DELTA_READABLE_MS + DELTA_FADE_MS);
+    }, schedule.removeAt - born);
     chipTimers.current.push(timer);
   }
 
@@ -626,7 +634,7 @@ export function PivotApp() {
     const last = s.seasonHistory[s.seasonHistory.length - 1];
     pushLog({
       kind: "recap",
-      title: last ? `Stagione ${last.season} · ${last.yearLabel}` : "Stagione",
+      title: last ? `Stagione ${last.season} · ${getSeasonDisplayLabel(last.season)}` : "Stagione",
       extraClass: "recap",
       resolved: true,
       row: last,
@@ -1238,7 +1246,7 @@ function CareerView(props: {
                 <FlagMark nation={player.nationality} size={24} />
                 <span>{ROLES[player.role].label}</span>
                 <span className="hud-age">{player.age} anni</span>
-                <span className="hud-year">{calendarLabel(player.season || 1)}</span>
+                <span className="hud-year">{getSeasonDisplayLabel(player.season || 1)}</span>
               </div>
               <div className="hud-club">
                 <TeamCrest team={player.team} size={16} />
@@ -1356,7 +1364,7 @@ const LogBlock = memo(function LogBlock({ e, chips }: { e: LogEntry; chips?: str
   }
   const cls = [
     e.extraClass === "title-win"
-      ? "title-win playoff beat-wow"
+      ? "title-win playoff beat-wow stake-gold"
       : e.extraClass === "market-move"
         ? "market market-move beat-major"
         : e.extraClass === "playoff"
@@ -1462,6 +1470,7 @@ function PendingBlock(props: {
   if (pending.kind === "story") {
     return (
       <Decision
+        cls={isHighStakesPresentation({ title: pending.title }) ? "vignette beat-important stake-gold" : undefined}
         title={pending.title}
         sub={pending.subtitle}
         options={pending.options.map((o) => ({
@@ -1494,7 +1503,7 @@ function PendingBlock(props: {
     const oppSeed = oppRow?.seed;
     const finals = /Final/i.test(label);
     return (
-      <div className={`log-card playoff ${finals ? "finals beat-wow" : "beat-major"}`} data-pending>
+      <div className={`log-card playoff ${finals ? "finals beat-wow stake-gold" : "beat-major"}`} data-pending>
         {finals && <p className="eyebrow">Serie al meglio delle sette</p>}
         <h3 className="text-xl mb-2">{label}</h3>
         {oppRow ? (
@@ -1666,10 +1675,11 @@ function RecapCard({
   onGo: () => void;
 }) {
   const rec = teamRecord(row);
+  const mvpCard = isHighStakesPresentation({ awards: row.awards });
   return (
-    <div className={`log-card recap ${qualified ? "in" : "out"}`}>
+    <div className={`log-card recap ${qualified ? "in" : "out"}${mvpCard ? " stake-gold" : ""}`}>
       <h3 className="text-xl mb-0.5">
-        Stagione {row.season} · {row.yearLabel}
+        Stagione {row.season} · {getSeasonDisplayLabel(row.season)}
       </h3>
       <p className="text-[12px] text-muted mb-2">
         <TeamCrest team={{ abbr: row.teamAbbr, color: row.teamColor, secondary: row.teamSecondary || row.teamColor }} size={16} />
@@ -1752,7 +1762,7 @@ function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
   return (
     <div className="log-card recap">
       <h3 className="text-xl mb-0.5">
-        Stagione {row.season} · {row.yearLabel}
+        Stagione {row.season} · {getSeasonDisplayLabel(row.season)}
       </h3>
       <p className="text-[12px] text-muted mb-2">
         <TeamCrest team={{ abbr: row.teamAbbr, color: row.teamColor, secondary: row.teamSecondary || row.teamColor }} size={16} />
@@ -1804,7 +1814,7 @@ const SeasonSheet = memo(function SeasonSheet({ player }: { player: PlayerState 
               className={`year-chip ${i === idx ? "on" : ""}`}
               onClick={() => setIdx(i)}
             >
-              {h.yearLabel}
+              {getSeasonDisplayLabel(h.season)}
             </button>
           ))}
         </div>
@@ -1816,7 +1826,7 @@ const SeasonSheet = memo(function SeasonSheet({ player }: { player: PlayerState 
           number={player.number}
         />
         <div>
-          <h3 className="font-display text-[22px]">{row.yearLabel}</h3>
+          <h3 className="font-display text-[22px]">{getSeasonDisplayLabel(row.season)}</h3>
           <p className="text-[13px] text-muted">
             {row.team} · {rec.w}-{rec.l}
             {rec.seed ? ` · ${rec.seed}° ${confIt(rec.conf)}` : " · fuori"} · OVR {displayOverall(row.overall)}
@@ -1909,9 +1919,9 @@ const StatsTab = memo(function StatsTab({
     <div className="pt-3 fade-in">
       <div className="grid grid-cols-3 gap-2 mb-3">
         {[
-          [player.careerPoints, "PUNTI"],
-          [player.careerRebounds, "RIMBALZI"],
-          [player.careerAssists, "ASSIST"],
+          [formatCareerTotal(player.careerPoints, lang), "PUNTI"],
+          [formatCareerTotal(player.careerRebounds, lang), "RIMBALZI"],
+          [formatCareerTotal(player.careerAssists, lang), "ASSIST"],
         ].map(([v, l]) => (
           <div key={String(l)} className="bg-panel border border-line rounded p-3 text-center">
             <div className="font-display text-[24px] text-wood">{v}</div>
@@ -1935,7 +1945,7 @@ const StatsTab = memo(function StatsTab({
         <div key={r.season} className="flex justify-between gap-2 py-2 border-b border-line text-[13px]">
           <div>
             <div className="font-display text-[15px] text-chalk">
-              {r.yearLabel} · OVR {displayOverall(r.overall)}
+              {getSeasonDisplayLabel(r.season)} · OVR {displayOverall(r.overall)}
             </div>
             <div className="text-[11.5px] text-muted">
               {r.teamAbbr} · {r.age}a · {teamRecord(r).w}-{teamRecord(r).l}
@@ -2007,7 +2017,7 @@ const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
             <div key={`${m.season}-${m.label}-${i}`} className="life-node">
               <i aria-hidden="true" />
               <div>
-                <b>Stagione {m.season}</b>
+                <b>{getSeasonDisplayLabel(m.season)}</b>
                 <span>{m.label}</span>
               </div>
             </div>
@@ -2098,14 +2108,18 @@ function ResultView({
             ))}
           </div>
         )}
+        <div className="career-complete">
+          <h3>{t("careerDone", lang)}</h3>
+          {hof === "hall" ? <p>{t("hofIn", lang)}</p> : null}
+        </div>
         <div className="result-stats">
           {[
             [p.avgPpg.toFixed(1), "PPG"],
             [p.avgRpg.toFixed(1), "RPG"],
             [p.avgApg.toFixed(1), "APG"],
-            [p.points, "Punti"],
-            [p.titles, "Titoli"],
-            [p.mvp, t("mvp", lang)],
+            [formatCareerTotal(p.points, lang), "Punti"],
+            [formatCareerTotal(p.titles, lang), "Titoli"],
+            [formatCareerTotal(p.mvp, lang), t("mvp", lang)],
           ].map(([val, lab]) => (
             <div key={String(lab)} className="result-stat">
               <div className="tv">{val}</div>
@@ -2132,7 +2146,7 @@ function ResultView({
         </div>
         {p.best && (
           <p className="result-best">
-            Miglior anno: {p.best.yearLabel} · {p.best.teamAbbr} · {p.best.ppg.toFixed(1)} PPG · OVR {displayOverall(p.best.overall)}
+            Miglior anno: {getSeasonDisplayLabel(p.best.season)} · {p.best.teamAbbr} · {p.best.ppg.toFixed(1)} PPG · OVR {displayOverall(p.best.overall)}
             {p.best.awards.length ? ` · ${p.best.awards[0]}` : ""}
           </p>
         )}
@@ -2157,7 +2171,7 @@ function ResultView({
             number={player.number}
           />
           <div>
-            <div className="year-line-title">{r.yearLabel}</div>
+            <div className="year-line-title">{getSeasonDisplayLabel(r.season)}</div>
             <div className="year-line-sub">
               {r.teamAbbr} · {displayOverall(r.overall)} · {r.playoff || "—"}
             </div>
@@ -2229,7 +2243,7 @@ function ArchiveView({
         {viewing.history.map((r) => (
           <div key={r.season} className="flex justify-between py-2 border-b border-line text-[13px]">
             <span>
-              {r.yearLabel} · {r.teamAbbr}
+              {getSeasonDisplayLabel(r.season)} · {r.teamAbbr}
             </span>
             <span className="text-wood font-display">
               {r.ppg.toFixed(1)}/{r.rpg.toFixed(1)}/{r.apg.toFixed(1)}
@@ -2261,8 +2275,8 @@ function ArchiveView({
         >
           <span className="font-display text-[18px]">{c.name}</span>
           <span className="text-[12.5px] text-muted">
-            {c.history[0]?.yearLabel && c.history[c.history.length - 1]?.yearLabel
-              ? `${c.history[0].yearLabel} → ${c.history[c.history.length - 1]!.yearLabel}`
+            {c.history[0]?.season && c.history[c.history.length - 1]?.season
+              ? `${getSeasonDisplayLabel(c.history[0].season)} → ${getSeasonDisplayLabel(c.history[c.history.length - 1]!.season)}`
               : `${c.seasons} stagioni`}
             {" · "}
             {c.role} · {c.verdict}
@@ -2287,6 +2301,7 @@ function CareerCardPanel({
   choices: ArchiveCareer["choices"];
   careerId?: string;
 }) {
+  const lang = useLang();
   if (!card) return null;
   const draft = choices.find((choice) => choice.title === "Chiamata");
   const teams = [...new Set(history.map((season) => season.team))];
@@ -2314,9 +2329,9 @@ function CareerCardPanel({
           [card.ppg.toFixed(1), "PPG"],
           [card.rpg.toFixed(1), "RPG"],
           [card.apg.toFixed(1), "APG"],
-          [card.championships, "Titoli"],
-          [card.allStars, "All-Star"],
-          [card.mvps, "MVP"],
+          [formatCareerTotal(card.championships, lang), "Titoli"],
+          [formatCareerTotal(card.allStars, lang), "All-Star"],
+          [formatCareerTotal(card.mvps, lang), "MVP"],
         ].map(([value, label]) => (
           <div key={String(label)} className="result-stat">
             <div className="tv">{value}</div>
