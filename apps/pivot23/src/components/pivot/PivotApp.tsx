@@ -3,7 +3,7 @@ import { Component, lazy, memo, Suspense, useEffect, useLayoutEffect, useMemo, u
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
 import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components/pivot/LeaguePanel";
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
-import { chipsFromFx, chipsFromSnapshot, consequenceSchedule, formatCareerTotal, getSeasonDisplayLabel, isHighStakesPresentation } from "@/components/pivot/presentation";
+import { chipsFromFx, chipsFromSnapshot, consequenceSchedule, formatCareerTotal, getSeasonDisplayLabel, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
 import { pathFeel, playoffNerves, ROLE_ARTICLE, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
@@ -1501,10 +1501,10 @@ function PendingBlock(props: {
       : undefined;
     const seed = player.playoff?.seed;
     const oppSeed = oppRow?.seed;
-    const finals = /Final/i.test(label);
+    const genuineFinals = isGenuineFinalsRound(label);
     return (
-      <div className={`log-card playoff ${finals ? "finals beat-wow stake-gold" : "beat-major"}`} data-pending>
-        {finals && <p className="eyebrow">Serie al meglio delle sette</p>}
+      <div className={`log-card playoff ${genuineFinals ? "finals beat-wow stake-gold" : "beat-major"}`} data-pending>
+        {label === NBA_FINALS_LABEL && <p className="eyebrow">Serie al meglio delle sette</p>}
         <h3 className="text-xl mb-2">{label}</h3>
         {oppRow ? (
           <TeamDossier row={oppRow} />

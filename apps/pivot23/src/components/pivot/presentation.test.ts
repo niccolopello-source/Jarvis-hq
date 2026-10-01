@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { ATTR_LABELS } from "../../lib/pivot/data.ts";
+import { ATTR_LABELS, EURO_ROUNDS, NBA_ROUNDS } from "../../lib/pivot/data.ts";
 import {
   DELTA_FADE_MS,
   DELTA_READABLE_MS,
+  EUROLEAGUE_FINALS_LABEL,
+  NBA_FINALS_LABEL,
   UI_SEASON_ORIGIN,
   calendarLabel,
   chipsFromFx,
@@ -11,6 +13,7 @@ import {
   consequenceSchedule,
   formatCareerTotal,
   getSeasonDisplayLabel,
+  isGenuineFinalsRound,
   isHighStakesPresentation,
 } from "./presentation.ts";
 
@@ -88,13 +91,25 @@ test("career totals use the active locale thousands separator", () => {
   assert.equal(formatCareerTotal(25000, "es"), "25.000");
 });
 
-test("gold treatment is limited to Finals and MVP cards", () => {
-  assert.equal(isHighStakesPresentation({ finals: true }), true);
+test("gold is only the real championship rounds and MVP cards", () => {
+  assert.deepEqual(NBA_ROUNDS.filter(isGenuineFinalsRound), [NBA_FINALS_LABEL]);
+  assert.deepEqual(EURO_ROUNDS.filter(isGenuineFinalsRound), [EUROLEAGUE_FINALS_LABEL]);
+  assert.equal(NBA_FINALS_LABEL, "Finali NBA");
+  assert.equal(EUROLEAGUE_FINALS_LABEL, "Finale Eurolega");
+  for (const label of [...NBA_ROUNDS, ...EURO_ROUNDS]) {
+    assert.equal(isHighStakesPresentation({ roundLabel: label }), isGenuineFinalsRound(label), label);
+  }
+  assert.equal(isHighStakesPresentation({ roundLabel: "Semifinali Est/Ovest" }), false);
+  assert.equal(isHighStakesPresentation({ roundLabel: "Finali Est/Ovest" }), false);
+  assert.equal(isHighStakesPresentation({ roundLabel: "Quarti di finale" }), false);
+  assert.equal(isHighStakesPresentation({ roundLabel: "Semifinale Final Four" }), false);
+  assert.equal(isHighStakesPresentation({ roundLabel: "Finali NBA" }), true);
+  assert.equal(isHighStakesPresentation({ roundLabel: "Finale Eurolega" }), true);
   assert.equal(isHighStakesPresentation({ title: "Corsa all'MVP" }), true);
   assert.equal(isHighStakesPresentation({ awards: ["MVP"] }), true);
   assert.equal(isHighStakesPresentation({ awards: ["FMVP"] }), true);
   assert.equal(isHighStakesPresentation({ title: "Mercato estivo", awards: ["All-Star"] }), false);
-  assert.equal(isHighStakesPresentation({ finals: false, title: "L'ultimo inverno" }), false);
+  assert.equal(isHighStakesPresentation({ roundLabel: "Primo turno", title: "L'ultimo inverno" }), false);
 });
 
 function blank() {

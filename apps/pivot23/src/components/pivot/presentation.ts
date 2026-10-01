@@ -1,5 +1,6 @@
-import type { AttrKey, Fx, PlayerState } from "../../lib/pivot/types";
+import { EURO_ROUNDS, NBA_ROUNDS } from "../../lib/pivot/data";
 import type { Lang } from "../../lib/pivot/i18n";
+import type { AttrKey, Fx, PlayerState } from "../../lib/pivot/types";
 
 /** First simulated season is shown as this calendar year. Display only. */
 export const UI_SEASON_ORIGIN = 2026;
@@ -37,9 +38,17 @@ export function consequenceSchedule(now = 0) {
   };
 }
 
+/** Championship rounds only. Matched by exact supported round value, not by substring. */
+export const NBA_FINALS_LABEL = NBA_ROUNDS.find((label) => label === "Finali NBA") ?? "";
+export const EUROLEAGUE_FINALS_LABEL = EURO_ROUNDS.find((label) => label === "Finale Eurolega") ?? "";
+
+export function isGenuineFinalsRound(label: string): boolean {
+  return label.length > 0 && (label === NBA_FINALS_LABEL || label === EUROLEAGUE_FINALS_LABEL);
+}
+
 /** Finals and MVP surfaces only. Not a rarity model. */
-export function isHighStakesPresentation(input: { finals?: boolean; title?: string; awards?: string[] }): boolean {
-  if (input.finals) return true;
+export function isHighStakesPresentation(input: { roundLabel?: string; title?: string; awards?: string[] }): boolean {
+  if (input.roundLabel && isGenuineFinalsRound(input.roundLabel)) return true;
   if (mentionsMvp(input.title ?? "")) return true;
   return (input.awards ?? []).some((award) => mentionsMvp(award));
 }
