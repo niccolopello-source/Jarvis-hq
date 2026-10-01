@@ -3,6 +3,7 @@ import { Component, lazy, memo, Suspense, useEffect, useLayoutEffect, useMemo, u
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
 import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components/pivot/LeaguePanel";
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
+import { chipsFromFx, chipsFromSnapshot, consequenceSchedule, formatCareerTotal, getSeasonDisplayLabel, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
 import { pathFeel, playoffNerves, ROLE_ARTICLE, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
@@ -110,6 +111,7 @@ import type {
   SeriesResult,
   StandingRow,
   Team,
+  Fx,
 } from "@/lib/pivot/types";
 
 type Screen = "intro" | "setup" | "draft" | "career" | "result" | "archive";
@@ -125,7 +127,7 @@ type Pending =
   | { kind: "trade-notice"; team: Team; from: string; pitch: string }
   | { kind: "retire" };
 
-type Opt = { label: string; detail: string; run: (s: PlayerState) => string };
+type Opt = { label: string; detail: string; run: (s: PlayerState) => { flavor: string; chips: string[] } };
 
 class CareerGuard extends Component<{ children: ReactNode }, { crashed: boolean; error: Error | null }> {
   state = { crashed: false, error: null as Error | null };
@@ -172,7 +174,7 @@ function nid() {
 }
 
 function optsFromEvent(
-  ev: { id?: string; choices: { label: string; detail: string; fx: (s: PlayerState) => import("@/lib/pivot/types").Fx }[] },
+  ev: { id?: string; choices: { label: string; detail: string; fx: (s: PlayerState) => Fx }[] },
   s: PlayerState,
 ): Opt[] {
   return ev.choices.map((c) => ({
@@ -180,8 +182,9 @@ function optsFromEvent(
     detail: fillTemplate(c.detail, s),
     run: (p) => {
       const fx = c.fx(p);
+      const chips = chipsFromFx(fx, ATTR_LABELS);
       applyFx(p, fx);
-      return fillTemplate(fx.flavor, p);
+      return { flavor: fillTemplate(fx.flavor, p), chips };
     },
   }));
 }
@@ -215,7 +218,7 @@ function hydratePending(raw: SavedPending | Pending | null, s: PlayerState): Pen
         detail: fillTemplate(o.detail, s),
         run: match?.run ?? ((p) => {
           applyFx(p, { flavor: "Si va avanti." });
-          return "La pagina si è persa. Si va avanti.";
+          return { flavor: "La pagina si è persa. Si va avanti.", chips: [] };
         }),
       };
     });
@@ -274,13 +277,15 @@ export function PivotApp() {
           detail: "La stagione riprende da qui.",
           run: (p) => {
             applyFx(p, { flavor: "Si va avanti." });
-            return "Si va avanti.";
+            return { flavor: "Si va avanti.", chips: [] };
           },
         },
       ],
     };
   });
   const [log, setLog] = useState<LogEntry[]>(boot?.log || []);
+  const [fxChips, setFxChips] = useState<Record<string, string[]>>({});
+  const chipTimers = useRef<number[]>([]);
   const [locked, setLocked] = useState(false);
   const holdTimer = useRef(0);
   const gestureUntil = useRef(0);
@@ -354,6 +359,7 @@ export function PivotApp() {
   useEffect(() => () => {
     if (holdTimer.current) window.clearTimeout(holdTimer.current);
     if (simTimer.current) window.clearTimeout(simTimer.current);
+    chipTimers.current.forEach((id) => window.clearTimeout(id));
   }, []);
 
   useEffect(() => {
@@ -401,6 +407,12 @@ export function PivotApp() {
     };
   }, [player, pending, log, screen]);
 
+  useEffect(() => {
+    if (screen === "career") return;
+    chipTimers.current.forEach((id) => window.clearTimeout(id));
+    chipTimers.current = [];
+  }, [screen]);
+
   function takeGesture(token: string) {
     const now = performance.now();
     if (gestureToken.current === token && now < gestureUntil.current) return false;
@@ -409,8 +421,22 @@ export function PivotApp() {
     return true;
   }
 
-  function pushLog(e: Omit<LogEntry, "id">) {
-    setLog((prev) => [...prev, { ...e, id: nid() }]);
+  function pushLog(e: Omit<LogEntry, "id">, chips?: string[]) {
+    const id = nid();
+    setLog((prev) => [...prev, { ...e, id }]);
+    if (!chips?.length) return;
+    setFxChips((prev) => ({ ...prev, [id]: chips }));
+    const born = performance.now();
+    const schedule = consequenceSchedule(born);
+    const timer = window.setTimeout(() => {
+      setFxChips((prev) => {
+        if (!prev[id]) return prev;
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
+    }, schedule.removeAt - born);
+    chipTimers.current.push(timer);
   }
 
   function startDraft() {
@@ -608,7 +634,7 @@ export function PivotApp() {
     const last = s.seasonHistory[s.seasonHistory.length - 1];
     pushLog({
       kind: "recap",
-      title: last ? `Stagione ${last.season} · ${last.yearLabel}` : "Stagione",
+      title: last ? `Stagione ${last.season} · ${getSeasonDisplayLabel(last.season)}` : "Stagione",
       extraClass: "recap",
       resolved: true,
       row: last,
@@ -636,8 +662,14 @@ export function PivotApp() {
     const s = structuredClone(player);
     const { round, opponent } = pending;
     const before = s.overall;
+    const beforeAttrs = {
+      attrs: { ...s.attrs },
+      morale: s.morale,
+      overall: s.overall,
+    };
     const choice = playoffChoicesFor(s, round)[choiceIndex];
     const res = withPlayer(s, () => resolvePlayoffRound(s, s.season, round, choiceIndex, opponent));
+    const chips = chipsFromSnapshot(beforeAttrs, s, ATTR_LABELS);
     s.choiceLog.push({
       season: s.season,
       title: playoffRounds(s)[round] || "Playoff",
@@ -655,7 +687,7 @@ export function PivotApp() {
       ovrBefore: before,
       ovrAfter: s.overall,
       series: res.series,
-    });
+    }, chips);
     if (res.champion) {
       setPending(null);
       holdThen(HOLD_FINALS_MS, () => goOffseasonOrEnd(s));
@@ -836,18 +868,18 @@ export function PivotApp() {
     if (!player || !takeGesture("story")) return;
     const s = structuredClone(player);
     const before = s.overall;
-    const flavor = withPlayer(s, () => opt.run(s));
+    const outcome = withPlayer(s, () => opt.run(s));
     s.choiceLog.push({ season: s.season, title: pending?.kind === "story" ? pending.title : "Scelta", pick: opt.label });
     setPlayer(s);
     pushLog({
       kind: "decision",
       title: pending && pending.kind === "story" ? pending.title : "Decisione",
       chosen: opt.label,
-      result: withOvr(flavor, before, s.overall),
+      result: withOvr(outcome.flavor, before, s.overall),
       resolved: true,
       ovrBefore: before,
       ovrAfter: s.overall,
-    });
+    }, outcome.chips);
     const snapshot = s;
     holdThen(HOLD_TITLE_MS, () => runSeason(snapshot));
   }
@@ -891,7 +923,9 @@ export function PivotApp() {
   }, [player]);
 
   return (
-    <div className={screen === "career" ? "pivot-app career-mode" : "pivot-app"}>
+    <div className="pivot-stage">
+      <aside className="ad-rail" aria-hidden="true"><span>Riservato</span></aside>
+      <div className={screen === "career" ? "pivot-app career-mode" : "pivot-app"}>
       {screen === "intro" && (
         <section className="intro-hero home-screen">
           <CourtMark number={23} size={132} brand />
@@ -1034,6 +1068,7 @@ export function PivotApp() {
           tab={tab}
           setTab={setTab}
           log={log}
+          chips={fxChips}
           pending={pending}
           locked={locked}
           chartData={chartData}
@@ -1063,6 +1098,9 @@ export function PivotApp() {
         />
       )}
       <MiniGuide open={guideOpen} onClose={() => setGuideOpen(false)} />
+      </div>
+      <aside className="ad-rail" aria-hidden="true"><span>Riservato</span></aside>
+      <div className="ad-foot" aria-hidden="true" />
     </div>
   );
 }
@@ -1164,6 +1202,7 @@ function CareerView(props: {
   tab: Tab;
   setTab: (t: Tab) => void;
   log: LogEntry[];
+  chips: Record<string, string[]>;
   pending: Pending | null;
   locked: boolean;
   chartData: { age: number; overall?: number; curva: number }[];
@@ -1203,18 +1242,29 @@ function CareerView(props: {
             <TeamMark team={player.team} size={52} number={player.number} />
             <div className="min-w-0">
               <div className="font-display text-[22px] leading-tight truncate">{player.name}</div>
-              <div className="text-[11.5px] text-muted flex items-center gap-1.5">
+              <div className="hud-meta">
                 <FlagMark nation={player.nationality} size={24} />
-                {ROLES[player.role].label} · {player.age} anni
-                {player.draftPick ? ` · ${player.draftPick}ª scelta` : ""}
+                <span>{ROLES[player.role].label}</span>
+                <span className="hud-age">{player.age} anni</span>
+                <span className="hud-year">{getSeasonDisplayLabel(player.season || 1)}</span>
               </div>
-              <div className="text-[12px] mt-1 flex items-center">
+              <div className="hud-club">
                 <TeamCrest team={player.team} size={16} />
-                <span className="ml-1.5">
+                <span>
                   {player.team.name} · {player.league === "EuroLega" ? "Eurolega" : "NBA"}
                 </span>
               </div>
-              <div className="text-[11px] text-muted mt-0.5">
+              {last ? (
+                <div className="hud-line tabular">
+                  {last.ppg.toFixed(1)}
+                  <span>/</span>
+                  {last.rpg.toFixed(1)}
+                  <span>/</span>
+                  {last.apg.toFixed(1)}
+                  <span>ultima stagione</span>
+                </div>
+              ) : null}
+              <div className="hud-contract">
                 {player.contract.yearsRemaining} {player.contract.yearsRemaining === 1 ? "anno" : "anni"} × ${player.contract.annualM}M
                 {last ? (() => {
                   const rec = teamRecord(last);
@@ -1269,7 +1319,7 @@ function CareerView(props: {
               </button>
             )}
             {logShown.map((e) => (
-              <LogBlock key={e.id} e={e} />
+              <LogBlock key={e.id} e={e} chips={props.chips[e.id]} />
             ))}
             {pending && (
               <div data-pending className={props.locked ? "pending-beat is-held" : "pending-beat"}>
@@ -1301,7 +1351,7 @@ function CareerView(props: {
   );
 }
 
-const LogBlock = memo(function LogBlock({ e }: { e: LogEntry }) {
+const LogBlock = memo(function LogBlock({ e, chips }: { e: LogEntry; chips?: string[] }) {
   if (e.kind === "narrative") {
     return (
       <div className="mb-4">
@@ -1312,26 +1362,36 @@ const LogBlock = memo(function LogBlock({ e }: { e: LogEntry }) {
   if (e.kind === "recap" && e.row) {
     return <RecapSummary row={e.row} result={e.result} />;
   }
-  const cls =
+  const cls = [
     e.extraClass === "title-win"
-      ? "title-win playoff"
+      ? "title-win playoff beat-wow stake-gold"
       : e.extraClass === "market-move"
-        ? "market market-move"
+        ? "market market-move beat-major"
         : e.extraClass === "playoff"
-          ? "playoff"
+          ? "playoff beat-major"
           : e.extraClass === "offseason"
             ? "offseason"
             : e.extraClass === "market"
-              ? "market"
+              ? "market beat-major"
               : e.kind === "recap"
                 ? "recap"
-                : "";
+                : e.kind === "decision"
+                  ? "beat-important"
+                  : "",
+  ].join(" ");
   return (
     <div className={`log-card ${cls}`}>
       {e.extraClass === "title-win" && <p className="title-kicker">Finale · Campione</p>}
       {e.title && <h3 className="text-xl mb-1">{e.title}</h3>}
       {e.body && <p className="text-[13.5px] text-muted mb-2">{e.body}</p>}
       {e.chosen && <p className="text-[13px] text-chalk">Scelta: {e.chosen}</p>}
+      {chips && chips.length > 0 && (
+        <p className="delta-row" aria-live="polite">
+          {chips.map((chip) => (
+            <span key={chip} className="delta-chip">{chip}</span>
+          ))}
+        </p>
+      )}
       {e.series && <SeriesStrip series={e.series} />}
       {e.result && (
         <p className={e.extraClass === "title-win" ? "focus-line mt-2" : "text-[13.5px] text-wood italic mt-2"}>
@@ -1390,7 +1450,7 @@ function PendingBlock(props: {
   }
   if (pending.kind === "call") {
     return (
-      <div className="log-card" data-pending>
+      <div className="log-card beat-important" data-pending>
         <p className="text-[13px] text-wood mb-1">La chiamata</p>
         <h3 className="text-xl mb-2">{pending.pick}ª scelta</h3>
         <div className="flex items-center gap-3 mb-3">
@@ -1410,6 +1470,7 @@ function PendingBlock(props: {
   if (pending.kind === "story") {
     return (
       <Decision
+        cls={isHighStakesPresentation({ title: pending.title }) ? "vignette beat-important stake-gold" : undefined}
         title={pending.title}
         sub={pending.subtitle}
         options={pending.options.map((o) => ({
@@ -1440,10 +1501,10 @@ function PendingBlock(props: {
       : undefined;
     const seed = player.playoff?.seed;
     const oppSeed = oppRow?.seed;
-    const finals = /Final/i.test(label);
+    const genuineFinals = isGenuineFinalsRound(label);
     return (
-      <div className={`log-card playoff${finals ? " finals" : ""}`} data-pending>
-        {finals && <p className="eyebrow">Serie al meglio delle sette</p>}
+      <div className={`log-card playoff ${genuineFinals ? "finals beat-wow stake-gold" : "beat-major"}`} data-pending>
+        {label === NBA_FINALS_LABEL && <p className="eyebrow">Serie al meglio delle sette</p>}
         <h3 className="text-xl mb-2">{label}</h3>
         {oppRow ? (
           <TeamDossier row={oppRow} />
@@ -1473,7 +1534,7 @@ function PendingBlock(props: {
   }
   if (pending.kind === "fa") {
     return (
-      <div className="log-card market">
+      <div className="log-card market beat-major">
         <h3 className="text-[20px] mb-1">Mercato estivo</h3>
         <p className="text-[13.5px] text-muted mb-3">
           {pending.desk}
@@ -1509,7 +1570,7 @@ function PendingBlock(props: {
     const from = player.team;
     const to = pending.team;
     return (
-      <div className="log-card market" data-pending>
+      <div className="log-card market beat-major" data-pending>
         <p className="title-kicker">Mercato</p>
         <h3 className="text-[20px] mb-2">Voci di scambio</h3>
         <div className="transfer-strip" aria-hidden>
@@ -1534,7 +1595,7 @@ function PendingBlock(props: {
   if (pending.kind === "trade-notice") {
     const from = clubByName(pending.from);
     return (
-      <div className="log-card market market-move" data-pending>
+      <div className="log-card market market-move beat-major" data-pending>
         <p className="title-kicker">Mercato</p>
         <h3 className="text-xl mb-2">Scambio chiuso</h3>
         <div className="transfer-strip">
@@ -1552,6 +1613,7 @@ function PendingBlock(props: {
   if (pending.kind === "retire") {
     return (
       <Decision
+        cls="beat-wow finale"
         title="L'ultimo inverno"
         sub="Hai chiuso i 35. Puoi scendere a 36, o lasciare il parquet qui."
         options={[
@@ -1584,7 +1646,7 @@ function Decision({
   options: { label: string; detail: string; run: () => void }[];
 }) {
   return (
-    <div className={`log-card ${cls || "vignette"}`}>
+    <div className={`log-card ${cls || "vignette beat-important"}`}>
       <h3 className="text-[20px] mb-1">{title}</h3>
       <p className="feel-line">{sub}</p>
       <div className="flex flex-col gap-2">
@@ -1613,10 +1675,11 @@ function RecapCard({
   onGo: () => void;
 }) {
   const rec = teamRecord(row);
+  const mvpCard = isHighStakesPresentation({ awards: row.awards });
   return (
-    <div className={`log-card recap ${qualified ? "in" : "out"}`}>
+    <div className={`log-card recap ${qualified ? "in" : "out"}${mvpCard ? " stake-gold" : ""}`}>
       <h3 className="text-xl mb-0.5">
-        Stagione {row.season} · {row.yearLabel}
+        Stagione {row.season} · {getSeasonDisplayLabel(row.season)}
       </h3>
       <p className="text-[12px] text-muted mb-2">
         <TeamCrest team={{ abbr: row.teamAbbr, color: row.teamColor, secondary: row.teamSecondary || row.teamColor }} size={16} />
@@ -1699,7 +1762,7 @@ function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
   return (
     <div className="log-card recap">
       <h3 className="text-xl mb-0.5">
-        Stagione {row.season} · {row.yearLabel}
+        Stagione {row.season} · {getSeasonDisplayLabel(row.season)}
       </h3>
       <p className="text-[12px] text-muted mb-2">
         <TeamCrest team={{ abbr: row.teamAbbr, color: row.teamColor, secondary: row.teamSecondary || row.teamColor }} size={16} />
@@ -1751,7 +1814,7 @@ const SeasonSheet = memo(function SeasonSheet({ player }: { player: PlayerState 
               className={`year-chip ${i === idx ? "on" : ""}`}
               onClick={() => setIdx(i)}
             >
-              {h.yearLabel}
+              {getSeasonDisplayLabel(h.season)}
             </button>
           ))}
         </div>
@@ -1763,7 +1826,7 @@ const SeasonSheet = memo(function SeasonSheet({ player }: { player: PlayerState 
           number={player.number}
         />
         <div>
-          <h3 className="font-display text-[22px]">{row.yearLabel}</h3>
+          <h3 className="font-display text-[22px]">{getSeasonDisplayLabel(row.season)}</h3>
           <p className="text-[13px] text-muted">
             {row.team} · {rec.w}-{rec.l}
             {rec.seed ? ` · ${rec.seed}° ${confIt(rec.conf)}` : " · fuori"} · OVR {displayOverall(row.overall)}
@@ -1856,9 +1919,9 @@ const StatsTab = memo(function StatsTab({
     <div className="pt-3 fade-in">
       <div className="grid grid-cols-3 gap-2 mb-3">
         {[
-          [player.careerPoints, "PUNTI"],
-          [player.careerRebounds, "RIMBALZI"],
-          [player.careerAssists, "ASSIST"],
+          [formatCareerTotal(player.careerPoints, lang), "PUNTI"],
+          [formatCareerTotal(player.careerRebounds, lang), "RIMBALZI"],
+          [formatCareerTotal(player.careerAssists, lang), "ASSIST"],
         ].map(([v, l]) => (
           <div key={String(l)} className="bg-panel border border-line rounded p-3 text-center">
             <div className="font-display text-[24px] text-wood">{v}</div>
@@ -1882,7 +1945,7 @@ const StatsTab = memo(function StatsTab({
         <div key={r.season} className="flex justify-between gap-2 py-2 border-b border-line text-[13px]">
           <div>
             <div className="font-display text-[15px] text-chalk">
-              {r.yearLabel} · OVR {displayOverall(r.overall)}
+              {getSeasonDisplayLabel(r.season)} · OVR {displayOverall(r.overall)}
             </div>
             <div className="text-[11.5px] text-muted">
               {r.teamAbbr} · {r.age}a · {teamRecord(r).w}-{teamRecord(r).l}
@@ -1948,12 +2011,19 @@ const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
       ))}
       <h4 className="font-display text-[19px] mt-4 mb-2">Traguardi</h4>
       {player.milestones.length === 0 && <p className="text-muted italic text-[13px]">Ancora niente da appendere.</p>}
-      {player.milestones.map((m, i) => (
-        <div key={i} className="flex gap-2 py-1.5 text-[13px] border-b border-line">
-          <span className="text-wood font-display min-w-[36px]">S.{m.season}</span>
-          <span>{m.label}</span>
+      {player.milestones.length > 0 && (
+        <div className="life-timeline">
+          {player.milestones.map((m, i) => (
+            <div key={`${m.season}-${m.label}-${i}`} className="life-node">
+              <i aria-hidden="true" />
+              <div>
+                <b>{getSeasonDisplayLabel(m.season)}</b>
+                <span>{m.label}</span>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
       <h4 className="font-display text-[19px] mt-4 mb-2">Attributi visibili</h4>
       <AttrBars attrs={player.attrs} />
     </div>
@@ -2008,7 +2078,7 @@ function ResultView({
   }, [player.seasonHistory]);
   const years = fullYears ? player.seasonHistory : player.seasonHistory.slice(-8);
   return (
-    <section className="result-view">
+    <section className="result-view finale-sheet">
       <div className={`result-card ${v.card}`}>
         <CourtMark number={23} size={72} brand />
         {jerseys.length > 0 ? (
@@ -2038,14 +2108,18 @@ function ResultView({
             ))}
           </div>
         )}
+        <div className="career-complete">
+          <h3>{t("careerDone", lang)}</h3>
+          {hof === "hall" ? <p>{t("hofIn", lang)}</p> : null}
+        </div>
         <div className="result-stats">
           {[
             [p.avgPpg.toFixed(1), "PPG"],
             [p.avgRpg.toFixed(1), "RPG"],
             [p.avgApg.toFixed(1), "APG"],
-            [p.points, "Punti"],
-            [p.titles, "Titoli"],
-            [p.mvp, t("mvp", lang)],
+            [formatCareerTotal(p.points, lang), "Punti"],
+            [formatCareerTotal(p.titles, lang), "Titoli"],
+            [formatCareerTotal(p.mvp, lang), t("mvp", lang)],
           ].map(([val, lab]) => (
             <div key={String(lab)} className="result-stat">
               <div className="tv">{val}</div>
@@ -2072,7 +2146,7 @@ function ResultView({
         </div>
         {p.best && (
           <p className="result-best">
-            Miglior anno: {p.best.yearLabel} · {p.best.teamAbbr} · {p.best.ppg.toFixed(1)} PPG · OVR {displayOverall(p.best.overall)}
+            Miglior anno: {getSeasonDisplayLabel(p.best.season)} · {p.best.teamAbbr} · {p.best.ppg.toFixed(1)} PPG · OVR {displayOverall(p.best.overall)}
             {p.best.awards.length ? ` · ${p.best.awards[0]}` : ""}
           </p>
         )}
@@ -2097,7 +2171,7 @@ function ResultView({
             number={player.number}
           />
           <div>
-            <div className="year-line-title">{r.yearLabel}</div>
+            <div className="year-line-title">{getSeasonDisplayLabel(r.season)}</div>
             <div className="year-line-sub">
               {r.teamAbbr} · {displayOverall(r.overall)} · {r.playoff || "—"}
             </div>
@@ -2169,7 +2243,7 @@ function ArchiveView({
         {viewing.history.map((r) => (
           <div key={r.season} className="flex justify-between py-2 border-b border-line text-[13px]">
             <span>
-              {r.yearLabel} · {r.teamAbbr}
+              {getSeasonDisplayLabel(r.season)} · {r.teamAbbr}
             </span>
             <span className="text-wood font-display">
               {r.ppg.toFixed(1)}/{r.rpg.toFixed(1)}/{r.apg.toFixed(1)}
@@ -2195,14 +2269,18 @@ function ArchiveView({
       {archive.map((c) => (
         <button
           key={c.id}
-          className="choice-btn mb-2"
+          className="choice-btn archive-card mb-2"
           data-career-id={c.careerId || undefined}
           onClick={() => setViewing(c)}
         >
           <span className="font-display text-[18px]">{c.name}</span>
           <span className="text-[12.5px] text-muted">
-            {c.role} · {c.verdict} · {c.seasons} stagioni · picco {displayOverall(c.peak)}
-            {c.apexAge ? ` a ${c.apexAge}` : ""}
+            {c.history[0]?.season && c.history[c.history.length - 1]?.season
+              ? `${getSeasonDisplayLabel(c.history[0].season)} → ${getSeasonDisplayLabel(c.history[c.history.length - 1]!.season)}`
+              : `${c.seasons} stagioni`}
+            {" · "}
+            {c.role} · {c.verdict}
+            {c.titles ? ` · ${c.titles} ${c.titles === 1 ? "titolo" : "titoli"}` : ""}
             {c.difficulty ? ` · ${DIFFICULTIES.find((d) => d.id === c.difficulty)?.label}` : ""}
             {c.simulated ? " · sim" : ""}
           </span>
@@ -2223,6 +2301,7 @@ function CareerCardPanel({
   choices: ArchiveCareer["choices"];
   careerId?: string;
 }) {
+  const lang = useLang();
   if (!card) return null;
   const draft = choices.find((choice) => choice.title === "Chiamata");
   const teams = [...new Set(history.map((season) => season.team))];
@@ -2233,7 +2312,7 @@ function CareerCardPanel({
 
   return (
     <section
-      className={`result-card ${card.legacyTier}`}
+      className={`result-card career-collectible ${card.legacyTier}`}
       data-career-card
       data-career-id={careerId || undefined}
       role="region"
@@ -2250,9 +2329,9 @@ function CareerCardPanel({
           [card.ppg.toFixed(1), "PPG"],
           [card.rpg.toFixed(1), "RPG"],
           [card.apg.toFixed(1), "APG"],
-          [card.championships, "Titoli"],
-          [card.allStars, "All-Star"],
-          [card.mvps, "MVP"],
+          [formatCareerTotal(card.championships, lang), "Titoli"],
+          [formatCareerTotal(card.allStars, lang), "All-Star"],
+          [formatCareerTotal(card.mvps, lang), "MVP"],
         ].map(([value, label]) => (
           <div key={String(label)} className="result-stat">
             <div className="tv">{value}</div>
