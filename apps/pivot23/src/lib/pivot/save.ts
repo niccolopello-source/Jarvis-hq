@@ -30,6 +30,16 @@ function payloadChecksum(payload: object): string {
   return sha256(JSON.stringify(payload)).slice(0, 16);
 }
 
+let careerIdFallback = 0;
+
+/** Storage identity of one career. Never the simulation seed. */
+export function newCareerId(): string {
+  const uuid = globalThis.crypto?.randomUUID?.();
+  if (uuid) return uuid;
+  careerIdFallback += 1;
+  return `career-${Date.now()}-${careerIdFallback}`;
+}
+
 export type SwipePersist = {
   tab: CareerTab;
   dir: "next" | "prev";
@@ -512,6 +522,7 @@ function isLiveSave(value: unknown): value is LiveSave {
   if (!numericFields.every((key) => finite(state[key]))) return false;
   if (state.rngState !== undefined && !finite(state.rngState)) return false;
   if (state.draftEdge !== undefined && !finite(state.draftEdge)) return false;
+  if (state.careerId !== undefined && (typeof state.careerId !== "string" || state.careerId.length === 0)) return false;
   if (!["name", "nationality", "originPath", "rivalName", "coachName", "lastOffseasonId", "engineVersion"]
     .every((key) => typeof state[key] === "string")) return false;
   if (!["PG", "SG", "SF", "PF", "C"].includes(String(state.role))) return false;
@@ -566,6 +577,9 @@ function isLiveSave(value: unknown): value is LiveSave {
 }
 
 function revive(parsed: LiveSave): LiveSave {
+  if (typeof parsed.player.careerId !== "string" || parsed.player.careerId.length === 0) {
+    parsed.player.careerId = newCareerId();
+  }
   if (typeof parsed.player.rngState !== "number" || !Number.isFinite(parsed.player.rngState)) {
     parsed.player.rngState = parsed.player.seed;
   }

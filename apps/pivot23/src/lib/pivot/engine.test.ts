@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { acceptForcedPreseasonTrade, acceptForcedSummerTrade, acceptTrade, allDraftRounds, applyAutoOffseason, applyDraftCard, ARCHIVE_KEY, buildTradeOffer, careerEndAge, eventAfterMarket, finishDraft, freshPlayer, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, offseasonStep, openCareerSim, playCareerSim, recordRetirementChoice, revealDraftLanding, saveArchive, shouldOfferExtraYear, simulateFullCareer, simulateRegularSeason, startProPath, toArchive, withPlayer } from "./engine";
+import { acceptForcedPreseasonTrade, acceptForcedSummerTrade, acceptTrade, allDraftRounds, applyAutoOffseason, applyDraftCard, applyFx, ARCHIVE_KEY, buildTradeOffer, careerEndAge, eventAfterMarket, finishDraft, freshPlayer, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, offseasonStep, openCareerSim, playCareerSim, recordRetirementChoice, revealDraftLanding, saveArchive, shouldOfferExtraYear, simulateFullCareer, simulateRegularSeason, startProPath, storyEventById, toArchive, withPlayer } from "./engine";
 import { COACH_NAMES, RIVAL_NAMES } from "./data";
 import { pick, rand } from "./rng";
 import { NBA_TEAMS } from "./teams";
 import { fingerprintOf, sha256 } from "./card";
+import { SAVE_VERSION } from "./config";
 import { EURO_TITLE_LINES, playoffSeriesFormat, SERIES_WIN_LINES, seriesWinProbability, simulateSeries } from "./league";
 import { clearLive, loadLive, SAVE_KEY, saveLive, buildLiveSave } from "./save";
 
@@ -223,6 +224,54 @@ test("a market move stays on the career seed even if the fallback RNG was used",
     left.world?.stars.map((star) => `${star.name}:${star.teamAbbr}:${star.retired}`),
     right.world?.stars.map((star) => `${star.name}:${star.teamAbbr}:${star.retired}`),
   );
+});
+
+test("identical seed, state, and choices repeat the draft team, trade offer, and narrative effect", () => {
+  const replay = (seed: number) => {
+    const player = freshPlayer("Det", "PG", "ITA", 23, "pro", seed);
+    while (player.round < allDraftRounds().length) applyDraftCard(player, player.round, 0);
+    finishDraft(player);
+    const landed = withPlayer(player, () => {
+      startProPath(player, "NCAA");
+      return revealDraftLanding(player);
+    });
+    const offer = buildTradeOffer(player);
+    const effect = withPlayer(player, () => {
+      const event = storyEventById(player, "an5");
+      const fx = event.choices[0]!.fx(player);
+      applyFx(player, fx);
+      return {
+        flavor: fx.flavor,
+        coach: player.coachName,
+        overall: player.overall,
+        shooting: player.attrs.shooting,
+        rng: player.rngState,
+      };
+    });
+    return {
+      seed: player.seed,
+      engine: player.engineVersion,
+      careerId: player.careerId,
+      draftTeam: landed.team.abbr,
+      draftPick: landed.pick,
+      tradeTeam: offer.team.abbr,
+      tradePitch: offer.pitch,
+      effect,
+    };
+  };
+
+  const left = replay(90210);
+  rand();
+  rand();
+  rand();
+  const right = replay(90210);
+  assert.notEqual(left.careerId, right.careerId);
+  assert.equal(left.seed, right.seed);
+  assert.ok(left.effect.coach.length > 0);
+  assert.match(left.effect.flavor, new RegExp(left.effect.coach));
+  const comparable = ({ careerId: _careerId, ...rest }: ReturnType<typeof replay>) => rest;
+  assert.deepEqual(comparable(left), comparable(right));
+  assert.notDeepEqual(replay(90210).draftTeam + replay(90210).effect.coach, replay(90211).draftTeam + replay(90211).effect.coach);
 });
 
 test("1,000 Pro careers meet the P0-LIFE age distribution without changing the peak window", () => {
@@ -714,4 +763,76 @@ test("an already-won MVP or title makes the next one less common on Esordio", ()
   assert.ok(anyMvp > 0, "MVP disappeared");
   // P0-LIFE permits early retirement. The Pro distribution test separately
   // verifies that viable careers still reach the age-36 final season.
+});
+
+test("careerId is created once and stays off the simulation seed", () => {
+  const storage = installMemoryStorage();
+  try {
+    clearLive();
+    resetArchive(storage);
+    const player = freshPlayer("Identità", "SG", "ITA", 11, "pro", 515017);
+    assert.match(player.careerId, /^[0-9a-f-]{36}$/i);
+    const twin = freshPlayer("Identità", "SG", "ITA", 11, "pro", 515017);
+    assert.equal(twin.seed, player.seed);
+    assert.equal(twin.rngState, player.rngState);
+    assert.notEqual(twin.careerId, player.careerId);
+
+    assert.equal(saveLive({
+      player,
+      pending: null,
+      log: [],
+      screen: "career",
+      tab: "log",
+      logSeq: 1,
+    }), true);
+    const resumed = loadLive();
+    assert.ok(resumed);
+    assert.equal(resumed.player.careerId, player.careerId);
+    assert.equal(resumed.player.seed, player.seed);
+    assert.equal(resumed.player.rngState, player.rngState);
+
+    const archived = toArchive(player);
+    assert.equal(archived.careerId, player.careerId);
+    assert.equal(archived.seed, player.seed);
+    assert.notEqual(archived.id, player.careerId);
+    assert.equal(archived.card?.id, `${player.seed}:${SAVE_VERSION}`);
+    assert.equal(archived.fingerprint, fingerprintOf(archived.card!));
+    saveArchive(archived);
+    assert.equal(loadArchive().find((entry) => entry.id === archived.id)?.careerId, player.careerId);
+
+    clearLive();
+    const legacy = buildLiveSave(player, null, [], "career", "log", 1);
+    const body = JSON.parse(JSON.stringify(legacy)) as { c?: string; player: { careerId?: string; seed: number; rngState: number } };
+    delete body.c;
+    delete body.player.careerId;
+    const encoded = JSON.stringify({ ...body, c: sha256(JSON.stringify(body)).slice(0, 16) });
+    storage.local.setItem(SAVE_KEY, encoded);
+    storage.session.setItem(SAVE_KEY, encoded);
+    const migrated = loadLive();
+    assert.ok(migrated);
+    assert.match(migrated.player.careerId, /^[0-9a-f-]{36}$/i);
+    assert.notEqual(migrated.player.careerId, player.careerId);
+    assert.equal(migrated.player.seed, player.seed);
+    assert.equal(migrated.player.rngState, player.rngState);
+    assert.equal(saveLive({
+      player: migrated.player,
+      pending: migrated.pending,
+      log: migrated.log,
+      screen: migrated.screen,
+      tab: migrated.tab,
+      logSeq: migrated.logSeq,
+    }), true);
+    assert.equal(loadLive()?.player.careerId, migrated.player.careerId);
+
+    const oldArchive = toArchive(freshPlayer("Vecchia", "C", "ITA", 4, "pro", 17));
+    delete oldArchive.careerId;
+    storage.local.setItem(ARCHIVE_KEY, JSON.stringify([oldArchive]));
+    storage.session.setItem(ARCHIVE_KEY, JSON.stringify([oldArchive]));
+    const kept = loadArchive().find((entry) => entry.id === oldArchive.id);
+    assert.ok(kept);
+    assert.equal(kept.careerId, undefined);
+    assert.equal(kept.seed, 17);
+  } finally {
+    storage.restore();
+  }
 });

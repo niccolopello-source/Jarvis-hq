@@ -456,6 +456,8 @@ export interface PlayerState {
   /** Lingua scelta in home. Le scene generate la rispettano. */
   lang?: "it" | "en" | "es";
   simulated: boolean;
+  /** Storage identity. Not an RNG input and not derived from `seed`. */
+  careerId: string;
   seed: number;
   rngState: number;
   engineVersion: string;
@@ -483,6 +485,8 @@ export interface ArchiveCareer {
   difficulty?: DifficultyId;
   simulated?: boolean;
   seed?: number;
+  /** Stable career identity. Absent on archives written before it existed. */
+  careerId?: string;
   engineVersion?: string;
   /** Fotografia stabile. Non è il salvataggio e non è un NFT. */
   card?: import("./card").CareerCard;

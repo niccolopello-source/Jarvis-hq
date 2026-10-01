@@ -2078,7 +2078,12 @@ function ResultView({
         )}
         <p className="feel-line">{comment}</p>
       </div>
-      <CareerCardPanel card={careerCardOf(player)} history={player.seasonHistory} choices={player.choiceLog} />
+      <CareerCardPanel
+        card={careerCardOf(player)}
+        history={player.seasonHistory}
+        choices={player.choiceLog}
+        careerId={player.careerId}
+      />
       <h4 className="stats-heading">Gli inverni</h4>
       {years.map((r) => (
         <div
@@ -2155,7 +2160,12 @@ function ArchiveView({
           {viewing.difficulty ? ` · ${DIFFICULTIES.find((d) => d.id === viewing.difficulty)?.label ?? ""}` : ""}
         </p>
         <p className="italic text-muted text-[14px] mb-4">{viewing.closing}</p>
-        <CareerCardPanel card={viewing.card} history={viewing.history} choices={viewing.choices} />
+        <CareerCardPanel
+          card={viewing.card}
+          history={viewing.history}
+          choices={viewing.choices}
+          careerId={viewing.careerId}
+        />
         {viewing.history.map((r) => (
           <div key={r.season} className="flex justify-between py-2 border-b border-line text-[13px]">
             <span>
@@ -2183,7 +2193,12 @@ function ArchiveView({
       <h2 className="page-title">Archivio</h2>
       {archive.length === 0 && <p className="text-muted">Nessuna carriera salvata su questo dispositivo.</p>}
       {archive.map((c) => (
-        <button key={c.id} className="choice-btn mb-2" onClick={() => setViewing(c)}>
+        <button
+          key={c.id}
+          className="choice-btn mb-2"
+          data-career-id={c.careerId || undefined}
+          onClick={() => setViewing(c)}
+        >
           <span className="font-display text-[18px]">{c.name}</span>
           <span className="text-[12.5px] text-muted">
             {c.role} · {c.verdict} · {c.seasons} stagioni · picco {displayOverall(c.peak)}
@@ -2201,10 +2216,12 @@ function CareerCardPanel({
   card,
   history,
   choices,
+  careerId,
 }: {
   card: ReturnType<typeof careerCardOf> | undefined;
   history: ArchiveCareer["history"];
   choices: ArchiveCareer["choices"];
+  careerId?: string;
 }) {
   if (!card) return null;
   const draft = choices.find((choice) => choice.title === "Chiamata");
@@ -2215,7 +2232,13 @@ function CareerCardPanel({
   }
 
   return (
-    <section className={`result-card ${card.legacyTier}`} data-career-card role="region" aria-label="Career Card">
+    <section
+      className={`result-card ${card.legacyTier}`}
+      data-career-card
+      data-career-id={careerId || undefined}
+      role="region"
+      aria-label="Career Card"
+    >
       <div className="eyebrow">Career Card · {card.engineVersion}</div>
       <h3 className="page-title text-chalk">{card.playerName}</h3>
       <p className="result-name">{card.role} · {card.nationality}</p>

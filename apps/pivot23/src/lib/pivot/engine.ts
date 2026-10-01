@@ -43,6 +43,7 @@ import { DIFF_MAP, diffOf, type DifficultyId } from "./difficulty";
 import { seasonAtmosphere, quietYearChance, quietYearEventBits } from "./feel";
 import { lateCareerEvent } from "./story-late";
 import { createRng, gaussTrim, pick, rand, randInt, rngDepth, runWithRng, type Rng } from "./rng";
+import { newCareerId } from "./save";
 import { say, sayOr, sceneVars, fillVars, voiceKey, tooClose } from "./voice";
 import { getLang, type Lang } from "./i18n";
 import { proceduralLocale } from "./proc-text";
@@ -471,6 +472,7 @@ export function freshPlayer(
     championLog: TITLE_SEED.map((t) => ({ ...t })),
     difficulty,
     simulated: false,
+    careerId: newCareerId(),
     seed: seed ?? newSeed(),
     rngState: 0,
     engineVersion: ENGINE_VERSION,
@@ -2940,6 +2942,7 @@ export function toArchive(s: PlayerState): ArchiveCareer {
     difficulty: s.difficulty,
     simulated: s.simulated,
     seed: s.seed,
+    careerId: s.careerId,
     engineVersion: s.engineVersion,
     card,
     fingerprint: fingerprintOf(card),
@@ -3024,6 +3027,9 @@ function normalizeArchiveEntry(value: unknown): ArchiveCareer | null {
       && typeof item.pick === "string")
     : [];
   const normalized = { ...value, history, milestones, choices } as unknown as ArchiveCareer;
+  if (typeof value.careerId !== "string" || value.careerId.length === 0) {
+    delete normalized.careerId;
+  }
 
   // A broken optional card must not hide an otherwise readable legacy career.
   if (!isValidCareerCard(value.card)) {
