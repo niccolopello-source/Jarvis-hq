@@ -141,6 +141,19 @@ body,
   white-space: nowrap;
   font-weight: 600;
 }
+.team-dossier .team-label {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+}
+.team-dossier .team-label-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: visible;
+  text-overflow: unset;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
 .standings-slot {
   margin-bottom: 2px;
 }

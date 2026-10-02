@@ -28,6 +28,9 @@ The house priority used while building the beta, and not withdrawn: coherence, t
 | D-011 | 2026-09 | The game does not contain a control that dumps its own source for the player to copy. |
 | D-012 | 2026-09 | A Finals win has a stronger animation than a regular beat. |
 | D-013 | 2026-09 | There is one GitHub repository for this project: `niccolopello-source/Jarvis-hq`. Do not create a second one. |
+| D-014 | 2026-10-01 | Supersedes D-004 for the demo. The selector offers Italian and English only. Spanish and French stay planned until their coverage is verified. The Spanish dictionary is not deleted. |
+| D-015 | 2026-10-01 | NBA franchise names stay in the demo. A legal review is required before any commercial distribution. Do not rename teams in this phase. This does not accept P-005's rename. |
+| D-016 | 2026-10-01 | The demo source is `apps/pivot23` on `main` at `89249efccdb1b86e7b84de801c46f9c6b544b4d0`. The App Builder workspace is a separate tree and must not be copied over this repository. |
 
 ## Proposed, not accepted
 

@@ -71,7 +71,7 @@ import {
   verdictOf,
   withPlayer,
 } from "@/lib/pivot/engine";
-import { initLang, setLang, t, useLang, awardLabel, type Lang } from "@/lib/pivot/i18n";
+import { initLang, setLang, t, useLang, awardLabel, DEMO_LANGS } from "@/lib/pivot/i18n";
 
 const CareerChart = lazy(() => import("@/components/pivot/CareerChart").then((m) => ({ default: m.CareerChart })));
 import { HOLD_FINALS_MS, HOLD_MARKET_MS, HOLD_RECAP_MS, HOLD_TITLE_MS } from "@/lib/pivot/config";
@@ -933,14 +933,14 @@ export function PivotApp() {
           <h1 className="display-title">PIVOT</h1>
           <p className="lede">{t("lede", lang)}</p>
           <div className="lang-row" role="group" aria-label={t("lang", lang)}>
-            {(["it", "en", "es"] as Lang[]).map((id) => (
+            {DEMO_LANGS.map((id) => (
               <button
                 key={id}
                 type="button"
                 className={`lang-btn ${lang === id ? "on" : ""}`}
                 onClick={() => setLang(id)}
               >
-                {id === "it" ? "Italiano" : id === "en" ? "English" : "Español"}
+                {id === "it" ? "Italiano" : "English"}
               </button>
             ))}
           </div>
