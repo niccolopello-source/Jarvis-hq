@@ -25,7 +25,7 @@ Closed only after the fix was on `main` and the same test was run there.
 
 Balance, recorded and not retuned: 1777 of 2000 Esordio careers win zero MVP. `INVARIANTS.md` and this table do not set a minimum MVP share. P-002 is still proposed and does not set that floor. Do not change the constants to raise the rate unless the owner asks.
 
-P0-LIFE stays a watched invariant. The distribution test passed again on 2026-10-01 in the phase-b run of `engine.test.ts` (36 tests, 0 fail), which includes that 1,000-career case. That run was on the phase-b branch before its commit, starting from `89249ef`. Do not retune retirement from this note.
+P0-LIFE stays a watched invariant. On 2026-10-02 the same 1,000 Pro seeds used by the test (`seed = (i + 1) * 1000 + 17`) finished at these ages: 32 → 336, 34 → 50, 35 → 19, 36 → 595. None ended at 33. All peaks stayed inside 26–28. The suite that contains the test passed the same day, 48 tests, 0 fail. Do not retune retirement from this note. The empty age-33 cell is recorded, not treated as a license to change constants.
 
 ## P0-LIFE candidate evidence — `codex/demo-hardening`
 

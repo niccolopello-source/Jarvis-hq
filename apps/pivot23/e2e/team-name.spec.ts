@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { freshPlayer } from "../src/lib/pivot/engine";
 import { buildLiveSave } from "../src/lib/pivot/save";
 import { cloneTeam, NBA_TEAMS } from "../src/lib/pivot/teams";
@@ -31,9 +31,9 @@ function standing(team: Team): StandingRow {
   };
 }
 
-test("a long franchise name stays readable on a phone Finals card", async ({ page }) => {
+async function openFinals(page: Page, opponentAbbr: string) {
   const mine = cloneTeam(NBA_TEAMS.find((team) => team.abbr === "BOS")!);
-  const opp = cloneTeam(NBA_TEAMS.find((team) => team.abbr === "OKC")!);
+  const opp = cloneTeam(NBA_TEAMS.find((team) => team.abbr === opponentAbbr)!);
   const player = freshPlayer("Name Check", "PG", "Italia", 23, "pro", 37501);
   player.team = mine;
   player.contract = { ...player.contract, teamName: mine.name, yearsRemaining: 2 };
@@ -59,24 +59,38 @@ test("a long franchise name stays readable on a phone Finals card", async ({ pag
   await page.addInitScript((json) => {
     localStorage.setItem("pivot-v2-save", json);
   }, saved);
+  return opp.name;
+}
 
-  for (const width of [375, 390]) {
-    await page.setViewportSize({ width, height: 844 });
-    await page.goto("/");
-    const name = page.locator(".team-dossier .team-label-name");
-    await expect(name).toHaveText("Oklahoma City Thunder");
-    const fit = await name.evaluate((node) => ({
-      scroll: node.scrollWidth,
-      client: node.clientWidth,
-      card: node.closest(".log-card")?.getBoundingClientRect().right ?? 0,
-      right: node.getBoundingClientRect().right,
-      inner: document.documentElement.clientWidth,
-      page: document.documentElement.scrollWidth,
-    }));
-    expect(fit.scroll).toBeLessThanOrEqual(fit.client + 1);
-    expect(fit.right).toBeLessThanOrEqual(fit.card + 1);
-    expect(fit.page).toBeLessThanOrEqual(fit.inner + 1);
+async function expectNameFits(page: Page, name: string, width: number) {
+  await page.setViewportSize({ width, height: 844 });
+  await page.goto("/");
+  const label = page.locator(".team-dossier .team-label-name");
+  await expect(label).toHaveText(name);
+  const fit = await label.evaluate((node) => ({
+    scroll: node.scrollWidth,
+    client: node.clientWidth,
+    card: node.closest(".log-card")?.getBoundingClientRect().right ?? 0,
+    right: node.getBoundingClientRect().right,
+    inner: document.documentElement.clientWidth,
+    page: document.documentElement.scrollWidth,
+  }));
+  expect(fit.scroll).toBeLessThanOrEqual(fit.client + 1);
+  expect(fit.right).toBeLessThanOrEqual(fit.card + 1);
+  expect(fit.page).toBeLessThanOrEqual(fit.inner + 1);
+}
+
+test("a long franchise name stays readable from a narrow phone to a wide desktop", async ({ page }) => {
+  const name = await openFinals(page, "OKC");
+  for (const width of [320, 360, 375, 390, 430, 768, 1024, 1280, 1440]) {
+    await expectNameFits(page, name, width);
   }
+});
+
+test("a shorter franchise name stays inside the same card", async ({ page }) => {
+  const name = await openFinals(page, "BOS");
+  await expectNameFits(page, name, 320);
+  await expectNameFits(page, name, 1440);
 });
 
 test("the home screen offers Italian and English only", async ({ page }) => {
