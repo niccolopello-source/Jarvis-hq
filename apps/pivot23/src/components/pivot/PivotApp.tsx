@@ -1,5 +1,5 @@
 
-import { Component, lazy, memo, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Component, memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
 import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components/pivot/LeaguePanel";
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
@@ -77,8 +77,10 @@ import {
 import { initLang, setLang, t, tf, useLang, awardLabel, DEMO_LANGS, difficultyFace } from "@/lib/pivot/i18n";
 import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
 import { ModalDialog } from "@/components/pivot/Dialog";
+import { LazyChunk } from "@/components/pivot/ChunkBoundary";
 
-const CareerChart = lazy(() => import("@/components/pivot/CareerChart").then((m) => ({ default: m.CareerChart })));
+const loadCareerChart = () => import("@/components/pivot/CareerChart");
+const pickCareerChart = (m: typeof import("@/components/pivot/CareerChart")) => m.CareerChart;
 import { HOLD_FINALS_MS, HOLD_MARKET_MS, HOLD_RECAP_MS, HOLD_TITLE_MS } from "@/lib/pivot/config";
 import { EURO_TEAMS, NBA_TEAMS } from "@/lib/pivot/teams";
 
@@ -2119,9 +2121,13 @@ const StatsTab = memo(function StatsTab({
         Picco osservato tra 26 e 28 anni. La linea piena è il tuo overall; quella tratteggiata è la traiettoria.
       </p>
       <div className="h-44 bg-panel border border-line rounded p-2 mb-4">
-        <Suspense fallback={<div className="grid h-full place-items-center text-xs text-muted" role="status">Caricamento grafico…</div>}>
-          <CareerChart data={chartData} />
-        </Suspense>
+        <LazyChunk
+          load={loadCareerChart}
+          pick={pickCareerChart}
+          props={{ data: chartData }}
+          label={t("chartName", lang)}
+          fallback={<div className="grid h-full place-items-center text-xs text-muted" role="status">{t("chartLoading", lang)}</div>}
+        />
       </div>
       <PersonalAwards title={t("lifeAwards", lang)} rows={player.seasonHistory} />
       <h4 className="font-display text-[19px] mb-2">Stagione per stagione</h4>

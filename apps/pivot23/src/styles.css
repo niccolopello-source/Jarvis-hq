@@ -2367,3 +2367,20 @@ img.court-mark-photo {
     opacity: 1;
   }
 }
+
+/* Local fallback when a lazy chunk (the chart) fails to load. */
+.chunk-fallback {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 8px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+.chunk-fallback .ghost-btn {
+  width: auto;
+  padding: 6px 14px;
+  min-height: 44px;
+}

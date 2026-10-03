@@ -101,6 +101,12 @@ const IT = {
     archiveFullSoon: "L'archivio è pieno ({limit} carriere). Quando chiuderai questa carriera, uscirà la più vecchia: {name}.",
     archiveUnsaved: "La carriera non è entrata nell'archivio del browser. Resta visibile in questa scheda; il salvataggio in corso non è stato cancellato.",
     dismiss: "Chiudi avviso",
+    chunkFailed: "Non è stato possibile caricare {what}. La carriera non è toccata.",
+    chunkFailedFinal: "{what} non è disponibile adesso. Il resto della carriera funziona; riprova più tardi ricaricando la pagina.",
+    chunkRetry: "Riprova",
+    chartName: "il grafico",
+    chartNameCap: "Il grafico",
+    chartLoading: "Caricamento grafico…",
   /*@@IT@@*/
 } as const;
 
@@ -195,6 +201,12 @@ const EN: Record<Msg, string> = {
     archiveFullSoon: "The archive is full ({limit} careers). When this career ends, the oldest one leaves: {name}.",
     archiveUnsaved: "The career did not reach the browser archive. It stays visible in this tab; the live save was not deleted.",
     dismiss: "Dismiss notice",
+    chunkFailed: "{what} could not be loaded. Your career is not affected.",
+    chunkFailedFinal: "{what} is not available right now. The rest of the career works; try again later by reloading the page.",
+    chunkRetry: "Try again",
+    chartName: "the chart",
+    chartNameCap: "The chart",
+    chartLoading: "Loading chart…",
   /*@@EN@@*/
 };
 
