@@ -104,11 +104,24 @@ function remembered(s: Storage): Map<string, string> {
   return box.map;
 }
 
+/** True only when the store now holds exactly `value`. Another tab may have written since. */
+function holds(s: Storage, key: string, value: string): boolean {
+  try {
+    return s.getItem(key) === value;
+  } catch {
+    return false;
+  }
+}
+
 function writeStore(s: Storage, key: string, value: string): boolean {
   const memory = remembered(s);
-  if (memory.get(key) === value) return true;
+  /* The cache is only a hint: a second tab or a second module instance can overwrite the key.
+     Skip the write only when the store really holds the same string. */
+  if (memory.get(key) === value && holds(s, key, value)) return true;
+  memory.delete(key);
   try {
     s.setItem(key, value);
+    if (!holds(s, key, value)) return false;
     memory.set(key, value);
     return true;
   } catch (e) {
@@ -128,6 +141,7 @@ function writeStore(s: Storage, key: string, value: string): boolean {
       }
       try {
         s.setItem(key, value);
+        if (!holds(s, key, value)) return false;
         memory.set(key, value);
         return true;
       } catch {
@@ -138,15 +152,21 @@ function writeStore(s: Storage, key: string, value: string): boolean {
   }
 }
 
-function writeAll(key: string, value: string): boolean {
-  let ok = false;
+/** Writes to localStorage and sessionStorage. `persistent` is true only when localStorage holds the value. */
+function writeEach(key: string, value: string): { any: boolean; persistent: boolean } {
+  const local = storage();
+  const session = sessionStore();
+  let persistent = false;
+  let any = false;
   const failed: Storage[] = [];
-  for (const s of stores()) {
+  for (const s of [local, session]) {
     if (!s) continue;
-    if (writeStore(s, key, value)) ok = true;
-    else failed.push(s);
+    if (writeStore(s, key, value)) {
+      any = true;
+      if (s === local) persistent = true;
+    } else failed.push(s);
   }
-  if (ok && key !== SAVE_KEY) {
+  if (any && key !== SAVE_KEY) {
     for (const s of failed) {
       try {
         s.removeItem(key);
@@ -155,7 +175,11 @@ function writeAll(key: string, value: string): boolean {
       }
     }
   }
-  return ok;
+  return { any, persistent };
+}
+
+function writeAll(key: string, value: string): boolean {
+  return writeEach(key, value).any;
 }
 
 function readFirst(key: string): string | null {
@@ -171,14 +195,37 @@ function readFirst(key: string): string | null {
   return null;
 }
 
-function removeAll(key: string) {
+/** Removes `key` from every store. True only when no store still holds it. */
+function removeAll(key: string): boolean {
+  let clean = true;
   for (const s of stores()) {
     if (!s) continue;
     try {
       s.removeItem(key);
     } catch {
-      /* ignore */
+      /* checked below */
     }
+    try {
+      if (s.getItem(key) !== null) clean = false;
+    } catch {
+      clean = false;
+    }
+  }
+  return clean;
+}
+
+/** Can this browser keep a career after the tab closes? Probes localStorage with a throwaway key. */
+export function persistentStorageAvailable(): boolean {
+  const s = storage();
+  if (!s) return false;
+  const probe = "pivot-v2-probe";
+  try {
+    s.setItem(probe, "1");
+    const ok = s.getItem(probe) === "1";
+    s.removeItem(probe);
+    return ok;
+  } catch {
+    return false;
   }
 }
 
@@ -456,7 +503,8 @@ export function saveLive(data: {
       const payload = buildLiveSave(data.player, data.pending, data.log, data.screen, data.tab, data.logSeq, level);
       last = payload;
       const json = JSON.stringify(payload);
-      if (writeAll(SAVE_KEY, json)) {
+      /* Success means the browser will still have this career after the tab closes. */
+      if (writeEach(SAVE_KEY, json).persistent) {
         MEM = payload;
         writeHint(payload);
         const prev = loadSwipe();
@@ -621,34 +669,187 @@ function fresher(a: LiveSave, b: LiveSave): LiveSave {
   return (a.logSeq ?? 0) >= (b.logSeq ?? 0) ? a : b;
 }
 
-export function loadLive(): LiveSave | null {
+/* ------------------------------------------------------------------ */
+/* Versions and migrations                                             */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Raw copy of a save that could not be opened as-is (damaged, from a newer build, from an older
+ * schema, or before a migration). It is written before anything else happens to that save.
+ */
+export const BACKUP_KEY = "pivot-v2-save-backup";
+
+export type LiveLoadState = "none" | "ok" | "migrated" | "corrupt" | "future" | "incompatible";
+
+export interface LiveLoadReport {
+  state: LiveLoadState;
+  /** Version field found in the stored JSON, when it was readable. */
+  version: unknown;
+  /** True when the unreadable or migrated original is safe under BACKUP_KEY. */
+  backedUp: boolean;
+}
+
+type RawSave = Record<string, unknown>;
+
+/**
+ * Sequential migrations: LIVE_MIGRATIONS[n] turns a version-n save into version n+1.
+ *
+ * Git history of this repository has only ever shipped LIVE_SAVE_VERSION = 2 (checked on every
+ * commit that touched save.ts, from b04fff9 to 778a561). No earlier schema is known, so no
+ * migration is registered. Add one here only for a schema that really shipped, with a fixture.
+ */
+export const LIVE_MIGRATIONS: Record<number, (raw: RawSave) => RawSave> = {};
+
+let LAST_LOAD: LiveLoadReport = { state: "none", version: undefined, backedUp: false };
+
+/** What the last loadLive() found. The UI uses it to explain why a career did not open. */
+export function lastLoadReport(): LiveLoadReport {
+  return { ...LAST_LOAD };
+}
+
+function backupRaw(raw: string, reason: LiveLoadState): boolean {
+  const s = storage() ?? sessionStore();
+  if (!s) return false;
   try {
-    const found: LiveSave[] = [];
+    const prev = s.getItem(BACKUP_KEY);
+    if (prev) {
+      const rec = JSON.parse(prev) as { raw?: unknown };
+      if (rec && rec.raw === raw) return true;
+    }
+  } catch {
+    /* overwrite an unreadable backup */
+  }
+  const value = JSON.stringify({ v: 1, reason, at: Date.now(), raw });
+  try {
+    s.setItem(BACKUP_KEY, value);
+    return s.getItem(BACKUP_KEY) === value;
+  } catch {
+    return false;
+  }
+}
+
+/** Raw backup string, if one exists. */
+export function readLiveBackup(): { reason: string; at: number; raw: string } | null {
+  for (const s of stores()) {
+    if (!s) continue;
+    try {
+      const prev = s.getItem(BACKUP_KEY);
+      if (!prev) continue;
+      const rec = JSON.parse(prev) as { reason?: unknown; at?: unknown; raw?: unknown };
+      if (typeof rec.raw === "string") {
+        return { reason: String(rec.reason ?? ""), at: Number(rec.at) || 0, raw: rec.raw };
+      }
+    } catch {
+      /* try the other store */
+    }
+  }
+  return null;
+}
+
+/**
+ * Puts the backed-up original back under SAVE_KEY, exactly as it was. Returns true only when the
+ * store now holds it. The backup itself is kept.
+ */
+export function restoreLiveBackup(): boolean {
+  const backup = readLiveBackup();
+  if (!backup) return false;
+  writeGen += 1;
+  MEM = null;
+  return writeEach(SAVE_KEY, backup.raw).persistent;
+}
+
+type Classified =
+  | { state: "ok"; save: LiveSave }
+  | { state: "migrated"; save: LiveSave }
+  | { state: "corrupt" | "future" | "incompatible"; version: unknown };
+
+function classify(raw: string): Classified {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return { state: "corrupt", version: undefined };
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return { state: "corrupt", version: undefined };
+  const rec = parsed as RawSave;
+  const v = rec.v;
+  if (v === LIVE_SAVE_VERSION) {
+    return isLiveSave(rec) ? { state: "ok", save: rec as unknown as LiveSave } : { state: "corrupt", version: v };
+  }
+  if (typeof v !== "number" || !Number.isInteger(v)) return { state: "corrupt", version: v };
+  if (v > LIVE_SAVE_VERSION) return { state: "future", version: v };
+  let cur: RawSave = rec;
+  for (let n = v; n < LIVE_SAVE_VERSION; n++) {
+    const step = LIVE_MIGRATIONS[n];
+    if (!step) return { state: "incompatible", version: v };
+    try {
+      cur = step(JSON.parse(JSON.stringify(cur)) as RawSave);
+    } catch {
+      return { state: "incompatible", version: v };
+    }
+  }
+  const { c: _drop, ...body } = cur;
+  void _drop;
+  const migrated = { ...body, v: LIVE_SAVE_VERSION, c: payloadChecksum({ ...body, v: LIVE_SAVE_VERSION }) };
+  return isLiveSave(migrated) ? { state: "migrated", save: migrated as unknown as LiveSave } : { state: "incompatible", version: v };
+}
+
+const PROBLEM_RANK: Record<string, number> = { corrupt: 1, incompatible: 2, future: 3 };
+
+export function loadLive(): LiveSave | null {
+  const report: LiveLoadReport = { state: "none", version: undefined, backedUp: false };
+  try {
+    const local = storage();
+    const found: { save: LiveSave; session: boolean; migrated: boolean }[] = [];
     for (const s of stores()) {
       if (!s) continue;
+      let raw: string | null = null;
       try {
-        const raw = s.getItem(SAVE_KEY);
-        if (!raw) continue;
-        const parsed: unknown = JSON.parse(raw);
-        if (isLiveSave(parsed)) found.push(parsed);
+        raw = s.getItem(SAVE_KEY);
       } catch {
-        /* ignore */
+        raw = null;
+      }
+      if (!raw) continue;
+      const c = classify(raw);
+      if (c.state === "ok" || c.state === "migrated") {
+        if (c.state === "migrated" && !backupRaw(raw, "migrated")) {
+          /* Never transform a save whose original could not be kept. */
+          if ((PROBLEM_RANK[report.state] ?? 0) < PROBLEM_RANK.incompatible!) {
+            report.state = "incompatible";
+            report.version = JSON.parse(raw).v;
+          }
+          continue;
+        }
+        found.push({ save: c.save, session: s !== local, migrated: c.state === "migrated" });
+      } else if ((PROBLEM_RANK[c.state] ?? 0) > (PROBLEM_RANK[report.state] ?? 0)) {
+        report.state = c.state;
+        report.version = c.version;
+        report.backedUp = backupRaw(raw, c.state);
       }
     }
-    let parsed: LiveSave | null = null;
     if (found.length) {
-      parsed = found[0]!;
-      for (let i = 1; i < found.length; i++) parsed = fresher(found[i]!, parsed);
-    }
-    if (parsed) {
-      const live = revive(parsed);
+      /* Two tabs can hold two different careers: localStorage has the last writer,
+         sessionStorage has this tab's own career. Prefer this tab's career. */
+      const ids = new Set(found.map((f) => f.save.player.careerId ?? `seed:${f.save.player.seed}`));
+      let pool = found;
+      if (ids.size > 1 && found.some((f) => f.session)) pool = found.filter((f) => f.session);
+      let pick = pool[0]!;
+      for (let i = 1; i < pool.length; i++) {
+        pick = fresher(pool[i]!.save, pick.save) === pool[i]!.save ? pool[i]! : pick;
+      }
+      const live = revive(pick.save);
       MEM = live;
+      LAST_LOAD = { state: pick.migrated ? "migrated" : "ok", version: LIVE_SAVE_VERSION, backedUp: pick.migrated };
       return live;
     }
   } catch {
     /* prova la memoria */
   }
-  if (MEM && isLiveSave(MEM)) return MEM;
+  LAST_LOAD = report;
+  if (MEM && isLiveSave(MEM)) {
+    LAST_LOAD = { state: "ok", version: LIVE_SAVE_VERSION, backedUp: false };
+    return MEM;
+  }
   return null;
 }
 
@@ -662,13 +863,47 @@ export function hasLiveHint(): boolean {
   }
 }
 
-export function clearLive() {
+/**
+ * Deletes the live career from every store. Returns true only when the save key is gone everywhere.
+ * On failure the in-memory copy is kept, so the caller can tell the player nothing was lost.
+ */
+export function clearLive(): boolean {
   writeGen += 1;
-  MEM = null;
-  removeAll(SAVE_KEY);
+  const gone = removeAll(SAVE_KEY);
   removeAll(HINT_KEY);
   removeAll(SWIPE_KEY);
+  if (!gone) return false;
+  MEM = null;
   if (typeof document !== "undefined") document.documentElement.classList.remove("pivot-live");
+  return true;
+}
+
+/** True when a readable live save exists in a store or in memory. */
+export function hasLiveSave(): boolean {
+  return loadLive() !== null;
+}
+
+/**
+ * Calls `onOther` when another tab writes a different career to the live key.
+ * The newest write wins. This only warns; it never locks.
+ */
+export function watchLiveConflicts(careerId: () => string | null, onOther: () => void): () => void {
+  if (typeof window === "undefined" || typeof window.addEventListener !== "function") return () => {};
+  const handler = (event: StorageEvent) => {
+    if (event.key !== SAVE_KEY || event.newValue === null) return;
+    writeGen += 1;
+    const mine = careerId();
+    if (!mine) return;
+    try {
+      const parsed = JSON.parse(event.newValue) as { player?: { careerId?: unknown } };
+      const other = parsed?.player?.careerId;
+      if (typeof other === "string" && other !== mine) onOther();
+    } catch {
+      /* unreadable write from another tab: the next save will replace it */
+    }
+  };
+  window.addEventListener("storage", handler);
+  return () => window.removeEventListener("storage", handler);
 }
 
 export function saveSwipe(state: SwipePersist): boolean {

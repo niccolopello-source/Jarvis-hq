@@ -1,5 +1,5 @@
 
-import { Component, lazy, memo, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Component, memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
 import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components/pivot/LeaguePanel";
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
@@ -27,6 +27,8 @@ import {
   applyAutoOffseason,
   applyDraftCard,
   applyFx,
+  ARCHIVE_LIMIT,
+  archiveStateOf,
   beginPlayoffs,
   buildFaOffers,
   buildTradeOffer,
@@ -39,6 +41,7 @@ import {
   idealCurveSeries,
   isArchivePersisted,
   isContractYear,
+  lastArchiveEvicted,
   loadArchive,
   offseasonStep,
   pick,
@@ -60,6 +63,7 @@ import {
   saveArchive,
   scaledDraftCard,
   scriptedSeasonEvent,
+  scriptedSeasonSlot,
   shouldForceTrade,
   shouldOfferTrade,
   simulateRegularSeason,
@@ -71,9 +75,13 @@ import {
   verdictOf,
   withPlayer,
 } from "@/lib/pivot/engine";
-import { initLang, setLang, t, useLang, awardLabel, DEMO_LANGS, difficultyFace } from "@/lib/pivot/i18n";
+import { initLang, setLang, t, tf, useLang, awardLabel, DEMO_LANGS, difficultyFace } from "@/lib/pivot/i18n";
+import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
+import { ModalDialog } from "@/components/pivot/Dialog";
+import { LazyChunk } from "@/components/pivot/ChunkBoundary";
 
-const CareerChart = lazy(() => import("@/components/pivot/CareerChart").then((m) => ({ default: m.CareerChart })));
+const loadCareerChart = () => import("@/components/pivot/CareerChart");
+const pickCareerChart = (m: typeof import("@/components/pivot/CareerChart")) => m.CareerChart;
 import { HOLD_FINALS_MS, HOLD_MARKET_MS, HOLD_RECAP_MS, HOLD_TITLE_MS } from "@/lib/pivot/config";
 import { EURO_TEAMS, NBA_TEAMS } from "@/lib/pivot/teams";
 
@@ -91,7 +99,7 @@ function clubByName(name: string) {
 }
 import { advancedOf } from "@/lib/pivot/peak";
 import { defensiveMarks } from "@/lib/pivot/awards-helpers";
-import { clearLive, loadLive, loadSwipe, logSeqFrom, saveLive, saveSwipe } from "@/lib/pivot/save";
+import { clearLive, hasLiveSave, lastLoadReport, loadLive, loadSwipe, logSeqFrom, persistentStorageAvailable, saveLive, saveSwipe, watchLiveConflicts, type LiveLoadReport } from "@/lib/pivot/save";
 import { CAREER_TABS, SwipeTrack } from "@/components/pivot/SwipePager";
 import { careerCommentary, hofLabel, hofTier, palmares } from "@/lib/pivot/legacy";
 import { settleYearTitle } from "@/lib/pivot/league";
@@ -227,6 +235,11 @@ function hydratePending(raw: SavedPending | Pending | null, s: PlayerState): Pen
   return raw as Pending;
 }
 
+let bootReport: LiveLoadReport = { state: "none", version: undefined, backedUp: false };
+
+type NewLifeOrigin = "intro" | "replay";
+type NewLifeDialog = { ask: Exclude<NewLifeAsk, "none">; origin: NewLifeOrigin; error: string | null };
+
 export function PivotApp() {
   const bootRef = useRef<ReturnType<typeof loadLive> | undefined>(undefined);
   if (bootRef.current === undefined) {
@@ -234,6 +247,12 @@ export function PivotApp() {
     if (typeof window !== "undefined") {
       try {
         live = loadLive();
+        bootReport = lastLoadReport();
+        // A finished career already safe in the archive is not a career to resume.
+        if (live) {
+          const done = archiveStateOf(live.player.careerId);
+          if (done.finished && done.archived && clearLive()) live = null;
+        }
       } catch {
         live = null;
       }
@@ -323,6 +342,26 @@ export function PivotApp() {
   const [guideOpen, setGuideOpen] = useState(false);
   const saveGen = useRef(0);
   const lang = useLang();
+  const [newLife, setNewLife] = useState<NewLifeDialog | null>(null);
+  const newLifeBusy = useRef(false);
+  const [storageOff] = useState(() => typeof window !== "undefined" && !persistentStorageAvailable());
+  const [loadNotice, setLoadNotice] = useState<LiveLoadReport | null>(() =>
+    bootReport.state === "corrupt" || bootReport.state === "future" || bootReport.state === "incompatible" || bootReport.state === "migrated"
+      ? bootReport
+      : null,
+  );
+  const [otherTab, setOtherTab] = useState(false);
+  const [archiveNote, setArchiveNote] = useState<string | null>(null);
+  const playerRef = useRef(player);
+  playerRef.current = player;
+
+  useEffect(
+    () => watchLiveConflicts(() => playerRef.current?.careerId ?? null, () => setOtherTab(true)),
+    [],
+  );
+
+  // Finished = this career already has an archive entry (persisted or only in memory).
+  const playerDone = !!player?.careerId && archive.some((c) => c.careerId === player.careerId);
 
   useLayoutEffect(() => {
     document.documentElement.classList.remove("pivot-live", "pivot-ready");
@@ -504,6 +543,7 @@ export function PivotApp() {
         }
         const entry = toArchive(job.s);
         const all = saveArchive(entry);
+        noteArchive(entry.id);
         simJob.current = null;
         setArchive(all);
         setPlayer(job.s);
@@ -512,6 +552,7 @@ export function PivotApp() {
         setSimBusy(false);
         setSimShow(false);
         setSimSlow(false);
+        // A quick sim never had a live save of its own; only an archived career may clear one.
         if (isArchivePersisted(entry.id)) clearLive();
         setScreen("result");
       } catch {
@@ -585,8 +626,7 @@ export function PivotApp() {
     const scripted = scriptedSeasonEvent(s, n);
     if (scripted) {
       if (!s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
-      const script: SavedStoryScript =
-        n === 1 ? "rookie" : n === 6 ? "rival" : n === 8 ? "injury" : n === 10 ? "nation" : "pool";
+      const script: SavedStoryScript = scriptedSeasonSlot(s, n) ?? "pool";
       setPending(pendingFromEvent(scripted, script, s));
       return;
     }
@@ -909,11 +949,80 @@ export function PivotApp() {
     finishedCareerKey.current = key;
     const entry = toArchive(s);
     const all = saveArchive(entry);
+    noteArchive(entry.id);
     setArchive(all);
     setPlayer(s);
     setPending(null);
+    // The live save goes only once the archive copy is in storage that outlives the tab.
     if (isArchivePersisted(entry.id)) clearLive();
     setScreen("result");
+  }
+
+  /** Tells the player when the archive did not persist or pushed an old career out. */
+  function noteArchive(id: string) {
+    if (!isArchivePersisted(id)) {
+      setArchiveNote(t("archiveUnsaved", lang));
+      return;
+    }
+    const gone = lastArchiveEvicted()[0];
+    setArchiveNote(gone ? tf("archiveEvicted", { limit: ARCHIVE_LIMIT, name: gone.name }, lang) : null);
+  }
+
+  function careerFacts() {
+    const careerId = player?.careerId ?? loadLive()?.player.careerId ?? null;
+    const done = archiveStateOf(careerId);
+    return { hasLive: !!player || hasLiveSave(), finished: done.finished, archived: done.archived };
+  }
+
+  /** "Nuova vita" / "Un'altra vita": asks first whenever something could be lost. */
+  function requestNewLife(origin: NewLifeOrigin) {
+    if (newLifeBusy.current || newLife) return;
+    const ask = newLifeAsk(careerFacts());
+    if (ask === "none") {
+      startNewLife(origin, false);
+      return;
+    }
+    setNewLife({ ask, origin, error: null });
+  }
+
+  function startNewLife(origin: NewLifeOrigin, confirmed: boolean) {
+    if (newLifeBusy.current) return;
+    newLifeBusy.current = true;
+    try {
+      const cleared = clearLive();
+      if (!cleared && confirmed) {
+        // Nothing was deleted: say so and keep the career.
+        setNewLife((d) => (d ? { ...d, error: t("nlDeleteFailed", lang) } : d));
+        return;
+      }
+      setNewLife(null);
+      setArchiveNote(null);
+      setOtherTab(false);
+      finishedCareerKey.current = null;
+      setPlayer(null);
+      setPending(null);
+      setLog([]);
+      setScreen(origin === "intro" ? "setup" : "intro");
+    } finally {
+      newLifeBusy.current = false;
+    }
+  }
+
+  function retryArchive() {
+    if (!player || newLifeBusy.current) return;
+    newLifeBusy.current = true;
+    try {
+      const entry = loadArchive().find((c) => c.careerId === player.careerId);
+      if (entry) setArchive(saveArchive(entry));
+      if (entry && isArchivePersisted(entry.id)) {
+        setNewLife(null);
+        setArchiveNote(t("nlRetryOk", lang));
+      } else {
+        setNewLife((d) => (d ? { ...d, error: t("nlRetryFailed", lang) } : d));
+      }
+    } finally {
+      newLifeBusy.current = false;
+    }
   }
 
   const chartData = useMemo(() => {
@@ -931,6 +1040,21 @@ export function PivotApp() {
     <div className="pivot-stage">
       <aside className="ad-rail" aria-hidden="true"><span>Riservato</span></aside>
       <div className={screen === "career" ? "pivot-app career-mode" : "pivot-app"}>
+      <div className="app-notices" role="status" aria-live="polite">
+        {storageOff && screen !== "result" && screen !== "archive" ? <p className="app-notice">{t("storageOff", lang)}</p> : null}
+        {loadNotice && screen === "intro" ? (
+          <div className="app-notice">
+            <p>
+              {t(loadNotice.state === "future" ? "loadFuture" : loadNotice.state === "incompatible" ? "loadIncompatible" : loadNotice.state === "migrated" ? "loadMigrated" : "loadCorrupt", lang)}
+              {loadNotice.state !== "migrated" ? ` ${t(loadNotice.backedUp ? "loadBackedUp" : "loadNotBackedUp", lang)}` : ""}
+            </p>
+            <button type="button" className="ghost-btn" onClick={() => setLoadNotice(null)}>{t("dismiss", lang)}</button>
+          </div>
+        ) : null}
+        {otherTab && (screen === "career" || screen === "draft") ? <p className="app-notice">{t("otherTab", lang)}</p> : null}
+        {saveMissed && screen === "draft" ? <p className="app-notice">{t("saveMiss", lang)}</p> : null}
+        {archiveNote && (screen === "result" || screen === "intro") ? <p className="app-notice">{archiveNote}</p> : null}
+      </div>
       {screen === "intro" && (
         <section className="intro-hero home-screen">
           {premiere ? (
@@ -960,25 +1084,26 @@ export function PivotApp() {
               </button>
             ))}
           </div>
-          {player && (player.originPath || player.round > 0) ? (
+          {player && (playerDone || player.originPath || player.round > 0) ? (
             <>
-              <button
-                className="primary-btn"
-                onClick={() =>
-                  setScreen(!player.originPath && player.round < allDraftRounds().length ? "draft" : "career")
-                }
-              >
-                {t("resume", lang)}
-              </button>
+              {playerDone ? (
+                <button className="primary-btn" onClick={() => setScreen("result")}>
+                  {t("seeEnd", lang)}
+                </button>
+              ) : (
+                <button
+                  className="primary-btn"
+                  onClick={() =>
+                    setScreen(!player.originPath && player.round < allDraftRounds().length ? "draft" : "career")
+                  }
+                >
+                  {t("resume", lang)}
+                </button>
+              )}
               <button
                 className="ghost-btn mt-2.5"
-                onClick={() => {
-                  clearLive();
-                  setPlayer(null);
-                  setPending(null);
-                  setLog([]);
-                  setScreen("setup");
-                }}
+                aria-haspopup="dialog"
+                onClick={() => requestNewLife("intro")}
               >
                 {t("newLife", lang)}
               </button>
@@ -1104,7 +1229,7 @@ export function PivotApp() {
       )}
 
       {screen === "result" && player && (
-        <ResultView player={player} onReplay={() => { clearLive(); setPlayer(null); setLog([]); setPending(null); setScreen("intro"); }} onArchive={() => { setViewing(null); setScreen("archive"); }} />
+        <ResultView player={player} onReplay={() => requestNewLife("replay")} onArchive={() => { setViewing(null); setScreen("archive"); }} />
       )}
 
       {screen === "archive" && (
@@ -1116,6 +1241,35 @@ export function PivotApp() {
         />
       )}
       <MiniGuide open={guideOpen} onClose={() => setGuideOpen(false)} />
+      <ModalDialog
+        open={!!newLife}
+        className="confirm-sheet"
+        title={t(newLife?.ask === "unarchived" ? "nlTitleUnarchived" : "nlTitleRunning", lang)}
+        onCancel={() => setNewLife(null)}
+        actions={
+          <>
+            <button type="button" className="guide-next" onClick={() => setNewLife(null)}>
+              {t("nlCancel", lang)}
+            </button>
+            {newLife?.ask === "unarchived" ? (
+              <button type="button" className="guide-skip" onClick={retryArchive}>
+                {t("nlRetryArchive", lang)}
+              </button>
+            ) : null}
+            <button type="button" className="guide-danger" onClick={() => newLife && startNewLife(newLife.origin, true)}>
+              {t("nlConfirm", lang)}
+            </button>
+          </>
+        }
+      >
+        <p>
+          {newLife?.ask === "unarchived"
+            ? tf("nlBodyUnarchived", { name: player?.name ?? "" }, lang)
+            : tf("nlBodyRunning", { name: player?.name ?? "", seasons: seasonsText(player?.seasonHistory.length ?? 0, lang) }, lang)}
+        </p>
+        <p>{t("nlKeepArchive", lang)}</p>
+        {newLife?.error ? <p className="confirm-error" role="alert">{newLife.error}</p> : null}
+      </ModalDialog>
       </div>
       <aside className="ad-rail" aria-hidden="true"><span>Riservato</span></aside>
       <div className="ad-foot">
@@ -1123,6 +1277,11 @@ export function PivotApp() {
       </div>
     </div>
   );
+}
+
+function seasonsText(n: number, lang: string) {
+  if (lang === "en") return n === 1 ? "1 season played" : `${n} seasons played`;
+  return n === 1 ? "1 stagione giocata" : `${n} stagioni giocate`;
 }
 
 function withOvr(text: string, before: number, after: number) {
@@ -1962,9 +2121,13 @@ const StatsTab = memo(function StatsTab({
         Picco osservato tra 26 e 28 anni. La linea piena è il tuo overall; quella tratteggiata è la traiettoria.
       </p>
       <div className="h-44 bg-panel border border-line rounded p-2 mb-4">
-        <Suspense fallback={<div className="grid h-full place-items-center text-xs text-muted" role="status">Caricamento grafico…</div>}>
-          <CareerChart data={chartData} />
-        </Suspense>
+        <LazyChunk
+          load={loadCareerChart}
+          pick={pickCareerChart}
+          props={{ data: chartData }}
+          label={t("chartName", lang)}
+          fallback={<div className="grid h-full place-items-center text-xs text-muted" role="status">{t("chartLoading", lang)}</div>}
+        />
       </div>
       <PersonalAwards title={t("lifeAwards", lang)} rows={player.seasonHistory} />
       <h4 className="font-display text-[19px] mb-2">Stagione per stagione</h4>

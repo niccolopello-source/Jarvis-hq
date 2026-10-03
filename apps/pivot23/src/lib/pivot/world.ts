@@ -1,4 +1,5 @@
 
+import { TUNING } from "./tuning";
 import { IDENTITY_MOD, SIM } from "./config";
 import { chance, gaussTrim, gaussian, pick, rand, randInt } from "./rng";
 import { fillVars } from "./voice";
@@ -831,7 +832,7 @@ export function tickWorld(s: PlayerState) {
     const star = liveStar(w, t.abbr);
     const base = s.teamPower[t.abbr] ?? t.power;
     const mean = 70;
-    const revert = (mean - base) * 0.07;
+    const revert = (mean - base) * (TUNING.world === "regress" ? 0.12 : 0.07);
     const face = t.abbr === s.team.abbr ? s.overall : star?.overall ?? 70;
     const starPull = (face - 78) * 0.22;
     const noise = gaussian(0, 2.4);

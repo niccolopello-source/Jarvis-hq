@@ -2072,6 +2072,52 @@ img.court-mark-photo {
   }
 }
 
+/* Confirm dialog for destructive actions (Nuova vita). Safe action first, destructive last. */
+.confirm-sheet .guide-actions {
+  flex-direction: column;
+}
+.confirm-sheet .guide-body p {
+  margin: 0 0 10px;
+}
+.confirm-sheet .guide-body p:last-child {
+  margin-bottom: 0;
+}
+.guide-danger {
+  min-height: 44px;
+  border-radius: 14px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  background: transparent;
+  border: 1.5px solid var(--color-danger, #b42318);
+  color: var(--color-danger, #b42318);
+}
+.guide-skip:focus-visible,
+.guide-next:focus-visible,
+.guide-danger:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.confirm-error {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--color-danger, #b42318);
+}
+/* Persistent notices: storage unavailable, unreadable save, other tab, archive full. */
+.app-notice {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--color-line);
+  background: var(--color-panel);
+  color: var(--color-chalk);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.app-notice button {
+  margin-top: 8px;
+}
+
 /* Responsive stage. Side and bottom rails are reserved, empty, and never interactive. */
 .pivot-stage {
   min-height: 100dvh;
@@ -2320,4 +2366,21 @@ img.court-mark-photo {
   .delta-chip {
     opacity: 1;
   }
+}
+
+/* Local fallback when a lazy chunk (the chart) fails to load. */
+.chunk-fallback {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 8px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+.chunk-fallback .ghost-btn {
+  width: auto;
+  padding: 6px 14px;
+  min-height: 44px;
 }

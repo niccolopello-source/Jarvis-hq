@@ -1,4 +1,5 @@
 
+import { scriptSlotFor, seedHash, TUNING } from "./tuning";
 import {
   ATTR_LABELS,
   COACH_NAMES,
@@ -481,6 +482,13 @@ export function freshPlayer(
     choiceOvr: 0,
   };
   s.rngState = s.seed;
+  if (TUNING.world === "jitter") {
+    // Seeded spread of starting power: different worlds start from different pecking orders.
+    for (const abbr of Object.keys(s.teamPower)) {
+      const h = seedHash(s.seed, abbr.charCodeAt(0) * 131 + abbr.charCodeAt(1) * 17 + abbr.charCodeAt(2));
+      s.teamPower[abbr] = clamp((s.teamPower[abbr] ?? 70) + ((h % 1301) / 100 - 6.5), 42, 96);
+    }
+  }
   withPlayer(s, () => {
     s.hidden.clutch = 42 + randInt(0, 10);
     s.hidden.durability = 48 + randInt(0, 12);
@@ -1470,8 +1478,7 @@ export function eventAfterMarket(s: PlayerState): { event: StoryEvent; script: S
   const scripted = scriptedSeasonEvent(s, s.season);
   if (scripted) {
     if (!s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
-    const script: SavedStoryScript =
-      s.season === 1 ? "rookie" : s.season === 6 ? "rival" : s.season === 8 ? "injury" : s.season === 10 ? "nation" : "pool";
+    const script: SavedStoryScript = scriptSlotFor(s.seed, s.season) ?? "pool";
     return { event: scripted, script };
   }
   const event = pickStoryEvent(s, s.season);
@@ -1483,11 +1490,17 @@ export function eventAfterMarket(s: PlayerState): { event: StoryEvent; script: S
   return { event, script };
 }
 
+/** Scripted story slot for season n ("rookie" | "rival" | "injury" | "nation") or null. */
+export function scriptedSeasonSlot(s: PlayerState, n: number): SavedStoryScript | null {
+  return scriptSlotFor(s.seed, n);
+}
+
 export function scriptedSeasonEvent(s: PlayerState, n: number): StoryEvent | null {
-  if (n === 1) return rookieStory();
-  if (n === 6) return rivalStory(s);
-  if (n === 8) return injuryStory(s);
-  if (n === 10) return nationStory(s);
+  const slot = scriptSlotFor(s.seed, n);
+  if (slot === "rookie") return rookieStory();
+  if (slot === "rival") return rivalStory(s);
+  if (slot === "injury") return injuryStory(s);
+  if (slot === "nation") return nationStory(s);
   return null;
 }
 
@@ -3070,12 +3083,24 @@ export function loadArchive(): ArchiveCareer[] {
   if (!readable) return [...archiveMemory];
   const unique = new Map<string, ArchiveCareer>();
   for (const entry of [...archiveMemory, ...stored.flat()]) if (!unique.has(entry.id)) unique.set(entry.id, entry);
-  archiveMemory = [...unique.values()].sort((a, b) => b.savedAt - a.savedAt).slice(0, 8);
+  archiveMemory = [...unique.values()].sort((a, b) => b.savedAt - a.savedAt).slice(0, ARCHIVE_LIMIT);
   return [...archiveMemory];
 }
 
+/** Number of finished careers the archive keeps on this device. */
+export const ARCHIVE_LIMIT = 8;
+
+let archiveEvicted: ArchiveCareer[] = [];
+
+/** Careers pushed out of the archive by the last saveArchive() call, newest limit first. */
+export function lastArchiveEvicted(): ArchiveCareer[] {
+  return [...archiveEvicted];
+}
+
 export function saveArchive(entry: ArchiveCareer) {
-  const all = [entry, ...loadArchive().filter((c) => c.id !== entry.id)].slice(0, 8);
+  const previous = loadArchive().filter((c) => c.id !== entry.id);
+  const all = [entry, ...previous].slice(0, ARCHIVE_LIMIT);
+  archiveEvicted = previous.slice(ARCHIVE_LIMIT - 1);
   archiveMemory = all;
   const serialized = JSON.stringify(all);
   for (const store of archiveStores()) {
@@ -3088,9 +3113,23 @@ export function saveArchive(entry: ArchiveCareer) {
   return all;
 }
 
-/** True only when a completed career reached browser storage, not just session memory. */
+function persistentArchiveStores(): Storage[] {
+  try {
+    const local = globalThis.localStorage;
+    // With localStorage available, only localStorage outlives the tab.
+    if (local) return [local];
+  } catch {
+    // Privacy modes can throw here: fall back to whatever store exists.
+  }
+  return archiveStores();
+}
+
+/**
+ * True only when a completed career reached browser storage that outlives the tab
+ * (localStorage when it exists), not just session memory.
+ */
 export function isArchivePersisted(id: string) {
-  return archiveStores().some((store) => {
+  return persistentArchiveStores().some((store) => {
     try {
       const raw = store.getItem(ARCHIVE_KEY);
       if (!raw) return false;
@@ -3102,6 +3141,17 @@ export function isArchivePersisted(id: string) {
       return false;
     }
   });
+}
+
+/**
+ * Is this career finished (an archive entry exists, even only in memory) and is that entry in
+ * persistent storage? Used before any live save is deleted.
+ */
+export function archiveStateOf(careerId: string | undefined | null): { finished: boolean; archived: boolean } {
+  if (!careerId) return { finished: false, archived: false };
+  const entry = loadArchive().find((c) => c.careerId === careerId);
+  if (!entry) return { finished: false, archived: false };
+  return { finished: true, archived: isArchivePersisted(entry.id) };
 }
 
 export interface SimOpts {
