@@ -316,3 +316,16 @@ Claude, Gemini and James did not send a review. None is recorded as an approval.
 Production `https://pivot23.vercel.app` served the new intro after the merge. GitHub deployment `6827628745`, Vercel status success, inspector `https://vercel.com/jarvis-hq-vercel/pivot23/5aGq34HzfGxjXnaaL5qv4MpYnRFC`. The bundle was `index-CcXA-oDK.js`. On a delayed load the mark was 281 px wide, the background was `#0c0b0d`, and the gleam was `bootArc`. Reduced motion set that gleam to `none` and left the 23. After the script loaded, the home title was visible, the theme color was `#f5f5f7`, and there was no page error. The bundle still contains the Totem credit and the two-core lean rule.
 
 A phone was not used. Vercel project settings were not changed. The API that lists deployments returned 403 for this token, so the deployment id above comes from GitHub, not from the Vercel API.
+
+---
+
+## 22. Chrome language and home premiere, 2026-10-03
+
+Branch `grok/pivot23-master-improvement` starts from `main` `c7778cd`. It is not merged.
+
+The setup, the guide, the difficulty names and the season count on the result now follow Italian or English. Spanish strings exist and the picker still hides Spanish. The numbers in `difficulty.ts` were not changed. Story pools were not rewritten.
+
+On the home, the real mark plays one 4.8 second settle, `cineReveal`, with a granata light on the arcs. «Inizia» stays clickable. «Salta» ends it. Reduced motion does not start it. On 1 or 2 cores the same motion lasts 1.6 seconds. There is no timer that holds the buttons.
+
+Checked on Linux, headless Chromium, 2 cores, local Vite, not a phone. ESLint pass, `tsc` pass, unit tests 54/54, production build pass. Browser: the new skip check plus the previous boot, year, save, age-36, career and four-core checks, 11/11. The career from Inizia took 66 first-choice steps. The mark during the boot shell was 281 px at 390 and 420 px at 768 and 1440. One frame gap during that boot sample reached 50 ms. The age-35 retirement fixture on disk was 19,796 bytes. A phone was not used. Production was not deployed from this branch.
+

@@ -57,9 +57,14 @@ function mentionsMvp(value: string) {
   return value === "MVP" || value === "FMVP" || /\bMVP\b/i.test(value);
 }
 
-export function seasonCountLabel(count: number): string {
+export function seasonCountLabel(count: number, lang: Lang = "it"): string {
   const n = Math.max(0, Math.round(count));
-  return `${n} ${n === 1 ? "stagione" : "stagioni"}`;
+  const word = lang === "en"
+    ? (n === 1 ? "season" : "seasons")
+    : lang === "es"
+      ? (n === 1 ? "temporada" : "temporadas")
+      : (n === 1 ? "stagione" : "stagioni");
+  return `${n} ${word}`;
 }
 
 export function formatCareerTotal(value: number, lang: Lang): string {

@@ -238,18 +238,20 @@ export function CourtMark({
   size = 72,
   className,
   brand = false,
+  premiere = false,
 }: {
   number?: number | string;
   size?: number;
   className?: string;
   brand?: boolean;
+  premiere?: boolean;
 }) {
   const label = String(number);
-  const cls = ["court-mark", brand ? "is-brand" : "", className].filter(Boolean).join(" ");
+  const cls = ["court-mark", brand ? "is-brand" : "", premiere ? "is-premiere" : "", className].filter(Boolean).join(" ");
   const live = useRef<SVGSVGElement>(null);
   useEffect(() => {
     const el = live.current;
-    if (!el) return;
+    if (!el || premiere) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let timer = 0;
     const play = () => {
@@ -270,7 +272,7 @@ export function CourtMark({
       io.disconnect();
       window.clearInterval(timer);
     };
-  }, [brand, label]);
+  }, [brand, label, premiere]);
   if (brand && label === "23") {
     return (
       <svg ref={live} width={size} height={size} viewBox="0 0 80 80" aria-hidden className={`${cls} court-mark-live`}>
@@ -279,6 +281,12 @@ export function CourtMark({
           <path d="M22.2 22.4 A22.2 22.2 0 0 1 57.8 22.4" fill="none" stroke="currentColor" strokeWidth="3.15" strokeLinecap="round" />
           <path d="M57.8 57.6 A22.2 22.2 0 0 1 22.2 57.6" fill="none" stroke="currentColor" strokeWidth="3.15" strokeLinecap="round" />
         </g>
+        {premiere ? (
+          <g className="mark-gleam" fill="none" stroke="currentColor" strokeWidth="3.15" strokeLinecap="round">
+            <path d="M22.2 22.4 A22.2 22.2 0 0 1 57.8 22.4" />
+            <path d="M57.8 57.6 A22.2 22.2 0 0 1 22.2 57.6" />
+          </g>
+        ) : null}
         <line x1="4.2" y1="40" x2="16.6" y2="40" stroke="currentColor" strokeWidth="4.4" strokeLinecap="square" />
         <line x1="63.4" y1="40" x2="75.8" y2="40" stroke="currentColor" strokeWidth="4.4" strokeLinecap="square" />
         <text

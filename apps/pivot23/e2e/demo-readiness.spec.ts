@@ -97,6 +97,30 @@ test("the boot mark lights the real logo once and stays still when motion is red
   expect(errors).toEqual([]);
 });
 
+test("the home premiere can be skipped and does not block the start button", async ({ page }) => {
+  const viewports = [
+    { width: 375, height: 667 },
+    { width: 390, height: 844 },
+    { width: 393, height: 852 },
+    { width: 768, height: 1024 },
+    { width: 1440, height: 900 },
+  ];
+  await page.setViewportSize(viewports[1]!);
+  await page.goto("/");
+  await expect(page.locator(".court-mark-live.is-premiere")).toBeVisible();
+  await page.getByRole("button", { name: "Inizia", exact: true }).click({ trial: true });
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  }
+  await page.getByRole("button", { name: "Salta", exact: true }).click();
+  await expect(page.locator(".is-premiere")).toHaveCount(0);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.reload();
+  await expect(page.locator(".is-premiere")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Inizia", exact: true })).toBeVisible();
+});
+
 test("a failed boot script still shows the logo and the reload link", async ({ page }) => {
   await page.route("**/src/main.tsx", (route) => route.abort());
   await page.goto("/", { waitUntil: "commit" });
