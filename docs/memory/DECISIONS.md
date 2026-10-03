@@ -47,6 +47,8 @@ The house priority used while building the beta, and not withdrawn: coherence, t
 | P-009 | 2026-10-03 | Break long DPOY streaks (`dpoyFatigue=streak`: max streak 9 → 5, totals unchanged). | Measured, default-off. Owner decision. |
 | P-010 | 2026-10-03 | Security headers and CSP in `apps/pivot23/vercel.json`. Every future third-party script (ads, analytics, Totem) must extend the CSP in its own PR. | On the branch, not merged. Requires checking the Vercel root directory. |
 | P-011 | 2026-10-03 | English demo = English interface, Italian story text, stated on the home. Full narrative translation is a separate project (~2,970 strings). | Owner decision on scope. |
+| P-012 | 2026-10-03 | Engine rule `RULES.rookieShuffle = "portable"` (seeded Fisher–Yates instead of `sort(() => rand() - 0.5)`), so a seed gives the same career on every JavaScript engine. Ship it with an engine version bump (e.g. `2.12.0-beta`). | Default off on `grokbot/demo-hardening`. 1,000 careers: distributions unchanged within noise, per-seed outcomes change. Owner decision. |
+| P-013 | 2026-10-03 | Whether the lean (≤2 cores) and returning-visit premiere (1.6 s) should also get +1.5 s. | The owner asked for +1500 ms on «the» splash; only the first-visit 4.8 s premiere was changed. Owner decision. |
 
 ## Superseded documents
 
