@@ -2491,3 +2491,21 @@ img.court-mark-photo {
     text-overflow: ellipsis;
   }
 }
+
+/* Phase E: one visible focus ring everywhere (WCAG 2.4.7). :where() keeps specificity at zero, so
+   the existing component rings (guide buttons, swipe slides) still win. */
+:where(button, a[href], [role="button"], summary, select, textarea):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.text-input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+[data-pending]:focus {
+  outline: none;
+}
+[data-pending]:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
