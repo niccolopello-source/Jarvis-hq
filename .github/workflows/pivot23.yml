@@ -11,20 +11,33 @@ on:
       - "apps/pivot23/**"
       - ".github/workflows/pivot23.yml"
       - "package.json"
+  schedule:
+    # Nightly: statistical engine checks and the full e2e on the production build.
+    - cron: "17 3 * * *"
   workflow_dispatch:
+
+concurrency:
+  group: pivot23-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: apps/pivot23
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/pivot23
+    name: lint, types, unit, build, e2e (production build)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: 11.19.0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: pnpm
@@ -35,4 +48,35 @@ jobs:
       - run: pnpm run typecheck
       - run: pnpm run test
       - run: pnpm run build
-      - run: pnpm run test:e2e
+      - run: pnpm run check:headers
+      # Same build, served by vite preview with the vercel.json security headers.
+      - run: pnpm run test:e2e:preview
+        env:
+          CI: "true"
+      - name: Upload Playwright report and traces
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: |
+            apps/pivot23/playwright-report
+            apps/pivot23/test-results
+          retention-days: 7
+          if-no-files-found: ignore
+
+  engine-stats:
+    name: statistical engine checks (~4 min)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: apps/pivot23/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run test:stats

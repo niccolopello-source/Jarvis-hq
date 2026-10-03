@@ -10,7 +10,11 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test": "node --import=tsx --test src/lib/pivot/engine.test.ts src/lib/pivot/save.test.ts src/lib/pivot/awards.test.ts src/lib/pivot/determinism.test.ts src/lib/pivot/i18n.test.ts src/lib/pivot/score-line.test.ts src/components/pivot/presentation.test.ts src/components/pivot/i18n-coverage.test.ts",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:stats": "node --import=tsx --test src/lib/pivot/engine.stats.test.ts",
+    "test:all": "pnpm run test && pnpm run test:stats",
+    "test:e2e:preview": "E2E_PREVIEW=1 playwright test",
+    "check:headers": "node scripts/check-headers.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.510.0",
