@@ -1,10 +1,15 @@
 import { expect, test } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const here = dirname(fileURLToPath(import.meta.url));
+const savePath = join(here, "fixtures", "retire-save.json");
 
 test.beforeAll(() => {
-  execFileSync("node", ["--import=tsx", "/tmp/make-retire-save.ts"], {
-    cwd: "/tmp/pivot-a84fa7e/apps/pivot23",
+  execFileSync("node", ["--import=tsx", join(here, "fixtures", "make-retire-save.ts")], {
+    cwd: join(here, ".."),
     stdio: "inherit",
   });
 });
@@ -90,7 +95,7 @@ test("the year sheet explains the main stats and hides the advanced ones", async
 
 test("a failed write shows the warning and a reload keeps the previous save", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  const raw = readFileSync("/tmp/retire-save.json", "utf8");
+  const raw = readFileSync(savePath, "utf8");
   await page.addInitScript((saved) => {
     localStorage.setItem("pivot-v2-save", saved);
   }, raw);
@@ -112,7 +117,7 @@ test("a failed write shows the warning and a reload keeps the previous save", as
 });
 
 test("choosing to play at 36 leaves the retirement card", async ({ page }) => {
-  const raw = readFileSync("/tmp/retire-save.json", "utf8");
+  const raw = readFileSync(savePath, "utf8");
   await page.addInitScript((saved) => {
     localStorage.setItem("pivot-v2-save", saved);
   }, raw);
@@ -125,7 +130,7 @@ test("choosing to play at 36 leaves the retirement card", async ({ page }) => {
 test("the age-36 season is played once and the career then closes", async ({ page }) => {
   test.setTimeout(90_000);
   await page.setViewportSize({ width: 390, height: 844 });
-  const raw = readFileSync("/tmp/retire-save.json", "utf8");
+  const raw = readFileSync(savePath, "utf8");
   await page.addInitScript((saved) => {
     localStorage.setItem("pivot-v2-save", saved);
   }, raw);
@@ -206,4 +211,50 @@ test("welcome becomes clickable and the mark follows reduced motion on every vie
   expect(new Set(motion.map((row) => row.normal)).size).toBe(1);
   expect(new Set(motion.map((row) => row.lean)).size).toBe(1);
   console.log(`MOTION ${JSON.stringify(motion)}`);
+});
+
+test("a career started from the welcome can reach the archive", async ({ page }) => {
+  test.setTimeout(240_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.screenshot({ path: "/tmp/pivot-shots/01-home.png", fullPage: true });
+  await page.getByRole("button", { name: "Inizia", exact: true }).click();
+  await page.getByPlaceholder("Es. Marco Ferrara").fill("Carriera Intera");
+  await page.screenshot({ path: "/tmp/pivot-shots/02-setup.png", fullPage: true });
+  await page.getByRole("button", { name: "Gioca il Draft" }).click();
+  const ready = page.getByRole("heading", { name: "Il tuo giocatore è pronto" });
+  for (let round = 0; round < 10 && !(await ready.isVisible().catch(() => false)); round += 1) {
+    await page.locator(".draft-card").first().click();
+    await page.waitForTimeout(650);
+  }
+  await page.getByRole("button", { name: "Inizia la carriera" }).click();
+  await page.getByRole("button", { name: /College NCAA/ }).click();
+  await page.getByRole("button", { name: "Entra in palestra" }).click();
+  await page.screenshot({ path: "/tmp/pivot-shots/03-first-choice.png", fullPage: true });
+
+  const seen: string[] = [];
+  for (let step = 0; step < 220; step += 1) {
+    if (await page.getByRole("region", { name: "Career Card" }).isVisible().catch(() => false)) break;
+    const pending = page.locator("[data-pending]").first();
+    if (!(await pending.isVisible().catch(() => false))) {
+      if (await page.getByRole("heading", { name: "Carriera conclusa" }).isVisible().catch(() => false)) break;
+    }
+    await expect(pending).toBeVisible({ timeout: 12_000 });
+    const signature = (await pending.innerText()).slice(0, 160);
+    seen.push(signature);
+    const tail = seen.slice(-4);
+    if (tail.length === 4 && tail.every((item) => item === tail[0])) {
+      throw new Error(`career stalled at step ${step}: ${tail[0]}`);
+    }
+    await pending.locator("button").first().click({ timeout: 4_000 }).catch(async (error: unknown) => {
+      if (await page.getByRole("heading", { name: "Carriera conclusa" }).isVisible().catch(() => false)) return;
+      throw error;
+    });
+  }
+
+  await expect(page.getByRole("heading", { name: "Carriera conclusa" })).toBeVisible();
+  await page.screenshot({ path: "/tmp/pivot-shots/04-result.png", fullPage: true });
+  await page.getByRole("button", { name: "Archivio" }).click();
+  await expect(page.getByText("Carriera Intera")).toBeVisible();
+  console.log(`CAREER_STEPS ${seen.length}`);
 });

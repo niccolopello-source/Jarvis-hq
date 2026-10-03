@@ -226,15 +226,15 @@ export function seasonAtmosphere(s: PlayerState, row: SeasonRow): string {
     "Il voto è arrivato. Non cambia i lunedì, cambia il modo in cui ti presentano.",
   ]);
   add(row.awards.includes("Rookie of the Year"), [
-    "Il premio da matricola non è un arrivo. È un modo per dirti che adesso ti guardano.",
+    "Il Rookie of the Year non è un arrivo. È un modo per dirti che adesso ti guardano.",
     "Il premio da ragazzo. Una targa che dice: da ora il dubbio è degli altri, non tuo.",
-    "Premio da matricola. Una sera ti chiamano per nome, e il nome pesa già.",
+    "Rookie of the Year. Una sera ti chiamano per nome, e il nome pesa già.",
     "Il premio da ragazzo. Lo tieni, sapendo che ottobre prossimo non perdona i debutti.",
     "Te l'hanno dato al primo giro. Adesso tocca diventare altro, e lo sai.",
-    "Una targa da matricola. Lo spogliatoio ti guarda diverso: non è affetto, è attesa.",
+    "Il Rookie of the Year. Lo spogliatoio ti guarda diverso: non è affetto, è attesa.",
   ]);
   add(row.awards.includes("DPOY") && s.age <= 23, [
-    "A $AGE anni, difensore dell'anno. Di solito aspettano i canestri. Stavolta hanno contato le mani.",
+    "A $AGE anni, Defensive Player of the Year. Di solito aspettano i canestri. Stavolta hanno contato le mani.",
     "Troppo giovane, dicono, per coprire così. Il premio è arrivato lo stesso.",
     "Defensive Player of the Year, a $AGE anni. Chiudi già, e non hai ancora il discorso di un veterano.",
     "A $AGE anni ti volevano veloce. Ti hanno visto sporco, e il nome te l'hanno messo addosso.",
@@ -794,12 +794,12 @@ export function awardFeelLine(s: PlayerState, awards: readonly string[]): string
   if (awards.includes("Rookie of the Year")) {
     return (
       say(s, [
-        "Premio da matricola. Una targa da ragazzo: da ora ti guardano, e non è un complimento gratuito.",
-        "Il premio da matricola. Lo tieni, sapendo che il secondo ottobre non perdona i debutti.",
+        "Rookie of the Year. Una targa da ragazzo: da ora ti guardano, e non è un complimento gratuito.",
+        "Il Rookie of the Year. Lo tieni, sapendo che il secondo ottobre non perdona i debutti.",
         "Il premio da ragazzo. Il dubbio, da stasera, è degli altri. Il lavoro, no: resta tuo.",
         "Te l'hanno dato al primo giro. Adesso tocca diventare altro, senza alzare la voce.",
-        "Premio da matricola. Lo tieni in tasca, non al collo. Ottobre, poi, non perdona i debutti.",
-      ]) || "Premio da matricola. Da ora ti guardano."
+        "Rookie of the Year. Lo tieni in tasca, non al collo. Ottobre, poi, non perdona i debutti.",
+      ]) || "Rookie of the Year. Da ora ti guardano."
     );
   }
   if (awards.includes("DPOY")) {
@@ -807,7 +807,7 @@ export function awardFeelLine(s: PlayerState, awards: readonly string[]): string
       return (
         say(s, [
           "A $AGE anni te l'hanno dato per le chiusure. Il dubbio era l'età. Il palmo ha risposto prima.",
-          "A $AGE anni, difensore dell'anno. Lo tieni in tasca: ottobre non perdona i palmi pigri.",
+          "A $AGE anni, Defensive Player of the Year. Lo tieni in tasca: ottobre non perdona i palmi pigri.",
           "A $AGE anni coprire è già un nome. Te l'hanno appeso senza festa, e questo basta.",
           "Troppo presto, dicevano. Tu hai chiuso abbastanza da farli tacere, e il premio è questo.",
           "A $AGE anni la difesa ha il tuo nome. Non è un complimento: è un orario, da stasera.",

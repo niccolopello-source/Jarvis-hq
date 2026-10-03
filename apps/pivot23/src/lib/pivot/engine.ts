@@ -1571,13 +1571,13 @@ export function rookieStory(): StoryEvent {
   return {
     id: "roy-race",
     phase: "rookie",
-    title: "La corsa alla matricola dell'anno",
+    title: "Rookie of the Year",
     subtitle:
-      "Prima stagione da professionista. I minuti non si regalano, e il premio da matricola nemmeno. Come vuoi presentarti?",
+      "Prima stagione da professionista. I minuti non si regalano, e il Rookie of the Year nemmeno. Come vuoi presentarti?",
     choices: [
       {
         label: "Uso aggressivo",
-        detail: "Palloni, tiri, responsabilità. La corsa alla matricola parte da te.",
+        detail: "Palloni, tiri, responsabilità. La corsa al Rookie of the Year parte da te.",
         fx: () => ({
           form: 1.3,
           development: 0.85,
