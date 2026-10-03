@@ -35,6 +35,13 @@ Public production build is live. It is a beta demo, not a launch.
 - Source of the game that was verified in production on 2026-09-28: `main` at `421a4a0`, then a document-only commit `228a748` was also deployed to production.
 - Engine label in the bundle checked that day: `2.11.0-beta`
 
+Update 2026-10-03, afternoon (demo-stability work, branch `grokbot/demo-stability`):
+
+- Pull request #26 was merged by the owner as `ae67ac6` and deployed to production on Vercel. It contains: verified browser saves with backup of unreadable saves and no silent loss on "Nuova vita" (D-02, D-04, D-05, D-06), a local error boundary with bounded retry for the chart chunk (D-03), NBA-only DPOY (D-01), and default-off balance experiment flags.
+- Not merged yet (same branch, needs a new pull request): Italian/English interface on every screen with axe-clean main screens (D-07, D-12), punctuation fix (D-14), security headers/CSP (D-13), CI on the production build with Node 24 actions (D-16, D-22), full-archive warning (D-20), docs.
+- Root `src/` (D-18): an uploaded copy of root documents (`d8932a3`); `AI-GATEWAY-SPEC.md` and `gitignore.txt` are identical to the root ones, `README.md`, `agents.md`, `architecture.md` and `package.json` differ. Nothing builds from it (the app alias `@/` points at `apps/pivot23/src`). Not deleted; owner decision.
+- Details: `docs/pivot23/SAVE-FORMAT-AND-MIGRATIONS.md`, `docs/pivot23/SECURITY-HEADERS.md`, `docs/pivot23/LEGAL-DISCLAIMER-PROPOSAL.md`, `docs/pivot23-balance-experiments.md`.
+
 Verified later, on 2026-10-03, without replacing the note above:
 
 - `main` is `1a1d928f76a3df1b907cf914b821104d4321a51c`, the merge of pull request #15.

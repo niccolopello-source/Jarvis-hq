@@ -2,6 +2,14 @@
 
 Updated: 2026-10-01. The 28 September deployment claims below are history, not the current tip.
 
+## 2026-10-03 — PIVOT 23 demo-stability (branch `grokbot/demo-stability`)
+
+- Pull request #26 (first five commits of the branch, up to `735ddb1`) was merged into `main` by the owner on 2026-10-03 14:48 UTC as `ae67ac6`, and Vercel deployed it to production (`pivot23`, deployment `dpl_5B4mQJi2dMm1offXLi1f4h3UTBxn`, READY). https://www.pivot23.com answered 200 afterwards.
+- Later commits on the same branch (from `499c43a`) are **not** on `main`: i18n/a11y, security headers, CI, archive warning, docs. They need a new pull request.
+- Every push also builds a second Vercel project, `jarvis-hq` (see `pivot23/SECURITY-HEADERS.md`, D-21).
+- The CI workflow on the branch runs e2e against `vite preview` with the production headers (it no longer starts `pnpm dev`), and the two statistical engine tests run in a parallel job.
+- Save format and backup key: `pivot23/SAVE-FORMAT-AND-MIGRATIONS.md`. Balance measurements: `pivot23-balance-experiments.md`.
+
 ## Repository
 
 - Source of truth: `niccolopello-source/Jarvis-hq`, branch `main`, commit `89249efccdb1b86e7b84de801c46f9c6b544b4d0`. Decision D-016.
@@ -10,7 +18,7 @@ Updated: 2026-10-01. The 28 September deployment claims below are history, not t
 - Engine label: `2.11.0-beta`. Package version: `0.1.0`.
 - Browser save schema: `LIVE_SAVE_VERSION` 2, key `pivot-v2-save`. `SAVE_VERSION` 11 is the player label in `config.ts`, not the JSON schema version.
 - Demo languages on the selector: Italian and English. D-014. Spanish strings remain in `i18n.ts` and are not offered.
-- GitHub Actions: `.github/workflows/pivot23.yml`. The workflow's browser job starts `pnpm dev`, not the production preview.
+- GitHub Actions: `.github/workflows/pivot23.yml`. On `main` the browser job starts `pnpm dev`, not the production preview; the branch `grokbot/demo-stability` changes it to `vite preview` (see the 2026-10-03 section).
 
 ## Production
 

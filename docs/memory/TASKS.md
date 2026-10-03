@@ -45,3 +45,13 @@ Codex, on the branch merged in PR #1, hardened save quota behaviour, EuroLeague 
 ## Where not to implement
 
 Implement on a branch from `main` (`421a4a0` or later). Do not implement on the sandbox history `160b109`. That tree is not this repository.
+
+## 2026-10-03 measurements (branch `grokbot/demo-stability`, not a closure)
+
+Source: `docs/pivot23-balance-experiments.md`. Same seeds on `origin/main` 778a561 and the branch.
+
+- P1-BUST: 4,000 careers (1,000 per difficulty): 389 with potential ≥ 85, **0** peaked 8+ under it. Two candidate mechanisms behind flags (`bust=choices|events`) still give 0/100. Needs a design; still open.
+- P1-WORLD: Boston wins 14.9–16.2% of simulated NBA titles on every difficulty. Flag `world=regress` lowers it to 15.1% (Gini 0.373 → 0.331). Still open, owner decision.
+- P1-ROLE: mean peak by role C 77.0 / PF 77.9 / PG 77.1 / SF 76.7 / SG 76.3 on 1,000 mixed careers; role-fit flags move it by < 1. The box-score table by role is not done.
+- P0-LIFE: the 1,000-career test still passes; it now lives in `engine.stats.test.ts` (CI job of its own, same assertions).
+- D-01 (new): the NBA DPOY could go to a EuroLeague player in 33.2% of NBA seasons. Fixed on the branch and merged in #26; 0 in 4,000 careers after the fix.
