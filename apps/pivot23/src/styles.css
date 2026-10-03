@@ -2436,3 +2436,58 @@ img.court-mark-photo {
   outline: 2px solid var(--color-accent);
   outline-offset: -2px;
 }
+
+/* Phase E (demo readiness): the career chrome stays on screen while the story scrolls under it.
+   On a 320×568 phone it took 53 % of the height, on a landscape phone (844×390) 62 %, leaving
+   about 150 px for the story. Short or narrow screens get a tighter header; nothing is removed
+   from wide or tall screens. Landscape phones drop the last-season line (it is in Anno). */
+@media (max-width: 359px) {
+  .career-chrome .jersey-mark {
+    width: 40px;
+    height: 40px;
+  }
+  .career-chrome .font-display.text-\[22px\] {
+    font-size: 19px;
+  }
+  .career-chrome .ovr-orb {
+    width: 56px;
+    height: 56px;
+  }
+  .career-chrome .ovr-orb-num {
+    font-size: 19px;
+  }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .career-chrome .jersey-mark {
+    width: 40px;
+    height: 40px;
+  }
+  .career-chrome .ovr-orb {
+    width: 52px;
+    height: 52px;
+  }
+  .career-chrome .ovr-orb-num {
+    font-size: 19px;
+  }
+  .career-chrome .hud-line,
+  .career-chrome .swipe-hint {
+    display: none;
+  }
+  .career-chrome > .flex {
+    padding-block: 6px;
+  }
+  .career-chrome .font-display.text-\[22px\] {
+    font-size: 19px;
+  }
+  .career-chrome .hud-club {
+    margin-top: 2px;
+  }
+}
+@media (max-width: 359px) {
+  .career-chrome .hud-line span:last-child {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
