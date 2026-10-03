@@ -106,3 +106,88 @@ test("choosing to play at 36 leaves the retirement card", async ({ page }) => {
   await page.getByRole("button", { name: "Gioca a 36 anni" }).click();
   await expect(page.getByRole("heading", { name: "L'ultimo inverno" })).toHaveCount(0);
 });
+
+test("the age-36 season is played once and the career then closes", async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  const raw = readFileSync("/tmp/retire-save.json", "utf8");
+  await page.addInitScript((saved) => {
+    localStorage.setItem("pivot-v2-save", saved);
+  }, raw);
+  await page.goto("/");
+  await page.getByRole("button", { name: "Gioca a 36 anni" }).click();
+  await expect(page.getByRole("heading", { name: "L'ultimo inverno" })).toHaveCount(0);
+
+  const seen: string[] = [];
+  for (let step = 0; step < 16; step += 1) {
+    if (await page.getByRole("region", { name: "Career Card" }).isVisible().catch(() => false)) break;
+    const pending = page.locator("[data-pending]").first();
+    if (!(await pending.isVisible().catch(() => false))) {
+      if (await page.getByRole("heading", { name: "Carriera conclusa" }).isVisible().catch(() => false)) break;
+    }
+    await expect(pending).toBeVisible({ timeout: 8_000 });
+    const signature = (await pending.innerText()).slice(0, 180);
+    seen.push(signature);
+    const tail = seen.slice(-4);
+    if (tail.length === 4 && tail.every((item) => item === tail[0])) {
+      throw new Error(`career stalled: ${tail[0]}`);
+    }
+    await pending.locator("button").first().click({ timeout: 4_000 }).catch(async (error: unknown) => {
+      if (await page.getByRole("heading", { name: "Carriera conclusa" }).isVisible().catch(() => false)) return;
+      throw error;
+    });
+    await expect(page.getByRole("heading", { name: "Carriera conclusa" }).or(page.locator("[data-pending]")).first()).toBeVisible();
+  }
+
+  await expect(page.getByRole("heading", { name: "Carriera conclusa" })).toBeVisible();
+  await expect(page.getByText("36 anni")).toBeVisible();
+  const card = page.getByRole("region", { name: "Career Card" });
+  await card.scrollIntoViewIfNeeded();
+  await expect(card).toBeVisible();
+  await expect(card).toContainText("36");
+  await expect(page.getByRole("heading", { name: "L'ultimo inverno" })).toHaveCount(0);
+  expect(seen.filter((item) => item.includes("L'ultimo inverno"))).toEqual([]);
+});
+
+test("welcome becomes clickable and the mark follows reduced motion on every viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const started = Date.now();
+  await page.goto("/");
+  await page.getByRole("button", { name: "Inizia", exact: true }).click({ trial: true });
+  const interactiveMs = Date.now() - started;
+  const timing = await page.evaluate(() => {
+    const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+    const paints = performance.getEntriesByType("paint");
+    return {
+      cores: navigator.hardwareConcurrency,
+      reduced: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      lean: document.documentElement.classList.contains("pivot-lean"),
+      domContentLoaded: nav?.domContentLoadedEventEnd ?? null,
+      load: nav?.loadEventEnd ?? null,
+      firstContentfulPaint: paints.find((paint) => paint.name === "first-contentful-paint")?.startTime ?? null,
+    };
+  });
+  console.log(`STARTUP ${JSON.stringify({ interactiveMs, ...timing })}`);
+
+  const motion: { width: number; reduced: string; normal: string; lean: boolean }[] = [];
+  for (const viewport of [
+    { width: 320, height: 568 },
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 1440, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
+    const reduced = await page.locator(".mark-arcs").first().evaluate((el) => getComputedStyle(el).animationName);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.reload();
+    const normal = await page.locator(".court-mark-live.is-sweep .mark-arcs").evaluate((el) => getComputedStyle(el).animationName);
+    const lean = await page.evaluate(() => document.documentElement.classList.contains("pivot-lean"));
+    motion.push({ width: viewport.width, reduced, normal, lean });
+    expect(reduced).toBe("none");
+  }
+  expect(new Set(motion.map((row) => row.normal)).size).toBe(1);
+  expect(new Set(motion.map((row) => row.lean)).size).toBe(1);
+  console.log(`MOTION ${JSON.stringify(motion)}`);
+});
