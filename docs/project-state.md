@@ -230,3 +230,11 @@ What the browser showed:
 - The year sheet was empty after season 1 because `SeasonSheet` was memoized over a mutated player. The memo is removed. The sheet then showed PPG, RPG and APG, the legend, and the advanced block closed. Opening it showed USG%. The swipe layer had been capturing the pointer on `summary`, so the block could not open. `summary` is now treated as a control, not a swipe. Tab buttons were at least 44px at 320 and 390. No physical device was used.
 
 Pull request #16 is open. It is not merged. The public site was not deployed from this pass.
+
+Later the same day, on the same branch, Playwright drove the age-35 retirement card. "Gioca a 36 anni" left that card. The next season was played through its recap. The screen then showed "Carriera conclusa", the text "36 anni", and the Career Card. The winter card did not return. The click loop stopped inside 16 steps, in 7.3 seconds. This used a constructed save, not a career played by hand from the draft. No retirement rule was changed.
+
+Startup, headless Chromium, Linux, 2 CPU cores, viewport 390×844, localhost, no throttle. Dev server: the "Inizia" button accepted a trial click in 373 ms. First contentful paint 36 ms. Production preview on port 4180, three loads: 189 ms, then 87 ms, then 75 ms. First contentful paint on the cold production load was 72 ms. A phone was not measured. The public site was not measured.
+
+The mark keeps the sweep class, but on this machine `pivot-lean` turns the animation off because the CPU count is 2. That was the same at 320, 390, 768 and 1440, in dev and in the production preview. Reduced motion was `none` at 320 and at the other widths. Removing the lean class in the existing boot test still reads `markSweep`. No new animation was added.
+
+The result line for this one-season save reads "1 stagioni". That plural was seen and left unchanged.
