@@ -3,6 +3,11 @@ import { createRoot } from "react-dom/client";
 import { PivotApp } from "@/components/pivot/PivotApp";
 import "./styles.css";
 
+const themeMeta = document.querySelector('meta[name="theme-color"]');
+if (themeMeta instanceof HTMLMetaElement) {
+  themeMeta.content = window.matchMedia("(prefers-color-scheme: dark)").matches ? "#1c1c1e" : "#f5f5f7";
+}
+
 class AppErrorBoundary extends Component<
   { children: ReactNode },
   { error: Error | null }

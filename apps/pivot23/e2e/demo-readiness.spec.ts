@@ -17,8 +17,9 @@ test.beforeAll(() => {
 test("the boot page is a static fallback and the home mark can sweep", async ({ page }) => {
   const html = await (await page.request.get("/")).text();
   expect(html).toContain("Avvio dell");
-  expect(html).toContain("prefers-color-scheme: dark");
-  expect(html).toContain("bootSweep");
+  expect(html).toContain("--color-granata");
+  expect(html).toContain("M22.2 22.4");
+  expect(html).toContain("bootArc");
   expect(html).toContain("prefers-reduced-motion: reduce");
 
   await page.goto("/");
@@ -42,18 +43,66 @@ test("the boot page is a static fallback and the home mark can sweep", async ({ 
   await expect.poll(async () => page.locator(".mark-arcs").first().evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
 });
 
-test("the boot mark sweeps before React and stays still when motion is reduced", async ({ page }) => {
+test("the boot mark lights the real logo once and stays still when motion is reduced", async ({ page }) => {
+  test.setTimeout(60_000);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
   await page.route("**/src/main.tsx", async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     await route.continue();
   });
-  await page.goto("/", { waitUntil: "commit" });
-  await expect(page.locator(".boot-ring")).toContainText("23");
-  await expect.poll(async () => page.locator(".boot-sweep").evaluate((el) => getComputedStyle(el).animationName)).toBe("bootSweep");
+  const widths: number[] = [];
+  let worst = 0;
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 1440, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/", { waitUntil: "commit" });
+    const logo = page.locator(".boot-logo");
+    await expect(logo).toBeVisible();
+    await expect(page.locator(".boot-ring")).toContainText("23");
+    const box = await logo.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.width).toBeGreaterThan(200);
+    expect(box!.x).toBeGreaterThanOrEqual(0);
+    expect(box!.x + box!.width).toBeLessThanOrEqual(viewport.width + 1);
+    await expect.poll(async () => page.locator(".boot-gleam path").first().evaluate((el) => getComputedStyle(el).animationName)).toBe("bootArc");
+    widths.push(Math.round(box!.width));
+    if (viewport.width === 390) {
+      const gaps = await page.evaluate(async () => {
+        const samples: number[] = [];
+        let last = performance.now();
+        await new Promise<void>((resolve) => {
+          const step = (now: number) => {
+            samples.push(now - last);
+            last = now;
+            if (samples.length < 40) requestAnimationFrame(step);
+            else resolve();
+          };
+          requestAnimationFrame(step);
+        });
+        return samples;
+      });
+      worst = gaps.reduce((max, gap) => Math.max(max, gap), 0);
+    }
+  }
   await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.reload({ waitUntil: "commit" });
   await expect(page.locator(".boot-ring")).toContainText("23");
-  await expect.poll(async () => page.locator(".boot-sweep").evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
+  await expect.poll(async () => page.locator(".boot-gleam path").first().evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
+  console.log(`BOOT_FRAMES ${JSON.stringify({ widths, worstMs: Math.round(worst) })}`);
+  expect(errors).toEqual([]);
+});
+
+test("a failed boot script still shows the logo and the reload link", async ({ page }) => {
+  await page.route("**/src/main.tsx", (route) => route.abort());
+  await page.goto("/", { waitUntil: "commit" });
+  await expect(page.locator("#boot")).toBeVisible();
+  await expect(page.locator(".boot-ring")).toContainText("23");
+  await expect(page.getByRole("link", { name: "Ricarica PIVOT 23" })).toBeVisible();
 });
 
 test("the year sheet explains the main stats and hides the advanced ones", async ({ page }) => {
