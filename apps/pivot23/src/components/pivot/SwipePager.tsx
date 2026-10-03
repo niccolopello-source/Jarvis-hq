@@ -16,10 +16,13 @@ export function SwipeTrack({
   tab,
   onTab,
   children,
+  labels,
 }: {
   tab: CareerTab;
   onTab: (next: CareerTab, dir: Dir) => void;
   children: ReactNode[];
+  /** Accessible names of the four panels, in CAREER_TABS order. */
+  labels?: string[];
 }) {
   const index = Math.max(0, CAREER_TABS.indexOf(tab));
   const pagerRef = useRef<HTMLDivElement | null>(null);
@@ -191,7 +194,15 @@ export function SwipeTrack({
           const on = i === index;
           const ready = Math.abs(i - index) <= 1;
           return (
-            <div key={id} className={`swipe-slide${on ? " on" : " off"}`} aria-hidden={!on}>
+            <div
+              key={id}
+              className={`swipe-slide${on ? " on" : " off"}`}
+              aria-hidden={!on}
+              inert={!on}
+              tabIndex={on ? 0 : -1}
+              role="region"
+              aria-label={labels?.[i] ?? id}
+            >
               {ready ? slides[i] : null}
             </div>
           );

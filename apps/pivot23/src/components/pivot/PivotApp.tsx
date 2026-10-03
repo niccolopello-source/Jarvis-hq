@@ -3,7 +3,7 @@ import { Component, memo, useEffect, useLayoutEffect, useMemo, useRef, useState,
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
 import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components/pivot/LeaguePanel";
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
-import { chipsFromFx, chipsFromSnapshot, consequenceSchedule, formatCareerTotal, getSeasonDisplayLabel, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
+import { chipsFromFx, chipsFromSnapshot, consequenceSchedule, formatCareerTotal, getSeasonDisplayLabel, tidyText, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
 import { pathFeel, playoffNerves, ROLE_ARTICLE, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
@@ -14,9 +14,7 @@ import {
   NATIONALITIES,
   RIVAL_NAMES,
   ROLES,
-  confIt,
   natAdj,
-  awardIt,
 } from "@/lib/pivot/data";
 import {
   acceptForcedPreseasonTrade,
@@ -79,6 +77,7 @@ import { initLang, setLang, t, tf, useLang, awardLabel, DEMO_LANGS, difficultyFa
 import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
 import { ModalDialog } from "@/components/pivot/Dialog";
 import { LazyChunk } from "@/components/pivot/ChunkBoundary";
+import { attrLabel, confLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel } from "@/lib/pivot/labels";
 
 const loadCareerChart = () => import("@/components/pivot/CareerChart");
 const pickCareerChart = (m: typeof import("@/components/pivot/CareerChart")) => m.CareerChart;
@@ -101,7 +100,7 @@ import { advancedOf } from "@/lib/pivot/peak";
 import { defensiveMarks } from "@/lib/pivot/awards-helpers";
 import { clearLive, hasLiveSave, lastLoadReport, loadLive, loadSwipe, logSeqFrom, persistentStorageAvailable, saveLive, saveSwipe, watchLiveConflicts, type LiveLoadReport } from "@/lib/pivot/save";
 import { CAREER_TABS, SwipeTrack } from "@/components/pivot/SwipePager";
-import { careerCommentary, hofLabel, hofTier, palmares } from "@/lib/pivot/legacy";
+import { careerCommentary, hofTier, palmares } from "@/lib/pivot/legacy";
 import { settleYearTitle } from "@/lib/pivot/league";
 import type {
   ArchiveCareer,
@@ -158,8 +157,8 @@ function CrashFallback({ error }: { error: Error | null }) {
     <main className="min-h-screen bg-bg text-wood grid place-items-center p-6">
       <section className="max-w-md rounded-xl border border-line bg-panel p-6 shadow-sm" role="alert">
         <p className="text-xs font-semibold uppercase tracking-widest text-muted">PIVOT 23</p>
-        <h1 className="mt-2 text-2xl font-semibold">Si è verificato un problema</h1>
-        <p className="mt-2 text-sm text-muted">Ricarica PIVOT 23 per riprovare. La carriera salvata nel browser resta disponibile.</p>
+        <h1 className="mt-2 text-2xl font-semibold">{t("crashTitle")}</h1>
+        <p className="mt-2 text-sm text-muted">{t("crashBody")}</p>
         {import.meta.env.DEV && error && (
           <pre className="mt-4 overflow-auto rounded-lg bg-panel-2 p-3 text-xs text-muted" role="note">
             {error.message}
@@ -169,7 +168,7 @@ function CrashFallback({ error }: { error: Error | null }) {
           className="mt-5 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white"
           onClick={() => window.location.reload()}
         >
-          Ricarica PIVOT 23
+          {t("crashReload")}
         </button>
       </section>
     </main>
@@ -292,12 +291,12 @@ export function PivotApp() {
     if (boot.screen !== "career") return null;
     return {
       kind: "story",
-      title: "Si rientra in palestra",
-      subtitle: "Il gruppo è già in campo. Manca solo il tuo nome sul referto.",
+      title: t("resumeTitle"),
+      subtitle: t("resumeSub"),
       options: [
         {
-          label: "Entra in campo",
-          detail: "La stagione riprende da qui.",
+          label: t("resumeGo"),
+          detail: t("resumeGoDetail"),
           run: (p) => {
             applyFx(p, { flavor: "Si va avanti." });
             return { flavor: "Si va avanti.", chips: [] };
@@ -467,7 +466,12 @@ export function PivotApp() {
 
   function pushLog(e: Omit<LogEntry, "id">, chips?: string[]) {
     const id = nid();
-    setLog((prev) => [...prev, { ...e, id }]);
+    const clean = {
+      ...e,
+      ...(typeof e.body === "string" ? { body: tidyText(e.body) } : {}),
+      ...(typeof e.result === "string" ? { result: tidyText(e.result) } : {}),
+    };
+    setLog((prev) => [...prev, { ...clean, id }]);
     if (!chips?.length) return;
     setFxChips((prev) => ({ ...prev, [id]: chips }));
     const born = performance.now();
@@ -1038,7 +1042,7 @@ export function PivotApp() {
 
   return (
     <div className="pivot-stage">
-      <aside className="ad-rail" aria-hidden="true"><span>Riservato</span></aside>
+      <aside className="ad-rail" aria-hidden="true"><span>{t("adReserved", lang)}</span></aside>
       <div className={screen === "career" ? "pivot-app career-mode" : "pivot-app"}>
       <div className="app-notices" role="status" aria-live="polite">
         {storageOff && screen !== "result" && screen !== "archive" ? <p className="app-notice">{t("storageOff", lang)}</p> : null}
@@ -1128,52 +1132,54 @@ export function PivotApp() {
       {screen === "setup" && (
         <section className="fade-in">
           <button className="back-link" onClick={() => setScreen("intro")}>
-            <ChevronLeft className="size-4" /> Home
+            <ChevronLeft className="size-4" aria-hidden="true" /> {t("home", lang)}
           </button>
           <h2 className="page-title">{t("setupTitle", lang)}</h2>
           <p className="lede">{t("setupLede", lang)}</p>
-          <span className="group-label">{t("setupName", lang)}</span>
+          <label className="group-label" htmlFor="setup-name">{t("setupName", lang)}</label>
           <div className="group-card">
-            <input className="text-input" maxLength={20} placeholder="Es. Marco Ferrara" value={name} onChange={(e) => setName(e.target.value)} />
+            <input id="setup-name" className="text-input" maxLength={20} autoComplete="off" placeholder={t("namePlaceholder", lang)} value={name} onChange={(e) => setName(e.target.value)} />
           </div>
-          <span className="group-label">{t("setupRole", lang)}</span>
-          <div className="grid grid-cols-2 gap-2 mb-6">
+          <span className="group-label" id="setup-role-label">{t("setupRole", lang)}</span>
+          <div className="grid grid-cols-2 gap-2 mb-6" role="group" aria-labelledby="setup-role-label">
             {(Object.keys(ROLES) as Role[]).map((r) => (
-              <button key={r} className={`pill-btn ${role === r ? "selected" : ""}`} onClick={() => setRole(r)}>
-                {ROLES[r].label}
+              <button key={r} className={`pill-btn ${role === r ? "selected" : ""}`} aria-pressed={role === r} onClick={() => setRole(r)}>
+                {roleLabel(r, lang)}
               </button>
             ))}
           </div>
-          <span className="group-label">{t("setupFrom", lang)}</span>
-          <div className="grid grid-cols-3 gap-2 mb-6">
+          <span className="group-label" id="setup-from-label">{t("setupFrom", lang)}</span>
+          <div className="grid grid-cols-3 gap-2 mb-6" role="group" aria-labelledby="setup-from-label">
             {NATIONALITIES.map((n) => (
               <button
                 key={n.id}
                 className={`pill-btn nat-pill ${nat === n.id ? "selected" : ""}`}
+                aria-pressed={nat === n.id}
                 onClick={() => setNat(n.id)}
               >
                 <span aria-hidden="true">
                   <FlagMark nation={n.id} size={16} />
                 </span>
-                {n.label}
+                {nationLabel(n.id, lang)}
               </button>
             ))}
           </div>
-          <span className="group-label">{t("setupNumber", lang)}</span>
+          <label className="group-label" htmlFor="setup-number">{t("setupNumber", lang)}</label>
           <div className="jersey-hero">
             <CourtMark number={Number.isFinite(number) ? number : 23} size={88} brand={number === 23} />
             <div>
               <div className="num tabular">{Number.isFinite(number) ? number : 23}</div>
-              <div className="hint">{t("setupHint", lang)}</div>
+              <div className="hint" id="setup-number-hint">{t("setupHint", lang)}</div>
             </div>
           </div>
-          <input className="text-input mb-6 w-24 text-center" type="number" min={0} max={99} value={number} onChange={(e) => setNumber(parseInt(e.target.value, 10) || 0)} />
-          <span className="group-label">{t("setupDiff", lang)}</span>
-          <div className="flex flex-col gap-2 mb-6">
+          <input id="setup-number" aria-describedby="setup-number-hint" className="text-input mb-6 w-24 text-center" type="number" inputMode="numeric" min={0} max={99} value={number} onChange={(e) => setNumber(parseInt(e.target.value, 10) || 0)} />
+          <span className="group-label" id="setup-diff-label">{t("setupDiff", lang)}</span>
+          <div className="flex flex-col gap-2 mb-6" role="group" aria-labelledby="setup-diff-label">
             {DIFFICULTIES.map((d) => (
               <button
                 key={d.id}
                 className={`diff-card ${difficulty === d.id ? "selected" : ""}`}
+                aria-pressed={difficulty === d.id}
                 onClick={() => setDifficulty(d.id)}
               >
                 <span className="diff-head">
@@ -1271,7 +1277,7 @@ export function PivotApp() {
         {newLife?.error ? <p className="confirm-error" role="alert">{newLife.error}</p> : null}
       </ModalDialog>
       </div>
-      <aside className="ad-rail" aria-hidden="true"><span>Riservato</span></aside>
+      <aside className="ad-rail" aria-hidden="true"><span>{t("adReserved", lang)}</span></aside>
       <div className="ad-foot">
         <p className="totem-credit">Powered by Totem</p>
       </div>
@@ -1288,9 +1294,9 @@ function withOvr(text: string, before: number, after: number) {
   const b = Math.round(before);
   const a = Math.round(after);
   const d = a - b;
-  if (d === 0) return text;
+  if (d === 0) return tidyText(text);
   const sign = d > 0 ? "+" : "";
-  return `${text} Overall ${b} → ${a} (${sign}${d}).`;
+  return tidyText(`${text} Overall ${b} → ${a} (${sign}${d}).`);
 }
 
 function openPlayoff(s: PlayerState, round: number, opponent: Team): Pending {
@@ -1316,17 +1322,18 @@ function DraftView({
   onPick: (i: number) => void;
   onStart: () => void;
 }) {
+  const lang = useLang();
   if (player.round >= allDraftRounds().length) {
     return (
       <section className="fade-in">
-        <div className="text-[13px] text-wood mb-1">Profilo pronto</div>
-        <h2 className="page-title">Il tuo giocatore è pronto</h2>
+        <div className="text-[13px] text-wood mb-1">{t("profileReady", lang)}</div>
+        <h2 className="page-title">{t("playerReady", lang)}</h2>
         <p className="text-muted text-[14px] mb-4">
-          {player.name} — {ROLES[player.role].label}. I tratti restano. Poi il percorso, poi la maglia.
+          {tf("playerReadyLede", { name: player.name, role: roleLabel(player.role, lang) }, lang)}
         </p>
         <AttrBars attrs={player.attrs} />
         <button className="primary-btn mt-6" onClick={onStart}>
-          Inizia la carriera
+          {t("startCareer", lang)}
         </button>
       </section>
     );
@@ -1336,14 +1343,14 @@ function DraftView({
   const total = allDraftRounds().length;
   return (
     <section className="fade-in">
-      <div className="text-[13px] text-wood mb-1">Round {player.round + 1} di {total}</div>
+      <div className="text-[13px] text-wood mb-1">{tf("draftRound", { n: player.round + 1, total }, lang)}</div>
       <div className="draft-pips" aria-hidden="true">
         {allDraftRounds().map((_, i) => (
           <span key={i} className={i < player.round ? "done" : i === player.round ? "now" : ""} />
         ))}
       </div>
       <h2 className="page-title">{r.label}</h2>
-      <p className="text-muted text-[14px] mb-4">{r.prompt} Tre strade. Una resta fuori.</p>
+      <p className="text-muted text-[14px] mb-4">{r.prompt} {t("draftThree", lang)}</p>
       <div className="flex flex-col gap-2.5">
         {hand.map((c, i) => {
           const shown = scaledDraftCard(player.role, c);
@@ -1358,8 +1365,8 @@ function DraftView({
               <div className="text-[13px] text-muted leading-snug">{c.desc}</div>
               <div className="text-[12.5px] text-wood mt-1">
                 {shown.primary.delta > 0 ? "+" : ""}
-                {shown.primary.delta.toFixed(0)} {ATTR_LABELS[shown.primary.key]}
-                {shown.secondary.map((sec) => `, ${sec.delta > 0 ? "+" : ""}${sec.delta.toFixed(0)} ${ATTR_LABELS[sec.key]}`).join("")}
+                {shown.primary.delta.toFixed(0)} {attrLabel(shown.primary.key, lang)}
+                {shown.secondary.map((sec) => `, ${sec.delta > 0 ? "+" : ""}${sec.delta.toFixed(0)} ${attrLabel(sec.key, lang)}`).join("")}
               </div>
             </button>
           );
@@ -1368,7 +1375,7 @@ function DraftView({
       <div className="flex flex-wrap gap-1.5 mt-4 pt-3.5 border-t border-line">
         {(Object.keys(ATTR_LABELS) as AttrKey[]).map((k) => (
           <span key={k} className="text-[11px] text-muted bg-panel border border-line px-2 py-1 rounded-sm">
-            {ATTR_LABELS[k]} <b className="text-chalk">{player.attrs[k].toFixed(0)}</b>
+            {attrLabel(k, lang)} <b className="text-chalk">{player.attrs[k].toFixed(0)}</b>
           </span>
         ))}
       </div>
@@ -1427,14 +1434,14 @@ function CareerView(props: {
               <div className="font-display text-[22px] leading-tight truncate">{player.name}</div>
               <div className="hud-meta">
                 <FlagMark nation={player.nationality} size={24} />
-                <span>{ROLES[player.role].label}</span>
-                <span className="hud-age">{player.age} anni</span>
+                <span>{roleLabel(player.role, lang)}</span>
+                <span className="hud-age">{tf("ageYears", { n: player.age }, lang)}</span>
                 <span className="hud-year">{getSeasonDisplayLabel(player.season || 1)}</span>
               </div>
               <div className="hud-club">
                 <TeamCrest team={player.team} size={16} />
                 <span>
-                  {player.team.name} · {player.league === "EuroLega" ? "Eurolega" : "NBA"}
+                  {player.team.name} · {player.league === "EuroLega" ? t("leagueEuro", lang) : "NBA"}
                 </span>
               </div>
               {last ? (
@@ -1444,14 +1451,14 @@ function CareerView(props: {
                   {last.rpg.toFixed(1)}
                   <span>/</span>
                   {last.apg.toFixed(1)}
-                  <span>ultima stagione</span>
+                  <span>{t("lastSeason", lang)}</span>
                 </div>
               ) : null}
               <div className="hud-contract">
-                {player.contract.yearsRemaining} {player.contract.yearsRemaining === 1 ? "anno" : "anni"} × ${player.contract.annualM}M
+                {player.contract.yearsRemaining === 1 ? t("contractYear", lang) : tf("contractYears", { n: player.contract.yearsRemaining }, lang)} × ${player.contract.annualM}M
                 {last ? (() => {
                   const rec = teamRecord(last);
-                  return rec.seed ? ` · ${rec.seed}° ${confIt(rec.conf)}` : "";
+                  return rec.seed ? ` · ${rec.seed}° ${confLabel(rec.conf, lang)}` : "";
                 })() : ""}
               </div>
             </div>
@@ -1468,7 +1475,7 @@ function CareerView(props: {
           </div>
           </div>
         </div>
-        <div className="seg-track">
+        <div className="seg-track" role="group" aria-label={t("careerTabs", lang)}>
           {(
             [
               ["log", t("tabLog", lang), BookOpen],
@@ -1480,6 +1487,7 @@ function CareerView(props: {
             <button
               key={id}
               className={tab === id ? "on" : ""}
+              aria-pressed={tab === id}
               onClick={() => {
                 const from = CAREER_TABS.indexOf(tab);
                 const to = CAREER_TABS.indexOf(id);
@@ -1490,15 +1498,15 @@ function CareerView(props: {
             </button>
           ))}
         </div>
-        {hint && <p className="swipe-hint">Scorri tra Storia, Anno, Lega, Vita</p>}
+        {hint && <p className="swipe-hint">{t("swipeHint", lang)}</p>}
       </div>
 
-      <SwipeTrack tab={tab} onTab={goTab}>
+      <SwipeTrack tab={tab} onTab={goTab} labels={[t("tabLog", lang), t("tabYear", lang), t("tabLeague", lang), t("tabLife", lang)]}>
         {[
           <div key="log" className="pt-3.5">
             {!fullLog && props.log.length > 24 && (
               <button type="button" className="ghost-btn mb-3" onClick={() => setFullLog(true)}>
-                Mostra tutta la storia
+                {t("showFullLog", lang)}
               </button>
             )}
             {logShown.map((e) => (
@@ -1535,6 +1543,7 @@ function CareerView(props: {
 }
 
 const LogBlock = memo(function LogBlock({ e, chips }: { e: LogEntry; chips?: string[] }) {
+  const lang = useLang();
   if (e.kind === "narrative") {
     return (
       <div className="mb-4">
@@ -1564,10 +1573,10 @@ const LogBlock = memo(function LogBlock({ e, chips }: { e: LogEntry; chips?: str
   ].join(" ");
   return (
     <div className={`log-card ${cls}`}>
-      {e.extraClass === "title-win" && <p className="title-kicker">Finale · Campione</p>}
+      {e.extraClass === "title-win" && <p className="title-kicker">{t("finalChampion", lang)}</p>}
       {e.title && <h3 className="text-xl mb-1">{e.title}</h3>}
       {e.body && <p className="text-[13.5px] text-muted mb-2">{e.body}</p>}
-      {e.chosen && <p className="text-[13px] text-chalk">Scelta: {e.chosen}</p>}
+      {e.chosen && <p className="text-[13px] text-chalk">{tf("choiceMade", { x: e.chosen }, lang)}</p>}
       {chips && chips.length > 0 && (
         <p className="delta-row" aria-live="polite">
           {chips.map((chip) => (
@@ -1586,12 +1595,13 @@ const LogBlock = memo(function LogBlock({ e, chips }: { e: LogEntry; chips?: str
 });
 
 function SeriesStrip({ series }: { series: SeriesResult }) {
+  const lang = useLang();
   const singleGame = series.games.length === 1;
   const game = series.games[0];
   return (
     <div className="series-strip">
       <div className="series-score">
-        {singleGame && game ? `${game.us}-${game.them}` : `${series.wins}-${series.losses}`} · {singleGame ? (series.won ? "Partita vinta" : "Partita persa") : (series.won ? "Serie vinta" : "Serie persa")} vs {series.opponent.abbr}
+        {singleGame && game ? `${game.us}-${game.them}` : `${series.wins}-${series.losses}`} · {t(singleGame ? (series.won ? "gameWon" : "gameLost") : (series.won ? "seriesWon" : "seriesLost"), lang)} vs {series.opponent.abbr}
       </div>
       <div className="series-games">
         {series.games.map((g) => (
@@ -1618,15 +1628,16 @@ function PendingBlock(props: {
   onRetire: (extra: boolean) => void;
 }) {
   const { pending, player } = props;
+  const lang = useLang();
   if (pending.kind === "path") {
     return (
       <Decision
-        title="Il percorso verso il professionismo"
-        sub="Come arrivi al grande salto. Poi arriva la chiamata, e la maglia."
+        title={t("pathTitle", lang)}
+        sub={t("pathSub", lang)}
         options={[
-          { label: "College NCAA, Stati Uniti", detail: "Fondamentali solidi. Arrivi a 21 anni.", run: () => props.onPath("NCAA") },
-          { label: "Accademia europea", detail: "Crescita paziente, più intelligenza cestistica.", run: () => props.onPath("Europa") },
-          { label: "Salto in G League", detail: "Talento grezzo, minuti subito.", run: () => props.onPath("G-League") },
+          { label: t("pathNcaa", lang), detail: t("pathNcaaDetail", lang), run: () => props.onPath("NCAA") },
+          { label: t("pathEuro", lang), detail: t("pathEuroDetail", lang), run: () => props.onPath("Europa") },
+          { label: t("pathGl", lang), detail: t("pathGlDetail", lang), run: () => props.onPath("G-League") },
         ]}
       />
     );
@@ -1634,18 +1645,18 @@ function PendingBlock(props: {
   if (pending.kind === "call") {
     return (
       <div className="log-card beat-important" data-pending>
-        <p className="text-[13px] text-wood mb-1">La chiamata</p>
-        <h3 className="text-xl mb-2">{pending.pick}ª scelta</h3>
+        <p className="text-[13px] text-wood mb-1">{t("theCall", lang)}</p>
+        <h3 className="text-xl mb-2">{tf("pickN", { n: pending.pick }, lang)}</h3>
         <div className="flex items-center gap-3 mb-3">
           <TeamMark team={player.team} size={56} number={player.number} />
           <div>
             <p className="font-display text-[18px]">{player.team.name}</p>
-            <p className="text-[13px] text-muted">Overall {displayOverall(player.overall)}</p>
+            <p className="text-[13px] text-muted">{tf("overallN", { n: displayOverall(player.overall) }, lang)}</p>
           </div>
         </div>
         <p className="feel-line">{pending.flavor}</p>
         <button className="primary-btn mt-4" onClick={props.onCall}>
-          Entra in palestra
+          {t("enterGym", lang)}
         </button>
       </div>
     );
@@ -1687,8 +1698,8 @@ function PendingBlock(props: {
     const genuineFinals = isGenuineFinalsRound(label);
     return (
       <div className={`log-card playoff ${genuineFinals ? "finals beat-wow stake-gold" : "beat-major"}`} data-pending>
-        {label === NBA_FINALS_LABEL && <p className="eyebrow">Serie al meglio delle sette</p>}
-        <h3 className="text-xl mb-2">{label}</h3>
+        {label === NBA_FINALS_LABEL && <p className="eyebrow">{t("bestOfSeven", lang)}</p>}
+        <h3 className="text-xl mb-2">{roundLabel(label, lang)}</h3>
         {oppRow ? (
           <TeamDossier row={oppRow} />
         ) : (
@@ -1718,7 +1729,7 @@ function PendingBlock(props: {
   if (pending.kind === "fa") {
     return (
       <div className="log-card market beat-major">
-        <h3 className="text-[20px] mb-1">Mercato estivo</h3>
+        <h3 className="text-[20px] mb-1">{t("summerMarket", lang)}</h3>
         <p className="text-[13.5px] text-muted mb-3">
           {pending.desk}
         </p>
@@ -1734,11 +1745,11 @@ function PendingBlock(props: {
                 <TeamMark team={o.team} size={40} />
                 <span>
                   <span className="font-display font-semibold text-[16px] block">
-                    {o.kind === "extension" ? "Rinnovo · " : o.kind === "ring" ? "Anello · " : o.kind === "max" ? "Massimo · " : ""}
+                    {o.kind === "extension" ? t("offerExtension", lang) : o.kind === "ring" ? t("offerRing", lang) : o.kind === "max" ? t("offerMax", lang) : ""}
                     {o.team.name}
                   </span>
                   <span className="text-[12.5px] text-wood">
-                    ${o.annualM}M × {o.years} {o.years === 1 ? "anno" : "anni"} · {o.team.city}
+                    ${o.annualM}M × {o.years === 1 ? t("contractYear", lang) : tf("contractYears", { n: o.years }, lang)} · {o.team.city}
                   </span>
                 </span>
               </span>
@@ -1754,8 +1765,8 @@ function PendingBlock(props: {
     const to = pending.team;
     return (
       <div className="log-card market beat-major" data-pending>
-        <p className="title-kicker">Mercato</p>
-        <h3 className="text-[20px] mb-2">Voci di scambio</h3>
+        <p className="title-kicker">{t("market", lang)}</p>
+        <h3 className="text-[20px] mb-2">{t("tradeRumors", lang)}</h3>
         <div className="transfer-strip" aria-hidden>
           <TeamMark team={from} size={52} number={player.number} />
           <span className="transfer-arrow">→</span>
@@ -1764,12 +1775,12 @@ function PendingBlock(props: {
         <p className="feel-line">{pending.pitch}</p>
         <div className="flex flex-col gap-2">
           <button className="choice-btn offer-btn" style={{ ["--club" as string]: to.color }} onClick={() => props.onTrade(true)}>
-            <span className="font-display font-semibold text-[16px] text-chalk">Accetti: {to.name}</span>
-            <span className="text-[12.5px] text-muted">{to.city} · il contratto ti segue.</span>
+            <span className="font-display font-semibold text-[16px] text-chalk">{tf("tradeAccept", { team: to.name }, lang)}</span>
+            <span className="text-[12.5px] text-muted">{tf("tradeAcceptDetail", { city: to.city }, lang)}</span>
           </button>
           <button className="choice-btn" onClick={() => props.onTrade(false)}>
-            <span className="font-display font-semibold text-[16px] text-chalk">Rifiuti, resti a {from.name}</span>
-            <span className="text-[12.5px] text-muted">Fedeltà. Lo staff se lo ricorda.</span>
+            <span className="font-display font-semibold text-[16px] text-chalk">{tf("tradeRefuse", { team: from.name }, lang)}</span>
+            <span className="text-[12.5px] text-muted">{t("tradeRefuseDetail", lang)}</span>
           </button>
         </div>
       </div>
@@ -1779,16 +1790,16 @@ function PendingBlock(props: {
     const from = clubByName(pending.from);
     return (
       <div className="log-card market market-move beat-major" data-pending>
-        <p className="title-kicker">Mercato</p>
-        <h3 className="text-xl mb-2">Scambio chiuso</h3>
+        <p className="title-kicker">{t("market", lang)}</p>
+        <h3 className="text-xl mb-2">{t("tradeDone", lang)}</h3>
         <div className="transfer-strip">
           {from ? <TeamMark team={from} size={52} /> : <span className="text-[13px] text-muted">{pending.from}</span>}
           <span className="transfer-arrow">→</span>
           <TeamMark team={pending.team} size={56} number={player.number} />
         </div>
-        <p className="feel-line">La dirigenza ha deciso senza chiederti il permesso. {pending.pitch}</p>
+        <p className="feel-line">{t("tradeForced", lang)} {pending.pitch}</p>
         <button className="primary-btn mt-4" onClick={props.onForcedTradeAck}>
-          Entra nello spogliatoio nuovo
+          {t("tradeEnterLocker", lang)}
         </button>
       </div>
     );
@@ -1797,21 +1808,21 @@ function PendingBlock(props: {
     return (
       <Decision
         cls="beat-wow finale"
-        title="L'ultimo inverno"
-        sub="Hai chiuso i 35. Puoi scendere a 36, o lasciare il parquet qui."
+        title={t("retireTitle", lang)}
+        sub={t("retireSub", lang)}
         options={[
-          { label: "Gioca a 36 anni", detail: "Un'ultima stagione. Poi, basta.", run: () => props.onRetire(true) },
-          { label: "Chiudi ora", detail: "A testa alta, senza l'anno di troppo.", run: () => props.onRetire(false) },
+          { label: t("retirePlay", lang), detail: t("retirePlayDetail", lang), run: () => props.onRetire(true) },
+          { label: t("retireNow", lang), detail: t("retireNowDetail", lang), run: () => props.onRetire(false) },
         ]}
       />
     );
   }
   return (
     <div className="log-card pending-beat">
-      <h3 className="text-xl mb-1">Si va avanti</h3>
-      <p className="text-[13.5px] text-muted mb-2">La carta non ha un bivio. Il calendario, sì.</p>
+      <h3 className="text-xl mb-1">{t("moveOn", lang)}</h3>
+      <p className="text-[13.5px] text-muted mb-2">{t("moveOnSub", lang)}</p>
       <button className="primary-btn mt-2" onClick={props.onCall}>
-        Continua
+        {t("continue", lang)}
       </button>
     </div>
   );
@@ -1857,19 +1868,20 @@ function RecapCard({
   door: string;
   onGo: () => void;
 }) {
+  const lang = useLang();
   const rec = teamRecord(row);
   const mvpCard = isHighStakesPresentation({ awards: row.awards });
   return (
     <div className={`log-card recap ${qualified ? "in" : "out"}${mvpCard ? " stake-gold" : ""}`}>
       <h3 className="text-xl mb-0.5">
-        Stagione {row.season} · {getSeasonDisplayLabel(row.season)}
+        {tf("seasonN", { n: row.season }, lang)} · {getSeasonDisplayLabel(row.season)}
       </h3>
       <p className="text-[12px] text-muted mb-2">
         <TeamCrest team={{ abbr: row.teamAbbr, color: row.teamColor, secondary: row.teamSecondary || row.teamColor }} size={16} />
         {" "}
         <span>
-          {row.age} anni · {row.team} · {rec.w}-{rec.l}
-          {rec.seed ? ` · ${rec.seed}° ${confIt(rec.conf)}` : ""} · OVR {displayOverall(row.overall)}
+          {tf("ageYears", { n: row.age }, lang)} · {row.team} · {rec.w}-{rec.l}
+          {rec.seed ? ` · ${rec.seed}° ${confLabel(rec.conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
         </span>
       </p>
       <div className="totals-strip mb-3">
@@ -1914,7 +1926,7 @@ function RecapCard({
       {row.awards.length ? (
         <div className="league-awards-mini">
           {row.awards.map((a) => (
-            <span key={a} className="yours">{awardIt(a)}</span>
+            <span key={a} className="yours">{awardLabel(a, lang)}</span>
           ))}
         </div>
       ) : (
@@ -1924,7 +1936,7 @@ function RecapCard({
         <div className="league-awards-mini">
           {row.league.awards.map((a) => (
             <span key={a.title} className={a.isPlayer ? "yours" : ""}>
-              {awardIt(a.title)} · {a.name}
+              {awardLabel(a.title, lang)} · {a.name}
             </span>
           ))}
         </div>
@@ -1935,24 +1947,25 @@ function RecapCard({
       )}
       <p className="feel-line door">{door}</p>
       <button className="ghost-btn" onClick={onGo}>
-        {qualified ? "Entra nei playoff" : "Prossima stagione"}
+        {t(qualified ? "enterPlayoffs" : "nextSeason", lang)}
       </button>
     </div>
   );
 }
 
 function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
+  const lang = useLang();
   return (
     <div className="log-card recap">
       <h3 className="text-xl mb-0.5">
-        Stagione {row.season} · {getSeasonDisplayLabel(row.season)}
+        {tf("seasonN", { n: row.season }, lang)} · {getSeasonDisplayLabel(row.season)}
       </h3>
       <p className="text-[12px] text-muted mb-2">
         <TeamCrest team={{ abbr: row.teamAbbr, color: row.teamColor, secondary: row.teamSecondary || row.teamColor }} size={16} />
         {" "}
         <span>
-          {row.age} anni · {row.team} · {teamRecord(row).w}-{teamRecord(row).l}
-          {teamRecord(row).seed ? ` · ${teamRecord(row).seed}° ${confIt(teamRecord(row).conf)}` : ""} · OVR {displayOverall(row.overall)}
+          {tf("ageYears", { n: row.age }, lang)} · {row.team} · {teamRecord(row).w}-{teamRecord(row).l}
+          {teamRecord(row).seed ? ` · ${teamRecord(row).seed}° ${confLabel(teamRecord(row).conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
         </span>
       </p>
       <div className="font-display text-[17px] mb-1 tabular">
@@ -1960,7 +1973,7 @@ function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
         <span className="text-muted text-[13px] font-sans"> · {row.gp} GP · PER {row.per.toFixed(1)}</span>
       </div>
       {row.awards.length > 0 && (
-        <p className="text-[13px] text-wood mb-1">{row.awards.map(awardIt).join(" · ")}</p>
+        <p className="text-[13px] text-wood mb-1">{row.awards.map((a) => awardLabel(a, lang)).join(" · ")}</p>
       )}
       {row.mood && <p className="feel-line">{row.mood}</p>}
       {result && <p className="text-[13px] text-muted italic">{result}</p>}
@@ -1983,7 +1996,7 @@ function SeasonSheet({ player }: { player: PlayerState }) {
   const [idx, setIdx] = useState(Math.max(0, history.length - 1));
   const row = history[Math.min(idx, history.length - 1)];
   if (!row) {
-    return <p className="empty-hint pt-3">Dopo la prima stagione qui trovi la scheda completa dell'anno.</p>;
+    return <p className="empty-hint pt-3">{t("seasonEmpty", lang)}</p>;
   }
   const rec = teamRecord(row);
   const snap = row.league;
@@ -2012,7 +2025,7 @@ function SeasonSheet({ player }: { player: PlayerState }) {
           <h3 className="font-display text-[22px]">{getSeasonDisplayLabel(row.season)}</h3>
           <p className="text-[13px] text-muted">
             {row.team} · {rec.w}-{rec.l}
-            {rec.seed ? ` · ${rec.seed}° ${confIt(rec.conf)}` : " · fuori"} · OVR {displayOverall(row.overall)}
+            {rec.seed ? ` · ${rec.seed}° ${confLabel(rec.conf, lang)}` : ` · ${t("outOfPlayoffs", lang)}`} · OVR {displayOverall(row.overall)}
           </p>
         </div>
       </div>
@@ -2067,7 +2080,7 @@ function SeasonSheet({ player }: { player: PlayerState }) {
       {row.season === 1 && <RoyBoard player={player} race={row.league?.royRace} />}
       {row.seriesLog && row.seriesLog.length > 0 && (
         <>
-          <h4 className="stats-heading">Percorso playoff</h4>
+          <h4 className="stats-heading">{t("playoffPath", lang)}</h4>
           {row.seriesLog.map((s) => {
             const oppSnap = snap ? [...snap.east, ...snap.west, ...snap.euro].find((x) => x.abbr === s.opponent.abbr) : undefined;
             return (
@@ -2076,14 +2089,14 @@ function SeasonSheet({ player }: { player: PlayerState }) {
                   <div className="flex items-center gap-2 mb-1">
                     <TeamMark team={s.opponent} size={36} />
                     <div>
-                      <b className="font-display">{s.label}</b>
+                      <b className="font-display">{roundLabel(s.label, lang)}</b>
                       <p className="text-[12px] text-muted">
                         vs {s.opponentSeed}° {s.opponent.name}
                       </p>
                     </div>
                   </div>
                 )}
-                <p className="text-[12px] text-muted mt-2">{s.label}</p>
+                <p className="text-[12px] text-muted mt-2">{roundLabel(s.label, lang)}</p>
                 <SeriesStrip series={s} />
               </div>
             );
@@ -2106,9 +2119,9 @@ const StatsTab = memo(function StatsTab({
     <div className="pt-3 fade-in">
       <div className="grid grid-cols-3 gap-2 mb-3">
         {[
-          [formatCareerTotal(player.careerPoints, lang), "PUNTI"],
-          [formatCareerTotal(player.careerRebounds, lang), "RIMBALZI"],
-          [formatCareerTotal(player.careerAssists, lang), "ASSIST"],
+          [formatCareerTotal(player.careerPoints, lang), t("statPoints", lang)],
+          [formatCareerTotal(player.careerRebounds, lang), t("statRebounds", lang)],
+          [formatCareerTotal(player.careerAssists, lang), t("statAssists", lang)],
         ].map(([v, l]) => (
           <div key={String(l)} className="bg-panel border border-line rounded p-3 text-center">
             <div className="font-display text-[24px] text-wood">{v}</div>
@@ -2116,10 +2129,8 @@ const StatsTab = memo(function StatsTab({
           </div>
         ))}
       </div>
-      <h4 className="font-display text-[19px] mb-2">Curva overall</h4>
-      <p className="text-[12px] text-muted mb-2">
-        Picco osservato tra 26 e 28 anni. La linea piena è il tuo overall; quella tratteggiata è la traiettoria.
-      </p>
+      <h4 className="font-display text-[19px] mb-2">{t("ovrCurve", lang)}</h4>
+      <p className="text-[12px] text-muted mb-2">{t("ovrCurveCap", lang)}</p>
       <div className="h-44 bg-panel border border-line rounded p-2 mb-4">
         <LazyChunk
           load={loadCareerChart}
@@ -2130,8 +2141,8 @@ const StatsTab = memo(function StatsTab({
         />
       </div>
       <PersonalAwards title={t("lifeAwards", lang)} rows={player.seasonHistory} />
-      <h4 className="font-display text-[19px] mb-2">Stagione per stagione</h4>
-      {player.seasonHistory.length === 0 && <p className="text-muted text-[12.5px] italic">Ancora nessuna riga.</p>}
+      <h4 className="font-display text-[19px] mb-2">{t("bySeason", lang)}</h4>
+      {player.seasonHistory.length === 0 && <p className="text-muted text-[12.5px] italic">{t("noRows", lang)}</p>}
       {player.seasonHistory.map((r) => (
         <div key={r.season} className="flex justify-between gap-2 py-2 border-b border-line text-[13px]">
           <div>
@@ -2139,7 +2150,7 @@ const StatsTab = memo(function StatsTab({
               {getSeasonDisplayLabel(r.season)} · OVR {displayOverall(r.overall)}
             </div>
             <div className="text-[11.5px] text-muted">
-              {r.teamAbbr} · {r.age}a · {teamRecord(r).w}-{teamRecord(r).l}
+              {r.teamAbbr} · {tf("ageShort", { n: r.age }, lang)} · {teamRecord(r).w}-{teamRecord(r).l}
               {teamRecord(r).seed ? ` · ${teamRecord(r).seed}°` : ""} · {r.gp} GP
             </div>
           </div>
@@ -2148,17 +2159,17 @@ const StatsTab = memo(function StatsTab({
               {r.ppg.toFixed(1)}/{r.rpg.toFixed(1)}/{r.apg.toFixed(1)}
             </div>
             <span className="text-[10.5px] text-muted">
-              {r.playoff || "—"}
+              {playoffResultLabel(r.playoff, lang) || "—"}
               {r.awards.length ? ` · ${r.awards.map((a) => awardLabel(a, lang)).join(" · ")}` : ""}
             </span>
           </div>
         </div>
       ))}
-      <h4 className="font-display text-[19px] mt-4 mb-2">Sviluppo estivo</h4>
-      {player.devLog.length === 0 && <p className="text-muted text-[12.5px] italic">Dopo la prima stagione vedrai la crescita estiva.</p>}
+      <h4 className="font-display text-[19px] mt-4 mb-2">{t("summerDev", lang)}</h4>
+      {player.devLog.length === 0 && <p className="text-muted text-[12.5px] italic">{t("summerDevEmpty", lang)}</p>}
       {player.devLog.map((d) => (
         <div key={d.season + d.label} className="flex gap-2.5 py-1.5 text-[13px] border-b border-line">
-          <span className="text-wood font-display min-w-[36px]">S.{d.season}</span>
+          <span className="text-wood font-display min-w-[36px]">{tf("seasonShort", { n: d.season }, lang)}</span>
           <span>
             {d.label} — {d.line} · {d.before.toFixed(1)}→{d.after.toFixed(1)}
           </span>
@@ -2170,14 +2181,13 @@ const StatsTab = memo(function StatsTab({
 
 const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
   const hints = hiddenHints(player);
+  const lang = useLang();
   return (
     <div className="pt-3 fade-in review-pane">
-      <p className="text-[13px] text-muted mb-3">
-        Diario della carriera in corso. I tratti nascosti restano coperti fino al verdetto — restano le sensazioni.
-      </p>
+      <p className="text-[13px] text-muted mb-3">{t("reviewLede", lang)}</p>
       {hints.length > 0 && (
         <div className="log-card mb-4">
-          <h4 className="font-display text-[18px] mb-2">Sensazioni</h4>
+          <h4 className="font-display text-[18px] mb-2">{t("feelings", lang)}</h4>
           {hints.map((h, i) => (
             <p
               key={`${i}-${h.slice(0, 24)}`}
@@ -2189,19 +2199,19 @@ const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
           ))}
         </div>
       )}
-      <h4 className="font-display text-[19px] mb-2">Scelte</h4>
-      {player.choiceLog.length === 0 && <p className="text-muted italic text-[13px]">Nessuna scelta ancora.</p>}
+      <h4 className="font-display text-[19px] mb-2">{t("choices", lang)}</h4>
+      {player.choiceLog.length === 0 && <p className="text-muted italic text-[13px]">{t("noChoices", lang)}</p>}
       {player.choiceLog.map((c, i) => (
         <div key={i} className="flex gap-2 py-1.5 text-[13px] border-b border-line">
-          <span className="text-wood font-display min-w-[36px]">S.{c.season}</span>
+          <span className="text-wood font-display min-w-[36px]">{tf("seasonShort", { n: c.season }, lang)}</span>
           <span>
             <span className="text-muted">{c.title}: </span>
             {c.pick}
           </span>
         </div>
       ))}
-      <h4 className="font-display text-[19px] mt-4 mb-2">Traguardi</h4>
-      {player.milestones.length === 0 && <p className="text-muted italic text-[13px]">Ancora niente da appendere.</p>}
+      <h4 className="font-display text-[19px] mt-4 mb-2">{t("milestonesH", lang)}</h4>
+      {player.milestones.length === 0 && <p className="text-muted italic text-[13px]">{t("noMilestones", lang)}</p>}
       {player.milestones.length > 0 && (
         <div className="life-timeline">
           {player.milestones.map((m, i) => (
@@ -2215,19 +2225,20 @@ const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
           ))}
         </div>
       )}
-      <h4 className="font-display text-[19px] mt-4 mb-2">Attributi visibili</h4>
+      <h4 className="font-display text-[19px] mt-4 mb-2">{t("visibleAttrs", lang)}</h4>
       <AttrBars attrs={player.attrs} />
     </div>
   );
 });
 
 function AttrBars({ attrs }: { attrs: Record<AttrKey, number> }) {
+  const lang = useLang();
   return (
     <div>
       {(Object.keys(ATTR_LABELS) as AttrKey[]).map((k) => (
         <div key={k} className="mb-2.5">
           <div className="flex justify-between text-[12.5px] text-muted mb-0.5">
-            <span>{ATTR_LABELS[k]}</span>
+            <span>{attrLabel(k, lang)}</span>
             <b className="text-chalk">{attrs[k].toFixed(1)}</b>
           </div>
           <div className="attr-bar-track">
@@ -2286,12 +2297,12 @@ function ResultView({
           {player.name} · N.{player.number}
         </div>
         <div className="result-span">
-          {ROLES[player.role].label} · {p.startAge}–{p.endAge} {t("years", lang)} · {seasonCountLabel(p.seasons, lang)} · {t("peak", lang)} {displayOverall(p.peak)}
+          {roleLabel(player.role, lang)} · {p.startAge}–{p.endAge} {t("years", lang)} · {seasonCountLabel(p.seasons, lang)} · {t("peak", lang)} {displayOverall(p.peak)}
         </div>
-        <div className={`hof-seal ${hof}`}>{hofLabel(hof)}</div>
+        <div className={`hof-seal ${hof}`}>{t(hof === "hall" ? "hofHall" : hof === "borderline" ? "hofBorder" : "hofOut", lang)}</div>
         <p className="result-close">{v.closing}</p>
         {jerseys.length > 0 && (
-          <div className="result-jerseys" aria-label="Maglie indossate">
+          <div className="result-jerseys" aria-label={t("jerseysWorn", lang)}>
             {jerseys.map((t) => (
               <span key={t.abbr} title={t.name}>
                 <TeamMark team={t} size={36} number={player.number} />
@@ -2308,8 +2319,8 @@ function ResultView({
             [p.avgPpg.toFixed(1), "PPG"],
             [p.avgRpg.toFixed(1), "RPG"],
             [p.avgApg.toFixed(1), "APG"],
-            [formatCareerTotal(p.points, lang), "Punti"],
-            [formatCareerTotal(p.titles, lang), "Titoli"],
+            [formatCareerTotal(p.points, lang), t("points", lang)],
+            [formatCareerTotal(p.titles, lang), t("titles", lang)],
             [formatCareerTotal(p.mvp, lang), t("mvp", lang)],
           ].map(([val, lab]) => (
             <div key={String(lab)} className="result-stat">
@@ -2325,8 +2336,8 @@ function ResultView({
             p.fmvp ? `${p.fmvp}× ${t("fmvp", lang)}` : null,
             p.dpoy ? `${p.dpoy}× ${t("dpoy", lang)}` : null,
             p.roy ? t("roy", lang) : null,
-            player.medal ? "Medaglia" : null,
-            jerseys.length ? `${jerseys.length} ${jerseys.length === 1 ? "maglia" : "maglie"}` : null,
+            player.medal ? t("medal", lang) : null,
+            jerseys.length ? `${jerseys.length} ${t(jerseys.length === 1 ? "jerseyOne" : "jerseyMany", lang)}` : null,
           ]
             .filter(Boolean)
             .map((t) => (
@@ -2337,8 +2348,8 @@ function ResultView({
         </div>
         {p.best && (
           <p className="result-best">
-            Miglior anno: {getSeasonDisplayLabel(p.best.season)} · {p.best.teamAbbr} · {p.best.ppg.toFixed(1)} PPG · OVR {displayOverall(p.best.overall)}
-            {p.best.awards.length ? ` · ${p.best.awards[0]}` : ""}
+            {t("bestYear", lang)}: {getSeasonDisplayLabel(p.best.season)} · {p.best.teamAbbr} · {p.best.ppg.toFixed(1)} PPG · OVR {displayOverall(p.best.overall)}
+            {p.best.awards.length ? ` · ${awardLabel(p.best.awards[0]!, lang)}` : ""}
           </p>
         )}
         <p className="feel-line">{comment}</p>
@@ -2349,7 +2360,7 @@ function ResultView({
         choices={player.choiceLog}
         careerId={player.careerId}
       />
-      <h4 className="stats-heading">Gli inverni</h4>
+      <h4 className="stats-heading">{t("winters", lang)}</h4>
       {years.map((r) => (
         <div
           key={r.season}
@@ -2364,7 +2375,7 @@ function ResultView({
           <div>
             <div className="year-line-title">{getSeasonDisplayLabel(r.season)}</div>
             <div className="year-line-sub">
-              {r.teamAbbr} · {displayOverall(r.overall)} · {r.playoff || "—"}
+              {r.teamAbbr} · {displayOverall(r.overall)} · {playoffResultLabel(r.playoff, lang) || "—"}
             </div>
           </div>
           <div className="year-line-box">
@@ -2374,14 +2385,14 @@ function ResultView({
       ))}
       {!fullYears && player.seasonHistory.length > 8 && (
         <button type="button" className="ghost-btn mt-2.5" onClick={() => setFullYears(true)}>
-          Tutta la carriera · {player.seasonHistory.length} anni
+          {tf("wholeCareer", { n: player.seasonHistory.length }, lang)}
         </button>
       )}
-      <h4 className="stats-heading">Tratti svelati</h4>
+      <h4 className="stats-heading">{t("traitsRevealed", lang)}</h4>
       {(Object.keys(HIDDEN_LABELS) as HiddenKey[]).map((k) => (
         <div key={k} className="mb-2">
           <div className="flex justify-between text-[12.5px] text-muted">
-            <span>{HIDDEN_LABELS[k]}</span>
+            <span>{hiddenLabel(k, lang)}</span>
             <b className="text-chalk">{player.hidden[k].toFixed(0)}</b>
           </div>
           <div className="attr-bar-track">
@@ -2389,13 +2400,13 @@ function ResultView({
           </div>
         </div>
       ))}
-      <h4 className="stats-heading">Attributi finali</h4>
+      <h4 className="stats-heading">{t("finalAttrs", lang)}</h4>
       <AttrBars attrs={player.attrs} />
       <button className="primary-btn mt-6" onClick={onReplay}>
-        <RotateCcw className="inline size-4 mr-1" /> Un'altra vita
+        <RotateCcw className="inline size-4 mr-1" aria-hidden="true" /> {t("anotherLife", lang)}
       </button>
       <button className="ghost-btn mt-2.5" onClick={onArchive}>
-        Archivio
+        {t("archive", lang)}
       </button>
     </section>
   );
@@ -2417,12 +2428,12 @@ function ArchiveView({
     return (
       <section className="fade-in">
         <button className="back-link" onClick={() => setViewing(null)}>
-          <ChevronLeft className="size-4" /> Archivio
+          <ChevronLeft className="size-4" aria-hidden="true" /> {t("archive", lang)}
         </button>
         <h2 className="page-title">{viewing.name}</h2>
         <p className="text-muted text-[13px] mb-4">
-          {viewing.role} · {viewing.verdict} · {t("peak", lang)} {displayOverall(viewing.peak)}
-          {viewing.apexAge ? ` a ${viewing.apexAge} anni` : ""} · {viewing.titles} titoli
+          {roleLabel(viewing.role, lang)} · {viewing.verdict} · {t("peak", lang)} {displayOverall(viewing.peak)}
+          {viewing.apexAge ? tf("atAge", { n: viewing.apexAge }, lang) : ""} · {viewing.titles} {t(viewing.titles === 1 ? "titleOne" : "titleMany", lang)}
           {viewing.difficulty ? ` · ${difficultyFace(viewing.difficulty, lang).label}` : ""}
         </p>
         <p className="italic text-muted text-[14px] mb-4">{viewing.closing}</p>
@@ -2442,10 +2453,10 @@ function ArchiveView({
             </span>
           </div>
         ))}
-        <h4 className="font-display text-[18px] mt-4 mb-2">Scelte</h4>
+        <h4 className="font-display text-[18px] mt-4 mb-2">{t("choices", lang)}</h4>
         {viewing.choices.map((c, i) => (
           <div key={i} className="text-[13px] py-1 text-muted">
-            S.{c.season} {c.title}: <span className="text-chalk">{c.pick}</span>
+            {tf("seasonShort", { n: c.season }, lang)} {c.title}: <span className="text-chalk">{c.pick}</span>
           </div>
         ))}
       </section>
@@ -2454,10 +2465,10 @@ function ArchiveView({
   return (
     <section className="fade-in">
       <button className="back-link" onClick={onBack}>
-        <ChevronLeft className="size-4" /> Home
+        <ChevronLeft className="size-4" aria-hidden="true" /> {t("home", lang)}
       </button>
-      <h2 className="page-title">Archivio</h2>
-      {archive.length === 0 && <p className="text-muted">Nessuna carriera salvata su questo dispositivo.</p>}
+      <h2 className="page-title">{t("archive", lang)}</h2>
+      {archive.length === 0 && <p className="text-muted">{t("archiveEmpty", lang)}</p>}
       {archive.map((c) => (
         <button
           key={c.id}
@@ -2471,8 +2482,8 @@ function ArchiveView({
               ? `${getSeasonDisplayLabel(c.history[0].season)} → ${getSeasonDisplayLabel(c.history[c.history.length - 1]!.season)}`
               : seasonCountLabel(c.seasons, lang)}
             {" · "}
-            {c.role} · {c.verdict}
-            {c.titles ? ` · ${c.titles} ${c.titles === 1 ? "titolo" : "titoli"}` : ""}
+            {roleLabel(c.role, lang)} · {c.verdict}
+            {c.titles ? ` · ${c.titles} ${t(c.titles === 1 ? "titleOne" : "titleMany", lang)}` : ""}
             {c.difficulty ? ` · ${difficultyFace(c.difficulty, lang).label}` : ""}
             {c.simulated ? " · sim" : ""}
           </span>
@@ -2512,7 +2523,7 @@ function CareerCardPanel({
     >
       <div className="eyebrow">Career Card · {card.engineVersion}</div>
       <h3 className="page-title text-chalk">{card.playerName}</h3>
-      <p className="result-name">{card.role} · {card.nationality}</p>
+      <p className="result-name">{roleLabel(card.role, lang)} · {card.nationality}</p>
       <p className="result-span">
         {t("age", lang)} {card.ageStart}–{card.ageEnd} · {seasonCountLabel(card.seasons, lang)} · {t("peak", lang)} {displayOverall(card.peakOverall)}
       </p>
@@ -2531,15 +2542,15 @@ function CareerCardPanel({
           </div>
         ))}
       </div>
-      <p className="feel-line">Draft: {draft?.pick ?? "dato non disponibile"}</p>
-      <p className="feel-line">Squadre: {teams.length ? teams.join(" → ") : "dato non disponibile"}</p>
+      <p className="feel-line">{tf("draftLine", { v: draft?.pick ?? t("noData", lang) }, lang)}</p>
+      <p className="feel-line">{tf("teamsLine", { v: teams.length ? teams.join(" → ") : t("noData", lang) }, lang)}</p>
       {awards.size > 0 && (
         <p className="feel-line">
-          Premi stagionali: {[...awards].map(([name, count]) => `${count}× ${name}`).join(" · ")}
+          {tf("seasonAwardsLine", { v: [...awards].map(([name, count]) => `${count}× ${awardLabel(name, lang)}`).join(" · ") }, lang)}
         </p>
       )}
       {card.milestones.length > 0 && (
-        <div className="result-chips" aria-label="Traguardi">
+        <div className="result-chips" aria-label={t("milestonesH", lang)}>
           {card.milestones.map((milestone) => <span key={milestone} className="result-chip">{milestone}</span>)}
         </div>
       )}

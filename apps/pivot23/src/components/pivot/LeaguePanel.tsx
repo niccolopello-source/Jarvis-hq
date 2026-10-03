@@ -1,23 +1,49 @@
 
 import { memo, useState } from "react";
 import { TeamCrest, TeamLabel, TeamMark } from "@/components/pivot/TeamMark";
-import { labelAmbition, labelIdentity } from "@/lib/pivot/world";
-import { confIt } from "@/lib/pivot/data";
+import { awardNoteLabel, confLabel } from "@/lib/pivot/labels";
 import { cpuPer, mvpRaceScore, personalAwardBrief, quintetRaceScore } from "@/lib/pivot/awards-helpers";
-import { awardLabel, t, useLang } from "@/lib/pivot/i18n";
-import type { DpoyCandidate, LeagueSnapshot, PlayerState, RoyCandidate, SeasonRow, StandingRow } from "@/lib/pivot/types";
+import { awardLabel, t, tf, useLang, type Lang as UiLang, type Msg } from "@/lib/pivot/i18n";
+import type { DpoyCandidate, LeagueSnapshot, PlayerState, RoyCandidate, SeasonRow, StandingRow, TeamAmbition, TeamIdentity } from "@/lib/pivot/types";
 
-function systemLine(row: StandingRow): string {
-  if (row.identity === "defense") return `Subiscono ${row.oppPpg.toFixed(1)} punti. La difesa è il mestiere della squadra.`;
-  if (row.identity === "pace") return `Ritmo ${row.pace.toFixed(1)}. Qui la partita corre, e chi non tiene il passo esce.`;
-  if (row.identity === "threePoint") return "Il tiro da tre apre il campo. Chi non lo tira, lo subisce.";
-  if (row.identity === "ballMovement") return "Il pallone gira prima del tiro. L'ego, in questo spogliatoio, conta meno.";
-  if (row.identity === "isolation") return "Uno crea, gli altri tengono. Il possesso ha un nome solo.";
-  if (row.identity === "physical") return "Si gioca di contatto. Il ferro e il corpo arrivano prima dello schema.";
-  if (row.identity === "halfCourt") return "Si gioca a metà campo. Ogni possesso è un disegno, non una corsa.";
-  if (row.identity === "development") return "I minuti vanno ai giovani. Chi è già arrivato deve fare spazio.";
-  if (row.identity === "veteran") return "Lo spogliatoio ha memoria. I minuti si guadagnano, non si chiedono.";
-  return "";
+const SYSTEM_KEY = {
+  defense: "sysDefense",
+  pace: "sysPace",
+  threePoint: "sysThreePoint",
+  ballMovement: "sysBallMovement",
+  isolation: "sysIsolation",
+  physical: "sysPhysical",
+  halfCourt: "sysHalfCourt",
+  development: "sysDevelopment",
+  veteran: "sysVeteran",
+} as const satisfies Record<TeamIdentity, Msg>;
+
+const IDENTITY_KEY = {
+  pace: "idPace",
+  halfCourt: "idHalfCourt",
+  threePoint: "idThreePoint",
+  isolation: "idIsolation",
+  ballMovement: "idBallMovement",
+  defense: "idDefense",
+  physical: "idPhysical",
+  development: "idDevelopment",
+  veteran: "idVeteran",
+} as const satisfies Record<TeamIdentity, Msg>;
+
+const AMBITION_KEY = {
+  rebuild: "ambRebuild",
+  development: "ambDevelopment",
+  competitive: "ambCompetitive",
+  contender: "ambContender",
+  championship: "ambChampionship",
+} as const satisfies Record<TeamAmbition, Msg>;
+
+function systemLine(row: StandingRow, lang: UiLang): string {
+  if (!row.identity) return "";
+  const key = SYSTEM_KEY[row.identity];
+  if (!key) return "";
+  const v = row.identity === "defense" ? row.oppPpg.toFixed(1) : row.pace.toFixed(1);
+  return tf(key, { v }, lang);
 }
 
 export function TeamDossier({
@@ -29,6 +55,7 @@ export function TeamDossier({
   mine?: string;
   compact?: boolean;
 }) {
+  const lang = useLang();
   const pct = row.w + row.l ? row.w / (row.w + row.l) : 0;
   return (
     <div className={`team-dossier ${row.abbr === mine ? "mine" : ""} ${compact ? "compact" : ""}`}>
@@ -39,11 +66,11 @@ export function TeamDossier({
             <TeamLabel team={row} name={row.name} size={compact ? 20 : 24} />
           </div>
           <div className="text-[12px] text-muted">
-            {row.city} · {row.div} · {confIt(row.conf)}
+            {row.city} · {row.div} · {confLabel(row.conf, lang)}
           </div>
           <div className="text-[13px] text-wood tabular mt-0.5">
             {row.w}-{row.l}
-            {row.seed ? ` · ${row.seed}°` : " · fuori"} · {pct.toFixed(3).replace("0.", ".")}
+            {row.seed ? ` · ${row.seed}°` : ` · ${t("outOfPlayoffs", lang)}`} · {pct.toFixed(3).replace("0.", ".")}
           </div>
         </div>
       </div>
@@ -52,8 +79,8 @@ export function TeamDossier({
           <p className="text-[12.5px] text-muted italic mt-2 leading-snug">{row.note}</p>
           <div className="grid grid-cols-4 gap-1.5 text-center mt-3">
             {[
-              [row.ppg.toFixed(1), "PF"],
-              [row.oppPpg.toFixed(1), "PS"],
+              [row.ppg.toFixed(1), t("statPF", lang)],
+              [row.oppPpg.toFixed(1), t("statPS", lang)],
               [`${row.netRtg > 0 ? "+" : ""}${row.netRtg.toFixed(1)}`, "NET"],
               [row.pace.toFixed(1), "PACE"],
             ].map(([v, l]) => (
@@ -71,12 +98,12 @@ export function TeamDossier({
           </div>
           {(row.identity || row.ambition) && (
             <p className="text-[12px] text-muted mt-1.5">
-              {row.identity ? `Sistema ${labelIdentity(row.identity)}` : ""}
+              {row.identity ? tf("systemOf", { v: t(IDENTITY_KEY[row.identity], lang) }, lang) : ""}
               {row.identity && row.ambition ? " · " : ""}
-              {row.ambition ? labelAmbition(row.ambition) : ""}
+              {row.ambition ? t(AMBITION_KEY[row.ambition], lang) : ""}
             </p>
           )}
-          {row.identity ? <p className="text-[12.5px] text-chalk mt-1">{systemLine(row)}</p> : null}
+          {row.identity ? <p className="text-[12.5px] text-chalk mt-1">{systemLine(row, lang)}</p> : null}
         </>
       )}
     </div>
@@ -84,15 +111,16 @@ export function TeamDossier({
 }
 
 function TeamBanner({ row }: { row: StandingRow }) {
+  const lang = useLang();
   return (
     <div className="team-banner">
       <div className="team-banner-stats">
         {[
-          [`${row.w}-${row.l}`, "V-S"],
-          [row.ppg.toFixed(1), "PF"],
-          [row.oppPpg.toFixed(1), "PS"],
+          [`${row.w}-${row.l}`, t("statWL", lang)],
+          [row.ppg.toFixed(1), t("statPF", lang)],
+          [row.oppPpg.toFixed(1), t("statPS", lang)],
           [`${row.netRtg > 0 ? "+" : ""}${row.netRtg.toFixed(1)}`, "NET"],
-          [row.pace.toFixed(1), "RITMO"],
+          [row.pace.toFixed(1), t("statPace", lang)],
         ].map(([v, l]) => (
           <div key={l}>
             <b className="tabular">{v}</b>
@@ -106,7 +134,7 @@ function TeamBanner({ row }: { row: StandingRow }) {
           {row.starPpg.toFixed(1)} / {row.starRpg.toFixed(1)} / {row.starApg.toFixed(1)}
         </span>
       </div>
-      {row.identity ? <p>{systemLine(row)}</p> : row.note ? <p>{row.note}</p> : null}
+      {row.identity ? <p>{systemLine(row, lang)}</p> : row.note ? <p>{row.note}</p> : null}
     </div>
   );
 }
@@ -124,13 +152,14 @@ function Table({
   onPick: (abbr: string) => void;
   selected?: string | null;
 }) {
+  const lang = useLang();
   return (
     <div className="standings-block">
       <h4 className="stats-heading">{title}</h4>
       <div className="standings-head">
         <span>#</span>
-        <span>Squadra</span>
-        <span>V-S</span>
+        <span>{t("team", lang)}</span>
+        <span>{t("statWL", lang)}</span>
         <span>PPG</span>
       </div>
       {rows.map((r) => {
@@ -141,6 +170,7 @@ function Table({
               type="button"
               className={`standings-row ${r.abbr === mine ? "mine" : ""} ${playoff ? "in" : "out"} ${selected === r.abbr ? "open" : ""}`}
               style={{ ["--club" as string]: r.color }}
+              aria-expanded={selected === r.abbr}
               onClick={() => onPick(r.abbr)}
             >
               <span className="seed">{r.seed ?? "—"}</span>
@@ -172,12 +202,12 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
   if (!snap) {
     const seedTitles = (player.championLog ?? []).filter((c) => c.league === "NBA");
     if (!seedTitles.length) {
-      return <p className="empty-hint">La classifica compare dopo la prima stagione.</p>;
+      return <p className="empty-hint">{t("standingsLater", lang)}</p>;
     }
     return (
       <div className="pt-3 fade-in">
-        <p className="empty-hint">La classifica compare dopo la prima stagione. L'albo d'oro, intanto, è già aperto.</p>
-        <h4 className="stats-heading">Albo d'oro NBA</h4>
+        <p className="empty-hint">{t("standingsLaterAlbo", lang)}</p>
+        <h4 className="stats-heading">{t("alboNba", lang)}</h4>
         <ol className="albo-list">
           {seedTitles.map((c) => (
             <li key={c.yearLabel + c.teamAbbr}>
@@ -205,12 +235,10 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
   const toggle = (abbr: string) => setPicked((cur) => (cur === abbr ? null : abbr));
   return (
     <div className="pt-3 fade-in">
-      <p className="chart-cap">
-        {snap.yearLabel}. Una faccia per squadra. Tocca una riga: il riassunto si apre sotto.
-      </p>
+      <p className="chart-cap">{tf("leagueCap", { y: snap.yearLabel }, lang)}</p>
       {latestTitle && (
         <div className={`albo-featured ${latestTitle.isPlayer ? "yours" : ""}`}>
-          <div className="albo-kicker">Campione in carica</div>
+          <div className="albo-kicker">{t("reigningChamp", lang)}</div>
           <div className="albo-featured-row">
             <TeamCrest
               team={{ abbr: latestTitle.teamAbbr, color: latestTitle.teamColor, secondary: latestTitle.teamColor }}
@@ -219,7 +247,7 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
             <div>
               <div className="albo-year">{latestTitle.yearLabel}</div>
               <b>{latestTitle.team}</b>
-              <em>{latestTitle.isPlayer ? "Il tuo anello" : latestTitle.star}</em>
+              <em>{latestTitle.isPlayer ? t("yourRing", lang) : latestTitle.star}</em>
             </div>
           </div>
         </div>
@@ -235,15 +263,15 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
       />
       {nba ? (
         <>
-          <Table title="Est" rows={snap.east} mine={mine} onPick={toggle} selected={picked} />
-          <Table title="Ovest" rows={snap.west} mine={mine} onPick={toggle} selected={picked} />
+          <Table title={t("confEast", lang)} rows={snap.east} mine={mine} onPick={toggle} selected={picked} />
+          <Table title={t("confWest", lang)} rows={snap.west} mine={mine} onPick={toggle} selected={picked} />
         </>
       ) : (
-        <Table title="Eurolega" rows={snap.euro} mine={mine} onPick={toggle} selected={picked} />
+        <Table title={t("leagueEuro", lang)} rows={snap.euro} mine={mine} onPick={toggle} selected={picked} />
       )}
       {snap.awards.filter((a) => a.title !== "ROY" || player.season === 1).length > 0 && (
         <>
-          <h4 className="stats-heading">Premi della lega</h4>
+          <h4 className="stats-heading">{t("leagueAwards", lang)}</h4>
           <ul className="award-board">
             {snap.awards
               .filter((a) => a.title !== "ROY" || player.season === 1)
@@ -256,7 +284,7 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
                     {club ? <TeamCrest team={club} size={18} /> : null}
                     {a.name} · {a.teamAbbr}
                   </span>
-                  <em>{a.note}</em>
+                  <em>{awardNoteLabel(a.note, lang)}</em>
                 </li>
               );
             })}
@@ -265,7 +293,7 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
       )}
       {snap.leaders.length > 0 && (
         <>
-          <h4 className="stats-heading">Leader</h4>
+          <h4 className="stats-heading">{t("leaders", lang)}</h4>
           <div className="leader-row">
             {snap.leaders.map((l) => (
               <div key={l.stat} className={`leader-cell ${l.isPlayer ? "yours" : ""}`}>
@@ -281,8 +309,8 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
       )}
       {nbaTitles.length > 0 && (
         <>
-          <h4 className="stats-heading">Albo d'oro NBA</h4>
-          <p className="chart-cap">Le squadre campioni, dal 2023-24. Se alzi l'anello, il tuo nome resta qui.</p>
+          <h4 className="stats-heading">{t("alboNba", lang)}</h4>
+          <p className="chart-cap">{t("alboCap", lang)}</p>
           <ol className="albo-list">
             {nbaTitles.map((c) => (
               <li key={c.yearLabel + c.teamAbbr} className={c.isPlayer ? "yours" : ""}>
@@ -293,7 +321,7 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
                 />
                 <span className="albo-team">
                   <b>{c.team}</b>
-                  <em>{c.isPlayer ? "Il tuo anello" : c.star}</em>
+                  <em>{c.isPlayer ? t("yourRing", lang) : c.star}</em>
                 </span>
               </li>
             ))}
@@ -302,7 +330,7 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
       )}
       {euroTitles.length > 0 && (
         <>
-          <h4 className="stats-heading">Albo d'oro Eurolega</h4>
+          <h4 className="stats-heading">{t("alboEuro", lang)}</h4>
           <ol className="albo-list">
             {euroTitles.map((c) => (
               <li key={c.yearLabel + c.teamAbbr} className={c.isPlayer ? "yours" : ""}>
@@ -313,7 +341,7 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
                 />
                 <span className="albo-team">
                   <b>{c.team}</b>
-                  <em>{c.isPlayer ? "Il tuo titolo" : c.star}</em>
+                  <em>{c.isPlayer ? t("yourTitle", lang) : c.star}</em>
                 </span>
               </li>
             ))}
@@ -326,12 +354,13 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
 
 export function PersonalAwards({
   rows,
-  title = "Premi personali",
+  title,
 }: {
   rows: SeasonRow[];
   title?: string;
 }) {
   const lang = useLang();
+  const heading = title ?? t("lifeAwards", lang);
   const won = rows.flatMap((r) =>
     r.awards.map((a) => ({
       key: `${r.season}-${a}`,
@@ -343,7 +372,7 @@ export function PersonalAwards({
   if (!won.length) return null;
   return (
     <div className="personal-awards">
-      <h4 className="stats-heading">{title}</h4>
+      <h4 className="stats-heading">{heading}</h4>
       <ul className="award-board">
         {won.map((a) => (
           <li key={a.key} className="yours">
@@ -490,6 +519,7 @@ function RaceList({
   cap: string;
   rows: { key: string; name: string; abbr: string; color: string; line: string; yours: boolean; score: number }[];
 }) {
+  const lang = useLang();
   if (!rows.length) return null;
   const gap = rows.length > 1 ? Math.abs(rows[0]!.score - rows[1]!.score) : 0;
   const lead = rows[0]!;
@@ -498,10 +528,10 @@ function RaceList({
     rows.length < 2
       ? ""
       : gap < 0.6
-        ? "Sul voto è un testa a testa."
+        ? t("voteTie", lang)
         : lead.yours
-          ? `Sul voto sei davanti di ${gap.toFixed(1)}.`
-          : `Sul voto ${first} è davanti di ${gap.toFixed(1)}.`;
+          ? tf("voteYouAhead", { v: gap.toFixed(1) }, lang)
+          : tf("voteAhead", { name: first, v: gap.toFixed(1) }, lang);
   return (
     <div className="roy-board">
       <h4 className="stats-heading" style={{ marginTop: 0 }}>{title}</h4>
@@ -535,6 +565,7 @@ export function RoyBoard({
       : player?.season === 1
         ? (player.currentLeague?.royRace?.length ? player.currentLeague.royRace : player.royClass) ?? []
         : [];
+  const lang = useLang();
   if (!list.length) return null;
   const ordered = [...list].sort((a, b) => b.score - a.score);
   return (
@@ -542,12 +573,12 @@ export function RoyBoard({
       <h4 className="stats-heading" style={{ marginTop: 0 }}>
         Rookie of the Year
       </h4>
-      <p className="chart-cap">Solo il primo anno. Contano punti, rimbalzi, assist e le partite giocate.</p>
+      <p className="chart-cap">{t("royCap", lang)}</p>
       <div className="roy-head">
         <span />
         <span />
-        <span>Giocatore</span>
-        <span>PT · RIM · ASS</span>
+        <span>{t("playerCol", lang)}</span>
+        <span>{t("royCols", lang)}</span>
       </div>
       {ordered.map((c, i) => (
         <div key={c.name} className={`roy-row ${c.isPlayer ? "yours" : ""}`}>
@@ -570,17 +601,18 @@ export function RoyBoard({
 }
 
 export function DpoyBoard({ race }: { race?: DpoyCandidate[] }) {
+  const lang = useLang();
   if (!race?.length) return null;
   return (
     <div className="roy-board">
       <h4 className="stats-heading" style={{ marginTop: 0 }}>
         Defensive Player of the Year
       </h4>
-      <p className="chart-cap">Ogni stagione NBA. Stoppate, palle rubate, vittorie difensive, notti giocate.</p>
+      <p className="chart-cap">{t("dpoyCap", lang)}</p>
       <div className="roy-head">
         <span />
         <span />
-        <span>Giocatore</span>
+        <span>{t("playerCol", lang)}</span>
         <span>STL · BLK</span>
       </div>
       {race.map((c, i) => (
