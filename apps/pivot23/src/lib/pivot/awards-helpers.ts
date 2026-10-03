@@ -4,7 +4,7 @@ import { SIM } from "./config";
 import { diffOf } from "./difficulty";
 import { advancedOf } from "./peak";
 import { rand } from "./rng";
-import { findTeam } from "./teams";
+import { findTeam, NBA_TEAMS } from "./teams";
 import type { CpuStar, DpoyCandidate, LeagueAward, PlayerState, RoyCandidate, SeasonRow } from "./types";
 
 function clamp(v: number, min: number, max: number) {
@@ -388,8 +388,10 @@ function buildDpoyRace(s: PlayerState, row: SeasonRow): DpoyCandidate[] {
   const seen = new Set<string>([s.name]);
   const others: DpoyCandidate[] = [];
   const byAbbr = new Map([...(row.league?.east ?? []), ...(row.league?.west ?? [])].map((r) => [r.abbr, r]));
+  // NBA award: only players on NBA rosters. Same membership test as the MVP field (league.ts nbaField).
+  const nba = new Set(NBA_TEAMS.map((t) => t.abbr));
   for (const p of s.world?.stars ?? []) {
-    if (p.retired || p.teamAbbr === s.team.abbr || seen.has(p.name)) continue;
+    if (p.retired || !nba.has(p.teamAbbr) || p.teamAbbr === s.team.abbr || seen.has(p.name)) continue;
     const stand = byAbbr.get(p.teamAbbr);
     const bits = starDpoyBits(p, stand?.identity ?? s.world?.teams?.[p.teamAbbr]?.identity);
     seen.add(p.name);
