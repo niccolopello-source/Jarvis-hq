@@ -108,3 +108,22 @@ test("reduced motion: no running animations on the intro", async ({ page }) => {
   );
   expect(running).toBe(0);
 });
+
+test("no Content-Security-Policy violations through a played season (meaningful with E2E_PREVIEW=1)", async ({ page }) => {
+  await page.addInitScript(() => {
+    const w = window as Window & { __csp?: string[] };
+    w.__csp = [];
+    document.addEventListener("securitypolicyviolation", (e) => w.__csp!.push(`${e.violatedDirective} ${e.blockedURI}`));
+  });
+  const raw = readFileSync(savePath, "utf8");
+  await page.goto("/");
+  await page.evaluate((saved) => localStorage.setItem("pivot-v2-save", saved), raw);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: TEXT.it.retire })).toBeVisible();
+  for (const tab of TEXT.it.tabs.slice(1)) {
+    await settle(page);
+    await page.getByRole("button", { name: tab, exact: true }).click();
+  }
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => (window as Window & { __csp?: string[] }).__csp)).toEqual([]);
+});
