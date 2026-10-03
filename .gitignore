@@ -1,6 +1,7 @@
 node_modules/
 apps/pivot23/e2e/fixtures/retire-save.json
 apps/pivot23/e2e/fixtures/full-archive.json
+apps/pivot23/e2e/fixtures/crash-save.json
 
 .pnpm-store/
 .env

@@ -3,6 +3,7 @@ import { EURO_TEAMS, NBA_TEAMS, ROOKIE_NAMES, cloneTeam, powerToTier } from "./t
 import { diffOf } from "./difficulty";
 import { SIM } from "./config";
 import { pick, rand, randInt } from "./rng";
+import { RULES } from "./rules";
 import { identityModOf, liveStar, mvpScore, starOf, teamStrength } from "./world";
 import { royProductionScore } from "./awards-helpers";
 import { EURO_GAMES, NBA_GAMES, PLAYOFF_SEEDS, awardNoteIt } from "./data";
@@ -195,11 +196,20 @@ export function playerImpactOnTeam(s: PlayerState): number {
   return bump * diffOf(s).impact;
 }
 
+/** Fisher–Yates on the seeded stream: length-1 draws, same order on every JavaScript engine. */
+function shuffleSeeded<T>(arr: T[]): T[] {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [arr[i], arr[j]] = [arr[j]!, arr[i]!];
+  }
+  return arr;
+}
+
 export function seedRookieClass(s: PlayerState): RoyCandidate[] {
   if ((s.season ?? 0) > 1) return [];
   const others = NBA_TEAMS.filter((t) => t.abbr !== s.team.abbr);
   const classList: RoyCandidate[] = [];
-  const names = [...ROOKIE_NAMES].sort(() => rand() - 0.5).slice(0, 5);
+  const names = (RULES.rookieShuffle === "portable" ? shuffleSeeded([...ROOKIE_NAMES]) : [...ROOKIE_NAMES].sort(() => rand() - 0.5)).slice(0, 5);
   const bands = [
     [10.2, 12.4],
     [8.8, 10.6],

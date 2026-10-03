@@ -86,8 +86,19 @@ export function currentRng(): Rng | null {
   return CURRENT;
 }
 
+let FALLBACK_DRAWS = 0;
+
+/**
+ * How many times a draw was served by the unseeded session fallback (outside withPlayer/runWithRng).
+ * Such draws are not reproducible from the career seed. Tests assert it stays 0 for simulation code.
+ */
+export function fallbackDraws() {
+  return FALLBACK_DRAWS;
+}
+
 function needRng(): Rng {
   if (CURRENT) return CURRENT;
+  FALLBACK_DRAWS += 1;
   // Live UI can call flavor/doors outside withPlayer; never crash the session.
   if (!FALLBACK) FALLBACK = createRng(0x9e3779b9);
   return FALLBACK;

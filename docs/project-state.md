@@ -336,3 +336,55 @@ On the home, the real mark plays one 4.8 second settle, `cineReveal`, with a gra
 
 Checked on Linux, headless Chromium, 2 cores, local Vite, not a phone. ESLint pass, `tsc` pass, unit tests 54/54, production build pass. Browser: the new skip check plus the previous boot, year, save, age-36, career and four-core checks, 11/11. The career from Inizia took 66 first-choice steps. The mark during the boot shell was 281 px at 390 and 420 px at 768 and 1440. One frame gap during that boot sample reached 50 ms. The age-35 retirement fixture on disk was 19,796 bytes. A phone was not used. Production was not deployed from this branch.
 
+
+---
+
+## 23. Master cycle 1 — baseline, stability, engine, 2026-10-03
+
+Branch `grokbot/demo-hardening` from `main` `1099511`. Not merged. Draft PR. Author Grok Bot.
+
+### Baseline (verified on `1099511`, Linux, Node 20.19 locally; CI uses Node 24)
+
+- `main` HEAD `1099511` = merge of PR #28 (intro animation). PR #26, #27, #28 merged by the account `niccolopello-source`. No open PR before this cycle except the parallel workers' branches (`grokbot/full-translation`, `grokbot/bundle-split`, `grokbot/balance-d11-d23`).
+- CI on `main`: run 37136916431 success (lint, typecheck, unit, build, check:headers, e2e on `vite preview` with production headers; separate statistical job).
+- Local re-run on `1099511`: ESLint pass, `tsc` pass, unit 84/84, build pass (main chunk 744.84 KB / 238.28 KB gzip, chart chunk 379.65 KB lazy), `check:headers` 6/6, e2e on production build 37/37.
+- Commands: `pnpm install --frozen-lockfile`, `pnpm run lint`, `pnpm run typecheck`, `pnpm run test`, `pnpm run build`, `pnpm run check:headers`, `pnpm run test:e2e:preview` (all in `apps/pivot23`); `pnpm run test:stats` is the ~4-minute statistical suite. `E2E_PORT` (new) moves the e2e server off 4173/8080 when another worktree holds them.
+- Vercel: `apps/pivot23/vercel.json` holds headers only (no build settings). Production serves the same asset hashes as a local build of `1099511` and the CSP header, so the project root is `apps/pivot23` (inferred, setting not read). Vercel settings were not touched.
+- Versions: `ENGINE_VERSION` `2.11.0-beta`, `SAVE_VERSION` 11 (player schema), `LIVE_SAVE_VERSION` 2, no live migrations.
+- Prior report reconciliation: `final-implementation-report.md` said 8 commits of `grokbot/demo-stability` were not on `main` and needed a new PR; they were merged as #27. «Root directory to verify» is now answered indirectly by the live headers. Its other claims (save safety, chunk retry, DPOY NBA-only, CSP) match the code on `1099511`.
+
+### Home intro duration (owner request: +1500 ms)
+
+- Where: `apps/pivot23/src/styles.css`, rule `.court-mark-live.is-premiere`, `animation: cineReveal …` (line 1099 on `main`, line 1100 on the branch). The premiere ends on `animationend` (`PivotApp.tsx`), no JS timer. The boot curtain (`index.html` `curtainWipe` 0.52 s, `intro.ts` fallback 1.5 s) runs in parallel and was not changed.
+- Before: 4.8 s (4800 ms). After: 6.3 s (6300 ms). Measured on the production build in headless Chromium: 6358 ms and 6381 ms from mount to hand-off.
+- Unchanged: lean devices (≤2 cores) and returning visits 1.6 s; reduced motion: no premiere. Decision P-013 asks whether those should change too.
+- Bugs found and fixed while testing it: (1) going back to the home after leaving it mid-premiere replayed the premiere from 0; (2) at 1280×720 the «Salta» chip sat under the mark wrapper (`.intro-hero > *` forced `z-index: 1`) and the click never reached it.
+- Tests: `e2e/home-premiere.spec.ts` (duration, Start mid-premiere + return home, skip, reduced motion), `src/components/pivot/premiere.test.ts` (configured values).
+
+### Stability
+
+- Error boundaries: app-level (`main.tsx`) and career view (`CareerGuard`) now share `CrashFallback`. New: when a saved career exists, a second button copies it to `pivot-v2-save-crashed` and opens a clean home (removes nothing it could not copy). Reason: a checksum-valid save that breaks rendering looped on «Ricarica» (reproduced, `e2e/init-failure.spec.ts`).
+- Chunk load: `LazyChunk` (chart) bounded retry ×2 with cache-busting URL, stable fallback — verified by the existing `e2e/chunk-failure.spec.ts`; no change.
+- Boot fallback: static boot screen with reload link if the entry script fails — existing e2e; `prepareIntro()` errors no longer stop the app from mounting.
+- React duplicate keys on repeated milestone/award labels fixed (dev-only warning, could drop or duplicate chips).
+
+### Persistence
+
+- New `persistence.test.ts`: set-aside (copy then remove; storage full keeps the save), every season of 4 long careers saves/loads/resumes on the same RNG state (largest save well under 400 K chars), compaction under a quota, 120 truncation points, ARCHIVE_LIMIT order/eviction, archive backups.
+- Bug fixed: `saveArchive()` silently overwrote an unreadable archive and dropped entries it could not read (e.g. newer version). Now backed up in `pivot-v2-archive-backup` first.
+- Checksum scope documented in `pivot23/SAVE-FORMAT-AND-MIGRATIONS.md`.
+
+### Engine randomness audit
+
+| Source | Where | Seeded? | Action |
+|---|---|---|---|
+| `rand/pick/randInt/chance/gaussian/gaussTrim` | all of `src/lib/pivot` (simulation, playoffs, draft, awards, injuries, events, CPU market/world, progression, retirement, rosters) | yes, Mulberry32 per career, state saved as `rngState` | none |
+| session fallback RNG in `rng.ts` | any draw outside `withPlayer`/`runWithRng` | no (fixed seed per page, shared) | counted by `fallbackDraws()`; 0 in simulations and 0 in 29 UI e2e flows (dev probe). `beginPlayoffs` now wraps itself (no outcome change: 300 careers hash-identical to `main`). Story `fx` closures still rely on the caller's context (UI and simulator both provide it). |
+| `[...ROOKIE_NAMES].sort(() => rand() - 0.5)` | `league.ts` rookie class, career start | seeded but order and number of draws depend on the JS engine's sort | `RULES.rookieShuffle` (`rules.ts`), default `current`; `portable` = Fisher–Yates. Proven with a foreign merge sort in tests. Changes per-seed outcomes → needs an engine version bump (P-012). 1,000 careers current vs portable: peak 77.13 / 77.10, titles 0.363 / 0.368, hit90 0.097 / 0.099, ROY 0.030 / 0.038. |
+| `Date.now() ^ Math.random()` | `newSeed()` | no, by design | only creates a seed when a career has none |
+| `crypto.randomUUID`, `Date.now` | careerId, archive id, `savedAt`, backups | no, not gameplay | none |
+| `performance.now`, `Date.now` | UI pacing, swipe | no, not gameplay | none |
+
+Invariants (`engine-invariants.test.ts`, 320 careers across difficulties, paths and draft policies): no skipped/duplicate seasons or years, age +1 per season, no negative stats, overall 48–99, games ≤ season length and W+L = season length, no duplicate awards, at most one All-NBA team, no NBA awards in EuroLeague seasons, ROY only in the first NBA season, title/Finals-MVP/MVP/All-Star/DPOY counters match rows and milestones, one champion per league-year, |Δoverall| ≤ 6 per year and no rise after the apex age, attributes and hidden traits inside bounds, no active CPU star on two rosters, every career finishes in ≤ 21 steps. 0 violations on the current code. Interleaved careers equal careers run alone.
+
+A phone and Safari/WebKit were not used. Nothing was deployed.
