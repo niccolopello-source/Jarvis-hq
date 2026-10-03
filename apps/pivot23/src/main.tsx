@@ -2,6 +2,7 @@ import { Component, type ErrorInfo, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { PivotApp } from "@/components/pivot/PivotApp";
 import "./styles.css";
+import { IntroCurtain, prepareIntro } from "./intro";
 
 const themeMeta = document.querySelector('meta[name="theme-color"]');
 if (themeMeta instanceof HTMLMetaElement) {
@@ -60,8 +61,13 @@ if (!root) {
   throw new Error("PIVOT 23 root element #app is missing.");
 }
 
+prepareIntro();
+
 createRoot(root).render(
-  <AppErrorBoundary>
-    <PivotApp />
-  </AppErrorBoundary>,
+  <>
+    <AppErrorBoundary>
+      <PivotApp />
+    </AppErrorBoundary>
+    <IntroCurtain />
+  </>,
 );

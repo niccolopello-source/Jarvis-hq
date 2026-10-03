@@ -1,0 +1,46 @@
+/* Intro hand-off (see src/intro.ts). Transform and opacity only. */
+
+/* First visit: the home copy rises in behind the stinger. `backwards` so press/hover transforms keep working afterwards. */
+html[data-intro="full"] .intro-hero > .cine-skip,
+html[data-intro="full"] .intro-hero > .eyebrow,
+html[data-intro="full"] .intro-hero > .display-title,
+html[data-intro="full"] .intro-hero > .lede,
+html[data-intro="full"] .intro-hero > .lang-row,
+html[data-intro="full"] .intro-hero > .primary-btn,
+html[data-intro="full"] .intro-hero > .ghost-btn,
+html[data-intro="full"] .intro-hero > .totem-home {
+  animation: introRise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.18s backwards;
+}
+html[data-intro="full"] .intro-hero > .display-title { animation-delay: 0.24s; }
+html[data-intro="full"] .intro-hero > .lede { animation-delay: 0.3s; }
+html[data-intro="full"] .intro-hero > .lang-row { animation-delay: 0.34s; }
+html[data-intro="full"] .intro-hero > .primary-btn { animation-delay: 0.38s; }
+html[data-intro="full"] .intro-hero > .ghost-btn { animation-delay: 0.42s; }
+html[data-intro="full"] .intro-hero > .totem-home,
+html[data-intro="full"] .intro-hero > .cine-skip { animation-delay: 0.5s; }
+
+@keyframes introRise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Returning visitor: the premiere keeps its shape but takes the short timing the lean path already uses. */
+html.pivot-intro-seen .court-mark-live.is-premiere {
+  animation-duration: 1.6s;
+}
+html.pivot-intro-seen .court-mark-live.is-premiere .mark-gleam path {
+  animation-duration: 1s;
+  animation-delay: 0.15s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-intro] .intro-hero > * {
+    animation: none;
+  }
+}
