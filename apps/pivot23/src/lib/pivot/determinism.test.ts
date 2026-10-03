@@ -105,3 +105,30 @@ test("save and resume mid-career reproduces the uninterrupted career", () => {
     }
   }
 });
+
+test("the reader's language never changes the career or the save", async () => {
+  const { getLang, setLang } = await import("./i18n.ts");
+  const before = getLang();
+  try {
+    for (const [i, difficulty] of DIFFS.entries()) {
+      const opts = { seed: 7300 + i, difficulty, name: "Lang", nationality: "Italia", number: 7, role: "PG" as const, path: "NCAA" as const };
+      const run = (lang: "it" | "en") => {
+        setLang(lang);
+        const job = openCareerSim(opts);
+        while (!advanceCareerSim(job)) { /* run to the end */ }
+        job.s.rngState = job.rng.getState();
+        const save = JSON.parse(JSON.stringify(buildLiveSave(job.s, null, [], "career", "log", 1))) as { player: PlayerState & { lang?: string }; c?: string };
+        delete save.player.lang;
+        delete (save.player as { careerId?: string }).careerId; // random per career, by design
+        delete save.c;
+        return { fp: fingerprint(job.s), save: JSON.stringify(save) };
+      };
+      const it = run("it");
+      const en = run("en");
+      assert.equal(en.fp, it.fp, difficulty);
+      assert.equal(en.save, it.save, `${difficulty}: stored text is canonical Italian in both languages`);
+    }
+  } finally {
+    setLang(before);
+  }
+});
