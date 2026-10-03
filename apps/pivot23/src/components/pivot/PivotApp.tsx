@@ -1801,7 +1801,7 @@ function StatMini({ l, v }: { l: string; v: string }) {
   );
 }
 
-const SeasonSheet = memo(function SeasonSheet({ player }: { player: PlayerState }) {
+function SeasonSheet({ player }: { player: PlayerState }) {
   const history = player.seasonHistory;
   const lang = useLang();
   const [idx, setIdx] = useState(Math.max(0, history.length - 1));
@@ -1916,7 +1916,7 @@ const SeasonSheet = memo(function SeasonSheet({ player }: { player: PlayerState 
       )}
     </div>
   );
-});
+}
 
 const StatsTab = memo(function StatsTab({
   player,
