@@ -1930,7 +1930,8 @@ export function pickPlayoffOpponent(s: PlayerState, _round: number): Team {
 
 export function beginPlayoffs(s: PlayerState) {
   if (!s.currentLeague) return null;
-  return initPlayoffs(s, s.currentLeague);
+  // The bracket draws from the RNG: keep it on the career seed even outside a caller's withPlayer.
+  return withPlayer(s, () => initPlayoffs(s, s.currentLeague!));
 }
 
 export function playoffWinChance(s: PlayerState, round: number, choiceBonus: number) {
