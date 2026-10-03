@@ -219,3 +219,36 @@ Tests run on this tree after the edits, Linux, Node, 3 October 2026: `eslint . -
 One decision check, not a full career: 30 seeds, 1000–1029, a fresh Pro player, first playoff round, choice index 0 versus the last choice, same player state before the round. The series result changed in 4 of 30. The other 26 stayed the same. A full-career counterfactual is not available without an injection hook, which was not added.
 
 Scenarios that retire a typical career at 34–35, or cap age at 35, were not simulated. They would change `careerEndingSignal` or `MAX_AGE`. That was not authorized.
+
+Browser check on 2026-10-03, local Vite at `http://127.0.0.1:4179`, Playwright Chromium, not a phone. The suite against that server: 12 passed, including the three new checks and the existing end-to-end specs. ESLint, `tsc --noEmit` and 49 unit tests also passed on this tree.
+
+What the browser showed:
+
+- The first HTML is a static fallback. It has no keyframes. After React mounts, the home mark receives the sweep class. On this machine the sweep was turned off because `hardwareConcurrency` is 4 or less (`pivot-lean`). Removing that class in the test made `animationName` equal `markSweep`. Reduced motion leaves it at `none`. Dark mode sets `--color-bg` to `#1c1c1e`.
+- A poisoned write shows the alert and a reload still opens "L'ultimo inverno". The previous save string was unchanged.
+- "Gioca a 36 anni" leaves that card. The following season was not played through to the end.
+- The year sheet was empty after season 1 because `SeasonSheet` was memoized over a mutated player. The memo is removed. The sheet then showed PPG, RPG and APG, the legend, and the advanced block closed. Opening it showed USG%. The swipe layer had been capturing the pointer on `summary`, so the block could not open. `summary` is now treated as a control, not a swipe. Tab buttons were at least 44px at 320 and 390. No physical device was used.
+
+Pull request #16 is open. It is not merged. The public site was not deployed from this pass.
+
+Later the same day, on the same branch, Playwright drove the age-35 retirement card. "Gioca a 36 anni" left that card. The next season was played through its recap. The screen then showed "Carriera conclusa", the text "36 anni", and the Career Card. The winter card did not return. The click loop stopped inside 16 steps, in 7.3 seconds. This used a constructed save, not a career played by hand from the draft. No retirement rule was changed.
+
+Startup, headless Chromium, Linux, 2 CPU cores, viewport 390×844, localhost, no throttle. Dev server: the "Inizia" button accepted a trial click in 373 ms. First contentful paint 36 ms. Production preview on port 4180, three loads: 189 ms, then 87 ms, then 75 ms. First contentful paint on the cold production load was 72 ms. A phone was not measured. The public site was not measured.
+
+The mark keeps the sweep class, but on this machine `pivot-lean` turns the animation off because the CPU count is 2. That was the same at 320, 390, 768 and 1440, in dev and in the production preview. Reduced motion was `none` at 320 and at the other widths. Removing the lean class in the existing boot test still reads `markSweep`. No new animation was added.
+
+The result line for this one-season save reads "1 stagioni". That plural was seen and left unchanged.
+
+---
+
+## 16. Boot mark, 2026-10-03
+
+Pull request #16 was merged to `main` as `d19ccc4`. GitHub records its head as `c2f4af9`. The year-sheet update and the age-36 browser test were not in that merge. They are on `grok/p0-boot`, which starts from `d19ccc4`.
+
+This pass adds a boot mark in the first HTML. A sweep named `bootSweep` runs for 2.2 seconds while the script loads. React replaces that screen as soon as it mounts. There is no timer that holds the welcome. Reduced motion sets that animation to `none`, and the ring with "23" stays. Playwright confirmed both, with the module delayed only in the test, headless Chromium, local Vite `http://127.0.0.1:4179`.
+
+On a machine with 2 cores the home mark no longer goes fully still. `pivot-lean` now plays a 0.45 second fade (`markLean`). The full `markSweep` still runs when that class is removed. The infinite save spinner stays off on lean devices.
+
+The result and the Career Card now say "1 stagione" and "2 stagioni". The age-36 browser check saw "1 stagione". A unit test covers 0, 1 and 2.
+
+Not done in this pass: a career played by hand from the draft, a phone, a new production timing, and any change to retirement or formulas. John, Al, Rebecca and James were not available as separate reviews.

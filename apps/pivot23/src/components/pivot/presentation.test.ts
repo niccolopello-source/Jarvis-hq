@@ -12,6 +12,7 @@ import {
   chipsFromSnapshot,
   consequenceSchedule,
   formatCareerTotal,
+  seasonCountLabel,
   getSeasonDisplayLabel,
   isGenuineFinalsRound,
   isHighStakesPresentation,
@@ -89,6 +90,12 @@ test("career totals use the active locale thousands separator", () => {
   assert.equal(formatCareerTotal(25000, "en"), "25,000");
   assert.equal(formatCareerTotal(25000, "it"), "25.000");
   assert.equal(formatCareerTotal(25000, "es"), "25.000");
+});
+
+test("one season is singular", () => {
+  assert.equal(seasonCountLabel(1), "1 stagione");
+  assert.equal(seasonCountLabel(0), "0 stagioni");
+  assert.equal(seasonCountLabel(2), "2 stagioni");
 });
 
 test("gold is only the real championship rounds and MVP cards", () => {

@@ -1123,9 +1123,15 @@ body,
     transform: rotate(360deg);
   }
 }
-html.pivot-lean .court-mark-live.is-sweep .mark-arcs,
+html.pivot-lean .court-mark-live.is-sweep .mark-arcs {
+  animation: markLean 0.45s ease-out 1 both;
+}
 html.pivot-lean .save-glyph-arc {
   animation: none;
+}
+@keyframes markLean {
+  from { opacity: 0.45; }
+  to { opacity: 1; }
 }
 .sim-note {
   margin: 10px 0 0;
