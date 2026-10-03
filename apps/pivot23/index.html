@@ -9,9 +9,35 @@
     <style>
       #boot { background: #f5f5f7; color: #1d1d1f; }
       #boot .boot-muted { color: #6e6e73; }
+      .boot-mark { width: 88px; height: 88px; position: relative; display: grid; place-items: center; }
+      .boot-ring {
+        width: 72px; height: 72px; border-radius: 50%;
+        border: 2px solid #C40018;
+        display: grid; place-items: center;
+        font-weight: 700; letter-spacing: .04em;
+      }
+      .boot-sweep {
+        position: absolute; inset: 4px; border-radius: 50%;
+        background: conic-gradient(from 0deg, transparent 0 68%, #C40018 86%, transparent 100%);
+        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+        mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+        animation: bootSweep 2.2s cubic-bezier(0.16, 1, 0.3, 1) 1 both;
+      }
+      .boot-word { margin: 0; font-size: 12px; letter-spacing: .16em; animation: bootIn 0.7s ease-out both; }
+      @keyframes bootSweep {
+        from { transform: rotate(-24deg); opacity: .45; }
+        to { transform: rotate(200deg); opacity: 1; }
+      }
+      @keyframes bootIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
       @media (prefers-color-scheme: dark) {
         #boot { background: #1c1c1e; color: #f5f5f7; }
         #boot .boot-muted { color: #98989d; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .boot-sweep, .boot-word { animation: none; }
       }
     </style>
   </head>
@@ -23,8 +49,11 @@
         aria-live="polite"
         style="min-height:100vh;display:grid;place-content:center;justify-items:center;gap:12px;padding:24px;box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;text-align:center"
       >
-        <div aria-hidden="true" style="width:72px;height:72px;border-radius:50%;border:2px solid #C40018;display:grid;place-items:center;font-weight:700;letter-spacing:.04em">23</div>
-        <strong style="font-size:12px;letter-spacing:.16em">PIVOT 23</strong>
+        <div class="boot-mark" aria-hidden="true">
+          <div class="boot-sweep"></div>
+          <div class="boot-ring">23</div>
+        </div>
+        <strong class="boot-word">PIVOT 23</strong>
         <p style="margin:0;font-size:18px">Avvio dell’applicazione…</p>
         <p class="boot-muted" style="margin:0;font-size:14px">Se la schermata non cambia, ricarica la pagina.</p>
         <a href="./" style="width:max-content;color:#C40018;font-size:14px;font-weight:600">Ricarica PIVOT 23</a>

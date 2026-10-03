@@ -238,3 +238,17 @@ Startup, headless Chromium, Linux, 2 CPU cores, viewport 390×844, localhost, no
 The mark keeps the sweep class, but on this machine `pivot-lean` turns the animation off because the CPU count is 2. That was the same at 320, 390, 768 and 1440, in dev and in the production preview. Reduced motion was `none` at 320 and at the other widths. Removing the lean class in the existing boot test still reads `markSweep`. No new animation was added.
 
 The result line for this one-season save reads "1 stagioni". That plural was seen and left unchanged.
+
+---
+
+## 16. Boot mark, 2026-10-03
+
+Pull request #16 was merged to `main` as `d19ccc4`. GitHub records its head as `c2f4af9`. The year-sheet update and the age-36 browser test were not in that merge. They are on `grok/p0-boot`, which starts from `d19ccc4`.
+
+This pass adds a boot mark in the first HTML. A sweep named `bootSweep` runs for 2.2 seconds while the script loads. React replaces that screen as soon as it mounts. There is no timer that holds the welcome. Reduced motion sets that animation to `none`, and the ring with "23" stays. Playwright confirmed both, with the module delayed only in the test, headless Chromium, local Vite `http://127.0.0.1:4179`.
+
+On a machine with 2 cores the home mark no longer goes fully still. `pivot-lean` now plays a 0.45 second fade (`markLean`). The full `markSweep` still runs when that class is removed. The infinite save spinner stays off on lean devices.
+
+The result and the Career Card now say "1 stagione" and "2 stagioni". The age-36 browser check saw "1 stagione". A unit test covers 0, 1 and 2.
+
+Not done in this pass: a career played by hand from the draft, a phone, a new production timing, and any change to retirement or formulas. John, Al, Rebecca and James were not available as separate reviews.

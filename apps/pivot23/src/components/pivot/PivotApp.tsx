@@ -3,7 +3,7 @@ import { Component, lazy, memo, Suspense, useEffect, useLayoutEffect, useMemo, u
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
 import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components/pivot/LeaguePanel";
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
-import { chipsFromFx, chipsFromSnapshot, consequenceSchedule, formatCareerTotal, getSeasonDisplayLabel, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL } from "@/components/pivot/presentation";
+import { chipsFromFx, chipsFromSnapshot, consequenceSchedule, formatCareerTotal, getSeasonDisplayLabel, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
 import { pathFeel, playoffNerves, ROLE_ARTICLE, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
@@ -2106,7 +2106,7 @@ function ResultView({
           {player.name} · N.{player.number}
         </div>
         <div className="result-span">
-          {ROLES[player.role].label} · {p.startAge}–{p.endAge} anni · {p.seasons} stagioni · picco {displayOverall(p.peak)}
+          {ROLES[player.role].label} · {p.startAge}–{p.endAge} anni · {seasonCountLabel(p.seasons)} · picco {displayOverall(p.peak)}
         </div>
         <div className={`hof-seal ${hof}`}>{hofLabel(hof)}</div>
         <p className="result-close">{v.closing}</p>
@@ -2288,7 +2288,7 @@ function ArchiveView({
           <span className="text-[12.5px] text-muted">
             {c.history[0]?.season && c.history[c.history.length - 1]?.season
               ? `${getSeasonDisplayLabel(c.history[0].season)} → ${getSeasonDisplayLabel(c.history[c.history.length - 1]!.season)}`
-              : `${c.seasons} stagioni`}
+              : seasonCountLabel(c.seasons)}
             {" · "}
             {c.role} · {c.verdict}
             {c.titles ? ` · ${c.titles} ${c.titles === 1 ? "titolo" : "titoli"}` : ""}
@@ -2333,7 +2333,7 @@ function CareerCardPanel({
       <h3 className="page-title text-chalk">{card.playerName}</h3>
       <p className="result-name">{card.role} · {card.nationality}</p>
       <p className="result-span">
-        Età {card.ageStart}–{card.ageEnd} · {card.seasons} stagioni · picco {displayOverall(card.peakOverall)}
+        Età {card.ageStart}–{card.ageEnd} · {seasonCountLabel(card.seasons)} · picco {displayOverall(card.peakOverall)}
       </p>
       <div className="result-stats">
         {[

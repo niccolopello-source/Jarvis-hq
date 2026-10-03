@@ -13,7 +13,8 @@ test("the boot page is a static fallback and the home mark can sweep", async ({ 
   const html = await (await page.request.get("/")).text();
   expect(html).toContain("Avvio dell");
   expect(html).toContain("prefers-color-scheme: dark");
-  expect(html).not.toContain("@keyframes");
+  expect(html).toContain("bootSweep");
+  expect(html).toContain("prefers-reduced-motion: reduce");
 
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "PIVOT" })).toBeVisible();
@@ -34,6 +35,20 @@ test("the boot page is a static fallback and the home mark can sweep", async ({ 
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.reload();
   await expect.poll(async () => page.locator(".mark-arcs").first().evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
+});
+
+test("the boot mark sweeps before React and stays still when motion is reduced", async ({ page }) => {
+  await page.route("**/src/main.tsx", async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await route.continue();
+  });
+  await page.goto("/", { waitUntil: "commit" });
+  await expect(page.locator(".boot-ring")).toContainText("23");
+  await expect.poll(async () => page.locator(".boot-sweep").evaluate((el) => getComputedStyle(el).animationName)).toBe("bootSweep");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.reload({ waitUntil: "commit" });
+  await expect(page.locator(".boot-ring")).toContainText("23");
+  await expect.poll(async () => page.locator(".boot-sweep").evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
 });
 
 test("the year sheet explains the main stats and hides the advanced ones", async ({ page }) => {
@@ -141,6 +156,7 @@ test("the age-36 season is played once and the career then closes", async ({ pag
 
   await expect(page.getByRole("heading", { name: "Carriera conclusa" })).toBeVisible();
   await expect(page.getByText("36 anni")).toBeVisible();
+  await expect(page.getByText("1 stagione").first()).toBeVisible();
   const card = page.getByRole("region", { name: "Career Card" });
   await card.scrollIntoViewIfNeeded();
   await expect(card).toBeVisible();
