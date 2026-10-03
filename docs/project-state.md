@@ -252,3 +252,13 @@ On a machine with 2 cores the home mark no longer goes fully still. `pivot-lean`
 The result and the Career Card now say "1 stagione" and "2 stagioni". The age-36 browser check saw "1 stagione". A unit test covers 0, 1 and 2.
 
 Not done in this pass: a career played by hand from the draft, a phone, a new production timing, and any change to retirement or formulas. John, Al, Rebecca and James were not available as separate reviews.
+
+---
+
+## 17. Award names, 2026-10-03
+
+Branch `grok/language` starts from `grok/p0-boot` `8cdc54a`. Pull request #17 is open on that boot branch and was not modified.
+
+Award chips, the year sheet, the league boards and the Italian award lines now use one official English name. `All-League` and `Quintetto` are no longer substituted for All-NBA. The chrome dictionary has the same keys in Italian, English and Spanish, with no empty string. Spanish stays out of the language picker because the events are still Italian.
+
+Details are in [`language-qa.md`](language-qa.md). No formula or save version changed.
