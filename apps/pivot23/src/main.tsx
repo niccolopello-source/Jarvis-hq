@@ -4,6 +4,7 @@ import { CrashFallback } from "@/components/pivot/CrashFallback";
 import { PivotApp } from "@/components/pivot/PivotApp";
 import "./styles.css";
 import { IntroCurtain, prepareIntro } from "./intro";
+import { armIntroSound } from "./intro-sound/controller";
 
 const themeMeta = document.querySelector('meta[name="theme-color"]');
 if (themeMeta instanceof HTMLMetaElement) {
@@ -44,6 +45,8 @@ try {
 } catch {
   // The intro is decoration: if it cannot set up, the app still mounts and replaces the boot screen.
 }
+// Listeners only: the AudioContext is created on the first user gesture (see src/intro-sound/controller.ts).
+armIntroSound();
 
 createRoot(root).render(
   <>

@@ -99,6 +99,7 @@ function clubByName(name: string) {
 import { advancedOf } from "@/lib/pivot/peak";
 import { defensiveMarks } from "@/lib/pivot/awards-helpers";
 import { CrashFallback } from "./CrashFallback";
+import { SoundToggle } from "@/intro-sound/SoundToggle";
 import { clearLive, hasLiveSave, lastLoadReport, loadLive, loadSwipe, logSeqFrom, persistentStorageAvailable, saveLive, saveSwipe, watchLiveConflicts, type LiveLoadReport } from "@/lib/pivot/save";
 import { CAREER_TABS, SwipeTrack } from "@/components/pivot/SwipePager";
 import { careerCommentary, hofTier, palmares } from "@/lib/pivot/legacy";
@@ -1045,6 +1046,7 @@ export function PivotApp() {
       </div>
       {screen === "intro" && (
         <section className="intro-hero home-screen">
+          <SoundToggle />
           {premiere ? (
             <button type="button" className="cine-skip" onClick={() => setPremiere(false)}>
               {t("skip", lang)}
