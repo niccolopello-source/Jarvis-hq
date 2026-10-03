@@ -258,3 +258,40 @@ test("a career started from the welcome can reach the archive", async ({ page })
   await expect(page.getByText("Carriera Intera")).toBeVisible();
   console.log(`CAREER_STEPS ${seen.length}`);
 });
+
+test("a four-core device still sees the home sweep, and Totem stays out of the career", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "hardwareConcurrency", { configurable: true, get: () => 4 });
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "PIVOT" })).toBeVisible();
+  await expect(page.locator(".totem-home")).toBeVisible();
+  await expect(page.locator(".ad-foot")).toBeHidden();
+  const home = await page.locator(".court-mark-live.is-sweep .mark-arcs").evaluate((el) => ({
+    name: getComputedStyle(el).animationName,
+    lean: document.documentElement.classList.contains("pivot-lean"),
+  }));
+  expect(home.lean).toBe(false);
+  expect(home.name).toBe("markSweep");
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(page.locator(".totem-home")).toBeHidden();
+  await expect(page.locator(".ad-foot")).toContainText("Powered by Totem");
+  const rails = await page.locator(".ad-rail").evaluateAll((nodes) =>
+    nodes.map((node) => {
+      const box = node.getBoundingClientRect();
+      return { width: Math.round(box.width), height: Math.round(box.height), text: node.textContent };
+    }),
+  );
+  expect(rails).toHaveLength(2);
+  for (const rail of rails) {
+    expect(rail.width).toBeGreaterThanOrEqual(72);
+    expect(rail.text).toContain("Riservato");
+  }
+
+  await page.getByRole("button", { name: "Inizia", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Chi sei sul parquet" })).toBeVisible();
+  await expect(page.locator(".totem-home")).toHaveCount(0);
+  await expect(page.locator(".ad-foot")).toContainText("Powered by Totem");
+});
