@@ -1,6 +1,7 @@
 
 import { EXTRA_STORY } from "./story-extra";
 import { FEEL_STORY } from "./story-feel";
+import { awardLabel } from "./i18n";
 import { pick } from "./rng";
 import type {
   AttrKey,
@@ -233,28 +234,9 @@ export function confIt(c?: string) {
   return "";
 }
 
-/** Etichette premio per lo schermo. Gli id restano inglesi nel motore. */
-const AWARD_IT: Record<string, string> = {
-  "Rookie of the Year": "Matricola dell'anno",
-  ROY: "Matricola dell'anno",
-  DPOY: "Difensore dell'anno",
-  FMVP: "MVP delle Finals",
-  "Finals MVP": "MVP delle Finals",
-  MIP: "Giocatore più migliorato",
-  "Most Improved Player": "Giocatore più migliorato",
-  "6MOY": "Sesto uomo",
-  "Sixth Man": "Sesto uomo",
-  "All-NBA First Team": "Primo quintetto",
-  "All-NBA Second Team": "Secondo quintetto",
-  "All-NBA Third Team": "Terzo quintetto",
-  "NBA Champion": "Campione NBA",
-  "EuroLeague Champion": "Campione Eurolega",
-};
-
+/** Nome ufficiale a schermo. Gli id del motore non cambiano. */
 export function awardIt(label: string) {
-  if (AWARD_IT[label]) return AWARD_IT[label]!;
-  if (label.startsWith("All-NBA")) return label.replace("All-NBA", "Quintetto");
-  return label;
+  return awardLabel(label);
 }
 
 /** Note premio: niente sigle inglesi a schermo. */

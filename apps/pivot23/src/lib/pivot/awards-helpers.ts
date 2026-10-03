@@ -234,7 +234,7 @@ function nbaDpoyScore(b: DpoyShape): number {
   return Number.isFinite(raw) ? raw : 0;
 }
 
-/** STL%, BLK%, vittorie difensive e DBPM. Stesse voci che pesano sul Difensore dell'anno. */
+/** STL%, BLK%, vittorie difensive e DBPM. Stesse voci che pesano sul Defensive Player of the Year. */
 export function defensiveMarks(row: {
   gp?: number;
   min?: number;

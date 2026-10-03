@@ -236,27 +236,27 @@ export function seasonAtmosphere(s: PlayerState, row: SeasonRow): string {
   add(row.awards.includes("DPOY") && s.age <= 23, [
     "A $AGE anni, difensore dell'anno. Di solito aspettano i canestri. Stavolta hanno contato le mani.",
     "Troppo giovane, dicono, per coprire così. Il premio è arrivato lo stesso.",
-    "Difensore dell'anno a $AGE anni. Chiudi già, e non hai ancora il discorso di un veterano.",
+    "Defensive Player of the Year, a $AGE anni. Chiudi già, e non hai ancora il discorso di un veterano.",
     "A $AGE anni ti volevano veloce. Ti hanno visto sporco, e il nome te l'hanno messo addosso.",
     "Il premio di chi toglie, e tu sei ancora un ragazzo. Il palmo, però, è già da uomo.",
     "A $AGE anni chiudere non finisce in copertina. Quest'anno il premio è tuo lo stesso.",
   ]);
   add(row.awards.includes("DPOY") && s.age >= 32, [
     "A $AGE anni il premio di chi chiude non è una sorpresa: è il mestiere, contato tardi.",
-    "Difensore dell'anno, a $AGE anni. Le ginocchia tengono i nomi. Tu ci metti ancora il palmo.",
+    "Defensive Player of the Year, a $AGE anni. Le ginocchia tengono i nomi. Tu ci metti ancora il palmo.",
     "A $AGE anni non corri come prima. Chiudi meglio. Il premio è questo, nudo.",
     "Il premio di chi toglie. A $AGE anni togliere è un orario, non un salto.",
     "A $AGE anni i canestri degli altri restano corti perché tu sei ancora lì, un palmo prima.",
-    "Difensore dell'anno. A quest'età è un rispetto che arriva dopo i minuti, non prima.",
+    "Defensive Player of the Year. A quest'età è un rispetto che arriva dopo i minuti, non prima.",
   ]);
   add(row.awards.includes("DPOY"), [
-    "Difensore dell'anno. Non è un premio da debutto: si conta ogni aprile, e quest'anno il nome è il tuo.",
+    "Defensive Player of the Year. Non è un premio da debutto: si conta ogni aprile, e quest'anno il nome è il tuo.",
     "Quest'anno ti hanno letto sulle stoppate e sulle palle rubate, non sui canestri.",
     "Il premio difensivo. Pochi applausi, molte graffiature, e il rispetto giusto.",
-    "Difensore dell'anno. Una parola che non finisce in copertina, e per questo vale di più.",
+    "Defensive Player of the Year. Una parola che non finisce in copertina, e per questo vale di più.",
     "Ti hanno visto chiudere. È un complimento che si paga in contatti, non in copertina.",
     "Il premio di chi toglie. Lo staff, per una volta, parla del tuo palmo prima del tuo polso.",
-    "Difensore dell'anno. I canestri degli altri sono restati corti, e qualcuno li ha contati.",
+    "Defensive Player of the Year. I canestri degli altri sono restati corti, e qualcuno li ha contati.",
     "Una stagione a coprire. Il premio, quando arriva, non ha bisogno di un'altra parola.",
     "Hanno contato i possessi fermati. È il tuo mestiere, e stavolta ha un nome.",
   ]);
@@ -812,7 +812,7 @@ export function awardFeelLine(s: PlayerState, awards: readonly string[]): string
           "Troppo presto, dicevano. Tu hai chiuso abbastanza da farli tacere, e il premio è questo.",
           "A $AGE anni la difesa ha il tuo nome. Non è un complimento: è un orario, da stasera.",
           "Chiudevi già, senza discorso. A $AGE anni te l'hanno scritto su una targa, e basta.",
-        ]) || "Difensore dell'anno. Il rispetto giusto."
+        ]) || "Defensive Player of the Year. Il rispetto giusto."
       );
     }
     if (s.age >= 32) {
@@ -823,19 +823,19 @@ export function awardFeelLine(s: PlayerState, awards: readonly string[]): string
           "A $AGE anni coprire è già una vittoria. Te l'hanno riconosciuto senza copertina.",
           "Il corpo firma dopo. La difesa l'hai firmata tu, tutte le sere, e qualcuno l'ha messa su una targa.",
           "A $AGE anni il premio da chi chiude. Non chiedono più i numeri da manifesto: chiedono che tu resti lì.",
-          "Difensore dell'anno, a $AGE anni. Il rispetto arriva quando i canestri da copertina sono già andati.",
-        ]) || "Difensore dell'anno. Il rispetto giusto."
+          "Defensive Player of the Year, a $AGE anni. Il rispetto arriva quando i canestri da copertina sono già andati.",
+        ]) || "Defensive Player of the Year. Il rispetto giusto."
       );
     }
     return (
       say(s, [
-        "Difensore dell'anno. Si nota chi toglie, e quest'anno hai tolto abbastanza da avere un nome.",
-        "Difensore dell'anno. Pochi applausi, molte graffiature, il rispetto che non finisce in copertina.",
+        "Defensive Player of the Year. Si nota chi toglie, e quest'anno hai tolto abbastanza da avere un nome.",
+        "Defensive Player of the Year. Pochi applausi, molte graffiature, il rispetto che non finisce in copertina.",
         "Il premio a chi chiude. Lo staff, per una volta, parla del tuo palmo prima del tuo polso.",
         "Ti hanno visto coprire. È un complimento che si paga in contatti, e l'hai pagato.",
         "Una targa per i possessi che non sono nati. Il mestiere, sotto, resta identico, e tu lo sai.",
         "Te l'hanno appeso per quello che togli. Da ottobre le domande, però, restano le stesse.",
-      ]) || "Difensore dell'anno. Il rispetto giusto."
+      ]) || "Defensive Player of the Year. Il rispetto giusto."
     );
   }
   if (awards.includes("MVP")) {
@@ -865,13 +865,13 @@ export function awardFeelLine(s: PlayerState, awards: readonly string[]): string
   if (awards.some((a) => a.startsWith("All-NBA"))) {
     return (
       say(s, [
-        "Quintetto della lega. Una riga in una lista che non si compra, si tiene.",
+        "All-NBA. Una riga in una lista che non si compra, si tiene.",
         "Il quintetto della lega. Non è un filmato: è un elenco, e il tuo nome c'è.",
-        "Quintetto della lega. Una riga secca. Il mestiere, sotto, resta identico.",
+        "All-NBA. Una riga secca. Il mestiere, sotto, resta identico.",
         "Il quintetto. I lunedì non cambiano; cambia il modo in cui ti chiamano.",
         "Una lista, un nome. Il tuo. Poi ottobre, che non legge le liste.",
-        "Quintetto della lega. Lo tieni in tasca, non al collo.",
-      ]) || "Quintetto della lega. Il nome c'è."
+        "All-NBA. Lo tieni in tasca, non al collo.",
+      ]) || "All-NBA. Il nome c'è."
     );
   }
   if (awards.length) return noAwardLine(s);

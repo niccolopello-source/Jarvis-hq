@@ -540,7 +540,7 @@ export function RoyBoard({
   return (
     <div className="roy-board">
       <h4 className="stats-heading" style={{ marginTop: 0 }}>
-        Corsa alla matricola dell'anno
+        Rookie of the Year
       </h4>
       <p className="chart-cap">Solo il primo anno. Contano punti, rimbalzi, assist e le partite giocate.</p>
       <div className="roy-head">
@@ -574,7 +574,7 @@ export function DpoyBoard({ race }: { race?: DpoyCandidate[] }) {
   return (
     <div className="roy-board">
       <h4 className="stats-heading" style={{ marginTop: 0 }}>
-        Difensore dell'anno
+        Defensive Player of the Year
       </h4>
       <p className="chart-cap">Ogni stagione NBA. Stoppate, palle rubate, vittorie difensive, notti giocate.</p>
       <div className="roy-head">

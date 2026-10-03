@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DEMO_LANGS, demoLang, t } from "./i18n.ts";
+import { DEMO_LANGS, awardLabel, chromeGaps, demoLang, t } from "./i18n.ts";
 
 test("the demo offers only Italian and English", () => {
   assert.deepEqual(DEMO_LANGS, ["it", "en"]);
@@ -10,6 +10,27 @@ test("the demo offers only Italian and English", () => {
   assert.equal(demoLang("fr"), "it");
   assert.equal(demoLang(null), "it");
   assert.equal(demoLang(undefined), "it");
+});
+
+test("chrome strings exist in Italian, English and Spanish", () => {
+  assert.deepEqual(chromeGaps(), []);
+  assert.equal(t("saveMiss", "it").includes("$"), false);
+  assert.equal(t("saveMiss", "en").includes("$"), false);
+  assert.equal(t("saveMiss", "es").includes("$"), false);
+});
+
+test("award names stay official on every language", () => {
+  for (const lang of ["it", "en", "es"] as const) {
+    assert.equal(awardLabel("ROY", lang), "Rookie of the Year");
+    assert.equal(awardLabel("DPOY", lang), "Defensive Player of the Year");
+    assert.equal(awardLabel("FMVP", lang), "Finals MVP");
+    assert.equal(awardLabel("MIP", lang), "Most Improved Player");
+    assert.equal(awardLabel("6MOY", lang), "Sixth Man of the Year");
+    assert.equal(awardLabel("All-NBA First Team", lang), "All-NBA First Team");
+    assert.equal(awardLabel("NBA Champion", lang), "NBA Champion");
+    assert.equal(t("allNba", lang), "All-NBA");
+    assert.equal(t("allNba", lang).includes("All-League"), false);
+  }
 });
 
 test("a missed save says the last successful write is kept", () => {
