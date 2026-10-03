@@ -1,7 +1,7 @@
 
 /** ROY ~7% anno 1 NBA. DPOY ogni stagione NBA: stessa scala del campo, vince il box difensivo. */
 import { SIM } from "./config";
-import { TUNING } from "./tuning";
+import { dpoyFatigueOf, TUNING } from "./tuning";
 import { diffOf } from "./difficulty";
 import { advancedOf } from "./peak";
 import { rand } from "./rng";
@@ -383,15 +383,16 @@ function starDpoyBits(p: CpuStar, ident?: string) {
 /** Voter fatigue on the player's DPOY score. Shipped rule: 5.5% per DPOY, at most 22%. */
 function dpoyFatigue(s: PlayerState): number {
   const count = finite(s.dpoyCount, 0);
-  if (TUNING.dpoyFatigue === "steeper") return Math.min(0.36, count * 0.09);
-  if (TUNING.dpoyFatigue === "streak") {
+  const mode = dpoyFatigueOf(s);
+  if (mode === "steeper") return Math.min(0.36, count * 0.09);
+  if (mode === "streak") {
     // Only consecutive wins tire voters; a season without DPOY resets the streak.
     let streak = 0;
     for (let i = s.seasonHistory.length - 1; i >= 0; i--) {
       if (!s.seasonHistory[i]!.awards.includes("DPOY")) break;
       streak += 1;
     }
-    return Math.min(0.36, streak * 0.12);
+    return Math.min(TUNING.dpoyStreakCap, streak * TUNING.dpoyStreakStep);
   }
   return Math.min(0.22, count * 0.055);
 }
@@ -444,7 +445,7 @@ export function settleDpoy(s: PlayerState, row: SeasonRow, n: number): boolean {
       ? spg >= 1.5 && (teamDef >= 1.5 || stocks >= 2.15)
       : stocks >= 1.9 && (spg >= 1.15 || bpg >= 0.85);
   const youthOk = s.age > 21 || stocks >= 2.9 || bpg >= 2.45;
-  const gpOk = finite(row.gp, 0) >= 58;
+  const gpOk = finite(row.gp, 0) >= finite(TUNING.dpoyMinGames[s.league], 58);
   const mine = race.find((c) => c.isPlayer);
   const myScore = finite(mine?.score);
   const marks = defensiveMarks(row);

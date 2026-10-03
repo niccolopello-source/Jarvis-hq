@@ -1,5 +1,5 @@
 
-import { scriptSlotFor, seedHash, TUNING } from "./tuning";
+import { scriptSlotFor, scriptWindowsOf, seedHash, TUNING } from "./tuning";
 import {
   ATTR_LABELS,
   COACH_NAMES,
@@ -1478,7 +1478,7 @@ export function eventAfterMarket(s: PlayerState): { event: StoryEvent; script: S
   const scripted = scriptedSeasonEvent(s, s.season);
   if (scripted) {
     if (!s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
-    const script: SavedStoryScript = scriptSlotFor(s.seed, s.season) ?? "pool";
+    const script: SavedStoryScript = scriptSlotFor(s.seed, s.season, scriptWindowsOf(s)) ?? "pool";
     return { event: scripted, script };
   }
   const event = pickStoryEvent(s, s.season);
@@ -1492,11 +1492,11 @@ export function eventAfterMarket(s: PlayerState): { event: StoryEvent; script: S
 
 /** Scripted story slot for season n ("rookie" | "rival" | "injury" | "nation") or null. */
 export function scriptedSeasonSlot(s: PlayerState, n: number): SavedStoryScript | null {
-  return scriptSlotFor(s.seed, n);
+  return scriptSlotFor(s.seed, n, scriptWindowsOf(s));
 }
 
 export function scriptedSeasonEvent(s: PlayerState, n: number): StoryEvent | null {
-  const slot = scriptSlotFor(s.seed, n);
+  const slot = scriptSlotFor(s.seed, n, scriptWindowsOf(s));
   if (slot === "rookie") return rookieStory();
   if (slot === "rival") return rivalStory(s);
   if (slot === "injury") return injuryStory(s);

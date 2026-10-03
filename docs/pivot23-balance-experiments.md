@@ -1,5 +1,7 @@
 # PIVOT 23 — Balance experiments (DESIGN DECISIONS REQUIRED)
 
+> **Update 2026-10-03, branch `grokbot/balance-d11-d23` (awaiting Pello's approval):** D-11 (`scriptWindows: "seeded"`) and D-23 (`dpoyFatigue: "streak"`) are ON for careers created by engine 2.12.0 or later. Older careers keep `fixed`/`current` (see §6). Sections 1–5 describe the state before this change.
+
 Branch `grokbot/demo-stability`, measured 2026-10-03. Code: `apps/pivot23/src/lib/pivot/tuning.ts`. **Every flag defaults to the shipped rule; the game never changes them.** The comparison harness (offline, not committed: it writes large JSON) runs `playCareerSim` with a tuning object.
 
 ## 1. Proof that the hooks change nothing by default
@@ -59,3 +61,17 @@ Throughput: ~75–106 s per 1,000 careers per process, peak RSS ~160–175 MB, s
 ## 5. How to switch one on (after the decision)
 
 Change the default in `TUNING`, bump `ENGINE_VERSION`, gate on the career's engine version where saves are in flight (D-11), re-run this table and `determinism.test.ts` (its first test asserts the defaults are `fixed`/`current`; change that assertion in the same commit, with the reason).
+
+## 6. D-11 + D-23 switched on (branch `grokbot/balance-d11-d23`, engine 2.12.0-beta)
+
+- `TUNING.scriptWindows = "seeded"`, `TUNING.dpoyFatigue = "streak"` (step 0.12, cap 0.36, now `TUNING.dpoyStreakStep` / `dpoyStreakCap`). The DPOY games bar moved from a literal into `TUNING.dpoyMinGames` (per competition, NBA = 58, the existing value; only the NBA awards a player DPOY). No other formula changes.
+- Gate: `usesBalance(career)` is true when `career.engineVersion >= 2.12.0`. Careers created earlier (any running save) keep `LEGACY_RULES` = `fixed` / `current`.
+- Equivalence: 400 careers (seeds 900000+, all difficulties). Hash of the full state without `engineVersion`/`careerId`: `origin/main` = `5ee437d6…`; this branch with legacy rules = `5ee437d6…`; this branch with a 2.11.0-beta career resumed season by season = `5ee437d6…`. A pre-2.12 save therefore plays exactly as on main.
+- Harness: `scripts/balance-sim.ts` (offline, one JSON line per career). 1,000 careers per difficulty and per side, same seeds (Esordio 100000+, Pro 200000+, All-Star 300000+, Leggenda 400000+), plus D-11 only, D-23 only, a second "before" with other seeds (noise yardstick) and a D-23 step sweep. Full tables: PR description and `/workspace/reports/balance/` on the agent box (not in the repo).
+
+Key reading:
+- **D-11:** 1 calendar → 21 calendars; 6/8/10 in 4.0% of careers. Because the stories move, the RNG stream diverges and every other metric moves by about as much as a change of seeds (compare with the "before, other seeds" row).
+- **D-23 (`streak`, 0.12):** longest DPOY run 9 → 4–5, careers with a run ≥ 5: 15 → 0–2. **But** total DPOYs rise (485 → 539, +11%) and careers with ≥ 5 DPOYs rise (21 → 38): the streak rule resets after one miss and drops the cumulative fatigue. Max DPOYs in a career stays 8–9. Step 0.16 keeps totals within +4% of today; 0.24 lowers them by 2% (Esordio + Pro sweep). The step is a product decision.
+- **Title share (D-09 note):** excluding the three starting titles from `TITLE_SEED` (BOS 2023-24, OKC 2024-25, BOS 2025-26), the simulated NBA titles are OKC 8.0%, CLE 6.4%, BOS 6.1%; HHI 412; top-3 20.4%. The 15.8% BOS figure counts those three seeded entries in every world (2 of them BOS).
+- **Bust:** still 0/389 (potential ≥ 85, peak ≤ potential − 8), as expected: neither flag touches the realised peak (D-08).
+- **Retirement age:** still bimodal 32/36; differences are within the seed noise.

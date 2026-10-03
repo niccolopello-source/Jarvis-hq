@@ -3,7 +3,7 @@ import test from "node:test";
 import { advanceCareerSim, openCareerSim, playCareerSim } from "./engine.ts";
 import { createRng } from "./rng.ts";
 import { buildLiveSave } from "./save.ts";
-import { resetTuning, scriptSlotFor, TUNING, TUNING_DEFAULTS } from "./tuning.ts";
+import { BALANCE_SINCE, dpoyFatigueOf, LEGACY_RULES, resetTuning, scriptSlotFor, scriptWindowsOf, TUNING, TUNING_DEFAULTS, usesBalance } from "./tuning.ts";
 import type { PlayerState } from "./types.ts";
 
 /* Same seed => same career, under shipped settings and under every balance experiment. */
@@ -24,16 +24,36 @@ function fingerprint(s: PlayerState) {
   });
 }
 
-test("tuning defaults are the shipped rules", () => {
+test("tuning defaults: D-11 and D-23 on, every other experiment on the shipped rule", () => {
   assert.deepEqual({ ...TUNING }, { ...TUNING_DEFAULTS });
-  for (const v of Object.values(TUNING_DEFAULTS)) assert.ok(v === "fixed" || v === "current");
+  assert.equal(TUNING_DEFAULTS.scriptWindows, "seeded");
+  assert.equal(TUNING_DEFAULTS.dpoyFatigue, "streak");
+  for (const key of ["retirement", "bust", "world", "rolePeak"] as const) assert.equal(TUNING_DEFAULTS[key], "current", key);
+  assert.equal(TUNING_DEFAULTS.dpoyMinGames.NBA, 58, "DPOY games threshold unchanged");
+  // The pre-2.12 calendar is still available, for careers created before the change.
   for (let seed = 1; seed < 50; seed++) {
-    const slots = Array.from({ length: 20 }, (_, i) => scriptSlotFor(seed, i + 1));
+    const slots = Array.from({ length: 20 }, (_, i) => scriptSlotFor(seed, i + 1, "fixed"));
     assert.deepEqual(
       slots.map((x, i) => (x ? `${i + 1}:${x}` : null)).filter(Boolean),
       ["1:rookie", "6:rival", "8:injury", "10:nation"],
     );
   }
+});
+
+test("careers created before BALANCE_SINCE keep the rules they started with", () => {
+  for (const v of ["2.11.0-beta", "2.10.3", "1.0.0", "", "garbage"]) {
+    assert.equal(usesBalance({ engineVersion: v }), false, v);
+    assert.equal(scriptWindowsOf({ engineVersion: v }), LEGACY_RULES.scriptWindows, v);
+    assert.equal(dpoyFatigueOf({ engineVersion: v }), LEGACY_RULES.dpoyFatigue, v);
+  }
+  assert.equal(usesBalance({}), false, "missing version");
+  for (const v of [BALANCE_SINCE, `${BALANCE_SINCE}-beta`, "2.12.1", "2.13.0", "3.0.0"]) {
+    assert.equal(usesBalance({ engineVersion: v }), true, v);
+    assert.equal(scriptWindowsOf({ engineVersion: v }), "seeded", v);
+    assert.equal(dpoyFatigueOf({ engineVersion: v }), "streak", v);
+  }
+  const fresh = playCareerSim({ seed: 7300, difficulty: "pro" });
+  assert.equal(usesBalance(fresh), true, "new careers use the new rules");
 });
 
 test("seeded story windows keep order, stay distinct and depend only on the seed", () => {
