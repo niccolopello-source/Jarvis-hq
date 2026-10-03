@@ -1912,8 +1912,8 @@ function RecapCard({
       })()}
       {row.awards.length ? (
         <div className="league-awards-mini">
-          {row.awards.map((a) => (
-            <span key={a} className="yours">{awardLabel(a, lang)}</span>
+          {row.awards.map((a, i) => (
+            <span key={`${i}-${a}`} className="yours">{awardLabel(a, lang)}</span>
           ))}
         </div>
       ) : (
@@ -2538,7 +2538,8 @@ function CareerCardPanel({
       )}
       {card.milestones.length > 0 && (
         <div className="result-chips" aria-label={t("milestonesH", lang)}>
-          {card.milestones.map((milestone) => <span key={milestone} className="result-chip">{milestone}</span>)}
+          {/* Labels repeat across seasons (two All-Star years): the index keeps React keys unique. */}
+          {card.milestones.map((milestone, i) => <span key={`${i}-${milestone}`} className="result-chip">{milestone}</span>)}
         </div>
       )}
       <p className="result-close">{card.verdict} · Legacy {card.legacyTier}</p>
