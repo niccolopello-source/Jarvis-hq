@@ -12,8 +12,7 @@ export function demoLang(stored: string | null | undefined): "it" | "en" {
 
 const KEY = "pivot-lang";
 
-const DICT = {
-  it: {
+const IT = {
     eyebrow: "Simulatore di carriera",
     lede: "Una vita. Un parquet. Il resto lo scrivi tu.",
     start: "Inizia",
@@ -78,8 +77,36 @@ const DICT = {
     guide4Body: "Il mestiere sale verso i 26, 27, 28 anni, poi cala. Una vita alla volta. Se chiudi, riparti esatto dalla stessa carta.",
     guideDone: "Ho capito",
     guideNext: "Avanti",
-  },
-  en: {
+    seeEnd: "Rivedi il finale",
+    nlTitleRunning: "Iniziare una nuova vita?",
+    nlBodyRunning: "La carriera di {name} è ancora in corso ({seasons}). Se inizi una nuova vita, questa carriera viene cancellata da questo browser e non potrai riprenderla.",
+    nlKeepArchive: "Le carriere già concluse nell'archivio restano dove sono.",
+    nlTitleUnarchived: "Questa carriera non è nell'archivio",
+    nlBodyUnarchived: "Il browser non ha salvato la carriera di {name} nell'archivio (memoria piena o non disponibile). Se inizi una nuova vita adesso, questa carriera si perde.",
+    nlCancel: "Annulla, tengo la carriera",
+    nlConfirm: "Cancella e inizia una nuova vita",
+    nlRetryArchive: "Riprova a salvare nell'archivio",
+    nlDeleteFailed: "Non è stato possibile cancellare la carriera dal browser. Niente è stato perso: riprova o ricarica la pagina.",
+    nlRetryFailed: "L'archivio non è ancora scrivibile. La carriera resta aperta in questa scheda.",
+    nlRetryOk: "Carriera salvata nell'archivio.",
+    storageOff: "Questo browser non permette di salvare. La carriera resta solo finché questa scheda è aperta.",
+    loadCorrupt: "Abbiamo trovato un salvataggio danneggiato che non si può aprire.",
+    loadFuture: "Abbiamo trovato un salvataggio creato da una versione più recente di PIVOT 23. Non si può aprire qui.",
+    loadIncompatible: "Abbiamo trovato un salvataggio di una versione precedente che questa versione non sa convertire.",
+    loadBackedUp: "Non è stato cancellato: una copia è conservata nel browser.",
+    loadNotBackedUp: "Non è stato cancellato, ma il browser non ha spazio per una copia di riserva: iniziare una nuova vita lo sovrascrive.",
+    loadMigrated: "Il salvataggio è stato aggiornato al formato attuale. L'originale è conservato come copia.",
+    otherTab: "Un'altra scheda ha salvato una carriera diversa. Vale l'ultimo salvataggio: se continui qui, questa scheda sovrascrive l'altra.",
+    archiveEvicted: "L'archivio tiene {limit} carriere: per fare spazio è uscita la più vecchia, {name}.",
+    archiveFullSoon: "L'archivio è pieno ({limit} carriere). Quando chiuderai questa carriera, uscirà la più vecchia: {name}.",
+    archiveUnsaved: "La carriera non è entrata nell'archivio del browser. Resta visibile in questa scheda; il salvataggio in corso non è stato cancellato.",
+    dismiss: "Chiudi avviso",
+  /*@@IT@@*/
+} as const;
+
+export type Msg = keyof typeof IT;
+
+const EN: Record<Msg, string> = {
     eyebrow: "Career simulator",
     lede: "One life. One floor. You write the rest.",
     start: "Start",
@@ -144,8 +171,35 @@ const DICT = {
     guide4Body: "The craft climbs toward 26, 27, 28, then falls. One life at a time. If you close it, you start again from the same card.",
     guideDone: "Got it",
     guideNext: "Next",
-  },
-  es: {
+    seeEnd: "See the ending",
+    nlTitleRunning: "Start a new career?",
+    nlBodyRunning: "{name}'s career is still in progress ({seasons}). If you start a new career, this one is deleted from this browser and cannot be resumed.",
+    nlKeepArchive: "Finished careers in the archive stay where they are.",
+    nlTitleUnarchived: "This career is not in the archive",
+    nlBodyUnarchived: "The browser did not save {name}'s career to the archive (storage full or unavailable). If you start a new career now, this career is lost.",
+    nlCancel: "Cancel, keep this career",
+    nlConfirm: "Delete and start a new career",
+    nlRetryArchive: "Try saving to the archive again",
+    nlDeleteFailed: "The career could not be deleted from the browser. Nothing was lost: try again or reload the page.",
+    nlRetryFailed: "The archive still cannot be written. The career stays open in this tab.",
+    nlRetryOk: "Career saved to the archive.",
+    storageOff: "This browser does not allow saving. The career only lasts while this tab is open.",
+    loadCorrupt: "We found a damaged save that cannot be opened.",
+    loadFuture: "We found a save made by a newer version of PIVOT 23. It cannot be opened here.",
+    loadIncompatible: "We found a save from an older version that this version cannot convert.",
+    loadBackedUp: "It was not deleted: a copy is kept in the browser.",
+    loadNotBackedUp: "It was not deleted, but the browser has no room for a backup copy: starting a new career overwrites it.",
+    loadMigrated: "The save was updated to the current format. The original is kept as a copy.",
+    otherTab: "Another tab saved a different career. The latest save wins: if you continue here, this tab overwrites the other one.",
+    archiveEvicted: "The archive keeps {limit} careers: the oldest, {name}, was removed to make room.",
+    archiveFullSoon: "The archive is full ({limit} careers). When this career ends, the oldest one leaves: {name}.",
+    archiveUnsaved: "The career did not reach the browser archive. It stays visible in this tab; the live save was not deleted.",
+    dismiss: "Dismiss notice",
+  /*@@EN@@*/
+};
+
+/** Spanish is not offered in the demo (D-014). Missing keys fall back to Italian; see spanishGaps(). */
+const ES: Partial<Record<Msg, string>> = {
     eyebrow: "Simulador de carrera",
     lede: "Una vida. Un parqué. El resto lo escribes tú.",
     start: "Empezar",
@@ -210,10 +264,9 @@ const DICT = {
     guide4Body: "El oficio sube hacia los 26, 27, 28 y luego baja. Una vida cada vez. Si la cierras, vuelves a empezar desde la misma carta.",
     guideDone: "Entendido",
     guideNext: "Siguiente",
-  },
-} as const;
+};
 
-export type Msg = keyof (typeof DICT)["it"];
+const DICT: Record<Lang, Partial<Record<Msg, string>>> = { it: IT, en: EN, es: ES };
 
 let current: Lang = "it";
 const listeners = new Set<() => void>();
@@ -260,7 +313,12 @@ export function useLang(): Lang {
 }
 
 export function t(key: Msg, lang: Lang = current): string {
-  return DICT[lang][key];
+  return DICT[lang][key] ?? IT[key];
+}
+
+/** t() with {placeholders}: tf("archiveEvicted", { name: "Rossi" }). */
+export function tf(key: Msg, vars: Record<string, string | number>, lang: Lang = current): string {
+  return t(key, lang).replace(/\{(\w+)\}/g, (m, k: string) => (k in vars ? String(vars[k]) : m));
 }
 
 const OFFICIAL_AWARD: Record<string, string> = {
@@ -286,16 +344,22 @@ export function awardLabel(title: string, _lang: Lang = current): string {
   return OFFICIAL_AWARD[title] ?? title;
 }
 
-export function chromeGaps(): string[] {
-  const keys = Object.keys(DICT.it) as Msg[];
+/** Missing or empty keys in the demo languages (Italian and English). Must be empty. */
+export function chromeGaps(langs: readonly Lang[] = DEMO_LANGS): string[] {
+  const keys = Object.keys(IT) as Msg[];
   const gaps: string[] = [];
-  for (const lang of ["it", "en", "es"] as const) {
+  for (const lang of langs) {
     for (const key of keys) {
       const value = DICT[lang][key];
       if (typeof value !== "string" || value.trim().length === 0) gaps.push(`${lang}.${key}`);
     }
   }
   return gaps;
+}
+
+/** Spanish keys still missing: the size of the Spanish phase for the interface chrome. */
+export function spanishGaps(): Msg[] {
+  return (Object.keys(IT) as Msg[]).filter((k) => !ES[k]?.trim());
 }
 
 const DIFF_FACE = {
