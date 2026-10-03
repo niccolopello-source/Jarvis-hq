@@ -276,3 +276,17 @@ The first scripted card is titled `Rookie of the Year`. The closing commentary s
 Playwright, headless Chromium, Linux, 2 cores, viewport 390×844, local Vite `http://127.0.0.1:4179`. A new player named Carriera Intera was created from Inizia, drafted, and played by always taking the first available choice. After 61 steps the screen showed Carriera conclusa and the archive listed that name. This is not a phone, and it is not every choice a person might make.
 
 Spanish stays out of the picker. The story pools were not translated. No formula or save version changed. Al, Rebecca, John and James did not review this separately.
+
+---
+
+## 19. Branch 19, rebuilt, 2026-10-03
+
+Pull request #19 is `grok/demo-readiness` at `65bdfc9`. It stays where it is. It was not deleted.
+
+It does not merge into current `main` `5035f04`. Git reports conflicts in `apps/pivot23/e2e/demo-readiness.spec.ts` and `docs/project-state.md`. Its boot test requires the first HTML to contain no `@keyframes`. Current `main` has `bootSweep` in that HTML. Run against this tree, that assertion failed. The same file calls `/tmp/make-retire-save.ts` and `/tmp/pivot-a84fa7e`, which are not in the commit.
+
+The useful part is already on `main`: the year sheet is not memoized, the swipe layer ignores `summary` and `details`, one season is written "1 stagione", and the browser tests live next to `e2e/fixtures/make-retire-save.ts`. This branch starts from that `main` and does not copy the old spec back.
+
+Checked on this tree, Linux, 3 October 2026: ESLint pass, `tsc --noEmit` pass, unit tests 53/53, production build pass, Playwright `demo-readiness.spec.ts` 8/8. Headless Chromium, Vite `http://127.0.0.1:4179`, 2 cores. Not a phone. On branch 19 itself, earlier the same day: ESLint pass, `tsc` pass, unit tests 49/49. That older suite does not include the later copy tests.
+
+No formula or save version changed. No merge and no deploy.
