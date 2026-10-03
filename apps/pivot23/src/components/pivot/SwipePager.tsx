@@ -61,7 +61,7 @@ export function SwipeTrack({
 
     const fromUi = (target: EventTarget | null) => {
       const n = target as HTMLElement | null;
-      return Boolean(n?.closest("button, a, input, textarea, select, [role='button']"));
+      return Boolean(n?.closest("button, a, input, textarea, select, summary, details, [role='button']"));
     };
 
     const rememberScroll = () => {

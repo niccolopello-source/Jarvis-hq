@@ -219,3 +219,14 @@ Tests run on this tree after the edits, Linux, Node, 3 October 2026: `eslint . -
 One decision check, not a full career: 30 seeds, 1000–1029, a fresh Pro player, first playoff round, choice index 0 versus the last choice, same player state before the round. The series result changed in 4 of 30. The other 26 stayed the same. A full-career counterfactual is not available without an injection hook, which was not added.
 
 Scenarios that retire a typical career at 34–35, or cap age at 35, were not simulated. They would change `careerEndingSignal` or `MAX_AGE`. That was not authorized.
+
+Browser check on 2026-10-03, local Vite at `http://127.0.0.1:4179`, Playwright Chromium, not a phone. The suite against that server: 12 passed, including the three new checks and the existing end-to-end specs. ESLint, `tsc --noEmit` and 49 unit tests also passed on this tree.
+
+What the browser showed:
+
+- The first HTML is a static fallback. It has no keyframes. After React mounts, the home mark receives the sweep class. On this machine the sweep was turned off because `hardwareConcurrency` is 4 or less (`pivot-lean`). Removing that class in the test made `animationName` equal `markSweep`. Reduced motion leaves it at `none`. Dark mode sets `--color-bg` to `#1c1c1e`.
+- A poisoned write shows the alert and a reload still opens "L'ultimo inverno". The previous save string was unchanged.
+- "Gioca a 36 anni" leaves that card. The following season was not played through to the end.
+- The year sheet was empty after season 1 because `SeasonSheet` was memoized over a mutated player. The memo is removed. The sheet then showed PPG, RPG and APG, the legend, and the advanced block closed. Opening it showed USG%. The swipe layer had been capturing the pointer on `summary`, so the block could not open. `summary` is now treated as a control, not a swipe. Tab buttons were at least 44px at 320 and 390. No physical device was used.
+
+Pull request #16 is open. It is not merged. The public site was not deployed from this pass.
