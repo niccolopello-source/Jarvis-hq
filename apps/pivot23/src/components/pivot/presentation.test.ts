@@ -96,6 +96,8 @@ test("one season is singular", () => {
   assert.equal(seasonCountLabel(1), "1 stagione");
   assert.equal(seasonCountLabel(0), "0 stagioni");
   assert.equal(seasonCountLabel(2), "2 stagioni");
+  assert.equal(seasonCountLabel(1, "en"), "1 season");
+  assert.equal(seasonCountLabel(2, "en"), "2 seasons");
 });
 
 test("gold is only the real championship rounds and MVP cards", () => {

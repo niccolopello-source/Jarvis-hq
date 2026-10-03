@@ -1094,6 +1094,62 @@ body,
   color: var(--color-wood);
   overflow: visible;
 }
+.court-mark-live.is-premiere {
+  transform-origin: 50% 42%;
+  animation: cineReveal 4.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.court-mark-live.is-premiere .mark-gleam {
+  color: #a31d2e;
+}
+.court-mark-live.is-premiere .mark-gleam path {
+  stroke-dasharray: 12 78;
+  stroke-dashoffset: 16;
+  opacity: 0;
+  animation: cineArc 2.4s cubic-bezier(0.16, 1, 0.3, 1) 0.7s 1 both;
+}
+@keyframes cineReveal {
+  0% { opacity: 0; transform: scale(1.35); }
+  20% { opacity: 1; transform: scale(1.35); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes cineArc {
+  0% { opacity: 0; stroke-dashoffset: 16; }
+  16% { opacity: 0.95; }
+  100% { opacity: 0; stroke-dashoffset: -68; }
+}
+html.pivot-lean .court-mark-live.is-premiere {
+  animation-duration: 1.6s;
+}
+html.pivot-lean .court-mark-live.is-premiere .mark-gleam path {
+  animation-duration: 1s;
+  animation-delay: 0.15s;
+}
+.home-screen { position: relative; }
+.cine-skip {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 14px;
+  border: 0;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+@media (prefers-color-scheme: dark) {
+  .court-mark-live.is-premiere .mark-gleam { color: #f6ecee; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .court-mark-live.is-premiere,
+  .court-mark-live.is-premiere .mark-gleam path {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
 .court-mark-live .mark-arcs {
   transform-origin: 40px 40px;
   transform: rotate(0deg);

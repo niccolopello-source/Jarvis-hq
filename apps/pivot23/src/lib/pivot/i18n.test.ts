@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DEMO_LANGS, awardLabel, chromeGaps, demoLang, t } from "./i18n.ts";
+import { DEMO_LANGS, awardLabel, chromeGaps, demoLang, difficultyFace, t } from "./i18n.ts";
 
 test("the demo offers only Italian and English", () => {
   assert.deepEqual(DEMO_LANGS, ["it", "en"]);
@@ -39,4 +39,13 @@ test("a missed save says the last successful write is kept", () => {
   assert.match(it, /ricarichi/);
   assert.match(t("statLegend", "it"), /PPG/);
   assert.equal(t("advStats", "en"), "Advanced stats");
+});
+
+test("setup and difficulty chrome follow the active language", () => {
+  assert.equal(t("setupDraft", "en"), "Enter the Draft");
+  assert.equal(t("setupTitle", "it"), "Chi sei sul parquet");
+  assert.equal(difficultyFace("esordio", "en").label, "Debut");
+  assert.equal(difficultyFace("leggenda", "it").label, "Leggenda");
+  assert.equal(difficultyFace("nope", "en").label, "Pro");
+  assert.equal(t("guide1Body", "en").includes("Draft"), true);
 });

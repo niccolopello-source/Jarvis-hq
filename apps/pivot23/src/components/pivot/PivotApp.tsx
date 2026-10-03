@@ -71,7 +71,7 @@ import {
   verdictOf,
   withPlayer,
 } from "@/lib/pivot/engine";
-import { initLang, setLang, t, useLang, awardLabel, DEMO_LANGS } from "@/lib/pivot/i18n";
+import { initLang, setLang, t, useLang, awardLabel, DEMO_LANGS, difficultyFace } from "@/lib/pivot/i18n";
 
 const CareerChart = lazy(() => import("@/components/pivot/CareerChart").then((m) => ({ default: m.CareerChart })));
 import { HOLD_FINALS_MS, HOLD_MARKET_MS, HOLD_RECAP_MS, HOLD_TITLE_MS } from "@/lib/pivot/config";
@@ -257,6 +257,10 @@ export function PivotApp() {
   const [nat, setNat] = useState("Italia");
   const [number, setNumber] = useState(23);
   const [difficulty, setDifficulty] = useState<DifficultyId>("pro");
+  const [premiere, setPremiere] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
   const [player, setPlayer] = useState<PlayerState | null>(boot?.player ?? null);
   const [pending, setPending] = useState<Pending | null>(() => {
     if (!boot?.player) return null;
@@ -929,7 +933,18 @@ export function PivotApp() {
       <div className={screen === "career" ? "pivot-app career-mode" : "pivot-app"}>
       {screen === "intro" && (
         <section className="intro-hero home-screen">
-          <CourtMark number={23} size={132} brand />
+          {premiere ? (
+            <button type="button" className="cine-skip" onClick={() => setPremiere(false)}>
+              {t("skip", lang)}
+            </button>
+          ) : null}
+          <div
+            onAnimationEnd={(event) => {
+              if (event.animationName === "cineReveal") setPremiere(false);
+            }}
+          >
+            <CourtMark number={23} size={132} brand premiere={premiere} />
+          </div>
           <span className="eyebrow">{t("eyebrow", lang)}</span>
           <h1 className="display-title">PIVOT</h1>
           <p className="lede">{t("lede", lang)}</p>
@@ -990,13 +1005,13 @@ export function PivotApp() {
           <button className="back-link" onClick={() => setScreen("intro")}>
             <ChevronLeft className="size-4" /> Home
           </button>
-          <h2 className="page-title">Chi sei sul parquet</h2>
-          <p className="lede">Nome, ruolo, maglia. Poi la difficoltà — e il mestiere.</p>
-          <span className="group-label">Nome</span>
+          <h2 className="page-title">{t("setupTitle", lang)}</h2>
+          <p className="lede">{t("setupLede", lang)}</p>
+          <span className="group-label">{t("setupName", lang)}</span>
           <div className="group-card">
             <input className="text-input" maxLength={20} placeholder="Es. Marco Ferrara" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
-          <span className="group-label">Ruolo</span>
+          <span className="group-label">{t("setupRole", lang)}</span>
           <div className="grid grid-cols-2 gap-2 mb-6">
             {(Object.keys(ROLES) as Role[]).map((r) => (
               <button key={r} className={`pill-btn ${role === r ? "selected" : ""}`} onClick={() => setRole(r)}>
@@ -1004,7 +1019,7 @@ export function PivotApp() {
               </button>
             ))}
           </div>
-          <span className="group-label">Provenienza</span>
+          <span className="group-label">{t("setupFrom", lang)}</span>
           <div className="grid grid-cols-3 gap-2 mb-6">
             {NATIONALITIES.map((n) => (
               <button
@@ -1019,16 +1034,16 @@ export function PivotApp() {
               </button>
             ))}
           </div>
-          <span className="group-label">Numero</span>
+          <span className="group-label">{t("setupNumber", lang)}</span>
           <div className="jersey-hero">
             <CourtMark number={Number.isFinite(number) ? number : 23} size={88} brand={number === 23} />
             <div>
               <div className="num tabular">{Number.isFinite(number) ? number : 23}</div>
-              <div className="hint">Il numero sulla maglia. Da 0 a 99.</div>
+              <div className="hint">{t("setupHint", lang)}</div>
             </div>
           </div>
           <input className="text-input mb-6 w-24 text-center" type="number" min={0} max={99} value={number} onChange={(e) => setNumber(parseInt(e.target.value, 10) || 0)} />
-          <span className="group-label">Difficoltà</span>
+          <span className="group-label">{t("setupDiff", lang)}</span>
           <div className="flex flex-col gap-2 mb-6">
             {DIFFICULTIES.map((d) => (
               <button
@@ -1037,18 +1052,18 @@ export function PivotApp() {
                 onClick={() => setDifficulty(d.id)}
               >
                 <span className="diff-head">
-                  <b>{d.label}</b>
-                  <em>{d.tag}</em>
+                  <b>{difficultyFace(d.id, lang).label}</b>
+                  <em>{difficultyFace(d.id, lang).tag}</em>
                 </span>
-                <span className="diff-desc">{d.desc}</span>
+                <span className="diff-desc">{difficultyFace(d.id, lang).desc}</span>
               </button>
             ))}
           </div>
           <button className="primary-btn" onClick={startDraft} disabled={simBusy || name.trim().length < 1}>
-            Gioca il Draft
+            {t("setupDraft", lang)}
           </button>
           <button className="ghost-btn mt-2.5" onClick={runOneSim} disabled={simBusy || name.trim().length < 1}>
-            {simShow ? <SaveGlyph /> : `Simula la carriera · ${DIFFICULTIES.find((d) => d.id === difficulty)?.label}`}
+            {simShow ? <SaveGlyph /> : `${t("setupSim", lang)} · ${difficultyFace(difficulty, lang).label}`}
           </button>
           {simSlow ? (
             <div className="sim-note">
@@ -2101,14 +2116,14 @@ function ResultView({
         ) : null}
         <div className="eyebrow">
           {t("end", lang)}
-          {player.simulated ? " · simulata" : ""} · {diffOf(player).label}
+          {player.simulated ? ` · ${t("simulated", lang)}` : ""} · {difficultyFace(diffOf(player).id, lang).label}
         </div>
         <h2 className="page-title text-chalk">{v.verdict}</h2>
         <div className="result-name">
           {player.name} · N.{player.number}
         </div>
         <div className="result-span">
-          {ROLES[player.role].label} · {p.startAge}–{p.endAge} anni · {seasonCountLabel(p.seasons)} · picco {displayOverall(p.peak)}
+          {ROLES[player.role].label} · {p.startAge}–{p.endAge} {t("years", lang)} · {seasonCountLabel(p.seasons, lang)} · {t("peak", lang)} {displayOverall(p.peak)}
         </div>
         <div className={`hof-seal ${hof}`}>{hofLabel(hof)}</div>
         <p className="result-close">{v.closing}</p>
@@ -2234,6 +2249,7 @@ function ArchiveView({
   setViewing: (c: ArchiveCareer | null) => void;
   onBack: () => void;
 }) {
+  const lang = useLang();
   if (viewing) {
     return (
       <section className="fade-in">
@@ -2242,9 +2258,9 @@ function ArchiveView({
         </button>
         <h2 className="page-title">{viewing.name}</h2>
         <p className="text-muted text-[13px] mb-4">
-          {viewing.role} · {viewing.verdict} · picco {displayOverall(viewing.peak)}
+          {viewing.role} · {viewing.verdict} · {t("peak", lang)} {displayOverall(viewing.peak)}
           {viewing.apexAge ? ` a ${viewing.apexAge} anni` : ""} · {viewing.titles} titoli
-          {viewing.difficulty ? ` · ${DIFFICULTIES.find((d) => d.id === viewing.difficulty)?.label ?? ""}` : ""}
+          {viewing.difficulty ? ` · ${difficultyFace(viewing.difficulty, lang).label}` : ""}
         </p>
         <p className="italic text-muted text-[14px] mb-4">{viewing.closing}</p>
         <CareerCardPanel
@@ -2290,11 +2306,11 @@ function ArchiveView({
           <span className="text-[12.5px] text-muted">
             {c.history[0]?.season && c.history[c.history.length - 1]?.season
               ? `${getSeasonDisplayLabel(c.history[0].season)} → ${getSeasonDisplayLabel(c.history[c.history.length - 1]!.season)}`
-              : seasonCountLabel(c.seasons)}
+              : seasonCountLabel(c.seasons, lang)}
             {" · "}
             {c.role} · {c.verdict}
             {c.titles ? ` · ${c.titles} ${c.titles === 1 ? "titolo" : "titoli"}` : ""}
-            {c.difficulty ? ` · ${DIFFICULTIES.find((d) => d.id === c.difficulty)?.label}` : ""}
+            {c.difficulty ? ` · ${difficultyFace(c.difficulty, lang).label}` : ""}
             {c.simulated ? " · sim" : ""}
           </span>
         </button>
@@ -2335,14 +2351,14 @@ function CareerCardPanel({
       <h3 className="page-title text-chalk">{card.playerName}</h3>
       <p className="result-name">{card.role} · {card.nationality}</p>
       <p className="result-span">
-        Età {card.ageStart}–{card.ageEnd} · {seasonCountLabel(card.seasons)} · picco {displayOverall(card.peakOverall)}
+        {t("age", lang)} {card.ageStart}–{card.ageEnd} · {seasonCountLabel(card.seasons, lang)} · {t("peak", lang)} {displayOverall(card.peakOverall)}
       </p>
       <div className="result-stats">
         {[
           [card.ppg.toFixed(1), "PPG"],
           [card.rpg.toFixed(1), "RPG"],
           [card.apg.toFixed(1), "APG"],
-          [formatCareerTotal(card.championships, lang), "Titoli"],
+          [formatCareerTotal(card.championships, lang), t("titles", lang)],
           [formatCareerTotal(card.allStars, lang), "All-Star"],
           [formatCareerTotal(card.mvps, lang), "MVP"],
         ].map(([value, label]) => (
