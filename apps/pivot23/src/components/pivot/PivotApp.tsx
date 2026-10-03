@@ -98,6 +98,7 @@ function clubByName(name: string) {
 }
 import { advancedOf } from "@/lib/pivot/peak";
 import { defensiveMarks } from "@/lib/pivot/awards-helpers";
+import { CrashFallback } from "./CrashFallback";
 import { clearLive, hasLiveSave, lastLoadReport, loadLive, loadSwipe, logSeqFrom, persistentStorageAvailable, saveLive, saveSwipe, watchLiveConflicts, type LiveLoadReport } from "@/lib/pivot/save";
 import { CAREER_TABS, SwipeTrack } from "@/components/pivot/SwipePager";
 import { careerCommentary, hofTier, palmares } from "@/lib/pivot/legacy";
@@ -150,29 +151,6 @@ class CareerGuard extends Component<{ children: ReactNode }, { crashed: boolean;
     }
     return this.props.children;
   }
-}
-
-function CrashFallback({ error }: { error: Error | null }) {
-  return (
-    <main className="min-h-screen bg-bg text-wood grid place-items-center p-6">
-      <section className="max-w-md rounded-xl border border-line bg-panel p-6 shadow-sm" role="alert">
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted">PIVOT 23</p>
-        <h1 className="mt-2 text-2xl font-semibold">{t("crashTitle")}</h1>
-        <p className="mt-2 text-sm text-muted">{t("crashBody")}</p>
-        {import.meta.env.DEV && error && (
-          <pre className="mt-4 overflow-auto rounded-lg bg-panel-2 p-3 text-xs text-muted" role="note">
-            {error.message}
-          </pre>
-        )}
-        <button
-          className="mt-5 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white"
-          onClick={() => window.location.reload()}
-        >
-          {t("crashReload")}
-        </button>
-      </section>
-    </main>
-  );
 }
 
 let logId = 1;
