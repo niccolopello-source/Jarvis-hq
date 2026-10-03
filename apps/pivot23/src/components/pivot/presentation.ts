@@ -110,3 +110,16 @@ export function chipsFromSnapshot(
   if (!chips.length) pushChip(chips, after.overall - before.overall, "Overall");
   return chips.slice(0, 3);
 }
+
+/**
+ * Joins narrative fragments without doubled punctuation ("è tuo.. Overall"), stray spaces
+ * before punctuation, or double spaces. Ellipses ("…" or "...") are kept.
+ */
+export function tidyText(text: string): string {
+  return text
+    .replace(/\s+([.,;:!?])/g, "$1")
+    .replace(/([!?…])\.(?!\.)/g, "$1")
+    .replace(/(^|[^.])\.\.(?!\.)/g, "$1.")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+}

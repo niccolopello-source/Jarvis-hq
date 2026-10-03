@@ -133,3 +133,12 @@ function blank() {
     iq: 0,
   };
 }
+
+test("D-14 tidyText removes doubled punctuation and keeps ellipses", async () => {
+  const { tidyText } = await import("./presentation.ts");
+  assert.equal(tidyText("Il possesso è tuo.. Overall 70 → 71 (+1)."), "Il possesso è tuo. Overall 70 → 71 (+1).");
+  assert.equal(tidyText("Fuori!. Dentro"), "Fuori! Dentro");
+  assert.equal(tidyText("Aspetta... poi parte."), "Aspetta... poi parte.");
+  assert.equal(tidyText("Uno ,  due ."), "Uno, due.");
+  assert.equal(tidyText("Già finita…"), "Già finita…");
+});
