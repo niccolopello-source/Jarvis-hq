@@ -31,3 +31,15 @@ POTENTIAL RISK: una cache del browser può tenere il bundle vecchio, quello con 
 `pivot-lean` ora si accende solo con 1 o 2 core. Il movimento ridotto non usa più quella classe: ha una regola CSS propria, `animation: none`.
 
 Un dispositivo a 4 core, simulato in Playwright, mostra `markSweep` e non ha `pivot-lean`. «Inizia» resta subito cliccabile. Non c'è uno schermo nero di attesa.
+
+## Intro granata, 2026-10-03
+
+Il marchio di avvio non è più un anello da 72 px con `bootSweep`. È lo stesso segno di `CourtMark`: cerchio, due archi, stanghette laterali e il 23. Vive nell'HTML, senza un file esterno.
+
+Lo sfondo è `#0c0b0d`. Il granata è il token già presente: `#6C1320` come `--color-granata` e `#A31D2E` come inchiostro del segno, perché il granata più scuro non si legge sul nero. Il movimento unico è `bootArc`: un riflesso percorre gli archi una volta, in 2,2 s, poi sparisce. Il segno resta intero anche prima. React sostituisce la pagina appena il modulo è pronto. Non c'è un timer che trattiene la Home.
+
+`prefers-reduced-motion` spegne `bootArc` e lascia il segno fermo. Se `main.tsx` non arriva, restano il segno, la frase di avvio e il link «Ricarica PIVOT 23».
+
+Misure, headless Chromium, Linux, 2 core, Vite locale, non un telefono. Marchio largo 281 px a 390, 420 px a 768 e a 1440, dentro lo schermo. Sessanta fotogrammi a riposo: media 16 ms, picco 17 ms. Durante la suite, con la CPU occupata, un picco è arrivato a 83 ms. «Inizia» ha accettato il click di prova in 487 ms. First contentful paint 60 ms. Nessun errore JavaScript in quel giro.
+
+Non verificato: un telefono, e l'anteprima Vercel di questo branch.

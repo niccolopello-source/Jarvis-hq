@@ -290,3 +290,17 @@ The useful part is already on `main`: the year sheet is not memoized, the swipe 
 Checked on this tree, Linux, 3 October 2026: ESLint pass, `tsc --noEmit` pass, unit tests 53/53, production build pass, Playwright `demo-readiness.spec.ts` 8/8. Headless Chromium, Vite `http://127.0.0.1:4179`, 2 cores. Not a phone. On branch 19 itself, earlier the same day: ESLint pass, `tsc` pass, unit tests 49/49. That older suite does not include the later copy tests.
 
 No formula or save version changed. No merge and no deploy.
+
+---
+
+## 20. Intro granata, 2026-10-03
+
+Branch `grok/intro-granata` starts from `main` `e69ff66`. The boot screen in `index.html` now draws the same mark as `CourtMark`: ring, two arcs, side ticks, and 23. It is not a new symbol.
+
+The field is `#0c0b0d`. The existing token `--color-granata` is `#6C1320`. On that black field the mark uses `#A31D2E`, the darker-theme granata, so the stroke stays visible. One motion, `bootArc`, runs a light once along the real arcs for 2.2 seconds and then leaves. React still replaces the screen as soon as the module loads. There is no hold.
+
+Reduced motion turns that light off. If the module never arrives, the mark, the startup sentence, and the reload link stay. The home mark, the lean rule, and the career engine were not changed.
+
+Measured on Linux, headless Chromium, 2 cores, local Vite, not a phone. The mark was 281 px wide at 390×844 and 420 px at 768 and 1440, inside the viewport. Alone, 60 frames averaged 16 ms and peaked at 17 ms. While the unit suite was also running, one gap reached 83 ms. The Inizia button accepted a trial click in 487 ms. No JavaScript error was recorded in that boot check. Unit tests 53/53, ESLint, `tsc`, the production build, and 10 browser tests passed on this tree.
+
+A phone was not used. Production was not deployed.
