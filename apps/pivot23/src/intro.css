@@ -39,6 +39,22 @@ html.pivot-intro-seen .court-mark-live.is-premiere .mark-gleam path {
   animation-delay: 0.15s;
 }
 
+/* The skip control reads as a small broadcast chip in the corner. `.intro-hero > *` made it relative and full width. */
+.intro-hero > .cine-skip {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  border-radius: 999px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 12px;
+  background: color-mix(in oklab, var(--color-panel) 72%, transparent);
+  box-shadow: inset 0 0 0 1px var(--color-line);
+}
+.intro-hero > .cine-skip:hover {
+  color: var(--color-chalk);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html[data-intro] .intro-hero > * {
     animation: none;
