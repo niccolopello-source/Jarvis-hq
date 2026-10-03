@@ -304,3 +304,15 @@ Reduced motion turns that light off. If the module never arrives, the mark, the 
 Measured on Linux, headless Chromium, 2 cores, local Vite, not a phone. The mark was 281 px wide at 390×844 and 420 px at 768 and 1440, inside the viewport. Alone, 60 frames averaged 16 ms and peaked at 17 ms. While the unit suite was also running, one gap reached 83 ms. The Inizia button accepted a trial click in 487 ms. No JavaScript error was recorded in that boot check. Unit tests 53/53, ESLint, `tsc`, the production build, and 10 browser tests passed on this tree.
 
 A phone was not used. Production was not deployed.
+
+---
+
+## 21. Intro in production, 2026-10-03
+
+Pull request #24 was merged to `main` as `58e8365`. The head was `6abae43`. GitHub `verify` passed, including the browser suite. Locally, on that same head, ESLint, `tsc`, 53 unit tests and 10 browser tests passed. A first local run against port 8080 failed because that port was a different app, not PIVOT 23. Repeated against the PIVOT server, the same 10 tests passed.
+
+Claude, Gemini and James did not send a review. None is recorded as an approval.
+
+Production `https://pivot23.vercel.app` served the new intro after the merge. GitHub deployment `6827628745`, Vercel status success, inspector `https://vercel.com/jarvis-hq-vercel/pivot23/5aGq34HzfGxjXnaaL5qv4MpYnRFC`. The bundle was `index-CcXA-oDK.js`. On a delayed load the mark was 281 px wide, the background was `#0c0b0d`, and the gleam was `bootArc`. Reduced motion set that gleam to `none` and left the 23. After the script loaded, the home title was visible, the theme color was `#f5f5f7`, and there was no page error. The bundle still contains the Totem credit and the two-core lean rule.
+
+A phone was not used. Vercel project settings were not changed. The API that lists deployments returned 403 for this token, so the deployment id above comes from GitHub, not from the Vercel API.
