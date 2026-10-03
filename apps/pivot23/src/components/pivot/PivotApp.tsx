@@ -1085,12 +1085,15 @@ export function PivotApp() {
                 key={id}
                 type="button"
                 className={`lang-btn ${lang === id ? "on" : ""}`}
+                aria-pressed={lang === id}
+                lang={id}
                 onClick={() => setLang(id)}
               >
                 {id === "it" ? "Italiano" : "English"}
               </button>
             ))}
           </div>
+          {lang === "en" ? <p className="text-[12.5px] text-muted mt-2">{t("enNarrativeNote", lang)}</p> : null}
           {player && (playerDone || player.originPath || player.round > 0) ? (
             <>
               {playerDone ? (

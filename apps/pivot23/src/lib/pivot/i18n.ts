@@ -269,6 +269,7 @@ const IT = {
     resumeSub: "Il gruppo è già in campo. Manca solo il tuo nome sul referto.",
     resumeGo: "Entra in campo",
     resumeGoDetail: "La stagione riprende da qui.",
+    enNarrativeNote: "Nella versione inglese i testi della storia restano in italiano.",
   /*@@IT@@*/
 } as const;
 
@@ -531,6 +532,7 @@ const EN: Record<Msg, string> = {
     resumeSub: "The group is already on the floor. Only your name is missing from the scoresheet.",
     resumeGo: "Take the floor",
     resumeGoDetail: "The season picks up from here.",
+    enNarrativeNote: "In this demo the story text (draft cards, season stories, verdicts) is still in Italian.",
   /*@@EN@@*/
 };
 
