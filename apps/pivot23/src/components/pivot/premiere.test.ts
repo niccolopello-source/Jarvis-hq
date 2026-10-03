@@ -13,10 +13,11 @@ function block(css: string, selector: string): string {
   return css.slice(at, css.indexOf("}", at));
 }
 
-test("the first-visit home premiere is 6.3 s: the 4.8 s that shipped plus the requested 1.5 s", () => {
+test("the first-visit home premiere is 9.2 s, long enough for the dribble and the swish", () => {
   const rule = block(styles, ".court-mark-live.is-premiere");
-  const ms = Number(/cineReveal\s+([\d.]+)s/.exec(rule)?.[1]) * 1000;
-  assert.equal(ms, 4800 + 1500);
+  const ms = Number(/--cine:\s*([\d.]+)s/.exec(rule)?.[1]) * 1000;
+  assert.equal(ms, 9200);
+  assert.ok(ms > 6300, "longer than the 6.3 s cut");
 });
 
 test("lean devices and returning visits keep the short 1.6 s premiere", () => {
@@ -26,7 +27,7 @@ test("lean devices and returning visits keep the short 1.6 s premiere", () => {
 
 test("reduced motion switches the premiere animation off entirely", () => {
   const media = styles.slice(styles.indexOf("@media (prefers-reduced-motion: reduce) {\n  .court-mark-live.is-premiere"));
-  assert.match(media.slice(0, 300), /animation:\s*none/);
+  assert.match(media.slice(0, 900), /animation:\s*none/);
 });
 
 test("the skip chip stacks above the mark wrapper that follows it", () => {

@@ -275,7 +275,14 @@ export function CourtMark({
   }, [brand, label, premiere]);
   if (brand && label === "23") {
     return (
-      <svg ref={live} width={size} height={size} viewBox="0 0 80 80" aria-hidden className={`${cls} court-mark-live`}>
+      <svg
+        ref={live}
+        width={size}
+        height={size}
+        viewBox="0 0 80 80"
+        aria-hidden
+        className={`${cls} court-mark-live`}
+      >
         <circle cx="40" cy="40" r="34.6" fill="none" stroke="currentColor" strokeWidth="5.4" />
         <g className="mark-arcs">
           <path d="M22.2 22.4 A22.2 22.2 0 0 1 57.8 22.4" fill="none" stroke="currentColor" strokeWidth="3.15" strokeLinecap="round" />
@@ -286,6 +293,20 @@ export function CourtMark({
             <path d="M22.2 22.4 A22.2 22.2 0 0 1 57.8 22.4" />
             <path d="M57.8 57.6 A22.2 22.2 0 0 1 22.2 57.6" />
           </g>
+        ) : null}
+        {premiere ? (
+          <>
+            <ellipse className="cine-shadow" cx="36" cy="74.5" rx="5.4" ry="1.15" />
+            <g className="cine-net" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
+              <path d="M30 56 C31.2 68 34.6 68 36 56" />
+              <path d="M36 57 C37.6 72 42.4 72 44 57" />
+              <path d="M44 56 C45.4 68 48.8 68 50 56" />
+            </g>
+            <g className="cine-ball-body">
+              <circle r="10" />
+              <path d="M-10 0 H10 M0 -10 V10 M-7.1 -6.8 C-2.2 -2.6 2.2 -2.6 7.1 -6.8 M-7.1 6.8 C-2.2 2.6 2.2 2.6 7.1 6.8" />
+            </g>
+          </>
         ) : null}
         <line x1="4.2" y1="40" x2="16.6" y2="40" stroke="currentColor" strokeWidth="4.4" strokeLinecap="square" />
         <line x1="63.4" y1="40" x2="75.8" y2="40" stroke="currentColor" strokeWidth="4.4" strokeLinecap="square" />

@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { makeMaster, makeNoise, playCue } from "./synth";
 import {
+  CUE_ORDER,
   FULL_TIMELINE,
   SOUND_PREF_KEY,
   TAIL_MS,
@@ -10,6 +11,7 @@ import {
   planRemaining,
   soundEnabled,
   type Cue,
+  type CueName,
   type PlannedCue,
   type SoundPref,
 } from "./timeline";
@@ -25,7 +27,7 @@ import {
  * - Salta, Inizia (leaving the home), the end of the premiere, muting or hiding the tab stop the sounds;
  * - the in-sync sequence plays at most once per page load, so coming back to the home never replays it;
  * - prefers-reduced-motion: no premiere and no sound, unless the visitor turns sound on with the toggle,
- *   which plays the three cues once as a confirmation.
+ *   which plays the dribble phrase and the swish once as a confirmation.
  *
  * Every entry point is wrapped: audio is decoration and must never throw or block the UI.
  */
@@ -48,7 +50,7 @@ let premierePlayed = false;
 let armed = false;
 let disarmTimer = 0;
 let observer: MutationObserver | null = null;
-const DISARM_MS = 12_000;
+const DISARM_MS = 20_000;
 
 let pref: SoundPref = null;
 let reduced = false;
@@ -195,10 +197,14 @@ function syncWithPremiere() {
 const onAnimationStart = safe((event: AnimationEvent) => {
   if (event.animationName !== "cineReveal" || !(event.target instanceof Element)) return;
   const el = event.target;
-  const reveal = cssTimeMs(getComputedStyle(el).animationDuration);
-  const gleam = el.querySelector(".mark-gleam path");
-  const gleamDelay = gleam ? cssTimeMs(getComputedStyle(gleam).animationDelay) : NaN;
-  cues = introTimeline(reveal, gleamDelay);
+  const style = getComputedStyle(el);
+  const reveal = cssTimeMs(style.animationDuration);
+  const beats = {} as Partial<Record<CueName, number>>;
+  for (const name of CUE_ORDER) {
+    const key = name === "swish" ? "--beat-swish" : `--beat-${name.replace("bounce", "b")}`;
+    beats[name] = cssTimeMs(style.getPropertyValue(key));
+  }
+  cues = introTimeline(reveal, beats);
   anim = el.getAnimations?.().find((a) => (a as CSSAnimation).animationName === "cineReveal") ?? null;
   anchor = performance.now() - event.elapsedTime * 1000;
   premiereLive = true;

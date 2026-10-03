@@ -28,7 +28,7 @@ try {
   const result = await page.evaluate(async ({ short }) => {
     const synth = await import("/src/intro-sound/synth.ts");
     const tl = await import("/src/intro-sound/timeline.ts");
-    const cues = short ? tl.introTimeline(1600, 150) : tl.FULL_TIMELINE;
+    const cues = short ? tl.SHORT_TIMELINE : tl.FULL_TIMELINE;
     const sampleRate = 48000;
     const seconds = cues[cues.length - 1].at / 1000 + 1.1;
     const ctx = new OfflineAudioContext(2, Math.ceil(sampleRate * seconds), sampleRate);
