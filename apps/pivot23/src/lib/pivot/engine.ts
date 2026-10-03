@@ -29,6 +29,7 @@ import {
   opponentAsTeam,
   seedRookieClass,
   playoffSeriesFormat,
+  playoffLineScore,
   simulateSeries,
   simulateLeagueSeason,
   standingOf,
@@ -2105,7 +2106,12 @@ function resolvePlayoffRoundInner(
   const oneGame = format.maxGames === 1;
   const finalGame = series.games[0];
   const userScore = oneGame && finalGame ? `${finalGame.us}-${finalGame.them}` : `${series.wins}-${series.losses}`;
-  const oppScore = oneGame && finalGame ? `${finalGame.them}-${finalGame.us}` : `${series.losses}-${series.wins}`;
+  const lineScore = playoffLineScore({
+    oneGame,
+    playerPoints: oneGame && finalGame ? finalGame.us : series.wins,
+    opponentPoints: oneGame && finalGame ? finalGame.them : series.losses,
+    opponent: opponent.name,
+  });
   if (last) {
     last.seriesLog = [...(last.seriesLog || []), packed];
   }
@@ -2123,7 +2129,7 @@ function resolvePlayoffRoundInner(
       s.hidden.clutch = clamp(s.hidden.clutch + 3, 0, 100);
       imprint(s, s.age <= 26 ? 0.42 : 0.28);
       const titleLines = s.league === "EuroLega" ? EURO_TITLE_LINES : TITLE_LINES;
-      const line = sayOr(s, titleLines, { OPP: opponent.name, SCORE: userScore }, `Titolo, $SCORE su $OPP.`);
+      const line = sayOr(s, titleLines, { OPP: opponent.name, SCORE: lineScore }, `Titolo, $SCORE su $OPP.`);
       settleYearTitle(s, true);
       return { win: true, champion: true, flavor: line, series: packed };
     }
@@ -2131,7 +2137,7 @@ function resolvePlayoffRoundInner(
     const line = sayOr(
       s,
       oneGame ? SINGLE_GAME_WIN_LINES : SERIES_WIN_LINES,
-      { OPP: opponent.name, SCORE: userScore },
+      { OPP: opponent.name, SCORE: lineScore },
       oneGame ? `Partita vinta $SCORE contro $OPP.` : `Serie vinta $SCORE su $OPP.`,
     );
     imprint(s, 0.14);
@@ -2144,7 +2150,7 @@ function resolvePlayoffRoundInner(
   const line = sayOr(
     s,
     oneGame ? SINGLE_GAME_LOSS_LINES : SERIES_LOSS_LINES,
-    { OPP: opponent.name, SCORE: oppScore },
+    { OPP: opponent.name, SCORE: lineScore },
     oneGame ? `Sconfitta $SCORE contro $OPP. Stagione finita.` : `Eliminati $SCORE da $OPP.`,
   );
   settleYearTitle(s, false);
