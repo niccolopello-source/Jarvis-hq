@@ -17,6 +17,7 @@ export type IntroMode = "full" | "brief" | "still";
 export const INTRO_SEEN_KEY = "pivot23.introSeen";
 const CURTAIN_MAX_MS = 1500;
 const SKIP_FADE_MS = 160;
+const START_TIMEOUT_MS = 150;
 const DATA_CLEAR_MS = 1400;
 const PREMIERE_KEYS_MS = 8000;
 
@@ -96,8 +97,13 @@ function playCurtain(): () => void {
   const fallback = window.setTimeout(finish, CURTAIN_MAX_MS);
   // The home copy keeps its own short entrance; drop the hook once it has played.
   if (mode === "full") clearTimer = window.setTimeout(() => delete root.dataset.intro, DATA_CLEAR_MS);
-  boot.classList.add(`leave-${mode}`);
+  // Start once the first commit has settled, so the hand-off never competes with the first input.
+  const idle = "requestIdleCallback" in window;
+  const start = () => boot.classList.add(`leave-${mode}`);
+  const startHandle = idle ? window.requestIdleCallback(start, { timeout: START_TIMEOUT_MS }) : window.setTimeout(start, 0);
   return () => {
+    if (idle) window.cancelIdleCallback(startHandle);
+    else window.clearTimeout(startHandle);
     window.clearTimeout(clearTimer);
     finish();
   };

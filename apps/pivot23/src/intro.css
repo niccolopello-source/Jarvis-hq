@@ -1,23 +1,14 @@
 /* Intro hand-off (see src/intro.ts). Transform and opacity only. */
 
-/* First visit: the home copy rises in behind the stinger. `backwards` so press/hover transforms keep working afterwards. */
-html[data-intro="full"] .intro-hero > .cine-skip,
+/* First visit: the headline copy rises in behind the stinger. The buttons are never animated, so they are
+   where they will stay from the first commit. `backwards` leaves no transform behind once it has played. */
 html[data-intro="full"] .intro-hero > .eyebrow,
 html[data-intro="full"] .intro-hero > .display-title,
-html[data-intro="full"] .intro-hero > .lede,
-html[data-intro="full"] .intro-hero > .lang-row,
-html[data-intro="full"] .intro-hero > .primary-btn,
-html[data-intro="full"] .intro-hero > .ghost-btn,
-html[data-intro="full"] .intro-hero > .totem-home {
-  animation: introRise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.18s backwards;
+html[data-intro="full"] .intro-hero > .lede {
+  animation: introRise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.16s backwards;
 }
-html[data-intro="full"] .intro-hero > .display-title { animation-delay: 0.24s; }
-html[data-intro="full"] .intro-hero > .lede { animation-delay: 0.3s; }
-html[data-intro="full"] .intro-hero > .lang-row { animation-delay: 0.34s; }
-html[data-intro="full"] .intro-hero > .primary-btn { animation-delay: 0.38s; }
-html[data-intro="full"] .intro-hero > .ghost-btn { animation-delay: 0.42s; }
-html[data-intro="full"] .intro-hero > .totem-home,
-html[data-intro="full"] .intro-hero > .cine-skip { animation-delay: 0.5s; }
+html[data-intro="full"] .intro-hero > .display-title { animation-delay: 0.22s; }
+html[data-intro="full"] .intro-hero > .lede { animation-delay: 0.28s; }
 
 @keyframes introRise {
   from {

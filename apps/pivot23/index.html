@@ -57,6 +57,8 @@
         pointer-events: none;
         animation: curtainSafety 0.3s linear 8s forwards;
       }
+      /* The gleam animates stroke-dashoffset, which repaints on the main thread: stop it once the app is mounting. */
+      #boot.is-curtain .boot-gleam path { animation: none; opacity: 0; }
       /* The stinger edge: a skewed granata band with a chalk line, trailing the dark field as it leaves. */
       #boot.is-curtain.leave-full::before {
         content: "";
@@ -75,8 +77,8 @@
         will-change: transform;
         animation: curtainWipe 0.52s cubic-bezier(0.76, 0, 0.24, 1) both;
       }
-      #boot.is-curtain.leave-full > * {
-        animation: curtainMarkOut 0.3s cubic-bezier(0.4, 0, 1, 1) both;
+      #boot.is-curtain.leave-full .boot-mark {
+        animation: curtainFade 0.26s cubic-bezier(0.4, 0, 1, 1) both;
       }
       #boot.is-curtain.leave-full.leave-now {
         animation: curtainWipe 0.52s cubic-bezier(0.76, 0, 0.24, 1) both, curtainFade 0.14s linear both;
@@ -86,9 +88,6 @@
       @keyframes curtainWipe {
         from { transform: translate3d(0, 0, 0); }
         to { transform: translate3d(calc(100vw + var(--band) + 45vh), 0, 0); }
-      }
-      @keyframes curtainMarkOut {
-        to { opacity: 0; transform: scale(1.08); }
       }
       @keyframes curtainFade { to { opacity: 0; } }
       @keyframes curtainSafety { to { opacity: 0; visibility: hidden; } }
