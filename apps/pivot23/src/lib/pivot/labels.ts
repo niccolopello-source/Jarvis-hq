@@ -63,6 +63,17 @@ export function attrLabel(key: AttrKey, lang: UiLang): string {
   return lang === "en" ? ATTR_EN[key] : ATTR_LABELS[key];
 }
 
+/**
+ * Consequence chip ("+2 Tiro", "-1 Morale") in the reader's language. Chips are built once with
+ * the Italian attribute names; the number stays, the label follows the language.
+ */
+export function chipLabel(chip: string, lang: UiLang): string {
+  const m = /^([+-]?\d+) (.+)$/.exec(chip);
+  if (!m) return chip;
+  const key = (Object.keys(ATTR_LABELS) as AttrKey[]).find((k) => ATTR_LABELS[k] === m[2] || ATTR_EN[k] === m[2]);
+  return key ? `${m[1]} ${attrLabel(key, lang)}` : chip;
+}
+
 export function attrLabels(lang: UiLang): Record<AttrKey, string> {
   return lang === "en" ? ATTR_EN : ATTR_LABELS;
 }
@@ -80,6 +91,11 @@ const HIDDEN_EN: Record<HiddenKey, string> = {
 
 export function hiddenLabel(key: HiddenKey, lang: UiLang): string {
   return lang === "en" ? HIDDEN_EN[key] : HIDDEN_LABELS[key];
+}
+
+/** Playoff seed: "7°" in Italian, "#7" in English. */
+export function seedLabel(n: number | string, lang: UiLang): string {
+  return lang === "en" ? `#${n}` : `${n}°`;
 }
 
 export function confLabel(c: string | undefined, lang: UiLang): string {

@@ -3,10 +3,10 @@ import { Component, memo, useEffect, useLayoutEffect, useMemo, useRef, useState,
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
 import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components/pivot/LeaguePanel";
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
-import { chipsFromFx, chipsFromSnapshot, consequenceSchedule, formatCareerTotal, getSeasonDisplayLabel, tidyText, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
+import { chipsFromFx, chipsFromSnapshot, consequenceSchedule, endSentence, formatCareerTotal, getSeasonDisplayLabel, tidyText, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
-import { pathFeel, playoffNerves, ROLE_ARTICLE, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
+import { pathFeel, playoffNerves, draftWho, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
 import {
   ATTR_LABELS,
   COACH_NAMES,
@@ -14,7 +14,6 @@ import {
   NATIONALITIES,
   RIVAL_NAMES,
   ROLES,
-  natAdj,
 } from "@/lib/pivot/data";
 import {
   acceptForcedPreseasonTrade,
@@ -73,16 +72,20 @@ import {
   verdictOf,
   withPlayer,
 } from "@/lib/pivot/engine";
-import { initLang, setLang, t, tf, useLang, awardLabel, DEMO_LANGS, difficultyFace } from "@/lib/pivot/i18n";
+import { initLang, registerLangLoader, setLang, t, tf, useLang, awardLabel, DEMO_LANGS, difficultyFace } from "@/lib/pivot/i18n";
 import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
 import { ModalDialog } from "@/components/pivot/Dialog";
 import { LazyChunk } from "@/components/pivot/ChunkBoundary";
-import { attrLabel, confLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel } from "@/lib/pivot/labels";
+import { attrLabel, chipLabel, confLabel, seedLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel } from "@/lib/pivot/labels";
+import { loadNarrativeEn, nx } from "@/lib/pivot/narrative";
 
 const loadCareerChart = () => import("@/components/pivot/CareerChart");
 const pickCareerChart = (m: typeof import("@/components/pivot/CareerChart")) => m.CareerChart;
 import { HOLD_FINALS_MS, HOLD_MARKET_MS, HOLD_RECAP_MS, HOLD_TITLE_MS } from "@/lib/pivot/config";
 import { EURO_TEAMS, NBA_TEAMS } from "@/lib/pivot/teams";
+
+// English story text arrives as a lazy chunk; switching to EN waits for it (see setLang).
+registerLangLoader("en", loadNarrativeEn);
 
 function SaveGlyph() {
   return (
@@ -588,7 +591,7 @@ export function PivotApp() {
     setPending({ kind: "path" });
     pushLog({
       kind: "narrative",
-      body: `Il Draft si avvicina. ${s.name}, ${ROLE_ARTICLE[s.role] || "un "}${ROLES[s.role].label.toLowerCase()} ${natAdj(s.role, s.nationality)}, deve scegliere i primi passi da professionista.`,
+      body: `Il Draft si avvicina. ${s.name}, ${draftWho(s.role, s.nationality)}, deve scegliere i primi passi da professionista.`,
     });
   }
 
@@ -787,7 +790,7 @@ export function PivotApp() {
     pushLog({
       kind: "offseason",
       title: "Estate",
-      result: withOvr(`${feel} ${row.line || "Mantenimento"}.`, row.before, row.after),
+      result: withOvr(`${endSentence(feel)} ${row.line || "Mantenimento"}.`, row.before, row.after),
       resolved: true,
       extraClass: "offseason",
       ovrBefore: row.before,
@@ -1093,7 +1096,6 @@ export function PivotApp() {
               </button>
             ))}
           </div>
-          {lang === "en" ? <p className="text-[12.5px] text-muted mt-2">{t("enNarrativeNote", lang)}</p> : null}
           {player && (playerDone || player.originPath || player.round > 0) ? (
             <>
               {playerDone ? (
@@ -1355,8 +1357,8 @@ function DraftView({
           <span key={i} className={i < player.round ? "done" : i === player.round ? "now" : ""} />
         ))}
       </div>
-      <h2 className="page-title">{r.label}</h2>
-      <p className="text-muted text-[14px] mb-4">{r.prompt} {t("draftThree", lang)}</p>
+      <h2 className="page-title">{nx(r.label, lang)}</h2>
+      <p className="text-muted text-[14px] mb-4">{nx(r.prompt, lang)} {t("draftThree", lang)}</p>
       <div className="flex flex-col gap-2.5">
         {hand.map((c, i) => {
           const shown = scaledDraftCard(player.role, c);
@@ -1367,8 +1369,8 @@ function DraftView({
               style={{ animationDelay: `${i * 70}ms` }}
               onClick={() => onPick(i)}
             >
-              <div className="font-display text-[19px] font-semibold">{c.name}</div>
-              <div className="text-[13px] text-muted leading-snug">{c.desc}</div>
+              <div className="font-display text-[19px] font-semibold">{nx(c.name, lang)}</div>
+              <div className="text-[13px] text-muted leading-snug">{nx(c.desc, lang)}</div>
               <div className="text-[12.5px] text-wood mt-1">
                 {shown.primary.delta > 0 ? "+" : ""}
                 {shown.primary.delta.toFixed(0)} {attrLabel(shown.primary.key, lang)}
@@ -1437,7 +1439,7 @@ function CareerView(props: {
           <div className="min-w-0 flex-1 flex items-center gap-3">
             <TeamMark team={player.team} size={52} number={player.number} />
             <div className="min-w-0">
-              <div className="font-display text-[22px] leading-tight truncate">{player.name}</div>
+              <div className="font-display text-[22px] leading-tight truncate">{nx(player.name, lang)}</div>
               <div className="hud-meta">
                 <FlagMark nation={player.nationality} size={24} />
                 <span>{roleLabel(player.role, lang)}</span>
@@ -1464,7 +1466,7 @@ function CareerView(props: {
                 {player.contract.yearsRemaining === 1 ? t("contractYear", lang) : tf("contractYears", { n: player.contract.yearsRemaining }, lang)} × ${player.contract.annualM}M
                 {last ? (() => {
                   const rec = teamRecord(last);
-                  return rec.seed ? ` · ${rec.seed}° ${confLabel(rec.conf, lang)}` : "";
+                  return rec.seed ? ` · ${seedLabel(rec.seed, lang)} ${confLabel(rec.conf, lang)}` : "";
                 })() : ""}
               </div>
             </div>
@@ -1553,7 +1555,7 @@ const LogBlock = memo(function LogBlock({ e, chips }: { e: LogEntry; chips?: str
   if (e.kind === "narrative") {
     return (
       <div className="mb-4">
-        <p className="text-[14.5px] text-muted leading-relaxed italic">{e.body}</p>
+        <p className="text-[14.5px] text-muted leading-relaxed italic">{nx(e.body, lang)}</p>
       </div>
     );
   }
@@ -1580,20 +1582,20 @@ const LogBlock = memo(function LogBlock({ e, chips }: { e: LogEntry; chips?: str
   return (
     <div className={`log-card ${cls}`}>
       {e.extraClass === "title-win" && <p className="title-kicker">{t("finalChampion", lang)}</p>}
-      {e.title && <h3 className="text-xl mb-1">{e.title}</h3>}
-      {e.body && <p className="text-[13.5px] text-muted mb-2">{e.body}</p>}
-      {e.chosen && <p className="text-[13px] text-chalk">{tf("choiceMade", { x: e.chosen }, lang)}</p>}
+      {e.title && <h3 className="text-xl mb-1">{nx(e.title, lang)}</h3>}
+      {e.body && <p className="text-[13.5px] text-muted mb-2">{nx(e.body, lang)}</p>}
+      {e.chosen && <p className="text-[13px] text-chalk">{tf("choiceMade", { x: nx(e.chosen, lang) }, lang)}</p>}
       {chips && chips.length > 0 && (
         <p className="delta-row" aria-live="polite">
           {chips.map((chip) => (
-            <span key={chip} className="delta-chip">{chip}</span>
+            <span key={chip} className="delta-chip">{chipLabel(chip, lang)}</span>
           ))}
         </p>
       )}
       {e.series && <SeriesStrip series={e.series} />}
       {e.result && (
         <p className={e.extraClass === "title-win" ? "focus-line mt-2" : "text-[13.5px] text-wood italic mt-2"}>
-          {e.result}
+          {nx(e.result, lang)}
         </p>
       )}
     </div>
@@ -1660,7 +1662,7 @@ function PendingBlock(props: {
             <p className="text-[13px] text-muted">{tf("overallN", { n: displayOverall(player.overall) }, lang)}</p>
           </div>
         </div>
-        <p className="feel-line">{pending.flavor}</p>
+        <p className="feel-line">{nx(pending.flavor, lang)}</p>
         <button className="primary-btn mt-4" onClick={props.onCall}>
           {t("enterGym", lang)}
         </button>
@@ -1713,19 +1715,19 @@ function PendingBlock(props: {
             <TeamMark team={pending.opponent} size={56} />
             <div>
               <p className="text-[13px] text-muted">
-                {seed ? `${seed}°` : "Playoff"} vs {oppSeed ? `${oppSeed}°` : ""} {pending.opponent.name}
+                {seed ? seedLabel(seed, lang) : "Playoff"} vs {oppSeed ? seedLabel(oppSeed, lang) : ""} {pending.opponent.name}
               </p>
             </div>
           </div>
         )}
         <p className="feel-line">
-          {pending.nerves}
+          {nx(pending.nerves, lang)}
         </p>
         <div className="flex flex-col gap-2">
           {choices.map((c, i) => (
             <button key={c.label} className="choice-btn" onClick={() => props.onPlayoff(i)}>
-              <span className="font-display font-semibold text-base text-chalk">{c.label}</span>
-              <span className="text-[12.5px] text-muted">{c.detail}</span>
+              <span className="font-display font-semibold text-base text-chalk">{nx(c.label, lang)}</span>
+              <span className="text-[12.5px] text-muted">{nx(c.detail, lang)}</span>
             </button>
           ))}
         </div>
@@ -1737,7 +1739,7 @@ function PendingBlock(props: {
       <div className="log-card market beat-major">
         <h3 className="text-[20px] mb-1">{t("summerMarket", lang)}</h3>
         <p className="text-[13.5px] text-muted mb-3">
-          {pending.desk}
+          {nx(pending.desk, lang)}
         </p>
         <div className="flex flex-col gap-2">
           {pending.offers.map((o) => (
@@ -1759,7 +1761,7 @@ function PendingBlock(props: {
                   </span>
                 </span>
               </span>
-              <span className="text-[12.5px] text-muted">{o.pitch}</span>
+              <span className="text-[12.5px] text-muted">{nx(o.pitch, lang)}</span>
             </button>
           ))}
         </div>
@@ -1778,7 +1780,7 @@ function PendingBlock(props: {
           <span className="transfer-arrow">→</span>
           <TeamMark team={to} size={52} number={player.number} />
         </div>
-        <p className="feel-line">{pending.pitch}</p>
+        <p className="feel-line">{nx(pending.pitch, lang)}</p>
         <div className="flex flex-col gap-2">
           <button className="choice-btn offer-btn" style={{ ["--club" as string]: to.color }} onClick={() => props.onTrade(true)}>
             <span className="font-display font-semibold text-[16px] text-chalk">{tf("tradeAccept", { team: to.name }, lang)}</span>
@@ -1803,7 +1805,7 @@ function PendingBlock(props: {
           <span className="transfer-arrow">→</span>
           <TeamMark team={pending.team} size={56} number={player.number} />
         </div>
-        <p className="feel-line">{t("tradeForced", lang)} {pending.pitch}</p>
+        <p className="feel-line">{t("tradeForced", lang)} {nx(pending.pitch, lang)}</p>
         <button className="primary-btn mt-4" onClick={props.onForcedTradeAck}>
           {t("tradeEnterLocker", lang)}
         </button>
@@ -1845,15 +1847,16 @@ function Decision({
   cls?: string;
   options: { label: string; detail: string; run: () => void }[];
 }) {
+  const lang = useLang();
   return (
     <div className={`log-card ${cls || "vignette beat-important"}`}>
-      <h3 className="text-[20px] mb-1">{title}</h3>
-      <p className="feel-line">{sub}</p>
+      <h3 className="text-[20px] mb-1">{nx(title, lang)}</h3>
+      <p className="feel-line">{nx(sub, lang)}</p>
       <div className="flex flex-col gap-2">
         {options.map((o) => (
           <button key={o.label} className="choice-btn" onClick={o.run}>
-            <span className="font-display font-semibold text-[16px] text-chalk">{o.label}</span>
-            <span className="text-[12.5px] text-muted">{o.detail}</span>
+            <span className="font-display font-semibold text-[16px] text-chalk">{nx(o.label, lang)}</span>
+            <span className="text-[12.5px] text-muted">{nx(o.detail, lang)}</span>
           </button>
         ))}
       </div>
@@ -1887,7 +1890,7 @@ function RecapCard({
         {" "}
         <span>
           {tf("ageYears", { n: row.age }, lang)} · {row.team} · {rec.w}-{rec.l}
-          {rec.seed ? ` · ${rec.seed}° ${confLabel(rec.conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
+          {rec.seed ? ` · ${seedLabel(rec.seed, lang)} ${confLabel(rec.conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
         </span>
       </p>
       <div className="totals-strip mb-3">
@@ -1936,7 +1939,7 @@ function RecapCard({
           ))}
         </div>
       ) : (
-        <p className="text-[13px] text-muted mb-3 italic">{awardNote}</p>
+        <p className="text-[13px] text-muted mb-3 italic">{nx(awardNote, lang)}</p>
       )}
       {row.league && row.league.awards.length > 0 && (
         <div className="league-awards-mini">
@@ -1949,9 +1952,9 @@ function RecapCard({
       )}
       {row.season === 1 && row.league?.royRace?.length ? <RoyBoard race={row.league.royRace} /> : null}
       {row.mood && (
-        <p className="feel-line">{row.mood}</p>
+        <p className="feel-line">{nx(row.mood, lang)}</p>
       )}
-      <p className="feel-line door">{door}</p>
+      <p className="feel-line door">{nx(door, lang)}</p>
       <button className="ghost-btn" onClick={onGo}>
         {t(qualified ? "enterPlayoffs" : "nextSeason", lang)}
       </button>
@@ -1971,7 +1974,7 @@ function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
         {" "}
         <span>
           {tf("ageYears", { n: row.age }, lang)} · {row.team} · {teamRecord(row).w}-{teamRecord(row).l}
-          {teamRecord(row).seed ? ` · ${teamRecord(row).seed}° ${confLabel(teamRecord(row).conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
+          {teamRecord(row).seed ? ` · ${seedLabel(teamRecord(row).seed!, lang)} ${confLabel(teamRecord(row).conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
         </span>
       </p>
       <div className="font-display text-[17px] mb-1 tabular">
@@ -1981,8 +1984,8 @@ function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
       {row.awards.length > 0 && (
         <p className="text-[13px] text-wood mb-1">{row.awards.map((a) => awardLabel(a, lang)).join(" · ")}</p>
       )}
-      {row.mood && <p className="feel-line">{row.mood}</p>}
-      {result && <p className="text-[13px] text-muted italic">{result}</p>}
+      {row.mood && <p className="feel-line">{nx(row.mood, lang)}</p>}
+      {result && <p className="text-[13px] text-muted italic">{nx(result, lang)}</p>}
     </div>
   );
 }
@@ -2031,7 +2034,7 @@ function SeasonSheet({ player }: { player: PlayerState }) {
           <h3 className="font-display text-[22px]">{getSeasonDisplayLabel(row.season)}</h3>
           <p className="text-[13px] text-muted">
             {row.team} · {rec.w}-{rec.l}
-            {rec.seed ? ` · ${rec.seed}° ${confLabel(rec.conf, lang)}` : ` · ${t("outOfPlayoffs", lang)}`} · OVR {displayOverall(row.overall)}
+            {rec.seed ? ` · ${seedLabel(rec.seed, lang)} ${confLabel(rec.conf, lang)}` : ` · ${t("outOfPlayoffs", lang)}`} · OVR {displayOverall(row.overall)}
           </p>
         </div>
       </div>
@@ -2097,7 +2100,7 @@ function SeasonSheet({ player }: { player: PlayerState }) {
                     <div>
                       <b className="font-display">{roundLabel(s.label, lang)}</b>
                       <p className="text-[12px] text-muted">
-                        vs {s.opponentSeed}° {s.opponent.name}
+                        vs {seedLabel(s.opponentSeed, lang)} {s.opponent.name}
                       </p>
                     </div>
                   </div>
@@ -2157,7 +2160,7 @@ const StatsTab = memo(function StatsTab({
             </div>
             <div className="text-[11.5px] text-muted">
               {r.teamAbbr} · {tf("ageShort", { n: r.age }, lang)} · {teamRecord(r).w}-{teamRecord(r).l}
-              {teamRecord(r).seed ? ` · ${teamRecord(r).seed}°` : ""} · {r.gp} GP
+              {teamRecord(r).seed ? ` · ${seedLabel(teamRecord(r).seed!, lang)}` : ""} · {r.gp} GP
             </div>
           </div>
           <div className="text-right">
@@ -2177,7 +2180,7 @@ const StatsTab = memo(function StatsTab({
         <div key={d.season + d.label} className="flex gap-2.5 py-1.5 text-[13px] border-b border-line">
           <span className="text-wood font-display min-w-[36px]">{tf("seasonShort", { n: d.season }, lang)}</span>
           <span>
-            {d.label} — {d.line} · {d.before.toFixed(1)}→{d.after.toFixed(1)}
+            {nx(d.label, lang)} — {nx(d.line, lang)} · {d.before.toFixed(1)}→{d.after.toFixed(1)}
           </span>
         </div>
       ))}
@@ -2200,7 +2203,7 @@ const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
               className="review-hint text-[13.5px] text-muted italic mb-2 leading-relaxed"
               style={{ animationDelay: `${80 + i * 90}ms` }}
             >
-              {h}
+              {nx(h, lang)}
             </p>
           ))}
         </div>
@@ -2211,8 +2214,8 @@ const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
         <div key={i} className="flex gap-2 py-1.5 text-[13px] border-b border-line">
           <span className="text-wood font-display min-w-[36px]">{tf("seasonShort", { n: c.season }, lang)}</span>
           <span>
-            <span className="text-muted">{c.title}: </span>
-            {c.pick}
+            <span className="text-muted">{nx(c.title, lang)}: </span>
+            {nx(c.pick, lang)}
           </span>
         </div>
       ))}
@@ -2225,7 +2228,7 @@ const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
               <i aria-hidden="true" />
               <div>
                 <b>{getSeasonDisplayLabel(m.season)}</b>
-                <span>{m.label}</span>
+                <span>{nx(m.label, lang)}</span>
               </div>
             </div>
           ))}
@@ -2298,7 +2301,7 @@ function ResultView({
           {t("end", lang)}
           {player.simulated ? ` · ${t("simulated", lang)}` : ""} · {difficultyFace(diffOf(player).id, lang).label}
         </div>
-        <h2 className="page-title text-chalk">{v.verdict}</h2>
+        <h2 className="page-title text-chalk">{nx(v.verdict, lang)}</h2>
         <div className="result-name">
           {player.name} · N.{player.number}
         </div>
@@ -2306,7 +2309,7 @@ function ResultView({
           {roleLabel(player.role, lang)} · {p.startAge}–{p.endAge} {t("years", lang)} · {seasonCountLabel(p.seasons, lang)} · {t("peak", lang)} {displayOverall(p.peak)}
         </div>
         <div className={`hof-seal ${hof}`}>{t(hof === "hall" ? "hofHall" : hof === "borderline" ? "hofBorder" : "hofOut", lang)}</div>
-        <p className="result-close">{v.closing}</p>
+        <p className="result-close">{nx(v.closing, lang)}</p>
         {jerseys.length > 0 && (
           <div className="result-jerseys" aria-label={t("jerseysWorn", lang)}>
             {jerseys.map((t) => (
@@ -2358,7 +2361,7 @@ function ResultView({
             {p.best.awards.length ? ` · ${awardLabel(p.best.awards[0]!, lang)}` : ""}
           </p>
         )}
-        <p className="feel-line">{comment}</p>
+        <p className="feel-line">{nx(comment, lang)}</p>
       </div>
       <CareerCardPanel
         card={careerCardOf(player)}
@@ -2438,11 +2441,11 @@ function ArchiveView({
         </button>
         <h2 className="page-title">{viewing.name}</h2>
         <p className="text-muted text-[13px] mb-4">
-          {roleLabel(viewing.role, lang)} · {viewing.verdict} · {t("peak", lang)} {displayOverall(viewing.peak)}
+          {roleLabel(viewing.role, lang)} · {nx(viewing.verdict, lang)} · {t("peak", lang)} {displayOverall(viewing.peak)}
           {viewing.apexAge ? tf("atAge", { n: viewing.apexAge }, lang) : ""} · {viewing.titles} {t(viewing.titles === 1 ? "titleOne" : "titleMany", lang)}
           {viewing.difficulty ? ` · ${difficultyFace(viewing.difficulty, lang).label}` : ""}
         </p>
-        <p className="italic text-muted text-[14px] mb-4">{viewing.closing}</p>
+        <p className="italic text-muted text-[14px] mb-4">{nx(viewing.closing, lang)}</p>
         <CareerCardPanel
           card={viewing.card}
           history={viewing.history}
@@ -2462,7 +2465,7 @@ function ArchiveView({
         <h4 className="font-display text-[18px] mt-4 mb-2">{t("choices", lang)}</h4>
         {viewing.choices.map((c, i) => (
           <div key={i} className="text-[13px] py-1 text-muted">
-            {tf("seasonShort", { n: c.season }, lang)} {c.title}: <span className="text-chalk">{c.pick}</span>
+            {tf("seasonShort", { n: c.season }, lang)} {nx(c.title, lang)}: <span className="text-chalk">{nx(c.pick, lang)}</span>
           </div>
         ))}
       </section>
@@ -2488,7 +2491,7 @@ function ArchiveView({
               ? `${getSeasonDisplayLabel(c.history[0].season)} → ${getSeasonDisplayLabel(c.history[c.history.length - 1]!.season)}`
               : seasonCountLabel(c.seasons, lang)}
             {" · "}
-            {roleLabel(c.role, lang)} · {c.verdict}
+            {roleLabel(c.role, lang)} · {nx(c.verdict, lang)}
             {c.titles ? ` · ${c.titles} ${t(c.titles === 1 ? "titleOne" : "titleMany", lang)}` : ""}
             {c.difficulty ? ` · ${difficultyFace(c.difficulty, lang).label}` : ""}
             {c.simulated ? " · sim" : ""}
@@ -2529,7 +2532,7 @@ function CareerCardPanel({
     >
       <div className="eyebrow">Career Card · {card.engineVersion}</div>
       <h3 className="page-title text-chalk">{card.playerName}</h3>
-      <p className="result-name">{roleLabel(card.role, lang)} · {card.nationality}</p>
+      <p className="result-name">{roleLabel(card.role, lang)} · {nationLabel(card.nationality, lang)}</p>
       <p className="result-span">
         {t("age", lang)} {card.ageStart}–{card.ageEnd} · {seasonCountLabel(card.seasons, lang)} · {t("peak", lang)} {displayOverall(card.peakOverall)}
       </p>
@@ -2548,7 +2551,7 @@ function CareerCardPanel({
           </div>
         ))}
       </div>
-      <p className="feel-line">{tf("draftLine", { v: draft?.pick ?? t("noData", lang) }, lang)}</p>
+      <p className="feel-line">{tf("draftLine", { v: draft?.pick ? nx(draft.pick, lang) : t("noData", lang) }, lang)}</p>
       <p className="feel-line">{tf("teamsLine", { v: teams.length ? teams.join(" → ") : t("noData", lang) }, lang)}</p>
       {awards.size > 0 && (
         <p className="feel-line">
@@ -2557,10 +2560,10 @@ function CareerCardPanel({
       )}
       {card.milestones.length > 0 && (
         <div className="result-chips" aria-label={t("milestonesH", lang)}>
-          {card.milestones.map((milestone) => <span key={milestone} className="result-chip">{milestone}</span>)}
+          {card.milestones.map((milestone) => <span key={milestone} className="result-chip">{nx(milestone, lang)}</span>)}
         </div>
       )}
-      <p className="result-close">{card.verdict} · Legacy {card.legacyTier}</p>
+      <p className="result-close">{nx(card.verdict, lang)} · Legacy {card.legacyTier}</p>
     </section>
   );
 }

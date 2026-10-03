@@ -269,7 +269,6 @@ const IT = {
     resumeSub: "Il gruppo è già in campo. Manca solo il tuo nome sul referto.",
     resumeGo: "Entra in campo",
     resumeGoDetail: "La stagione riprende da qui.",
-    enNarrativeNote: "Nella versione inglese i testi della storia restano in italiano.",
   /*@@IT@@*/
 } as const;
 
@@ -532,7 +531,6 @@ const EN: Record<Msg, string> = {
     resumeSub: "The group is already on the floor. Only your name is missing from the scoresheet.",
     resumeGo: "Take the floor",
     resumeGoDetail: "The season picks up from here.",
-    enNarrativeNote: "In this demo the story text (draft cards, season stories, verdicts) is still in Italian.",
   /*@@EN@@*/
 };
 
@@ -619,20 +617,65 @@ function readStored(): Lang {
   return "it";
 }
 
+const DOC_TITLE: Partial<Record<Lang, string>> = {
+  it: "PIVOT 23 — La tua carriera cestistica",
+  en: "PIVOT 23 — Your basketball career",
+};
+
+/** <html lang> and the tab title follow the reader; index.html ships the Italian defaults. */
+function syncDocument() {
+  if (typeof document === "undefined") return;
+  document.documentElement.lang = current;
+  const title = DOC_TITLE[current];
+  if (title) document.title = title;
+}
+
+/*
+ * A language can ship part of its text as a lazy chunk (the English narrative catalog). The
+ * switch waits for it, so the screen never shows a half-translated frame; if the chunk fails,
+ * the switch still happens and stored text falls back to the canonical Italian.
+ */
+const loaders = new Map<Lang, () => Promise<unknown>>();
+const loaded = new Set<Lang>();
+let switchSeq = 0;
+
+export function registerLangLoader(lang: Lang, load: () => Promise<unknown>) {
+  loaders.set(lang, load);
+}
+
+function whenReady(lang: Lang): Promise<void> | null {
+  const load = loaders.get(lang);
+  if (!load || loaded.has(lang)) return null;
+  const done = () => void loaded.add(lang);
+  return load().then(done, done);
+}
+
+function apply(lang: Lang, seq: number, notify: boolean) {
+  if (seq !== switchSeq) return; // a later choice wins
+  current = lang;
+  syncDocument();
+  if (notify) listeners.forEach((fn) => fn());
+}
+
 export function initLang() {
-  current = readStored();
-  if (typeof document !== "undefined") document.documentElement.lang = current;
+  const lang = readStored();
+  const seq = ++switchSeq;
+  const ready = whenReady(lang);
+  if (ready) void ready.then(() => apply(lang, seq, true));
+  else apply(lang, seq, false);
 }
 
 export function setLang(next: Lang) {
-  current = demoLang(next);
+  const lang = demoLang(next);
   try {
-    window.localStorage.setItem(KEY, current);
+    window.localStorage.setItem(KEY, lang);
   } catch {
     /* resta in memoria */
   }
-  if (typeof document !== "undefined") document.documentElement.lang = current;
-  listeners.forEach((fn) => fn());
+  const seq = ++switchSeq;
+  const ready = whenReady(lang);
+  if (ready) void ready.then(() => apply(lang, seq, true));
+  else apply(lang, seq, true);
 }
 
 export function getLang(): Lang {
@@ -698,6 +741,14 @@ export function chromeGaps(langs: readonly Lang[] = DEMO_LANGS): string[] {
     }
   }
   return gaps;
+}
+
+/**
+ * Italian/English chrome pairs. Some chrome strings are stored inside saved story entries
+ * (pending scenes, log titles); the narrative layer uses these pairs to re-render them.
+ */
+export function chromePairs(): [it: string, en: string][] {
+  return (Object.keys(IT) as Msg[]).map((k) => [IT[k], EN[k]] as [string, string]).filter(([it, en]) => it && en && it !== en);
 }
 
 /** Spanish keys still missing: the size of the Spanish phase for the interface chrome. */
