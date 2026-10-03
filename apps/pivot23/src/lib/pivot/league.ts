@@ -1160,6 +1160,17 @@ export function advanceBracket(s: PlayerState, userWon: boolean) {
   }
 }
 
+/** Player score first, then the opponent. Same order as the result strip. */
+export function playoffLineScore(input: {
+  oneGame: boolean;
+  playerPoints: number;
+  opponentPoints: number;
+  opponent: string;
+}): string {
+  const kind = input.oneGame ? "partita" : "serie";
+  return `${input.playerPoints}-${input.opponentPoints} (noi–${input.opponent}, ${kind})`;
+}
+
 export function buildSeriesResult(
   s: PlayerState,
   round: number,
