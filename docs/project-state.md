@@ -262,3 +262,17 @@ Branch `grok/language` starts from `grok/p0-boot` `8cdc54a`. Pull request #17 is
 Award chips, the year sheet, the league boards and the Italian award lines now use one official English name. `All-League` and `Quintetto` are no longer substituted for All-NBA. The chrome dictionary has the same keys in Italian, English and Spanish, with no empty string. Spanish stays out of the language picker because the events are still Italian.
 
 Details are in [`language-qa.md`](language-qa.md). No formula or save version changed.
+
+---
+
+## 18. Playable path, 2026-10-03
+
+`main` at the start of this pass was `5d00647`. The work is on `grok/demo-visual-polish`.
+
+The retirement fixture used by the browser tests now lives in `apps/pivot23/e2e/fixtures/make-retire-save.ts`. It no longer depends on `/tmp/make-retire-save.ts`. The generated JSON is not committed.
+
+The first scripted card is titled `Rookie of the Year`. The closing commentary speaks to the player, and the award lines that still said "premio da matricola" or "difensore dell'anno" now use the official name. The choice effects are unchanged.
+
+Playwright, headless Chromium, Linux, 2 cores, viewport 390×844, local Vite `http://127.0.0.1:4179`. A new player named Carriera Intera was created from Inizia, drafted, and played by always taking the first available choice. After 61 steps the screen showed Carriera conclusa and the archive listed that name. This is not a phone, and it is not every choice a person might make.
+
+Spanish stays out of the picker. The story pools were not translated. No formula or save version changed. Al, Rebecca, John and James did not review this separately.

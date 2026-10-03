@@ -7,6 +7,7 @@ import { NBA_TEAMS } from "./teams";
 import { fingerprintOf, sha256 } from "./card";
 import { SAVE_VERSION } from "./config";
 import { EURO_TITLE_LINES, playoffSeriesFormat, SERIES_WIN_LINES, seriesWinProbability, simulateSeries } from "./league";
+import { careerCommentary } from "./legacy";
 import { clearLive, loadLive, SAVE_KEY, saveLive, buildLiveSave } from "./save";
 
 const demoCareer = {
@@ -683,10 +684,18 @@ test("a legacy metadata checksum cannot validate a rewritten career", () => {
 test("the simulator offers the same scripted seasons as the game", () => {
   const player = playCareerSim(demoCareer);
   const titleAt = (season: number) => player.choiceLog.find((c) => c.season === season)?.title ?? "";
-  assert.equal(titleAt(1), "La corsa alla matricola dell'anno");
+  assert.equal(titleAt(1), "Rookie of the Year");
   assert.match(titleAt(6), /^Lo scontro con /);
   assert.equal(titleAt(8), "Un infortunio serio");
   assert.equal(titleAt(10), "Convocazione internazionale");
+});
+
+test("the closing note speaks to the player", () => {
+  const player = freshPlayer("Voce Test", "SF", "Italia", 23, "pro", 1);
+  player.originPath = "Europa";
+  const line = careerCommentary(player);
+  assert.match(line, /Sei arrivato dall'Europa/);
+  assert.doesNotMatch(line, /È arrivato|Ha cominciato|difensore dell'anno/);
 });
 
 test("a trade follow-up keeps the scripted card of that season", () => {

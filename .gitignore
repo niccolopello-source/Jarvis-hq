@@ -1,4 +1,6 @@
 node_modules/
+apps/pivot23/e2e/fixtures/retire-save.json
+
 .pnpm-store/
 .env
 .env.*

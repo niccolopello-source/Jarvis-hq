@@ -133,16 +133,16 @@ export function careerCommentary(s: PlayerState): string {
 
   const first = rows[0];
   if (first && first.ppg < 9 && p.peak >= 86) {
-    bits.push("È partito da pochi minuti. Il picco è arrivato dopo, quando il ruolo ha smesso di essere un favore.");
+    bits.push("Sei partito da pochi minuti. Il picco è arrivato dopo, quando il ruolo ha smesso di essere un favore.");
   } else if (first && first.ppg >= 16 && p.peak < 78) {
-    bits.push("La matricola prometteva. Il resto della vita non ha confermato il rumore di ottobre.");
+    bits.push("Il tuo primo anno prometteva. Il resto della carriera non ha confermato il rumore di ottobre.");
   } else if (first && first.ppg >= 14 && p.peak >= 88) {
-    bits.push("Ha cominciato già visibile. Il resto è stato tenere quella luce accesa.");
+    bits.push("Hai cominciato già visibile. Il resto è stato tenere quella luce accesa.");
   }
 
   if (s.roy) bits.push("Il Rookie of the Year c'è stato. Poi bisognava diventare altro.");
-  if (p.dpoy >= 2) bits.push(`${p.dpoy} volte difensore dell'anno. Si nota chi toglie, e lui ha tolto abbastanza da restare nei libri.`);
-  else if (p.dpoy === 1) bits.push("Un DPOY. Il rispetto che non finisce in copertina, e per questo dura.");
+  if (p.dpoy >= 2) bits.push(`${p.dpoy} volte Defensive Player of the Year. Si nota chi toglie, e tu hai tolto abbastanza da restare nei libri.`);
+  else if (p.dpoy === 1) bits.push("Defensive Player of the Year, una volta. Il rispetto che non finisce in copertina, e per questo dura.");
   if (p.mvp >= 2) bits.push(`${p.mvp} MVP. Non è un premio che si eredita: si ripete, o si smentisce.`);
   else if (p.mvp === 1) bits.push("Un MVP. Una stagione in cui la lega ha detto il suo nome per primo.");
 
@@ -162,14 +162,14 @@ export function careerCommentary(s: PlayerState): string {
 
   const last = rows[rows.length - 1];
   if (last && last.playoff === "Campione" && s.age >= 33) {
-    bits.push("Ha chiuso con un anello da veterano. Il tipo di fine che si racconta senza alzare la voce.");
+    bits.push("Hai chiuso con un anello da veterano. Il tipo di fine che si racconta senza alzare la voce.");
   } else if (last && last.ppg < 8 && p.peak >= 84) {
-    bits.push("Gli ultimi minuti sono stati pochi. Il picco, però, resta negli occhi di chi c'era.");
+    bits.push("I tuoi ultimi minuti sono stati pochi. Il picco, però, resta negli occhi di chi c'era.");
   }
 
-  if (p.hof === "hall") bits.push("La Hall of Fame lo tiene. I numeri, e il contesto, bastano.");
-  else if (p.hof === "borderline") bits.push("La Hall lo discute, non lo chiude. Resta il dibattito, che è già una forma di rispetto.");
-  else if (p.peak >= 82) bits.push("Fuori dalla Hall. Un picco alto non è un passaporto, e lo sa.");
+  if (p.hof === "hall") bits.push("La Hall of Fame ti tiene. I numeri, e il contesto, bastano.");
+  else if (p.hof === "borderline") bits.push("La Hall ti discute, non ti chiude. Resta il dibattito, che è già una forma di rispetto.");
+  else if (p.peak >= 82) bits.push("Fuori dalla Hall. Un picco alto non è un passaporto, e lo sai.");
 
   if (s.rivalName && s.rivalry >= 50) {
     bits.push(`${s.rivalName} è restato nel discorso. Non sul referto di ogni sera: nella testa, dove le rivalità durano.`);
@@ -178,8 +178,8 @@ export function careerCommentary(s: PlayerState): string {
   const turning = s.choiceLog.find((c) => /trade|free agency|mercato/i.test(c.title));
   if (turning) bits.push(`Una svolta di mercato: ${turning.pick}. Da lì la vita ha preso un'altra strada.`);
 
-  if (s.originPath === "Europa") bits.push("È arrivato dall'Europa. Si sente ancora, nel modo in cui legge il campo.");
-  else if (s.originPath === "G-League") bits.push("Ha bruciato le tappe. Il grezzo, all'inizio, era il punto di forza e il rischio.");
+  if (s.originPath === "Europa") bits.push("Sei arrivato dall'Europa. Si sente ancora, nel modo in cui leggi il campo.");
+  else if (s.originPath === "G-League") bits.push("Hai bruciato le tappe. Il grezzo, all'inizio, era il punto di forza e il rischio.");
 
   if (!bits.length) {
     bits.push("Una carriera senza proclami. I giorni, fatti fino in fondo, e basta.");
