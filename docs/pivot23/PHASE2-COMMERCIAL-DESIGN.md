@@ -1,6 +1,8 @@
 # PIVOT 23 — Proposta commerciale, account e privacy
 
-Stato: proposta, 2026-10-02. Non è implementata. Non è su `main`. Non autorizza deploy, tracker, pagamenti o raccolta di dati reali.
+Stato: proposta, 2026-10-02. Non è implementata. Non è su `main` come funzione. Non autorizza deploy, tracker, pagamenti o raccolta di dati reali.
+
+Il 2026-10-03 il dettaglio è stato spezzato, senza cambiare questo disegno, in [MONETIZATION-STRATEGY.md](MONETIZATION-STRATEGY.md), [ACCOUNT-AND-SAVE-ARCHITECTURE.md](ACCOUNT-AND-SAVE-ARCHITECTURE.md), [ANALYTICS-EVENT-SPEC.md](ANALYTICS-EVENT-SPEC.md), [PRIVACY-DATA-INVENTORY.md](PRIVACY-DATA-INVENTORY.md), [MONETIZATION-TECHNICAL-ROADMAP.md](MONETIZATION-TECHNICAL-ROADMAP.md) e [MONETIZATION-DECISIONS.md](MONETIZATION-DECISIONS.md).
 
 Fonte di gioco verificata: `apps/pivot23`. Oggi il gioco è ospite, locale, con `FLAGS.account`, `tokens` e `nft` a `false`. Il checksum del salvataggio è un'impronta locale. Non è un controllo anti-cheat e non lo diventa in questa proposta.
 
