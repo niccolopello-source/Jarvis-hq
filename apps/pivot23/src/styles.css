@@ -1797,7 +1797,8 @@ img.court-mark-photo {
 .seg-track button {
   border: none;
   background: transparent;
-  color: var(--color-muted);
+  /* D-12: plain muted was 4.15:1 on the plank background. */
+  color: color-mix(in oklab, var(--color-chalk) 40%, var(--color-muted));
   border-radius: 12px;
   min-height: 44px;
   font-family: var(--font-display);
@@ -2383,4 +2384,17 @@ img.court-mark-photo {
   width: auto;
   padding: 6px 14px;
   min-height: 44px;
+}
+
+/* D-12: muted text on the team-tinted career header reached only 3.2:1. Mix toward chalk so it
+   stays legible whatever the club colour (light and dark themes). */
+.career-chrome .hud-meta,
+.career-chrome .hud-contract,
+.career-chrome .text-muted,
+.swipe-hint {
+  color: color-mix(in oklab, var(--color-chalk) 72%, var(--color-muted));
+}
+.swipe-slide:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
 }
