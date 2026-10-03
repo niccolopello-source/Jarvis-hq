@@ -589,7 +589,9 @@ test("archive writes fall back from localStorage to sessionStorage", () => {
     const entry = toArchive(playCareerSim(demoCareer));
     saveArchive(entry);
 
-    assert.equal(isArchivePersisted(entry.id), true);
+    // The session copy keeps the archive readable in this tab, but it does not outlive the tab.
+    // It must not count as persisted, or a caller could delete the live save on its strength.
+    assert.equal(isArchivePersisted(entry.id), false);
     assert.ok(storage.session.getItem(ARCHIVE_KEY));
     assert.equal(loadArchive()[0]?.id, entry.id);
   } finally {

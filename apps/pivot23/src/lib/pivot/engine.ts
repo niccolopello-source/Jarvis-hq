@@ -3070,12 +3070,24 @@ export function loadArchive(): ArchiveCareer[] {
   if (!readable) return [...archiveMemory];
   const unique = new Map<string, ArchiveCareer>();
   for (const entry of [...archiveMemory, ...stored.flat()]) if (!unique.has(entry.id)) unique.set(entry.id, entry);
-  archiveMemory = [...unique.values()].sort((a, b) => b.savedAt - a.savedAt).slice(0, 8);
+  archiveMemory = [...unique.values()].sort((a, b) => b.savedAt - a.savedAt).slice(0, ARCHIVE_LIMIT);
   return [...archiveMemory];
 }
 
+/** Number of finished careers the archive keeps on this device. */
+export const ARCHIVE_LIMIT = 8;
+
+let archiveEvicted: ArchiveCareer[] = [];
+
+/** Careers pushed out of the archive by the last saveArchive() call, newest limit first. */
+export function lastArchiveEvicted(): ArchiveCareer[] {
+  return [...archiveEvicted];
+}
+
 export function saveArchive(entry: ArchiveCareer) {
-  const all = [entry, ...loadArchive().filter((c) => c.id !== entry.id)].slice(0, 8);
+  const previous = loadArchive().filter((c) => c.id !== entry.id);
+  const all = [entry, ...previous].slice(0, ARCHIVE_LIMIT);
+  archiveEvicted = previous.slice(ARCHIVE_LIMIT - 1);
   archiveMemory = all;
   const serialized = JSON.stringify(all);
   for (const store of archiveStores()) {
@@ -3088,9 +3100,23 @@ export function saveArchive(entry: ArchiveCareer) {
   return all;
 }
 
-/** True only when a completed career reached browser storage, not just session memory. */
+function persistentArchiveStores(): Storage[] {
+  try {
+    const local = globalThis.localStorage;
+    // With localStorage available, only localStorage outlives the tab.
+    if (local) return [local];
+  } catch {
+    // Privacy modes can throw here: fall back to whatever store exists.
+  }
+  return archiveStores();
+}
+
+/**
+ * True only when a completed career reached browser storage that outlives the tab
+ * (localStorage when it exists), not just session memory.
+ */
 export function isArchivePersisted(id: string) {
-  return archiveStores().some((store) => {
+  return persistentArchiveStores().some((store) => {
     try {
       const raw = store.getItem(ARCHIVE_KEY);
       if (!raw) return false;
@@ -3102,6 +3128,17 @@ export function isArchivePersisted(id: string) {
       return false;
     }
   });
+}
+
+/**
+ * Is this career finished (an archive entry exists, even only in memory) and is that entry in
+ * persistent storage? Used before any live save is deleted.
+ */
+export function archiveStateOf(careerId: string | undefined | null): { finished: boolean; archived: boolean } {
+  if (!careerId) return { finished: false, archived: false };
+  const entry = loadArchive().find((c) => c.careerId === careerId);
+  if (!entry) return { finished: false, archived: false };
+  return { finished: true, archived: isArchivePersisted(entry.id) };
 }
 
 export interface SimOpts {
