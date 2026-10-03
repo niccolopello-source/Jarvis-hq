@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { acceptForcedPreseasonTrade, acceptForcedSummerTrade, acceptTrade, allDraftRounds, applyAutoOffseason, applyDraftCard, applyFx, ARCHIVE_KEY, buildTradeOffer, careerEndAge, eventAfterMarket, finishDraft, freshPlayer, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, offseasonStep, openCareerSim, playCareerSim, recordRetirementChoice, revealDraftLanding, saveArchive, shouldOfferExtraYear, simulateFullCareer, simulateRegularSeason, startProPath, storyEventById, toArchive, withPlayer } from "./engine";
+import { acceptForcedPreseasonTrade, acceptForcedSummerTrade, acceptTrade, allDraftRounds, applyAutoOffseason, applyDraftCard, applyFx, ARCHIVE_KEY, buildTradeOffer, careerEndAge, eventAfterMarket, finishDraft, freshPlayer, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, offseasonStep, openCareerSim, playCareerSim, recordRetirementChoice, revealDraftLanding, saveArchive, scriptedSeasonSlot, shouldOfferExtraYear, simulateFullCareer, simulateRegularSeason, startProPath, storyEventById, toArchive, withPlayer } from "./engine";
 import { COACH_NAMES, RIVAL_NAMES } from "./data";
 import { pick, rand } from "./rng";
 import { NBA_TEAMS } from "./teams";
@@ -661,10 +661,13 @@ test("a legacy metadata checksum cannot validate a rewritten career", () => {
 test("the simulator offers the same scripted seasons as the game", () => {
   const player = playCareerSim(demoCareer);
   const titleAt = (season: number) => player.choiceLog.find((c) => c.season === season)?.title ?? "";
+  // D-11: the seasons depend on the career seed; the simulator must follow the game's calendar.
+  const at = (slot: string) => Array.from({ length: 20 }, (_, i) => i + 1).find((n) => scriptedSeasonSlot(player, n) === slot)!;
+  assert.equal(at("rookie"), 1);
   assert.equal(titleAt(1), "Rookie of the Year");
-  assert.match(titleAt(6), /^Lo scontro con /);
-  assert.equal(titleAt(8), "Un infortunio serio");
-  assert.equal(titleAt(10), "Convocazione internazionale");
+  assert.match(titleAt(at("rival")), /^Lo scontro con /);
+  assert.equal(titleAt(at("injury")), "Un infortunio serio");
+  assert.equal(titleAt(at("nation")), "Convocazione internazionale");
 });
 
 test("the closing note speaks to the player", () => {
@@ -677,13 +680,27 @@ test("the closing note speaks to the player", () => {
 
 test("a trade follow-up keeps the scripted card of that season", () => {
   const job = openCareerSim({ ...demoCareer, seed: 3017, role: "SF", path: "G-League" });
-  job.s.season = 8;
+  const injurySeason = Array.from({ length: 20 }, (_, i) => i + 1).find((n) => scriptedSeasonSlot(job.s, n) === "injury")!;
+  const plainSeason = Array.from({ length: 20 }, (_, i) => i + 2).find((n) => scriptedSeasonSlot(job.s, n) === null)!;
+  job.s.season = injurySeason;
   const followed = withPlayer(job.s, () => eventAfterMarket(job.s));
   assert.equal(followed.script, "injury");
   assert.equal(followed.event.title, "Un infortunio serio");
-  job.s.season = 5;
+  job.s.season = plainSeason;
   const pool = withPlayer(job.s, () => eventAfterMarket(job.s));
   assert.equal(pool.script === "injury" || pool.script === "rival" || pool.script === "nation", false);
+});
+
+test("a save from before 2.12 keeps the 1/6/8/10 story calendar (D-11)", () => {
+  const job = openCareerSim({ ...demoCareer, seed: 3017, role: "SF", path: "G-League" });
+  job.s.engineVersion = "2.11.0-beta";
+  const slots = Array.from({ length: 20 }, (_, i) => i + 1).map((n) => scriptedSeasonSlot(job.s, n));
+  assert.deepEqual(
+    slots.map((x, i) => (x ? `${i + 1}:${x}` : null)).filter(Boolean),
+    ["1:rookie", "6:rival", "8:injury", "10:nation"],
+  );
+  job.s.season = 8;
+  assert.equal(withPlayer(job.s, () => eventAfterMarket(job.s)).script, "injury");
 });
 
 test("season 12 does not open with a preseason trade", () => {

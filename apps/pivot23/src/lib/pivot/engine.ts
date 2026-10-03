@@ -1,5 +1,5 @@
 
-import { scriptSlotFor, seedHash, TUNING } from "./tuning";
+import { scriptSlotFor, scriptWindowsOf, seedHash, TUNING } from "./tuning";
 import {
   ATTR_LABELS,
   COACH_NAMES,
@@ -1406,7 +1406,7 @@ export function eventAfterMarket(s: PlayerState): { event: StoryEvent; script: S
   const scripted = scriptedSeasonEvent(s, s.season);
   if (scripted) {
     if (!s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
-    const script: SavedStoryScript = scriptSlotFor(s.seed, s.season) ?? "pool";
+    const script: SavedStoryScript = scriptSlotFor(s.seed, s.season, scriptWindowsOf(s)) ?? "pool";
     return { event: scripted, script };
   }
   const event = pickStoryEvent(s, s.season);
@@ -1420,11 +1420,11 @@ export function eventAfterMarket(s: PlayerState): { event: StoryEvent; script: S
 
 /** Scripted story slot for season n ("rookie" | "rival" | "injury" | "nation") or null. */
 export function scriptedSeasonSlot(s: PlayerState, n: number): SavedStoryScript | null {
-  return scriptSlotFor(s.seed, n);
+  return scriptSlotFor(s.seed, n, scriptWindowsOf(s));
 }
 
 export function scriptedSeasonEvent(s: PlayerState, n: number): StoryEvent | null {
-  const slot = scriptSlotFor(s.seed, n);
+  const slot = scriptSlotFor(s.seed, n, scriptWindowsOf(s));
   if (slot === "rookie") return rookieStory();
   if (slot === "rival") return rivalStory(s);
   if (slot === "injury") return injuryStory(s);
@@ -1858,7 +1858,8 @@ export function pickPlayoffOpponent(s: PlayerState, _round: number): Team {
 
 export function beginPlayoffs(s: PlayerState) {
   if (!s.currentLeague) return null;
-  return initPlayoffs(s, s.currentLeague);
+  // The bracket draws from the RNG: keep it on the career seed even outside a caller's withPlayer.
+  return withPlayer(s, () => initPlayoffs(s, s.currentLeague!));
 }
 
 export function playoffWinChance(s: PlayerState, round: number, choiceBonus: number) {
@@ -2906,8 +2907,48 @@ function archiveId(timestamp: number) {
 }
 
 export const ARCHIVE_KEY = "pivot-v2-archive";
+/**
+ * Raw copies of archive contents this build could not fully read (unparseable JSON, or entries it
+ * drops such as a newer version), taken before saveArchive() writes over them. Newest last, capped.
+ */
+export const ARCHIVE_BACKUP_KEY = "pivot-v2-archive-backup";
+const ARCHIVE_BACKUP_KEEP = 3;
 export const SAVE_KEY = "pivot-v2-save";
 let archiveMemory: ArchiveCareer[] = [];
+
+/** Test hook: forget the in-memory archive copy kept for storage-less sessions. */
+export function resetArchiveMemory() {
+  archiveMemory = [];
+}
+
+/** True when `raw` holds something loadArchive() would not carry forward on the next write. */
+function archiveLosesData(raw: string): boolean {
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return true;
+    return parsed.some((entry) => normalizeArchiveEntry(entry) === null);
+  } catch {
+    return true;
+  }
+}
+
+/** Keeps `raw` under ARCHIVE_BACKUP_KEY in `store` before it is overwritten. Best effort. */
+function backupArchiveRaw(store: Storage, raw: string) {
+  try {
+    let raws: string[] = [];
+    try {
+      const prev = JSON.parse(store.getItem(ARCHIVE_BACKUP_KEY) ?? "null") as { raws?: unknown } | null;
+      if (prev && Array.isArray(prev.raws)) raws = prev.raws.filter((r): r is string => typeof r === "string");
+    } catch {
+      /* unreadable backup: start a new one */
+    }
+    if (raws.includes(raw)) return;
+    raws = [...raws, raw].slice(-ARCHIVE_BACKUP_KEEP);
+    store.setItem(ARCHIVE_BACKUP_KEY, JSON.stringify({ v: 1, at: Date.now(), raws }));
+  } catch {
+    /* full or blocked storage: the write below is attempted anyway, as before */
+  }
+}
 
 function archiveStores(): Storage[] {
   const found: Storage[] = [];
@@ -3032,6 +3073,12 @@ export function saveArchive(entry: ArchiveCareer) {
   archiveMemory = all;
   const serialized = JSON.stringify(all);
   for (const store of archiveStores()) {
+    try {
+      const prior = store.getItem(ARCHIVE_KEY);
+      if (prior !== null && prior !== serialized && archiveLosesData(prior)) backupArchiveRaw(store, prior);
+    } catch {
+      /* unreadable store: nothing to keep */
+    }
     try {
       store.setItem(ARCHIVE_KEY, serialized);
     } catch {

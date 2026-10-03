@@ -1,14 +1,16 @@
 # Facts
 
-Updated: 2026-10-01. The 28 September deployment claims below are history, not the current tip.
+Updated: 2026-10-03 (evening). The sections below the first one are history unless they say otherwise.
 
-## 2026-10-03 — PIVOT 23 demo-stability (branch `grokbot/demo-stability`)
+## 2026-10-03 evening — current tip (verified by Grok Bot, master cycle 1)
 
-- Pull request #26 (first five commits of the branch, up to `735ddb1`) was merged into `main` by the owner on 2026-10-03 14:48 UTC as `ae67ac6`, and Vercel deployed it to production (`pivot23`, deployment `dpl_5B4mQJi2dMm1offXLi1f4h3UTBxn`, READY). https://www.pivot23.com answered 200 afterwards.
-- Later commits on the same branch (from `499c43a`) are **not** on `main`: i18n/a11y, security headers, CI, archive warning, docs. They need a new pull request.
-- Every push also builds a second Vercel project, `jarvis-hq` (see `pivot23/SECURITY-HEADERS.md`, D-21).
-- The CI workflow on the branch runs e2e against `vite preview` with the production headers (it no longer starts `pnpm dev`), and the two statistical engine tests run in a parallel job.
-- Save format and backup key: `pivot23/SAVE-FORMAT-AND-MIGRATIONS.md`. Balance measurements: `pivot23-balance-experiments.md`.
+- `main` = `1099511` (merge of PR #28, intro animation). PRs #26, #27 and #28 are all merged into `main` by the account `niccolopello-source`. The 2026-10-03 afternoon note «later commits are not on main» is no longer true.
+- GitHub Actions on `main` `1099511`: run 37136916431, success.
+- Production `https://pivot23.vercel.app` serves `assets/index-DJ5dytNN.js` and `assets/index-DtcPs_gF.css`, byte-identical names to a local `vite build` of `1099511`, and answers with the CSP and the other `vercel.json` headers. So the Vercel project uses `apps/pivot23` as root directory (inferred from the headers; the setting itself was not read).
+- Engine label `2.11.0-beta`, player schema `SAVE_VERSION` 11, live save `LIVE_SAVE_VERSION` 2, no live-save migrations registered.
+- Home premiere `cineReveal` on `main`: 4.8 s (styles.css). Branch `grokbot/demo-hardening` sets 6.3 s on owner request (+1.5 s). Lean (≤2 cores) and returning visits: 1.6 s. Reduced motion: none.
+- All gameplay randomness goes through the seeded Mulberry32 in `rng.ts`. Non-seeded sources: `newSeed()` (Date.now ^ Math.random, only to create a career seed), `crypto.randomUUID` (careerId and archive ids), Date.now (timestamps), performance.now (UI pacing). See `docs/project-state.md` §23.
+- Save format, backup keys and checksum scope: `pivot23/SAVE-FORMAT-AND-MIGRATIONS.md`. Security headers: `pivot23/SECURITY-HEADERS.md` (D-21: every push also builds the `jarvis-hq` Vercel project). Balance measurements: `pivot23-balance-experiments.md`.
 
 ## Repository
 

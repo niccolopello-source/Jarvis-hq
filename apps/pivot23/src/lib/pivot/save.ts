@@ -878,6 +878,46 @@ export function clearLive(): boolean {
   return true;
 }
 
+/**
+ * Copy of a live save that made the app crash while rendering, put aside by the player from the
+ * error screen. Separate from BACKUP_KEY so it never overwrites an older backup.
+ */
+export const CRASH_BACKUP_KEY = "pivot-v2-save-crashed";
+
+/**
+ * Error-screen escape hatch. A save can pass the checksum and the shape checks and still break the
+ * interface (for example after a deploy changed what the screens expect): without this, "Ricarica"
+ * reopens the same career and crashes again. Each store's raw save is first copied, byte for byte,
+ * under CRASH_BACKUP_KEY in that same store; the live save is removed only if every copy was
+ * verified. Returns true when the home will open clean on reload.
+ */
+export function setAsideLive(): boolean {
+  let held = false;
+  for (const s of stores()) {
+    if (!s) continue;
+    let raw: string | null;
+    try {
+      raw = s.getItem(SAVE_KEY);
+    } catch {
+      return false;
+    }
+    if (!raw) continue;
+    held = true;
+    const value = JSON.stringify({ v: 1, reason: "crashed", at: Date.now(), raw });
+    try {
+      s.setItem(CRASH_BACKUP_KEY, value);
+      if (s.getItem(CRASH_BACKUP_KEY) !== value) return false;
+    } catch {
+      return false;
+    }
+  }
+  if (!held) {
+    MEM = null;
+    return true;
+  }
+  return clearLive();
+}
+
 /** True when a readable live save exists in a store or in memory. */
 export function hasLiveSave(): boolean {
   return loadLive() !== null;

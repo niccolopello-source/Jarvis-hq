@@ -1096,7 +1096,8 @@ body,
 }
 .court-mark-live.is-premiere {
   transform-origin: 50% 42%;
-  animation: cineReveal 4.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* Home premiere length. 4.8s until 2026-10-03, +1.5s on owner request (6.3s). Lean and returning visits: 1.6s. */
+  animation: cineReveal 6.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .court-mark-live.is-premiere .mark-gleam {
   color: #a31d2e;
