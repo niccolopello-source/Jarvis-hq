@@ -43,6 +43,10 @@ The house priority used while building the beta, and not withdrawn: coherence, t
 | P-005 | 2026-09-28 | Real NBA franchise names in a public build are a trademark risk. Replace them before a launch that presents the game as a product, unless the owner gets legal advice to keep them. | The owner has not accepted a rename. The names are in production today. |
 | P-006 | 2026-09-28 | No rarity, NFT or sold career card until a server replays the seed and the choice list and signs the result. The phone can rewrite a local save. | Not an owner request. Do not build it. |
 | P-007 | 2026-09-28 | Do not sell overall, difficulty or extra choices. A frame around an already verified career can be paid later. The career stays free. | Not an owner request. |
+| P-008 | 2026-10-03 | Scripted seasons (rival/injury/national team) move per career seed instead of always 6/8/10 (`scriptWindows=seeded`), gated on a new engine version. | Measured, behind a default-off flag. Owner decision. |
+| P-009 | 2026-10-03 | Break long DPOY streaks (`dpoyFatigue=streak`: max streak 9 → 5, totals unchanged). | Measured, default-off. Owner decision. |
+| P-010 | 2026-10-03 | Security headers and CSP in `apps/pivot23/vercel.json`. Every future third-party script (ads, analytics, Totem) must extend the CSP in its own PR. | On the branch, not merged. Requires checking the Vercel root directory. |
+| P-011 | 2026-10-03 | English demo = English interface, Italian story text, stated on the home. Full narrative translation is a separate project (~2,970 strings). | Owner decision on scope. |
 
 ## Superseded documents
 

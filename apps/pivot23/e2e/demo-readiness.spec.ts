@@ -4,6 +4,9 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+/** App entry script: /src/main.tsx on the dev server, /assets/index-<hash>.js on a production build. */
+const APP_ENTRY = /\/src\/main\.tsx(\?.*)?$|\/assets\/index-[\w-]+\.js$/;
+
 const here = dirname(fileURLToPath(import.meta.url));
 const savePath = join(here, "fixtures", "retire-save.json");
 
@@ -20,12 +23,14 @@ test("the boot page is a static fallback and the home mark can sweep", async ({ 
   expect(html).toContain("--color-granata");
   expect(html).toContain("M22.2 22.4");
   expect(html).toContain("bootArc");
-  expect(html).toContain("prefers-reduced-motion: reduce");
+  expect(html).toMatch(/prefers-reduced-motion:\s?reduce/); // minified in production builds
 
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "PIVOT" })).toBeVisible();
   const sweep = page.locator(".court-mark-live.is-sweep .mark-arcs");
-  await expect(sweep).toBeVisible();
+  // The home premiere (cineReveal) lasts 4.8 s before the sweep mark takes over; the default
+  // 5 s budget left 0.2 s and flaked on loaded CI runners.
+  await expect(sweep).toBeVisible({ timeout: 12_000 });
   const motion = await sweep.evaluate((el) => {
     const lean = document.documentElement.classList.contains("pivot-lean");
     document.documentElement.classList.remove("pivot-lean");
@@ -47,7 +52,7 @@ test("the boot mark lights the real logo once and stays still when motion is red
   test.setTimeout(60_000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.route("**/src/main.tsx", async (route) => {
+  await page.route(APP_ENTRY, async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     await route.continue();
   });
@@ -122,7 +127,7 @@ test("the home premiere can be skipped and does not block the start button", asy
 });
 
 test("a failed boot script still shows the logo and the reload link", async ({ page }) => {
-  await page.route("**/src/main.tsx", (route) => route.abort());
+  await page.route(APP_ENTRY, (route) => route.abort());
   await page.goto("/", { waitUntil: "commit" });
   await expect(page.locator("#boot")).toBeVisible();
   await expect(page.locator(".boot-ring")).toContainText("23");
