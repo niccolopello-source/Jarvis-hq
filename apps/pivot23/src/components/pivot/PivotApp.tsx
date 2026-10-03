@@ -327,8 +327,7 @@ export function PivotApp() {
 
   useEffect(() => {
     const lean =
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      (typeof navigator !== "undefined" && navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4);
+      typeof navigator !== "undefined" && navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 2;
     document.documentElement.classList.toggle("pivot-lean", lean);
   }, []);
 
@@ -982,6 +981,7 @@ export function PivotApp() {
               {t("archive", lang)} · {archive.length}
             </button>
           )}
+          <p className="totem-credit totem-home">Powered by Totem</p>
         </section>
       )}
 
@@ -1103,7 +1103,9 @@ export function PivotApp() {
       <MiniGuide open={guideOpen} onClose={() => setGuideOpen(false)} />
       </div>
       <aside className="ad-rail" aria-hidden="true"><span>Riservato</span></aside>
-      <div className="ad-foot" aria-hidden="true" />
+      <div className="ad-foot">
+        <p className="totem-credit">Powered by Totem</p>
+      </div>
     </div>
   );
 }
