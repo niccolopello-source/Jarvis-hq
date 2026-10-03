@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { BOUNCE_1, BOUNCE_2, makeBus, makeMaster, playCue } from "./synth";
+import { BOUNCE_1, BOUNCE_2, BOUNCE_3, makeBus, makeMaster, playCue } from "./synth";
 
 /** Minimal Web Audio stand-in: records every param automation and source start/stop. */
 type Event = { node: string; param: string; method: string; value: number; time: number };
@@ -56,7 +56,7 @@ function fakeContext(sampleRate = 48000) {
   return { ctx: ctx as unknown as BaseAudioContext, events, sources };
 }
 
-function render(cues: { name: "bounce1" | "bounce2" | "swish"; at: number }[]) {
+function render(cues: { name: "bounce1" | "bounce2" | "bounce3" | "swish"; at: number }[]) {
   const fake = fakeContext();
   const master = makeMaster(fake.ctx);
   const bus = makeBus(fake.ctx, master.input);
@@ -67,38 +67,45 @@ function render(cues: { name: "bounce1" | "bounce2" | "swish"; at: number }[]) {
 
 test("every source of every cue starts at or after its cue time and stops by the returned tail end", () => {
   const cues = [
-    { name: "bounce1" as const, at: 0.7 },
-    { name: "bounce2" as const, at: 1.26 },
-    { name: "swish" as const, at: 2.4 },
+    { name: "bounce1" as const, at: 1.15 },
+    { name: "bounce2" as const, at: 2.05 },
+    { name: "bounce3" as const, at: 2.8 },
+    { name: "swish" as const, at: 4.85 },
   ];
   const { sources, ends, tracked } = render(cues);
   assert.equal(tracked.length, sources.length, "every source is handed to the tracker, so stop() can reach it");
   const lastEnd = Math.max(...ends);
   for (const s of sources) {
     assert.ok(Number.isFinite(s.start) && Number.isFinite(s.stop), `${s.kind} start/stop scheduled`);
-    assert.ok(s.start >= 0.7 - 1e-9 && s.stop > s.start && s.stop <= lastEnd + 1e-9);
+    assert.ok(s.start >= 1.15 - 1e-9 && s.stop > s.start && s.stop <= lastEnd + 1e-9);
   }
-  assert.ok(ends[2]! - 2.4 < 0.7, "swish tail under 0.7 s");
-  assert.ok(ends[0]! - 0.7 < 0.4, "bounce tail under 0.4 s");
+  assert.ok(ends[3]! - 4.85 < 0.9, "swish tail under 0.9 s");
+  assert.ok(ends[0]! - 1.15 < 0.4, "bounce tail under 0.4 s");
+  assert.ok(ends[2]! - 2.8 < ends[1]! - 2.05, "the gather's tail is shorter than the second dribble's");
 });
 
 test("automation values are finite and no ramp targets zero (which would throw in browsers)", () => {
   const { events } = render([
-    { name: "bounce1", at: 0.7 },
-    { name: "bounce2", at: 1.26 },
-    { name: "swish", at: 2.4 },
+    { name: "bounce1", at: 1.15 },
+    { name: "bounce2", at: 2.05 },
+    { name: "bounce3", at: 2.8 },
+    { name: "swish", at: 4.85 },
   ]);
   assert.ok(events.length > 30);
   for (const e of events) assert.ok(Number.isFinite(e.value) && Number.isFinite(e.time), JSON.stringify(e));
 });
 
-test("the second dribble differs from the first: softer, higher, shorter", () => {
+test("the dribbles are not clones: the second is lighter, the gather is heavier and shorter", () => {
   assert.ok(BOUNCE_2.gain < BOUNCE_1.gain);
   assert.ok(BOUNCE_2.pitch > BOUNCE_1.pitch);
-  assert.ok(BOUNCE_2.decay < BOUNCE_1.decay);
+  assert.ok(BOUNCE_3.gain > BOUNCE_1.gain);
+  assert.ok(BOUNCE_3.pitch < BOUNCE_1.pitch);
+  assert.ok(BOUNCE_3.decay < BOUNCE_2.decay);
   const a = render([{ name: "bounce1", at: 0 }]);
   const b = render([{ name: "bounce2", at: 0 }]);
+  const c = render([{ name: "bounce3", at: 0 }]);
   assert.ok(b.ends[0]! < a.ends[0]!);
+  assert.ok(c.ends[0]! < b.ends[0]!);
 });
 
 test("the swish is noise only (no tonal rim ping): its only oscillator is the sub-audio net flutter", () => {

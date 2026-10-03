@@ -1096,8 +1096,15 @@ body,
 }
 .court-mark-live.is-premiere {
   transform-origin: 50% 42%;
-  /* Home premiere length. 4.8s until 2026-10-03, +1.5s on owner request (6.3s). Lean and returning visits: 1.6s. */
-  animation: cineReveal 6.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* First-visit premiere. Was 6.3s (2026-10-03). 9.2s on 2026-10-04 so the dribble,
+     the shot and the swish can play out together, then the mark holds. Lean and
+     returning visits stay at 1.6s. */
+  --cine: 9.2s;
+  --beat-b1: 1.15s;
+  --beat-b2: 2.05s;
+  --beat-b3: 2.8s;
+  --beat-swish: 4.85s;
+  animation: cineReveal var(--cine) linear both;
 }
 .court-mark-live.is-premiere .mark-gleam {
   color: #a31d2e;
@@ -1106,24 +1113,139 @@ body,
   stroke-dasharray: 12 78;
   stroke-dashoffset: 16;
   opacity: 0;
-  animation: cineArc 2.4s cubic-bezier(0.16, 1, 0.3, 1) 0.7s 1 both;
+  /* The arc flare IS the ciuffo: it starts on the swish beat, not during the dribble. */
+  animation: cineArc 1.85s cubic-bezier(0.16, 1, 0.3, 1) var(--beat-swish) 1 both;
 }
 @keyframes cineReveal {
-  0% { opacity: 0; transform: scale(1.16); }
-  20% { opacity: 1; transform: scale(1.16); }
-  100% { opacity: 1; transform: scale(1); }
+  0% { opacity: 0; transform: scale(0.92) translateY(10px); }
+  3% { opacity: 0.7; transform: scale(0.985) translateY(3px); }
+  8% { opacity: 1; transform: scale(1) translateY(0); }
+  50% { opacity: 1; transform: scale(1) translateY(0); }
+  56% { opacity: 1; transform: scale(1.04) translateY(0); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 @keyframes cineArc {
   0% { opacity: 0; stroke-dashoffset: 16; }
-  16% { opacity: 0.95; }
+  12% { opacity: 1; }
   100% { opacity: 0; stroke-dashoffset: -68; }
 }
+/* Ball, floor shadow and net. Times are percentages of --cine so they land on the
+   same beats the synth reads from --beat-b1/b2/b3/swish. Timing is linear on purpose:
+   an easing function would move the picture off the sound. */
+.court-mark-live.is-premiere .cine-ball-body {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cineBall var(--cine) linear both;
+}
+.court-mark-live.is-premiere .cine-ball-body circle {
+  fill: #e07a2f;
+  stroke: #6c1320;
+  stroke-width: 0.7;
+}
+.court-mark-live.is-premiere .cine-ball-body path {
+  fill: none;
+  stroke: #3a2014;
+  stroke-width: 0.65;
+  stroke-linecap: round;
+}
+.court-mark-live.is-premiere .cine-shadow {
+  fill: currentColor;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cineShadow var(--cine) linear both;
+}
+.court-mark-live.is-premiere .cine-net {
+  color: var(--color-wood);
+}
+.court-mark-live.is-premiere .cine-net path {
+  stroke-dasharray: 16;
+  stroke-dashoffset: 8;
+  opacity: 0;
+  animation: cineNet var(--cine) linear both;
+}
+.court-mark-live.is-premiere .cine-net path:nth-child(2) { animation-name: cineNetB; }
+.court-mark-live.is-premiere .cine-net path:nth-child(3) { animation-name: cineNetC; }
+.court-mark-live.is-premiere .court-mark-num {
+  animation: cineNum var(--cine) linear both;
+}
+@keyframes cineBall {
+  /* translate() is in SVG user units (Chromium maps 1px to 1 viewBox unit before the viewport scale). */
+  0% { opacity: 0; transform: translate(36px, -10px) scale(0.86) rotate(-30deg); }
+  5% { opacity: 1; transform: translate(36px, 18px) scale(1) rotate(-18deg); }
+  12.5% { opacity: 1; transform: translate(36px, 68px) scale(1.22, 0.64) rotate(-6deg); }
+  13.4% { transform: translate(36px, 58px) scale(0.94, 1.12) rotate(4deg); }
+  17.4% { transform: translate(36px, 40px) scale(1) rotate(18deg); }
+  22.28% { transform: translate(36px, 70px) scale(1.14, 0.72) rotate(8deg); }
+  23.2% { transform: translate(36px, 60px) scale(0.96, 1.08) rotate(16deg); }
+  26.3% { transform: translate(37px, 50px) scale(1) rotate(28deg); }
+  30.43% { transform: translate(38px, 72px) scale(1.18, 0.68) rotate(12deg); }
+  31.3% { transform: translate(39px, 60px) scale(0.98, 1.06) rotate(24deg); }
+  36% { transform: translate(44px, 22px) scale(0.96, 1.05) rotate(80deg); }
+  42.4% { transform: translate(48px, 6px) scale(0.9) rotate(140deg); }
+  52.72% { opacity: 1; transform: translate(40px, 40px) scale(0.78) rotate(210deg); }
+  58% { opacity: 0.9; transform: translate(40px, 62px) scale(0.74) rotate(240deg); }
+  63.5% { opacity: 0; transform: translate(40px, 78px) scale(0.7) rotate(260deg); }
+  100% { opacity: 0; transform: translate(40px, 78px) scale(0.7) rotate(260deg); }
+}
+@keyframes cineShadow {
+  0%, 4% { opacity: 0; transform: scaleX(0.45); }
+  12.5% { opacity: 0.32; transform: scaleX(1.2); }
+  17.4% { opacity: 0.06; transform: scaleX(0.5); }
+  22.28% { opacity: 0.26; transform: scaleX(1.05); }
+  26.3% { opacity: 0.06; transform: scaleX(0.55); }
+  30.43% { opacity: 0.34; transform: scaleX(1.25); }
+  36% { opacity: 0; transform: scaleX(0.4); }
+  100% { opacity: 0; }
+}
+@keyframes cineNet {
+  0%, 49% { opacity: 0; stroke-dashoffset: 8; }
+  52.72% { opacity: 0.15; stroke-dashoffset: 4; }
+  56% { opacity: 0.9; stroke-dashoffset: -2; }
+  62% { opacity: 0; stroke-dashoffset: -14; }
+  100% { opacity: 0; }
+}
+@keyframes cineNetB {
+  0%, 50% { opacity: 0; stroke-dashoffset: 8; }
+  53.6% { opacity: 0.2; stroke-dashoffset: 3; }
+  58% { opacity: 1; stroke-dashoffset: -6; }
+  65% { opacity: 0; stroke-dashoffset: -16; }
+  100% { opacity: 0; }
+}
+@keyframes cineNetC {
+  0%, 51% { opacity: 0; stroke-dashoffset: 8; }
+  55% { opacity: 0.2; stroke-dashoffset: 2; }
+  60% { opacity: 0.75; stroke-dashoffset: -8; }
+  67% { opacity: 0; stroke-dashoffset: -16; }
+  100% { opacity: 0; }
+}
+@keyframes cineNum {
+  0%, 8% { opacity: 1; }
+  12%, 50% { opacity: 0.28; }
+  66%, 100% { opacity: 1; }
+}
 html.pivot-lean .court-mark-live.is-premiere {
+  --cine: 1.6s;
+  --beat-b1: -1s;
+  --beat-b2: -1s;
+  --beat-b3: -1s;
+  --beat-swish: 0.61s;
   animation-duration: 1.6s;
 }
 html.pivot-lean .court-mark-live.is-premiere .mark-gleam path {
   animation-duration: 1s;
   animation-delay: 0.15s;
+}
+html.pivot-lean .court-mark-live.is-premiere .cine-ball-body,
+html.pivot-lean .court-mark-live.is-premiere .cine-shadow,
+html.pivot-lean .court-mark-live.is-premiere .cine-net path,
+html.pivot-lean .court-mark-live.is-premiere .court-mark-num {
+  animation: none;
+  opacity: 0;
+}
+html.pivot-lean .court-mark-live.is-premiere .court-mark-num {
+  opacity: 1;
 }
 .home-screen { position: relative; }
 .cine-skip {
@@ -1142,13 +1264,24 @@ html.pivot-lean .court-mark-live.is-premiere .mark-gleam path {
 }
 @media (prefers-color-scheme: dark) {
   .court-mark-live.is-premiere .mark-gleam { color: #f6ecee; }
+  .court-mark-live.is-premiere .cine-ball-body circle { fill: #f09445; stroke: #f6ecee; }
+  .court-mark-live.is-premiere .cine-ball-body path { stroke: #2a120c; }
 }
 @media (prefers-reduced-motion: reduce) {
   .court-mark-live.is-premiere,
-  .court-mark-live.is-premiere .mark-gleam path {
+  .court-mark-live.is-premiere .mark-gleam path,
+  .court-mark-live.is-premiere .cine-ball-body,
+  .court-mark-live.is-premiere .cine-shadow,
+  .court-mark-live.is-premiere .cine-net path,
+  .court-mark-live.is-premiere .court-mark-num {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+  .court-mark-live.is-premiere .cine-ball-body,
+  .court-mark-live.is-premiere .cine-shadow,
+  .court-mark-live.is-premiere .cine-net path {
+    opacity: 0;
   }
 }
 .court-mark-live .mark-arcs {

@@ -1,48 +1,75 @@
 /**
- * Intro sound timeline: two dribbles and a net swish, synced to the home premiere (src/styles.css).
+ * Intro sound timeline: three dribbles and a net swish, synced to the home premiere.
  *
- * All times are milliseconds from the start of the `cineReveal` animation on the home mark.
- * The beats are derived from the CSS, so a change to the premiere timing moves the sounds with it:
+ * Times are milliseconds from the start of `cineReveal` and are the same numbers as the CSS
+ * custom properties on `.court-mark-live.is-premiere` (`--beat-b1`, `--beat-b2`, `--beat-b3`,
+ * `--beat-swish`). The picture (ball, shadow, net, arc flare) is keyed to those same beats.
  *
- *   bounce1  = cineArc delay          (700 ms)   the gleam ignites on the two arcs, the curtain has cleared
- *   bounce2  = cineReveal 20 % key    (1260 ms)  the mark is fully opaque and the zoom-settle starts
- *   swish    = settle 80 % complete   (2400 ms)  the zoom (scale 1.16 -> 1) has visibly landed
+ *   bounce1  1150 ms   ball hits the floor
+ *   bounce2  2050 ms   second bounce, lighter
+ *   bounce3  2800 ms   gather, the last dribble before the shot
+ *   swish    4850 ms   the ball passes through the mark and the net flares
  *
- * The settle uses cubic-bezier(0.16, 1, 0.3, 1) over the 20 %..100 % keyframe interval; it reaches ≈80 % of its
- * travel at 22.6 % of that interval (see SETTLE_80). The short 1.6 s premiere (returning visit, lean device) is
- * too fast for a believable dribble, so it gets the swish alone on the same landing beat.
+ * The 1.6 s premiere (returning visit, lean device) is too fast for a dribble, so its CSS
+ * clears the bounce beats and keeps only the swish.
  */
-export type CueName = "bounce1" | "bounce2" | "swish";
+export type CueName = "bounce1" | "bounce2" | "bounce3" | "swish";
 export type Cue = { name: CueName; at: number };
 
-/** Keyframe offset where cineReveal stops fading in and starts settling. */
-export const REVEAL_SETTLE_KEY = 0.2;
-/** Fraction of the settle interval at which cubic-bezier(0.16, 1, 0.3, 1) reaches ≈0.80 (0.795). */
-export const SETTLE_80 = 0.2262;
-/** Two bounces closer than this sound like a drum roll, not a dribble: the timeline drops to the swish. */
+export const CUE_ORDER: readonly CueName[] = ["bounce1", "bounce2", "bounce3", "swish"];
+
+/** Two bounces closer than this sound like a drum roll, not a dribble. */
 export const MIN_DRIBBLE_GAP_MS = 350;
 /** A cue whose moment passed less than this ago still plays (at once); older ones are skipped. */
 export const LATE_GRACE_MS = 90;
 /** Length of the last cue's audible tail, used to suspend the AudioContext afterwards. */
 export const TAIL_MS = 900;
 
-/** Builds the cue list from the computed premiere timing (reveal duration and gleam delay, both in ms). */
-export function introTimeline(revealMs: number, gleamDelayMs: number): Cue[] {
+/** First-visit beats. Must match `--beat-*` in src/styles.css. */
+export const PREMIERE_MS = 9200;
+export const FULL_BEATS: Partial<Record<CueName, number>> = {
+  bounce1: 1150,
+  bounce2: 2050,
+  bounce3: 2800,
+  swish: 4850,
+};
+/** Returning visit / lean device. Must match the short overrides in styles.css and intro.css. */
+export const SHORT_PREMIERE_MS = 1600;
+export const SHORT_BEATS: Partial<Record<CueName, number>> = { swish: 610 };
+
+/**
+ * Builds the cue list from the premiere length and the beat map (both in ms).
+ * Negative or non-finite beats are dropped. A beat that would land after the premiere is dropped.
+ * Fewer than two dribbles with a swish collapses to the swish alone.
+ */
+export function introTimeline(revealMs: number, beats: Partial<Record<CueName, number>>): Cue[] {
   if (!Number.isFinite(revealMs) || revealMs <= 0) return [];
-  const settleStart = revealMs * REVEAL_SETTLE_KEY;
-  const swish = Math.round(settleStart + revealMs * (1 - REVEAL_SETTLE_KEY) * SETTLE_80);
-  const bounce1 = Math.round(Number.isFinite(gleamDelayMs) && gleamDelayMs >= 0 ? gleamDelayMs : 0);
-  const bounce2 = Math.round(settleStart);
-  if (bounce2 - bounce1 < MIN_DRIBBLE_GAP_MS || swish - bounce2 < MIN_DRIBBLE_GAP_MS) return [{ name: "swish", at: swish }];
-  return [
-    { name: "bounce1", at: bounce1 },
-    { name: "bounce2", at: bounce2 },
-    { name: "swish", at: swish },
-  ];
+  const cues: Cue[] = [];
+  for (const name of CUE_ORDER) {
+    const at = beats[name];
+    if (typeof at !== "number" || !Number.isFinite(at) || at < 0) continue;
+    if (at >= revealMs - 120) continue;
+    cues.push({ name, at: Math.round(at) });
+  }
+  const swish = cues.find((cue) => cue.name === "swish");
+  const dribbles = cues.filter((cue) => cue.name !== "swish");
+  if (!swish) return dribbles.length >= 2 ? dribbles : [];
+  const kept: Cue[] = [];
+  let prev = -Infinity;
+  for (const dribble of dribbles) {
+    if (dribble.at - prev < MIN_DRIBBLE_GAP_MS) continue;
+    if (swish.at - dribble.at < MIN_DRIBBLE_GAP_MS) continue;
+    kept.push(dribble);
+    prev = dribble.at;
+  }
+  if (kept.length < 2) return [swish];
+  return [...kept, swish];
 }
 
-/** The first-visit premiere: cineReveal 6.3 s, cineArc delay 0.7 s. */
-export const FULL_TIMELINE = introTimeline(6300, 700);
+/** The first-visit premiere. */
+export const FULL_TIMELINE = introTimeline(PREMIERE_MS, FULL_BEATS);
+/** The 1.6 s premiere: swish only. */
+export const SHORT_TIMELINE = introTimeline(SHORT_PREMIERE_MS, SHORT_BEATS);
 
 export type PlannedCue = { name: CueName; delayMs: number };
 
@@ -57,7 +84,7 @@ export function planRemaining(cues: readonly Cue[], elapsedMs: number, graceMs =
     .map((cue) => ({ name: cue.name, delayMs: Math.max(0, cue.at - elapsedMs) }));
 }
 
-/** Parses a CSS time list entry ("6.3s", "700ms") into ms. */
+/** Parses a CSS time list entry ("9.2s", "1150ms", "-1s") into ms. */
 export function cssTimeMs(value: string | null | undefined): number {
   const first = (value ?? "").split(",")[0]!.trim();
   const m = /^(-?[\d.]+)(ms|s)$/.exec(first);

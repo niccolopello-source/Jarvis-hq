@@ -1,37 +1,48 @@
 # PIVOT 23 — Suoni dell'intro (palleggi e canestro)
 
-Richiesta di Pello (2026-10-03): sulla premiere della home, due palleggi e poi il pallone che entra nel
-canestro con lo "ciuffo" (swish), sincronizzati con l'animazione.
+Richiesta di Pello (2026-10-03, aggiornata 2026-10-04): sulla premiere della home, i palleggi e poi il pallone che entra nel
+canestro con lo "ciuffo" (swish) devono andare **insieme** all'immagine, più a lungo, più fluidi e più incisivi.
+
+## Diagnosi del taglio da 6,3 s
+
+- L'immagine era solo uno zoom del marchio (`scale 1.16 → 1`) con un bagliore sugli archi nei primi 3 s.
+- I suoni (due palleggi a 700 e 1260 ms, swish a 2400 ms) finivano circa 3 secondi prima della premiere.
+- Non c'era un pallone, quindi i suoni non erano montati su un'azione. Il cubic-bezier scaricava quasi tutto il
+  movimento all'inizio e lasciava il marchio fermo.
+
+## Taglio attuale (9,2 s)
+
+Il pallone, l'ombra, la retina e il bagliore degli archi sono keyframe **lineari** della stessa premiere.
+I tempi dei suoni sono le custom property CSS `--beat-*`: se si sposta un beat, si spostano picture e audio.
+
+| Cue | ms | Battuta visiva |
+| --- | --- | --- |
+| Palleggio 1 | **1150** | il pallone schiaccia sul parquet (ombra larga) |
+| Palleggio 2 | **2050** | secondo rimbalzo, più leggero e più alto |
+| Palleggio 3 | **2800** | gather, l'ultimo palleggio prima del tiro |
+| Swish | **4850** | il pallone attraversa il marchio; la retina e gli archi si aprono (il ciuffo) |
+
+900 ms e 750 ms tra i palleggi, circa 2 s di volo, coda dello swish finita prima dei 6 s. La premiere resta fino a
+9,2 s per far rientrare il 23 e consegnare il marchio allo sweep. Premiere corta da 1,6 s (visita di ritorno /
+dispositivo lento): solo lo swish a 610 ms, niente pallone. `prefers-reduced-motion`: niente premiere e niente pallone.
 
 ## Come sono fatti i suoni e licenza
 
 - **Sintesi procedurale con la Web Audio API**, al momento della riproduzione (`apps/pivot23/src/intro-sound/synth.ts`).
   Nessun campione, nessun file audio, nessuna richiesta di rete: oscillatori + rumore bianco con seed fisso.
 - Sono quindi **originali di questo repository** e coperti dalla stessa licenza del codice. Nessun asset di terzi,
-  nessuna attribuzione richiesta. Peso degli asset audio: **0 byte** (solo codice: ~24 kB di sorgente commentato, pochi kB minificati nel bundle).
-- Palleggio (parquet): tonfo del corpo con caduta di pitch 165→62 Hz (la palla che si schiaccia), "pang" della
-  camera d'aria (392 Hz + 960 Hz, decadimento rapido), schiocco gomma-su-vernice (rumore passa-banda 1,75 kHz, 35 ms),
-  tonfo del legno (rumore passa-basso 320 Hz) e un riverbero corto da palestra (convolver con IR sintetica di 0,45 s).
-  Il **secondo palleggio è diverso**: −2 dB, pitch +7 %, coda −12 %, schiocco più brillante (2,15 kHz).
-- Swish senza ferro: sweep di rumore passa-banda 1,3→4,3→2,3 kHz con tremolo da "maglie della retina" (34→22 Hz),
-  strato d'aria passa-alto 5,2 kHz, spinta morbida passa-basso (la palla che riempie la retina) e un fruscio più
-  piccolo quando la retina torna giù. Nessuna componente tonale (niente "clang" del ferro): verificato da test.
-- Catena master: compressore leggero, volume 0,7. Loudness misurata: palleggi ≈ −22/−24 LUFS, swish ≈ −19 LUFS, picco −2,2 dBFS.
+  nessuna attribuzione richiesta. Peso degli asset audio: **0 byte**.
+- Palleggio (parquet): tonfo del corpo, "pang" della camera d'aria, schiocco gomma-su-vernice, tonfo del legno,
+  riverbero corto da palestra. Il secondo è più leggero e più acuto. Il terzo (gather) è più grave, più forte e più corto.
+- Swish senza ferro: sweep di rumore, tremolo da maglie della retina, strato d'aria, spinta morbida e **due**
+  fruscii (la retina che prende il pallone e quella che si richiude: il ciuffo). Nessuna componente tonale.
+- Catena master: compressore leggero, un po' più di room rispetto al taglio precedente, così palleggi e ciuffo
+  stanno nella stessa palestra. Volume 0,78.
 
 ## Tempi (sincronizzati con la premiere)
 
-Tempi in ms dall'inizio dell'animazione `cineReveal` del marchio in home (`src/styles.css`), calcolati dal CSS
-reale al momento dell'evento `animationstart` (se la premiere cambia durata, i suoni si spostano con lei):
-
-| Cue | ms | Battuta visiva |
-| --- | --- | --- |
-| Palleggio 1 | **700** | ritardo di `cineArc`: il bagliore si accende sui due archi; il sipario (PR #28) è appena uscito (~670 ms) |
-| Palleggio 2 | **1260** | keyframe 20 % di `cineReveal`: il marchio è pieno e parte l'assestamento (zoom 1,16→1) |
-| Swish | **2400** | l'assestamento (cubic-bezier(0.16, 1, 0.3, 1)) ha percorso ≈80 %: il marchio "atterra" |
-
-560 ms tra i palleggi (ritmo naturale), ~1,1 s di "tiro" prima dello swish, coda finita a ~3,0 s, ben prima
-della fine della premiere (6,3 s). Premiere corta da 1,6 s (visita di ritorno / dispositivo lento): troppo
-veloce per un palleggio credibile, quindi solo lo swish sullo stesso punto di atterraggio (610 ms).
+I millisecondi della tabella sopra sono `--beat-b1`, `--beat-b2`, `--beat-b3` e `--beat-swish` su
+`.court-mark-live.is-premiere` in `src/styles.css`. Il controller li legge a `animationstart` di `cineReveal`.
 La riproduzione usa l'orologio dell'animazione (`Animation.currentTime`) e compensa la latenza d'uscita.
 
 ## Autoplay: cosa succede davvero
@@ -41,7 +52,7 @@ I browser non lasciano partire l'audio senza un gesto dell'utente. Quindi:
 1. **Prima visita senza interazione: l'intro è muta.** Al caricamento non viene creato nessun AudioContext,
    nessun nodo, niente. Non parte nulla più tardi da solo.
 2. Al **primo click / tap / tasto** (con suoni attivi) viene creato e ripreso l'AudioContext. Se la premiere è
-   ancora in corso, i cue **ancora davanti** suonano in sync (es. click a 900 ms → palleggio 2 a 1260 e swish a 2400);
+   ancora in corso, i cue **ancora davanti** suonano in sync (es. un gesto a 1,5 s → palleggio 2, palleggio 3 e swish);
    quelli già passati vengono saltati (tolleranza 90 ms). Il gesto più comune per sentire tutto è toccare lo
    schermo o il chip "Suoni" nei primi istanti.
 3. Se il primo gesto è **Salta** o **Inizia**, non suona nulla (il controllo avviene dopo il click).

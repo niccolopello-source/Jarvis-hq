@@ -1,8 +1,15 @@
 # Facts
 
-Updated: 2026-10-03 (evening). The sections below the first one are history unless they say otherwise.
+Updated: 2026-10-04 (intro cut). The sections below the first one are history unless they say otherwise.
 
-## 2026-10-03 evening — current tip (verified by Grok Bot, master cycle 1)
+## 2026-10-04 — intro più lunga, pallone e suoni sullo stesso montaggio
+
+- Prima visita: `cineReveal` **9,2 s** (era 6,3 s). Visita di ritorno e dispositivo lento: 1,6 s. Movimento ridotto: niente premiere.
+- Il marchio non è più solo uno zoom. Un pallone palleggia tre volte (1,15 s, 2,05 s, 2,80 s), sale in arco ed entra nel segno a **4,85 s**, insieme allo swish e al bagliore degli archi. I tempi vivono nelle custom property `--beat-*`.
+- I suoni restano sintesi Web Audio, zero file. Terzo palleggio (gather) più grave; ciuffo con due fruscii della retina e un po' più di room, così sta nella stessa palestra dei palleggi.
+- `main` prima di questo taglio: `522f895` (merge della PR #33). Questa nota descrive il sorgente del taglio, non un deploy finché non è su `main`.
+
+## 2026-10-03 evening — previous tip
 
 - `main` = `1099511` (merge of PR #28, intro animation). PRs #26, #27 and #28 are all merged into `main` by the account `niccolopello-source`. The 2026-10-03 afternoon note «later commits are not on main» is no longer true.
 - GitHub Actions on `main` `1099511`: run 37136916431, success.

@@ -28,9 +28,8 @@ test("the boot page is a static fallback and the home mark can sweep", async ({ 
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "PIVOT" })).toBeVisible();
   const sweep = page.locator(".court-mark-live.is-sweep .mark-arcs");
-  // The home premiere (cineReveal) lasts 6.3 s before the sweep mark takes over; the default
-  // 5 s budget was too short already at 4.8 s and flaked on loaded CI runners.
-  await expect(sweep).toBeVisible({ timeout: 12_000 });
+  // The home premiere (cineReveal) lasts 9.2 s before the sweep mark takes over.
+  await expect(sweep).toBeVisible({ timeout: 18_000 });
   const motion = await sweep.evaluate((el) => {
     const lean = document.documentElement.classList.contains("pivot-lean");
     document.documentElement.classList.remove("pivot-lean");
