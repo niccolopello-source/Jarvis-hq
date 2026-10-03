@@ -2427,6 +2427,7 @@ img.court-mark-photo {
    stays legible whatever the club colour (light and dark themes). */
 .career-chrome .hud-meta,
 .career-chrome .hud-contract,
+.career-chrome .hud-line span,
 .career-chrome .text-muted,
 .swipe-hint {
   color: color-mix(in oklab, var(--color-chalk) 72%, var(--color-muted));
