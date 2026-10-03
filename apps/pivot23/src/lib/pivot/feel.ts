@@ -2,6 +2,7 @@
 import { rand } from "./rng";
 import { say } from "./voice";
 import { labelIdentity } from "./world";
+import { ROLES, natAdj } from "./data";
 import type { Conference, PlayerState, SeasonRow } from "./types";
 
 type LinePool = { pool: readonly string[]; vars?: Record<string, string> };
@@ -1070,3 +1071,8 @@ export const ROLE_ARTICLE: Record<string, string> = {
   PF: "un'",
   C: "un ",
 };
+
+/** "un playmaker greco": the role/nationality phrase of the draft intro, one catalog unit. */
+export function draftWho(role: keyof typeof ROLES, nationality: string): string {
+  return `${ROLE_ARTICLE[role] || "un "}${ROLES[role].label.toLowerCase()} ${natAdj(role, nationality)}`;
+}
