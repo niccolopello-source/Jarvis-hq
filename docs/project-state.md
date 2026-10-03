@@ -35,6 +35,14 @@ Public production build is live. It is a beta demo, not a launch.
 - Source of the game that was verified in production on 2026-09-28: `main` at `421a4a0`, then a document-only commit `228a748` was also deployed to production.
 - Engine label in the bundle checked that day: `2.11.0-beta`
 
+Verified later, on 2026-10-03, without replacing the note above:
+
+- `main` is `1a1d928f76a3df1b907cf914b821104d4321a51c`, the merge of pull request #15.
+- The game tree of that merge is the same as `15706456d0426e12123aff1d44e00a158f416c37`.
+- Engine version in source is still `2.11.0-beta`. Save version in source is `11`.
+- A 500-career sample was run on that tree. It is not in CI. See section 14.
+- `docs/memory/FACTS.md` was not edited in that pass. Until it is, a disagreement about a SHA is unresolved.
+
 The app lives in `/apps/pivot23`. It contains the career simulator, browser UI, browser-based saves, a deterministic engine test, and a Playwright smoke test. It runs without an account, database, or AI provider.
 
 Known holes, not closed by the deploy: retirement is only `age>=36` in the bundle that was inspected, real NBA franchise names were in that client, the black/white screen cause is still unknown, and the career-distribution audit was not run on this commit. See [`memory/TASKS.md`](memory/TASKS.md) and [`pivot23/AUDIT-GROK-001.md`](pivot23/AUDIT-GROK-001.md). The tasks stay open. This status file does not close them.
@@ -170,3 +178,44 @@ This document answers one question:
 "What is the actual current state of JARVIS HQ?"
 
 It must remain factual, current and synchronized with the repository.
+
+---
+
+## 14. Career sample, 2026-10-03
+
+This section records one run. It does not change formulas, and it does not close a balancing task.
+
+Method. `playCareerSim` on the tree above. Seeds `1000` through `1499`, one career each. Draft policy `random`. Nationality Italia, number 23, name `Sim500`. No custom potential. Positions cycle PG, SG, SF, PF, C (100 each). Paths cycle NCAA, Europa, G-League (170, 165, 165). Difficulties cycle Esordio, Pro, All-Star, Leggenda (135, 125, 120, 120). The built-in `simulateManyCareers` was not used: it does not take these seeds.
+
+Result. 500 completed, 0 failed, 32.2 seconds, Node, Linux. A second run of seed `1000` with the same fixed options (PG, NCAA, Pro) matched the first. That is one deterministic check, not a replay of all 500.
+
+Retirement age, last recorded season: 32 in 137 careers, 33 in 1, 34 in 15, 35 in 9, 36 in 338. Median age 36. Mean 34.8. The simulator recorded no choice titled `Ritiro`. Early exit versus a human choice is not stored. Of the 138 careers that ended before 34, all 138 still had `injuryDrag` of at least 2.5, and none had a final season at or under 11.5 minutes. The early signal in `careerEndingSignal` (`peak.ts`) allows injury or low minutes once age is at least 33. The minutes branch does not match this sample. That is an observation about the stored fields, not a new rule.
+
+Difficulty separates outcomes. Esordio: 95.6% reach age 36, 34.8% win at least one title, median peak 79. Leggenda: 57.5% reach 36, 0.8% win a title, median peak 71. Position and path do not separate peak or titles by much. Peak overall median is 75. Twelve careers posted their highest season overall outside ages 26–28. Assigned `apexAge` stayed inside 26–28 for all 500.
+
+Awards, share of 500: at least one title 18.2% (409 had zero; the highest was 6). MVP 4%. Finals MVP 13.8%. All-NBA 27.8%. All-Star 21.6%. Hall tier 9.4%. Final league EuroLeague 30 careers. Finals MVP is awarded in `resolvePlayoffRoundInner` with a base chance of 0.45 on a title. The higher Finals MVP rate matches that line. It is not, by itself, a defect.
+
+Not run in this pass: ESLint, typecheck, the unit suite, Playwright, a phone, and a hand-played career. No pull request, merge, or deploy was made for this note. The file change is local until a later, separate review.
+
+Demo blockers that this sample does not remove: a career played by hand to retirement, a phone check, and a decision on whether the age and award shapes are the intended game. No constant was changed.
+
+---
+
+## 15. Demo readiness pass, 2026-10-03
+
+Branch `grok/demo-readiness`, started from `main` `1a1d928`. Not merged. Not deployed.
+
+Verified in the current source, not taken from an older dump:
+
+- The boot screen is already a static message inside `index.html`, replaced when React mounts. An error boundary already offers a reload and says the saved career remains. No black-screen bug was reproduced in this pass, and the 2.5 second welcome time was not measured.
+- Retirement is a card at age 35: "Gioca a 36 anni" or "Chiudi ora". `onRetire` records the choice, then either continues or calls `finish`, which ignores a second finish with the same seed, length and age. No cap at 34 or 35 was added. The existing unit test for the age-35 path still passes.
+- `saveLive` already refuses to delete the last good save when storage throws. The career screen ignored that false return. It now shows `saveMiss` when the write fails.
+- There is no "play the next game" control. The career advances by cards and by season. That dashboard was not built, so it was not restyled.
+- The year sheet always showed advanced rates. They now sit behind "Statistiche avanzate". PPG, RPG and APG have a one-line legend. Year chips and the season tabs use a 44px minimum height.
+- The boot panel follows the system light or dark colors. It still has no motion.
+
+Tests run on this tree after the edits, Linux, Node, 3 October 2026: `eslint . --max-warnings=0` pass, `tsc --noEmit` pass, unit tests 49 pass, 0 fail. Playwright, a phone, contrast measurement, and a hand-played career were not run.
+
+One decision check, not a full career: 30 seeds, 1000–1029, a fresh Pro player, first playoff round, choice index 0 versus the last choice, same player state before the round. The series result changed in 4 of 30. The other 26 stayed the same. A full-career counterfactual is not available without an injection hook, which was not added.
+
+Scenarios that retire a typical career at 34–35, or cap age at 35, were not simulated. They would change `careerEndingSignal` or `MAX_AGE`. That was not authorized.

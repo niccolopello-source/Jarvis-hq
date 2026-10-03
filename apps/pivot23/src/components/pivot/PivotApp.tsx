@@ -314,6 +314,7 @@ export function PivotApp() {
   const [simBusy, setSimBusy] = useState(false);
   const [simShow, setSimShow] = useState(false);
   const [simSlow, setSimSlow] = useState(false);
+  const [saveMissed, setSaveMissed] = useState(false);
   const simJob = useRef<ReturnType<typeof openCareerSim> | null>(null);
   const [guideOpen, setGuideOpen] = useState(false);
   const saveGen = useRef(0);
@@ -382,7 +383,7 @@ export function PivotApp() {
     const gen = ++saveGen.current;
     const run = () => {
       if (gen !== saveGen.current) return;
-      saveLive({
+      const wrote = saveLive({
         player,
         pending: pending && pending.kind !== "call" ? (pending as never) : pending,
         log,
@@ -390,6 +391,7 @@ export function PivotApp() {
         tab: tabRef.current,
         logSeq: logSeqFrom(log),
       });
+      if (gen === saveGen.current) setSaveMissed(!wrote);
     };
     const w = window as Window & {
       requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
@@ -1081,6 +1083,7 @@ export function PivotApp() {
           onTrade={onTrade}
           onForcedTradeAck={onForcedTradeAck}
           onRetire={onRetire}
+          saveMissed={saveMissed}
         />
         </CareerGuard>
       )}
@@ -1215,6 +1218,7 @@ function CareerView(props: {
   onTrade: (go: boolean) => void;
   onForcedTradeAck: () => void;
   onRetire: (extra: boolean) => void;
+  saveMissed: boolean;
 }) {
   const lang = useLang();
   const { player, tab, setTab, pending } = props;
@@ -1234,6 +1238,9 @@ function CareerView(props: {
       style={{ ["--team" as string]: player.team.color }}
     >
       <div className="career-chrome">
+        {props.saveMissed ? (
+          <p className="save-miss" role="alert">{t("saveMiss", lang)}</p>
+        ) : null}
         <div
           className="flex justify-between items-center gap-2.5 py-2.5 border-b border-line"
           style={{ boxShadow: `inset 0 -2px 0 ${player.team.color}` }}
@@ -1856,6 +1863,9 @@ const SeasonSheet = memo(function SeasonSheet({ player }: { player: PlayerState 
         <StatMini l="3P%" v={(row.tp * 100).toFixed(1)} />
         <StatMini l="+/-" v={`${row.plusMinus > 0 ? "+" : ""}${row.plusMinus.toFixed(1)}`} />
       </div>
+      <p className="stat-legend">{t("statLegend", lang)}</p>
+      <details className="adv-stats">
+        <summary>{t("advStats", lang)}</summary>
       {(() => {
         const adv = advancedOf(row);
         const def = defensiveMarks(row);
@@ -1876,6 +1886,7 @@ const SeasonSheet = memo(function SeasonSheet({ player }: { player: PlayerState 
           </div>
         );
       })()}
+      </details>
       {row.awards.length > 0 && <PersonalAwards title={t("yearAwards", lang)} rows={[row]} />}
       {row.season === 1 && <RoyBoard player={player} race={row.league?.royRace} />}
       {row.seriesLog && row.seriesLog.length > 0 && (

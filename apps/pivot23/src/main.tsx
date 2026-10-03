@@ -35,7 +35,7 @@ class AppErrorBoundary extends Component<
               </pre>
             )}
             <button
-              className="mt-5 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white"
+              className="mt-5 min-h-11 min-w-11 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white"
               onClick={() => window.location.reload()}
             >
               Ricarica PIVOT 23

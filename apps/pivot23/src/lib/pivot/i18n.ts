@@ -49,6 +49,9 @@ const DICT = {
     lifeAwards: "Premi personali",
     careerDone: "Carriera conclusa",
     hofIn: "Nella Hall",
+    saveMiss: "Questa stagione non è stata scritta nel browser. Se ricarichi, torni all'ultimo salvataggio riuscito. Quello già scritto non viene cancellato.",
+    statLegend: "PPG punti, RPG rimbalzi, APG assist, a partita.",
+    advStats: "Statistiche avanzate",
   },
   en: {
     eyebrow: "Career simulator",
@@ -86,6 +89,9 @@ const DICT = {
     lifeAwards: "Personal awards",
     careerDone: "Career Completed",
     hofIn: "Hall of Fame",
+    saveMiss: "This season was not written in the browser. A reload returns to the last save that succeeded. That save is not deleted.",
+    statLegend: "PPG points, RPG rebounds, APG assists, per game.",
+    advStats: "Advanced stats",
   },
   es: {
     eyebrow: "Simulador de carrera",
@@ -123,6 +129,9 @@ const DICT = {
     lifeAwards: "Premios personales",
     careerDone: "Carrera concluida",
     hofIn: "En el Hall",
+    saveMiss: "Esta temporada no se ha guardado en el navegador. Si recargas, vuelves al último guardado que sí se escribió. Ese no se borra.",
+    statLegend: "PPG puntos, RPG rebotes, APG asistencias, por partido.",
+    advStats: "Estadísticas avanzadas",
   },
 } as const;
 
