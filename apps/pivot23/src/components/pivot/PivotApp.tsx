@@ -1057,6 +1057,9 @@ export function PivotApp() {
         ) : null}
         {otherTab && (screen === "career" || screen === "draft") ? <p className="app-notice">{t("otherTab", lang)}</p> : null}
         {saveMissed && screen === "draft" ? <p className="app-notice">{t("saveMiss", lang)}</p> : null}
+        {screen === "career" && pending?.kind === "retire" && archive.length >= ARCHIVE_LIMIT && !archive.some((c) => c.careerId && c.careerId === player?.careerId) ? (
+          <p className="app-notice">{tf("archiveFullSoon", { limit: ARCHIVE_LIMIT, name: archive[archive.length - 1]!.name }, lang)}</p>
+        ) : null}
         {archiveNote && (screen === "result" || screen === "intro") ? <p className="app-notice">{archiveNote}</p> : null}
       </div>
       {screen === "intro" && (

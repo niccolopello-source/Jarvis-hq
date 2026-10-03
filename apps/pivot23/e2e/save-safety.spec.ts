@@ -184,3 +184,25 @@ test("browser without storage: the player is told saving is off", async ({ page 
   await expect(page.getByText("Questo browser non permette di salvare")).toBeVisible();
   await expect(page.getByRole("heading", { name: "PIVOT" })).toBeVisible();
 });
+
+test("full archive: the last winter warns which career will leave, the result says it left (D-20)", async ({ page }) => {
+  const archive = readFileSync(join(here, "fixtures", "full-archive.json"), "utf8");
+  const oldest = (JSON.parse(archive) as { name: string }[]).at(-1)!.name;
+  await seedRetire(page);
+  await page.addInitScript((saved) => {
+    if (!sessionStorage.getItem("__e2e_archive")) {
+      sessionStorage.setItem("__e2e_archive", "1");
+      localStorage.setItem("pivot-v2-archive", saved);
+    }
+  }, archive);
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "L'ultimo inverno" })).toBeVisible();
+  await expect(page.getByText(`uscirà la più vecchia: ${oldest}`)).toBeVisible();
+  await page.getByRole("button", { name: /Chiudi ora/ }).click();
+  await expect(page.getByRole("button", { name: /Un'altra vita/ })).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByText(`è uscita la più vecchia, ${oldest}`)).toBeVisible();
+  expect(await archiveLen(page)).toBe(8);
+  const names = await page.evaluate(() => (JSON.parse(localStorage.getItem("pivot-v2-archive") || "[]") as { name: string }[]).map((c) => c.name));
+  expect(names).not.toContain(oldest);
+  expect(names[0]).toBe("Ritiro Test");
+});
