@@ -126,6 +126,95 @@ test("the home premiere can be skipped and does not block the start button", asy
   await expect(page.getByRole("button", { name: "Inizia", exact: true })).toBeVisible();
 });
 
+type IntroLog = { mode: string | null; anim: string | null; removedAt: number; keyAt: number };
+
+async function recordIntro(page: import("@playwright/test").Page, slowWipe = false) {
+  await page.addInitScript((slow) => {
+    const log = { mode: null as string | null, anim: null as string | null, removedAt: 0, keyAt: 0 };
+    (window as unknown as { __intro: typeof log }).__intro = log;
+    window.addEventListener("keydown", () => { log.keyAt ||= performance.now(); }, true);
+    if (slow) {
+      document.addEventListener("DOMContentLoaded", () => {
+        const style = document.createElement("style");
+        style.textContent = "#boot.is-curtain.leave-full { animation-duration: 6s !important; }";
+        document.head.append(style);
+      });
+    }
+    new MutationObserver(() => {
+      const boot = document.getElementById("boot");
+      const mode = document.documentElement.dataset.intro;
+      if (!log.mode && mode) log.mode = mode;
+      if (boot && !log.anim && /leave-/.test(boot.className)) log.anim = getComputedStyle(boot).animationName;
+      if (log.mode && !boot && !log.removedAt) log.removedAt = performance.now();
+    }).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ["class", "data-intro"] });
+  }, slowWipe);
+}
+
+const introLog = (page: import("@playwright/test").Page) =>
+  page.evaluate(() => (window as unknown as { __intro: IntroLog }).__intro);
+
+test("the intro curtain never blocks the start button and any key skips it", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await recordIntro(page, true);
+  await page.goto("/");
+  const curtain = page.locator("#boot.is-curtain.leave-full");
+  await expect(curtain).toBeAttached();
+  await expect(curtain).toHaveAttribute("aria-hidden", "true");
+  expect(await curtain.evaluate((el) => getComputedStyle(el).pointerEvents)).toBe("none");
+  await page.getByRole("button", { name: "Inizia", exact: true }).click({ trial: true });
+  await expect(curtain).toBeAttached();
+  await page.keyboard.press("Shift");
+  await expect(page.locator("#boot")).toHaveCount(0);
+  const log = await introLog(page);
+  expect(log.mode).toBe("full");
+  expect(log.anim).toContain("curtainWipe");
+  expect(log.keyAt).toBeGreaterThan(0);
+  expect(log.removedAt - log.keyAt).toBeLessThan(400);
+  expect(await page.evaluate(() => localStorage.getItem("pivot23.introSeen"))).toBe("1");
+  await expect(page.getByRole("heading", { name: "PIVOT" })).toBeVisible();
+});
+
+test("a returning visit gets the brief intro and Escape skips the premiere", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await recordIntro(page);
+  await page.goto("/");
+  await expect(page.locator(".court-mark-live.is-premiere")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".is-premiere")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Inizia", exact: true })).toBeVisible();
+
+  await page.reload();
+  await expect(page.locator("#boot")).toHaveCount(0);
+  const log = await introLog(page);
+  expect(log.mode).toBe("brief");
+  expect(log.anim).toBe("curtainFade");
+  await expect(page.locator("html")).toHaveClass(/pivot-intro-seen/);
+  const premiere = page.locator(".court-mark-live.is-premiere");
+  if (await premiere.count()) {
+    expect(await premiere.evaluate((el) => getComputedStyle(el).animationDuration)).toBe("1.6s");
+  }
+  expect(await page.locator(".display-title").evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
+});
+
+test("reduced motion gets a fade-only intro with no rising copy and no premiere", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 900 }]) {
+    await page.setViewportSize(viewport);
+    await recordIntro(page);
+    await page.goto("/");
+    await expect(page.locator("#boot")).toHaveCount(0);
+    const log = await introLog(page);
+    expect(log.mode).toBe("still");
+    expect(log.anim).toBe("curtainFade");
+    expect(log.removedAt).toBeGreaterThan(0);
+    await expect(page.locator(".is-premiere")).toHaveCount(0);
+    for (const selector of [".eyebrow", ".display-title", ".lede", ".primary-btn"]) {
+      expect(await page.locator(`.intro-hero ${selector}`).first().evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
+    }
+    await page.getByRole("button", { name: "Inizia", exact: true }).click({ trial: true });
+  }
+});
+
 test("a failed boot script still shows the logo and the reload link", async ({ page }) => {
   await page.route(APP_ENTRY, (route) => route.abort());
   await page.goto("/", { waitUntil: "commit" });

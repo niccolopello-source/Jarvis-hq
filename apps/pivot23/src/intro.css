@@ -1,0 +1,53 @@
+/* Intro hand-off (see src/intro.ts). Transform and opacity only. */
+
+/* First visit: the headline copy rises in behind the stinger. The buttons are never animated, so they are
+   where they will stay from the first commit. `backwards` leaves no transform behind once it has played. */
+html[data-intro="full"] .intro-hero > .eyebrow,
+html[data-intro="full"] .intro-hero > .display-title,
+html[data-intro="full"] .intro-hero > .lede {
+  animation: introRise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.16s backwards;
+}
+html[data-intro="full"] .intro-hero > .display-title { animation-delay: 0.22s; }
+html[data-intro="full"] .intro-hero > .lede { animation-delay: 0.28s; }
+
+@keyframes introRise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Returning visitor: the premiere keeps its shape but takes the short timing the lean path already uses. */
+html.pivot-intro-seen .court-mark-live.is-premiere {
+  animation-duration: 1.6s;
+}
+html.pivot-intro-seen .court-mark-live.is-premiere .mark-gleam path {
+  animation-duration: 1s;
+  animation-delay: 0.15s;
+}
+
+/* The skip control reads as a small broadcast chip in the corner. `.intro-hero > *` made it relative and full width. */
+.intro-hero > .cine-skip {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  border-radius: 999px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 12px;
+  background: color-mix(in oklab, var(--color-panel) 72%, transparent);
+  box-shadow: inset 0 0 0 1px var(--color-line);
+}
+.intro-hero > .cine-skip:hover {
+  color: var(--color-chalk);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-intro] .intro-hero > * {
+    animation: none;
+  }
+}

@@ -40,9 +40,57 @@
         16% { opacity: 0.95; }
         100% { opacity: 0; stroke-dashoffset: -68; }
       }
+      /* Loading copy only appears when the load is genuinely slow, so a normal start is just the mark. */
+      .boot-late { opacity: 0; animation: bootLate 0.4s ease-out 1.6s forwards; }
+      @keyframes bootLate { to { opacity: 1; } }
       @media (prefers-reduced-motion: reduce) {
         .boot-gleam path { animation: none; opacity: 0; }
+        .boot-late { animation-duration: 0.01s; }
       }
+      /* Hand-off: src/intro.ts lifts #boot above the mounted app and plays it out (transform/opacity only). */
+      #boot.is-curtain {
+        --band: clamp(140px, 24vw, 340px);
+        position: fixed;
+        inset: 0;
+        z-index: 2147483000;
+        min-height: 0 !important;
+        pointer-events: none;
+        animation: curtainSafety 0.3s linear 8s forwards;
+      }
+      /* The gleam animates stroke-dashoffset, which repaints on the main thread: stop it once the app is mounting. */
+      #boot.is-curtain .boot-gleam path { animation: none; opacity: 0; }
+      /* The stinger edge: a skewed granata band with a chalk line, trailing the dark field as it leaves. */
+      #boot.is-curtain.leave-full::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(-1 * (var(--band) + 20vh));
+        width: calc(var(--band) + 50vh);
+        z-index: -1;
+        transform: skewX(-10deg);
+        background:
+          linear-gradient(90deg, transparent 0, rgba(108, 19, 32, 0.55) 30%, #6C1320 62%, #A31D2E calc(100% - 6px), #f6ecee calc(100% - 6px), #f6ecee calc(100% - 2px), #0c0b0d calc(100% - 2px)) left / var(--band) 100% no-repeat,
+          linear-gradient(90deg, #0c0b0d 64%, transparent) right / calc(100% - var(--band)) 100% no-repeat;
+      }
+      #boot.is-curtain.leave-full {
+        will-change: transform;
+        animation: curtainWipe 0.52s cubic-bezier(0.76, 0, 0.24, 1) both;
+      }
+      #boot.is-curtain.leave-full .boot-mark {
+        animation: curtainFade 0.26s cubic-bezier(0.4, 0, 1, 1) both;
+      }
+      #boot.is-curtain.leave-full.leave-now {
+        animation: curtainWipe 0.52s cubic-bezier(0.76, 0, 0.24, 1) both, curtainFade 0.14s linear both;
+      }
+      #boot.is-curtain.leave-brief { animation: curtainFade 0.22s ease-out both; }
+      #boot.is-curtain.leave-still { animation: curtainFade 0.16s linear both; }
+      @keyframes curtainWipe {
+        from { transform: translate3d(0, 0, 0); }
+        to { transform: translate3d(calc(100vw + var(--band) + 45vh), 0, 0); }
+      }
+      @keyframes curtainFade { to { opacity: 0; } }
+      @keyframes curtainSafety { to { opacity: 0; visibility: hidden; } }
     </style>
   </head>
   <body>
@@ -70,9 +118,9 @@
           </svg>
         </div>
         <strong class="boot-word">PIVOT</strong>
-        <p style="margin:8px 0 0;font-size:14px">Avvio dell’applicazione… <span lang="en" class="boot-muted">· Loading…</span></p>
-        <p class="boot-muted" style="margin:0;font-size:14px">Se la schermata non cambia, ricarica la pagina. <span lang="en">If nothing changes, reload the page.</span></p>
-        <a href="./" style="width:max-content;color:#f5f5f7;font-size:14px;font-weight:600">Ricarica PIVOT 23 · <span lang="en">Reload</span></a>
+        <p class="boot-late" style="margin:8px 0 0;font-size:14px">Avvio dell’applicazione… <span lang="en" class="boot-muted">· Loading…</span></p>
+        <p class="boot-muted boot-late" style="margin:0;font-size:14px">Se la schermata non cambia, ricarica la pagina. <span lang="en">If nothing changes, reload the page.</span></p>
+        <a class="boot-late" href="./" style="width:max-content;color:#f5f5f7;font-size:14px;font-weight:600">Ricarica PIVOT 23 · <span lang="en">Reload</span></a>
         <noscript>Attiva JavaScript per giocare a PIVOT 23. <span lang="en">Enable JavaScript to play PIVOT 23.</span></noscript>
       </main>
     </div>

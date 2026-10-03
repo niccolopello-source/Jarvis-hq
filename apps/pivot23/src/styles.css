@@ -1108,8 +1108,8 @@ body,
   animation: cineArc 2.4s cubic-bezier(0.16, 1, 0.3, 1) 0.7s 1 both;
 }
 @keyframes cineReveal {
-  0% { opacity: 0; transform: scale(1.35); }
-  20% { opacity: 1; transform: scale(1.35); }
+  0% { opacity: 0; transform: scale(1.16); }
+  20% { opacity: 1; transform: scale(1.16); }
   100% { opacity: 1; transform: scale(1); }
 }
 @keyframes cineArc {
