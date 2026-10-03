@@ -279,6 +279,9 @@ export function PivotApp() {
     if (typeof window === "undefined") return false;
     return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   });
+  // The premiere plays once per page load. Leaving the home before it ends (Inizia, Archivio, a resumed
+  // career) closes it, so coming back to the home never replays it from the start.
+  if (premiere && screen !== "intro") setPremiere(false);
   const [player, setPlayer] = useState<PlayerState | null>(boot?.player ?? null);
   const [pending, setPending] = useState<Pending | null>(() => {
     if (!boot?.player) return null;
