@@ -1,6 +1,7 @@
 
 /** Curva d'età, picco osservato 26–28, overall intero in display. */
 import { SIM } from "./config";
+import { TUNING } from "./tuning";
 import { ROLES } from "./data";
 import { rand } from "./rng";
 import type { AttrKey, PlayerState, Role } from "./types";
@@ -36,10 +37,29 @@ export function displayOverall(n: number) {
 }
 
 export function careerEndingSignal(s: PlayerState): "minutes" | "injury" | null {
+  if (TUNING.retirement !== "current") return gradedEndingSignal(s);
   if (s.age < MAX_AGE - 3) return null;
   if (s.injuryDrag >= 2.5) return "injury";
   const lastSeason = s.seasonHistory.at(-1);
   if (lastSeason && lastSeason.min <= 11.5) return "minutes";
+  return null;
+}
+
+/** D-10 experiment: the minutes bar rises with age instead of switching on at 33. */
+function gradedEndingSignal(s: PlayerState): "minutes" | "injury" | null {
+  const bar: Record<number, number> = { 31: 6, 32: 8, 33: 9.5, 34: 10.5, 35: 11.5 };
+  if (s.age < 31) return null;
+  if (s.injuryDrag >= (s.age >= MAX_AGE - 3 ? 2.5 : 4)) return "injury";
+  let limit = bar[Math.min(35, s.age)] ?? 11.5;
+  if (TUNING.retirement === "path") {
+    // Career path: decorated players hang on longer, journeymen leave earlier.
+    const decorated = finite(s.allStarCount, 0) >= 3 || finite(s.peakOverall, 0) >= 85 || finite(s.titleCount, 0) >= 2;
+    const journeyman = finite(s.peakOverall, 0) < 72 && finite(s.allStarCount, 0) === 0;
+    if (decorated) limit -= 2;
+    else if (journeyman) limit += 2;
+  }
+  const lastSeason = s.seasonHistory.at(-1);
+  if (lastSeason && lastSeason.min <= limit) return "minutes";
   return null;
 }
 
@@ -159,9 +179,9 @@ export function realizationOf(s: PlayerState): number {
       (cons - 0.5) * 0.12 +
       (motor - 0.5) * 0.06 +
       (dur - 0.5) * 0.06 +
-      finite(s.development, 0) * 0.01 -
-      finite(s.injuryDrag, 0) * 0.018 +
-      imprint * 0.01 +
+      finite(s.development, 0) * (TUNING.bust === "choices" ? 0.02 : 0.01) -
+      finite(s.injuryDrag, 0) * (TUNING.bust === "events" ? 0.04 : 0.018) +
+      imprint * (TUNING.bust === "choices" ? 0.025 : 0.01) +
       ready * 0.004,
     0.58,
     1.08,
@@ -178,8 +198,18 @@ export function draftLift(s: PlayerState): number {
 export function realizedPeak(s: PlayerState): number {
   const pot = finite(s.potential, 76);
   const real = realizationOf(s);
-  const peak = START_OVERALL + (pot - START_OVERALL) * real + draftLift(s);
+  const peak = START_OVERALL + (pot - START_OVERALL) * real + draftLift(s) + roleFit(s);
   return round1(clamp(peak, SIM.overall.min, 99));
+}
+
+/** P1-ROLE experiment: attributes that suit the role lift the peak, a poor fit lowers it. */
+function roleFit(s: PlayerState): number {
+  if (TUNING.rolePeak === "current") return 0;
+  const keys = Object.keys(s.attrs ?? {}) as AttrKey[];
+  if (!keys.length) return 0;
+  const mean = keys.reduce((a, k) => a + clampAttr(finite(s.attrs[k], 0)), 0) / keys.length;
+  const k = TUNING.rolePeak === "fit-strong" ? 0.3 : 0.15;
+  return clamp((weightedSkill(s) - mean) * k, -3, 3);
 }
 
 export function twilightOf(s: PlayerState): number {

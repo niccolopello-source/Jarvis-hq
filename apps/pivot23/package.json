@@ -9,7 +9,7 @@
     "preview": "vite preview --host 0.0.0.0",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
-    "test": "node --import=tsx --test src/lib/pivot/engine.test.ts src/lib/pivot/save.test.ts src/lib/pivot/i18n.test.ts src/lib/pivot/score-line.test.ts src/components/pivot/presentation.test.ts",
+    "test": "node --import=tsx --test src/lib/pivot/engine.test.ts src/lib/pivot/save.test.ts src/lib/pivot/awards.test.ts src/lib/pivot/determinism.test.ts src/lib/pivot/i18n.test.ts src/lib/pivot/score-line.test.ts src/components/pivot/presentation.test.ts",
     "test:e2e": "playwright test"
   },
   "dependencies": {

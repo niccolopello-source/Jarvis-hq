@@ -1,4 +1,5 @@
 
+import { scriptSlotFor, seedHash, TUNING } from "./tuning";
 import {
   ATTR_LABELS,
   COACH_NAMES,
@@ -481,6 +482,13 @@ export function freshPlayer(
     choiceOvr: 0,
   };
   s.rngState = s.seed;
+  if (TUNING.world === "jitter") {
+    // Seeded spread of starting power: different worlds start from different pecking orders.
+    for (const abbr of Object.keys(s.teamPower)) {
+      const h = seedHash(s.seed, abbr.charCodeAt(0) * 131 + abbr.charCodeAt(1) * 17 + abbr.charCodeAt(2));
+      s.teamPower[abbr] = clamp((s.teamPower[abbr] ?? 70) + ((h % 1301) / 100 - 6.5), 42, 96);
+    }
+  }
   withPlayer(s, () => {
     s.hidden.clutch = 42 + randInt(0, 10);
     s.hidden.durability = 48 + randInt(0, 12);
@@ -1470,8 +1478,7 @@ export function eventAfterMarket(s: PlayerState): { event: StoryEvent; script: S
   const scripted = scriptedSeasonEvent(s, s.season);
   if (scripted) {
     if (!s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
-    const script: SavedStoryScript =
-      s.season === 1 ? "rookie" : s.season === 6 ? "rival" : s.season === 8 ? "injury" : s.season === 10 ? "nation" : "pool";
+    const script: SavedStoryScript = scriptSlotFor(s.seed, s.season) ?? "pool";
     return { event: scripted, script };
   }
   const event = pickStoryEvent(s, s.season);
@@ -1483,11 +1490,17 @@ export function eventAfterMarket(s: PlayerState): { event: StoryEvent; script: S
   return { event, script };
 }
 
+/** Scripted story slot for season n ("rookie" | "rival" | "injury" | "nation") or null. */
+export function scriptedSeasonSlot(s: PlayerState, n: number): SavedStoryScript | null {
+  return scriptSlotFor(s.seed, n);
+}
+
 export function scriptedSeasonEvent(s: PlayerState, n: number): StoryEvent | null {
-  if (n === 1) return rookieStory();
-  if (n === 6) return rivalStory(s);
-  if (n === 8) return injuryStory(s);
-  if (n === 10) return nationStory(s);
+  const slot = scriptSlotFor(s.seed, n);
+  if (slot === "rookie") return rookieStory();
+  if (slot === "rival") return rivalStory(s);
+  if (slot === "injury") return injuryStory(s);
+  if (slot === "nation") return nationStory(s);
   return null;
 }
 

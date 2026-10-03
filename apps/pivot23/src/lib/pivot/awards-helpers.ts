@@ -1,6 +1,7 @@
 
 /** ROY ~7% anno 1 NBA. DPOY ogni stagione NBA: stessa scala del campo, vince il box difensivo. */
 import { SIM } from "./config";
+import { TUNING } from "./tuning";
 import { diffOf } from "./difficulty";
 import { advancedOf } from "./peak";
 import { rand } from "./rng";
@@ -379,11 +380,27 @@ function starDpoyBits(p: CpuStar, ident?: string) {
   return { spg: round1n(spg), bpg: round1n(bpg), score: round1n(score) };
 }
 
+/** Voter fatigue on the player's DPOY score. Shipped rule: 5.5% per DPOY, at most 22%. */
+function dpoyFatigue(s: PlayerState): number {
+  const count = finite(s.dpoyCount, 0);
+  if (TUNING.dpoyFatigue === "steeper") return Math.min(0.36, count * 0.09);
+  if (TUNING.dpoyFatigue === "streak") {
+    // Only consecutive wins tire voters; a season without DPOY resets the streak.
+    let streak = 0;
+    for (let i = s.seasonHistory.length - 1; i >= 0; i--) {
+      if (!s.seasonHistory[i]!.awards.includes("DPOY")) break;
+      streak += 1;
+    }
+    return Math.min(0.36, streak * 0.12);
+  }
+  return Math.min(0.22, count * 0.055);
+}
+
 function buildDpoyRace(s: PlayerState, row: SeasonRow): DpoyCandidate[] {
   const player: DpoyCandidate = {
     name: s.name, team: s.team.name, teamAbbr: s.team.abbr, teamColor: s.team.color,
     spg: round1n(finite(row.spg, 0)), bpg: round1n(finite(row.bpg, 0)),
-    score: finite(round1n(finite(dpoyScore(s, row)) * (1 - Math.min(0.22, finite(s.dpoyCount, 0) * 0.055)))), isPlayer: true,
+    score: finite(round1n(finite(dpoyScore(s, row)) * (1 - dpoyFatigue(s)))), isPlayer: true,
   };
   const seen = new Set<string>([s.name]);
   const others: DpoyCandidate[] = [];

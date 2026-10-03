@@ -63,6 +63,7 @@ import {
   saveArchive,
   scaledDraftCard,
   scriptedSeasonEvent,
+  scriptedSeasonSlot,
   shouldForceTrade,
   shouldOfferTrade,
   simulateRegularSeason,
@@ -625,8 +626,7 @@ export function PivotApp() {
     const scripted = scriptedSeasonEvent(s, n);
     if (scripted) {
       if (!s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
-      const script: SavedStoryScript =
-        n === 1 ? "rookie" : n === 6 ? "rival" : n === 8 ? "injury" : n === 10 ? "nation" : "pool";
+      const script: SavedStoryScript = scriptedSeasonSlot(s, n) ?? "pool";
       setPending(pendingFromEvent(scripted, script, s));
       return;
     }
