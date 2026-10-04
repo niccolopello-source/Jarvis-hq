@@ -42,17 +42,17 @@ No new bust rate is proposed. No `world=regress`.
 
 | # | Gate | State | Evidence |
 |---|---|---|---|
-| 1 | Boot and main loop, no reproducible black screen | NOT RUN this pass | Older public checks exist. Not repeated on `d8fa56d`. |
-| 2 | Career playable into the late years | PASS by the statistical suite | P0-LIFE job on the same engine. Not a manual playthrough of this tip. |
-| 3 | Save, reload, resume | PASS on `b806f94` CI | Production-build e2e job of PR #39. The merge run was still open. |
-| 4 | Corrupt or failed persistence handled | PASS in unit tests of that same CI | `save.test.ts` / `persistence.test.ts` are in the unit job. Not re-listed case by case here. |
-| 5 | No open P0, and no P1 that breaks the loop | PASS for crashes | No P0 reproduced. P1-BUST and P1-WORLD do not stop play. They fail the written task, not the boot. |
+| 1 | Boot and main loop, no reproducible black screen | PASS in headless Chromium | 4 October, production preview of the `d8fa56d` game tree (identical in `apps/pivot23` to `88ba7dc`). Failed boot script still shows the logo and the reload link. 54/54 Playwright. Not a phone. |
+| 2 | Career playable into the late years | PASS | Same run: a career from the welcome reached the archive (51 choice steps) and the age-36 season closed once. The statistical P0-LIFE job on this engine already passed in run 37203654421 and was not repeated. |
+| 3 | Save, reload, resume | PASS | Same run: active career resumes after reload; finished career is not resumed; archive reload keeps the Career Card. |
+| 4 | Corrupt or failed persistence handled | PASS | Same run, plus the 133 unit tests: damaged save is kept and announced, a newer save is not opened, a failed write keeps the previous save, a crashing save can be set aside. |
+| 5 | No open P0, and no P1 that breaks the loop | PASS for crashes | No P0 reproduced in this run. P1-BUST and P1-WORLD do not stop play. |
 | 6 | Engine matches an agreed realism bar | FAIL | The bust task asks for a measured share of 8-point misses. The share is 0. No agreed replacement bar. |
-| 7 | Automatic regression | PASS | [Run 37203654421](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37203654421) on `d8fa56d`, 2026-10-04 12:57 UTC. Both jobs success. Same result on PR #39 head `b806f94`. |
-| 8 | Real phone and desktop smoke | NOT RUN | No device in this environment. |
-| 9 | Performance against the master-prompt targets | NOT RUN | No TTI, long-task or bundle measurement on this tip. |
+| 7 | Automatic regression | PASS on the game tree | [Run 37203654421](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37203654421) on `d8fa56d`. The later docs merges did not start Actions. Local recheck of that tree: lint, types, 133 unit, build, 54 e2e. Stats job not repeated. |
+| 8 | Real phone and desktop smoke | NOT RUN | No physical device. The mobile cases here are a resized Chromium window, including a Career Card reload. |
+| 9 | Performance against the master-prompt targets | PARTIAL | Build of this tree: app chunk 264 kB (gzip 88), English catalog 407 kB (gzip 136), chart vendor 379 kB (gzip 100). One boot sample in the e2e log: first contentful paint 112 ms, interactive 287 ms, on a 2-core headless machine. That is not the master-prompt budget and not a phone. |
 | 10 | Privacy and assets | BLOCKED for sale | Privacy inventory matches a local-only guest build. Franchise names are not cleared. |
-| 11 | Candidate build equals what would ship | NOT RUN | Production was not re-read after `d8fa56d`. |
+| 11 | Candidate build equals what would ship | PARTIAL | Production HTML at 13:07 UTC names the same initial assets as this build. The site was not played. |
 | 12 | Explicit approval to merge and deploy | BLOCKED | Not granted by this addendum. |
 
 ## Closed beta (5–10 people)

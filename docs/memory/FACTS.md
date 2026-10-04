@@ -1,14 +1,17 @@
 # Facts
 
-Updated: 2026-10-04 (tip `d8fa56d`). The sections below the first one are history unless they say otherwise.
+Updated: 2026-10-04 (tip `88ba7dc`). The sections below the first one are history unless they say otherwise.
+
+## 2026-10-04 — tip after the docs merges
+
+- `main` is `88ba7dc`, the merge of PR #42 (15:06 +0200). PR #40, #41 and #42 are docs only. `git diff d8fa56d 88ba7dc -- apps/pivot23` is empty. No open pull requests at the time of this note.
+- Those three merges did not start GitHub Actions. The workflow only listens to `apps/pivot23/**`. The last Actions run on the game tree is [run 37203654421](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37203654421) on `d8fa56d`, success, both jobs.
+- Rechecked locally on that same game tree, 4 October, headless Chromium, production preview: ESLint, `tsc`, 133 unit tests, `vite build`, 6 security headers, and 54/54 Playwright tests. The statistical job was not repeated. Detail is in the addendum.
+- Production `https://pivot23.vercel.app/`, read 2026-10-04 13:07 UTC: HTTP 200, the security headers are present, and the HTML names `assets/index-DStmhF_B.js`, `assets/react-vendor-CyDUuctK.js`, `assets/narrative-D8IjwUY_.js`, `assets/rolldown-runtime-hePW80VL.js` and `assets/index-xPL1_15-.css`. Those names match a production build of this game tree. The site was not played.
+- P-014 is in `DECISIONS.md` as a proposal. D-016 was not rewritten and is not superseded. D-017 does not exist until the owner accepts P-014.
+- Player and CPU names are assembled from fixed fictional lists (`world.ts` `FIRST`/`LAST`, `teams.ts` `ROOKIE_NAMES` and the face names). No external roster or stats feed is fetched. Team names and colours are the real franchises. Marks are original SVG, not league logos. Figtree is named in CSS and is not shipped as a file. Detail: `docs/pivot23/RELEASE-ADDENDUM-2026-10-04.md`. This is not a legal clearance.
 
 ## 2026-10-04 — tip after the dossier fix
-
-- `main` is `d8fa56d767cb35fb2e4f624df363535dbe3d2a39`, the merge of PR #39 (14:53 +0200). PR #38 (docs) and PR #39 (EuroLeague place line) are merged. No open pull requests at the time of this note.
-- The engine files are the same as `287850b`. The P1-BUST, P1-WORLD and P1-ROLE numbers in the section below still describe this tip. They were not re-run.
-- CI on the merge commit `d8fa56d`: [run 37203654421](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37203654421), success, both jobs, finished 2026-10-04 12:57 UTC. The PR head `b806f94` was already green before the merge.
-- Production was not re-read after this merge. The 12:24 UTC asset check below is for the previous game tree.
-- Player and CPU names are assembled from fixed fictional lists (`world.ts` `FIRST`/`LAST`, `teams.ts` `ROOKIE_NAMES` and the face names). No external roster or stats feed is fetched. Team names and colours are the real franchises. Marks are original SVG, not league logos. Figtree is named in CSS and is not shipped as a file. Detail: `docs/pivot23/RELEASE-ADDENDUM-2026-10-04.md`. This is not a legal clearance.
 
 ## 2026-10-04 — current tip
 
