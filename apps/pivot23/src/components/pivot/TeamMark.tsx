@@ -283,7 +283,7 @@ export function CourtMark({
         aria-hidden
         className={`${cls} court-mark-live`}
       >
-        <circle cx="40" cy="40" r="34.6" fill="none" stroke="currentColor" strokeWidth="5.4" />
+        <circle className="cine-ring" cx="40" cy="40" r="34.6" fill="none" stroke="currentColor" strokeWidth="5.4" />
         <g className="mark-arcs">
           <path d="M22.2 22.4 A22.2 22.2 0 0 1 57.8 22.4" fill="none" stroke="currentColor" strokeWidth="3.15" strokeLinecap="round" />
           <path d="M57.8 57.6 A22.2 22.2 0 0 1 22.2 57.6" fill="none" stroke="currentColor" strokeWidth="3.15" strokeLinecap="round" />
@@ -296,15 +296,15 @@ export function CourtMark({
         ) : null}
         {premiere ? (
           <>
-            <ellipse className="cine-shadow" cx="36" cy="74.5" rx="5.4" ry="1.15" />
-            <g className="cine-net" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
-              <path d="M30 56 C31.2 68 34.6 68 36 56" />
-              <path d="M36 57 C37.6 72 42.4 72 44 57" />
-              <path d="M44 56 C45.4 68 48.8 68 50 56" />
+            <ellipse className="cine-shadow" cx="36" cy="76" rx="7.2" ry="1.45" />
+            <g className="cine-net" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M28 54 C29.4 70 34.2 71 36 54" />
+              <path d="M36 55 C37.8 74 42.2 74 44 55" />
+              <path d="M44 54 C45.8 70 50.6 71 52 54" />
             </g>
             <g className="cine-ball-body">
-              <circle r="10" />
-              <path d="M-10 0 H10 M0 -10 V10 M-7.1 -6.8 C-2.2 -2.6 2.2 -2.6 7.1 -6.8 M-7.1 6.8 C-2.2 2.6 2.2 2.6 7.1 6.8" />
+              <circle r="13" />
+              <path d="M-13 0 H13 M0 -13 V13 M-9.2 -8.8 C-2.8 -3.4 2.8 -3.4 9.2 -8.8 M-9.2 8.8 C-2.8 3.4 2.8 3.4 9.2 8.8" />
             </g>
           </>
         ) : null}

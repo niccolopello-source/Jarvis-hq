@@ -8,7 +8,7 @@ import { logicalCueStarts } from "../src/intro-sound/synth";
  * mute and reduced motion are respected, Salta / Inizia stop everything and nothing replays.
  */
 
-const CUES = { bounce1: 1150, bounce2: 2050, bounce3: 2800, swish: 4850 };
+const CUES = { bounce1: 1800, bounce2: 3120, bounce3: 4320, swish: 7200 };
 
 type Rec = {
   contexts: number;
@@ -184,7 +184,7 @@ test("muted (stored off): a gesture creates nothing; the toggle turns sound on a
   await neutral(page).click();
   await page.waitForTimeout(200);
   expect((await rec(page)).contexts).toBe(0);
-  await waitElapsed(page, 3400);
+  await waitElapsed(page, 5200);
   await toggle(page).click();
   await expect(toggle(page)).toHaveAttribute("aria-pressed", "true");
   await page.waitForFunction(() => (window as unknown as { __audio: Rec }).__audio.starts.length > 0);

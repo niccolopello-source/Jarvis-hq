@@ -29,10 +29,10 @@ function beat(css: string, name: string): number {
 
 test("first-visit cues sit on the picture: three dribbles then the swish", () => {
   assert.deepEqual(FULL_TIMELINE, [
-    { name: "bounce1", at: 1150 },
-    { name: "bounce2", at: 2050 },
-    { name: "bounce3", at: 2800 },
-    { name: "swish", at: 4850 },
+    { name: "bounce1", at: 1800 },
+    { name: "bounce2", at: 3120 },
+    { name: "bounce3", at: 4320 },
+    { name: "swish", at: 7200 },
   ]);
 });
 
@@ -48,10 +48,10 @@ test("the timeline follows the CSS custom properties, not a guessed curve", () =
 
 test("the dribble keeps a natural rhythm and the swish is the shot, not another bounce", () => {
   const [b1, b2, b3, sw] = FULL_TIMELINE.map((c) => c.at);
-  assert.equal(b2! - b1!, 900);
-  assert.equal(b3! - b2!, 750);
-  assert.ok(sw! - b3! >= 1600 && sw! - b3! <= 2400, "a readable shot flight between the gather and the net");
-  assert.ok(sw! < PREMIERE_MS - 900, "the swish tail ends before the premiere hands over to the sweep");
+  assert.equal(b2! - b1!, 1320);
+  assert.equal(b3! - b2!, 1200);
+  assert.ok(sw! - b3! >= 2400 && sw! - b3! <= 3400, "a readable shot flight between the gather and the net");
+  assert.ok(sw! + 1400 < PREMIERE_MS, "the swish tail ends before the premiere hands over to the sweep");
 });
 
 test("the 1.6 s premiere (returning visit, lean device) is swish only", () => {
@@ -73,26 +73,26 @@ test("invalid timing yields no cues instead of NaN schedules", () => {
 
 test("a gesture before the first beat schedules every cue with its remaining delay", () => {
   assert.deepEqual(planRemaining(FULL_TIMELINE, 200), [
-    { name: "bounce1", delayMs: 950 },
-    { name: "bounce2", delayMs: 1850 },
-    { name: "bounce3", delayMs: 2600 },
-    { name: "swish", delayMs: 4650 },
+    { name: "bounce1", delayMs: 1600 },
+    { name: "bounce2", delayMs: 2920 },
+    { name: "bounce3", delayMs: 4120 },
+    { name: "swish", delayMs: 7000 },
   ]);
 });
 
 test("a gesture mid-premiere plays only what is still ahead, in sync", () => {
-  assert.deepEqual(planRemaining(FULL_TIMELINE, 1500), [
-    { name: "bounce2", delayMs: 550 },
-    { name: "bounce3", delayMs: 1300 },
-    { name: "swish", delayMs: 3350 },
+  assert.deepEqual(planRemaining(FULL_TIMELINE, 2000), [
+    { name: "bounce2", delayMs: 1120 },
+    { name: "bounce3", delayMs: 2320 },
+    { name: "swish", delayMs: 5200 },
   ]);
-  assert.deepEqual(planRemaining(FULL_TIMELINE, 3000), [{ name: "swish", delayMs: 1850 }]);
-  assert.deepEqual(planRemaining(FULL_TIMELINE, 5000), []);
+  assert.deepEqual(planRemaining(FULL_TIMELINE, 4500), [{ name: "swish", delayMs: 2700 }]);
+  assert.deepEqual(planRemaining(FULL_TIMELINE, 8000), []);
 });
 
 test("a just-missed cue (inside the grace) plays at once; an older one is skipped", () => {
-  assert.deepEqual(planRemaining(FULL_TIMELINE, 2050 + LATE_GRACE_MS - 1)[0], { name: "bounce2", delayMs: 0 });
-  assert.equal(planRemaining(FULL_TIMELINE, 2050 + LATE_GRACE_MS + 1)[0]!.name, "bounce3");
+  assert.deepEqual(planRemaining(FULL_TIMELINE, 3120 + LATE_GRACE_MS - 1)[0], { name: "bounce2", delayMs: 0 });
+  assert.equal(planRemaining(FULL_TIMELINE, 3120 + LATE_GRACE_MS + 1)[0]!.name, "bounce3");
   assert.deepEqual(planRemaining(FULL_TIMELINE, NaN), []);
 });
 

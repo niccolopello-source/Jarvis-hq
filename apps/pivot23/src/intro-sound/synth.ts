@@ -14,9 +14,9 @@
 export type Voice = { gain: number; pitch: number; decay: number; slapHz: number };
 
 /** Three dribbles that are not clones. The third is the gather: heavier, lower, shorter. */
-export const BOUNCE_1: Voice = { gain: 1, pitch: 1, decay: 1, slapHz: 1750 };
-export const BOUNCE_2: Voice = { gain: 0.78, pitch: 1.08, decay: 0.86, slapHz: 2200 };
-export const BOUNCE_3: Voice = { gain: 1.08, pitch: 0.92, decay: 0.68, slapHz: 1380 };
+export const BOUNCE_1: Voice = { gain: 1.16, pitch: 0.94, decay: 1.18, slapHz: 1480 };
+export const BOUNCE_2: Voice = { gain: 0.68, pitch: 1.18, decay: 0.76, slapHz: 2480 };
+export const BOUNCE_3: Voice = { gain: 1.28, pitch: 0.82, decay: 0.52, slapHz: 1100 };
 
 const FLOOR = 0.0001; // exponential ramps can never reach 0
 
@@ -40,7 +40,7 @@ export function makeNoise(ctx: BaseAudioContext, seconds = 1, seed = 23): AudioB
 }
 
 /** A decaying-noise impulse response: a small, slightly live gym. */
-export function makeRoom(ctx: BaseAudioContext, seconds = 0.45, seed = 7): AudioBuffer {
+export function makeRoom(ctx: BaseAudioContext, seconds = 0.82, seed = 7): AudioBuffer {
   const length = Math.max(1, Math.round(ctx.sampleRate * seconds));
   const buffer = ctx.createBuffer(2, length, ctx.sampleRate);
   for (let ch = 0; ch < 2; ch++) {
@@ -57,20 +57,20 @@ export function makeRoom(ctx: BaseAudioContext, seconds = 0.45, seed = 7): Audio
 }
 
 /** Master chain: dry + short room, glued by a gentle compressor so the dribbles and the swish sit in one gym. */
-export function makeMaster(ctx: BaseAudioContext, volume = 0.78): { input: GainNode; output: GainNode } {
+export function makeMaster(ctx: BaseAudioContext, volume = 0.86): { input: GainNode; output: GainNode } {
   const input = ctx.createGain();
   const output = ctx.createGain();
   output.gain.value = volume;
   const comp = ctx.createDynamicsCompressor();
-  comp.threshold.value = -16;
-  comp.knee.value = 10;
-  comp.ratio.value = 3.2;
-  comp.attack.value = 0.003;
-  comp.release.value = 0.18;
+  comp.threshold.value = -18;
+  comp.knee.value = 12;
+  comp.ratio.value = 4;
+  comp.attack.value = 0.004;
+  comp.release.value = 0.24;
   const room = ctx.createConvolver();
   room.buffer = makeRoom(ctx);
   const wet = ctx.createGain();
-  wet.gain.value = 0.24;
+  wet.gain.value = 0.36;
   input.connect(comp);
   input.connect(room);
   room.connect(wet);
@@ -98,7 +98,7 @@ function noiseSource(bus: Bus, t: number, length: number, offset: number, track:
 /** One dribble on hardwood starting at context time `t`. Returns when its tail has died out. */
 export function bounce(bus: Bus, t: number, v: Voice, track: Track = () => {}): number {
   const { ctx, out } = bus;
-  const end = t + 0.32 * v.decay + 0.02;
+  const end = t + 0.44 * v.decay + 0.04;
 
   // Body: the floor thump, pitch falling as the ball squashes and springs back.
   const body = ctx.createOscillator();
@@ -106,7 +106,7 @@ export function bounce(bus: Bus, t: number, v: Voice, track: Track = () => {}): 
   body.frequency.setValueAtTime(165 * v.pitch, t);
   body.frequency.exponentialRampToValueAtTime(62 * v.pitch, t + 0.085);
   const bodyGain = ctx.createGain();
-  envelope(bodyGain.gain, t, 0.95 * v.gain, 0.0025, 0.2 * v.decay);
+  envelope(bodyGain.gain, t, 1.05 * v.gain, 0.003, 0.26 * v.decay);
   body.connect(bodyGain).connect(out);
   body.start(t);
   body.stop(end);
@@ -141,12 +141,12 @@ export function bounce(bus: Bus, t: number, v: Voice, track: Track = () => {}): 
   slap.connect(slapBand).connect(slapGain).connect(out);
 
   // Floor: the boards under the ball, a low noise thud.
-  const floor = noiseSource(bus, t, 0.14, t * 0.61 + 0.2, track);
+  const floor = noiseSource(bus, t, 0.22, t * 0.61 + 0.2, track);
   const floorLow = ctx.createBiquadFilter();
   floorLow.type = "lowpass";
   floorLow.frequency.value = 320;
   const floorGain = ctx.createGain();
-  envelope(floorGain.gain, t, 0.5 * v.gain, 0.002, 0.08 * v.decay);
+  envelope(floorGain.gain, t, 0.72 * v.gain, 0.003, 0.14 * v.decay);
   floor.connect(floorLow).connect(floorGain).connect(out);
 
   return end;
@@ -155,28 +155,28 @@ export function bounce(bus: Bus, t: number, v: Voice, track: Track = () => {}): 
 /** The ball dropping clean through the net (no rim) at context time `t`. Returns when its tail has died out. */
 export function swish(bus: Bus, t: number, track: Track = () => {}): number {
   const { ctx, out } = bus;
-  const end = t + 0.78;
+  const end = t + 1.2;
 
   // Main swish: band-pass sweep up as the ball enters, down as it leaves the net.
-  const main = noiseSource(bus, t, 0.72, 0.11, track);
+  const main = noiseSource(bus, t, 1.05, 0.11, track);
   const band = ctx.createBiquadFilter();
   band.type = "bandpass";
-  band.Q.value = 0.9;
-  band.frequency.setValueAtTime(1200, t);
-  band.frequency.exponentialRampToValueAtTime(4600, t + 0.16);
-  band.frequency.exponentialRampToValueAtTime(2100, t + 0.55);
+  band.Q.value = 0.85;
+  band.frequency.setValueAtTime(900, t);
+  band.frequency.exponentialRampToValueAtTime(5400, t + 0.22);
+  band.frequency.exponentialRampToValueAtTime(1500, t + 0.9);
   const mainGain = ctx.createGain();
   mainGain.gain.setValueAtTime(0, t);
-  mainGain.gain.linearRampToValueAtTime(0.78, t + 0.04);
-  mainGain.gain.linearRampToValueAtTime(0.46, t + 0.16);
-  mainGain.gain.exponentialRampToValueAtTime(FLOOR, t + 0.62);
+  mainGain.gain.linearRampToValueAtTime(0.94, t + 0.05);
+  mainGain.gain.linearRampToValueAtTime(0.5, t + 0.22);
+  mainGain.gain.exponentialRampToValueAtTime(FLOOR, t + 1.05);
   // Net-string flutter: a fast tremolo that gives the "ciuffo" its knitted texture.
   const flutter = ctx.createOscillator();
-  flutter.frequency.setValueAtTime(38, t);
-  flutter.frequency.linearRampToValueAtTime(18, t + 0.55);
+  flutter.frequency.setValueAtTime(42, t);
+  flutter.frequency.linearRampToValueAtTime(16, t + 0.9);
   const depth = ctx.createGain();
-  depth.gain.setValueAtTime(0.34, t);
-  depth.gain.linearRampToValueAtTime(0.05, t + 0.55);
+  depth.gain.setValueAtTime(0.42, t);
+  depth.gain.linearRampToValueAtTime(0.06, t + 0.9);
   const trem = ctx.createGain();
   trem.gain.value = 0.9;
   flutter.connect(depth).connect(trem.gain);
@@ -186,12 +186,12 @@ export function swish(bus: Bus, t: number, track: Track = () => {}): number {
   main.connect(band).connect(mainGain).connect(trem).connect(out);
 
   // Air: the high, breathy part of the swish.
-  const air = noiseSource(bus, t + 0.008, 0.5, 0.43, track);
+  const air = noiseSource(bus, t + 0.008, 0.72, 0.43, track);
   const high = ctx.createBiquadFilter();
   high.type = "highpass";
   high.frequency.value = 4800;
   const airGain = ctx.createGain();
-  envelope(airGain.gain, t + 0.008, 0.34, 0.04, 0.4);
+  envelope(airGain.gain, t + 0.008, 0.42, 0.05, 0.55);
   air.connect(high).connect(airGain).connect(out);
 
   // Push: the ball filling the net, a soft low whump.
@@ -200,7 +200,7 @@ export function swish(bus: Bus, t: number, track: Track = () => {}): number {
   low.type = "lowpass";
   low.frequency.value = 480;
   const pushGain = ctx.createGain();
-  envelope(pushGain.gain, t + 0.015, 0.38, 0.01, 0.12);
+  envelope(pushGain.gain, t + 0.015, 0.5, 0.012, 0.16);
   push.connect(low).connect(pushGain).connect(out);
 
   // First snap: the net taking the ball.
@@ -220,7 +220,7 @@ export function swish(bus: Bus, t: number, track: Track = () => {}): number {
   closeBand.frequency.value = 2600;
   closeBand.Q.value = 0.8;
   const closeGain = ctx.createGain();
-  envelope(closeGain.gain, t + 0.28, 0.28, 0.03, 0.28);
+  envelope(closeGain.gain, t + 0.28, 0.46, 0.02, 0.42);
   close.connect(closeBand).connect(closeGain).connect(out);
 
   return end;

@@ -5,10 +5,10 @@
 html[data-intro="full"] .intro-hero > .eyebrow,
 html[data-intro="full"] .intro-hero > .display-title,
 html[data-intro="full"] .intro-hero > .lede {
-  animation: introRise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.16s backwards;
+  animation: introRise 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.9s backwards;
 }
-html[data-intro="full"] .intro-hero > .display-title { animation-delay: 0.22s; }
-html[data-intro="full"] .intro-hero > .lede { animation-delay: 0.28s; }
+html[data-intro="full"] .intro-hero > .display-title { animation-delay: 1.12s; }
+html[data-intro="full"] .intro-hero > .lede { animation-delay: 1.32s; }
 
 @keyframes introRise {
   from {
