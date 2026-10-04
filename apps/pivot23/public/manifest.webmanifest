@@ -1,0 +1,12 @@
+{
+  "name": "PIVOT 23",
+  "short_name": "PIVOT 23",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#0c0b0d",
+  "theme_color": "#0c0b0d",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
+  ]
+}
