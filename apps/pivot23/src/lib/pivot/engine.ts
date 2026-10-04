@@ -47,8 +47,7 @@ import { lateCareerEvent } from "./story-late";
 import { createRng, gaussTrim, pick, rand, randInt, rngDepth, runWithRng, type Rng } from "./rng";
 import { newCareerId } from "./save";
 import { say, sayOr, sceneVars, fillVars, voiceKey, tooClose } from "./voice";
-import { getLang, type Lang } from "./i18n";
-import { proceduralLocale } from "./proc-text";
+import { getLang } from "./i18n";
 import { hofTier } from "./legacy";
 import { settlePlayerAwards } from "./awards-helpers";
 import { playoffChoicesFor as doorChoices } from "./playoff-doors";
@@ -724,58 +723,17 @@ export function phaseFor(n: number, age = 20): "rookie" | "prime" | "veteran" {
 
 type ProcKind = "corpo" | "sfida" | "contratto" | "freddo" | "caldo" | "panchina" | "anni" | "numeri" | "ruolo";
 
-function localizePitch(s: PlayerState, kind: string, team: string, pitch: string): string {
-  const lang = careerLang(s);
-  if (lang === "it") return pitch;
-  const pack =
-    lang === "es"
-      ? {
-          extension: `Renovación. ${team} quiere que te quedes.`,
-          ring: `${team} va a por el anillo. Menos dinero, un aspirante de verdad.`,
-          fair: `${team} ofrece el precio de mercado y un rol de referencia.`,
-          max: `La cifra más alta llega de ${team}. El proyecto se escribe después.`,
-          euro: `Euroliga: ${team}. Otro escenario, la misma pelota.`,
-          prove: `Dos años en ${team} para demostrar que el pico no quedó atrás.`,
-          contender: `${team} quiere una pieza de título. Minutos de verdad.`,
-          mid: `${team} ofrece un rol de referencia, sin prometer junio.`,
-          rebuilding: `${team} reconstruye. Los minutos llegan ya, las victorias después.`,
-        }
-      : {
-          extension: `Extension. ${team} wants you to stay.`,
-          ring: `${team} is chasing a ring. Less money, a real contender.`,
-          fair: `${team} offers market money and a lead role.`,
-          max: `The richest offer comes from ${team}. The project comes after the check.`,
-          euro: `EuroLeague: ${team}. Another stage, the same ball.`,
-          prove: `Two years at ${team} to show the peak is not behind you.`,
-          contender: `${team} wants a piece for a title run. Real minutes.`,
-          mid: `${team} offers a lead role, without promising June.`,
-          rebuilding: `${team} is rebuilding. The minutes come now. The wins come later.`,
-        };
-  return pack[kind as keyof typeof pack] || pitch;
-}
-
-function careerLang(s: PlayerState): Lang {
-  return s.lang === "en" || s.lang === "es" || s.lang === "it" ? s.lang : getLang();
+/**
+ * Offer and trade pitches stay in the engine's canonical Italian; the screen translates them
+ * (src/lib/pivot/narrative). Saves and RNG are the same in every language.
+ */
+function localizePitch(_s: PlayerState, _kind: string, _team: string, pitch: string): string {
+  return pitch;
 }
 
 function priorLine(s: PlayerState): string {
   const row = s.seasonHistory[s.seasonHistory.length - 1];
   if (!row || !Number.isFinite(row.ppg)) return "";
-  const lang = careerLang(s);
-  if (lang === "en") {
-    const bits = [`${row.ppg.toFixed(1)} points`];
-    if (row.rpg >= 3.5) bits.push(`${row.rpg.toFixed(1)} rebounds`);
-    if (row.apg >= 2.5) bits.push(`${row.apg.toFixed(1)} assists`);
-    if (row.spg + row.bpg >= 1.5) bits.push(`${row.spg.toFixed(1)} steals and ${row.bpg.toFixed(1)} blocks`);
-    return `The year before, you finished at ${bits.slice(0, 3).join(", ")}.`;
-  }
-  if (lang === "es") {
-    const bits = [`${row.ppg.toFixed(1)} puntos`];
-    if (row.rpg >= 3.5) bits.push(`${row.rpg.toFixed(1)} rebotes`);
-    if (row.apg >= 2.5) bits.push(`${row.apg.toFixed(1)} asistencias`);
-    if (row.spg + row.bpg >= 1.5) bits.push(`${row.spg.toFixed(1)} robos y ${row.bpg.toFixed(1)} tapones`);
-    return `El año anterior cerraste con ${bits.slice(0, 3).join(", ")}.`;
-  }
   const bits = [`${row.ppg.toFixed(1)} punti`];
   if (row.rpg >= 3.5) bits.push(`${row.rpg.toFixed(1)} rimbalzi`);
   if (row.apg >= 2.5) bits.push(`${row.apg.toFixed(1)} assist`);
@@ -809,37 +767,7 @@ function proceduralFromId(s: PlayerState, id: string): StoryEvent | null {
 }
 
 function buildProcedural(s: PlayerState, kind: ProcKind, season = s.season): StoryEvent {
-  return dressProcedural(s, buildProceduralIt(s, kind, season));
-}
-
-function dressProcedural(s: PlayerState, ev: StoryEvent): StoryEvent {
-  const kind = ev.id.split("-")[1] || "";
-  const copy = proceduralLocale(careerLang(s), kind, {
-    age: s.age,
-    team: s.team?.name || "",
-    rival: s.rivalName || "",
-    prior: priorLine(s),
-  });
-  if (!copy) return ev;
-  return {
-    ...ev,
-    title: copy.title,
-    subtitle: copy.subtitle,
-    choices: ev.choices.map((c, i) => {
-      const alt = copy.choices[i];
-      if (!alt) return c;
-      const fx = c.fx;
-      return {
-        ...c,
-        label: alt.label,
-        detail: alt.detail,
-        fx: (p) => {
-          const out = fx(p);
-          return { ...out, flavor: alt.flavor };
-        },
-      };
-    }),
-  };
+  return buildProceduralIt(s, kind, season);
 }
 
 function buildProceduralIt(s: PlayerState, kind: ProcKind, season = s.season): StoryEvent {
