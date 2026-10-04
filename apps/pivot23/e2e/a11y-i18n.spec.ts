@@ -49,8 +49,8 @@ for (const lang of ["it", "en"] as const) {
     await page.goto("/");
     await expect(page.getByRole("button", { name: L.start, exact: true })).toBeVisible();
     await expect(page.locator("html")).toHaveAttribute("lang", lang);
-    // English chrome, Italian story: the home says so (narrative translation is out of scope, see report).
-    await expect(page.getByText(/story text .* is still in Italian/)).toHaveCount(lang === "en" ? 1 : 0);
+    // The story is translated too: the old "story text is still in Italian" notice is gone.
+    await expect(page.getByText(/story text .* is still in Italian/)).toHaveCount(0);
     found.push(...(await axe(page, "intro")));
 
     await page.getByRole("button", { name: L.how }).click();

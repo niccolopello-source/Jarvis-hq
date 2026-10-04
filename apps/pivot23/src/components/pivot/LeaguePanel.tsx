@@ -1,7 +1,8 @@
 
 import { memo, useState } from "react";
 import { TeamCrest, TeamLabel, TeamMark } from "@/components/pivot/TeamMark";
-import { awardNoteLabel, confLabel } from "@/lib/pivot/labels";
+import { awardNoteLabel, confLabel, seedLabel } from "@/lib/pivot/labels";
+import { nx } from "@/lib/pivot/narrative";
 import { cpuPer, mvpRaceScore, personalAwardBrief, quintetRaceScore } from "@/lib/pivot/awards-helpers";
 import { awardLabel, t, tf, useLang, type Lang as UiLang, type Msg } from "@/lib/pivot/i18n";
 import type { DpoyCandidate, LeagueSnapshot, PlayerState, RoyCandidate, SeasonRow, StandingRow, TeamAmbition, TeamIdentity } from "@/lib/pivot/types";
@@ -70,13 +71,13 @@ export function TeamDossier({
           </div>
           <div className="text-[13px] text-wood tabular mt-0.5">
             {row.w}-{row.l}
-            {row.seed ? ` · ${row.seed}°` : ` · ${t("outOfPlayoffs", lang)}`} · {pct.toFixed(3).replace("0.", ".")}
+            {row.seed ? ` · ${seedLabel(row.seed, lang)}` : ` · ${t("outOfPlayoffs", lang)}`} · {pct.toFixed(3).replace("0.", ".")}
           </div>
         </div>
       </div>
       {!compact && (
         <>
-          <p className="text-[12.5px] text-muted italic mt-2 leading-snug">{row.note}</p>
+          <p className="text-[12.5px] text-muted italic mt-2 leading-snug">{nx(row.note, lang)}</p>
           <div className="grid grid-cols-4 gap-1.5 text-center mt-3">
             {[
               [row.ppg.toFixed(1), t("statPF", lang)],
@@ -134,7 +135,7 @@ function TeamBanner({ row }: { row: StandingRow }) {
           {row.starPpg.toFixed(1)} / {row.starRpg.toFixed(1)} / {row.starApg.toFixed(1)}
         </span>
       </div>
-      {row.identity ? <p>{systemLine(row, lang)}</p> : row.note ? <p>{row.note}</p> : null}
+      {row.identity ? <p>{systemLine(row, lang)}</p> : row.note ? <p>{nx(row.note, lang)}</p> : null}
     </div>
   );
 }
@@ -284,7 +285,7 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
                     {club ? <TeamCrest team={club} size={18} /> : null}
                     {a.name} · {a.teamAbbr}
                   </span>
-                  <em>{awardNoteLabel(a.note, lang)}</em>
+                  <em>{awardNoteLabel(nx(a.note, lang), lang)}</em>
                 </li>
               );
             })}
@@ -297,7 +298,7 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
           <div className="leader-row">
             {snap.leaders.map((l) => (
               <div key={l.stat} className={`leader-cell ${l.isPlayer ? "yours" : ""}`}>
-                <div className="tl">{l.stat}</div>
+                <div className="tl">{nx(l.stat, lang)}</div>
                 <div className="tv">{l.value}</div>
                 <div className="tn">
                   {l.name} · {l.team}
@@ -378,7 +379,7 @@ export function PersonalAwards({
           <li key={a.key} className="yours">
             <span className="award-title">{a.title}</span>
             <span className="award-who">{a.year}</span>
-            <em>{a.brief}</em>
+            <em>{nx(a.brief, lang)}</em>
           </li>
         ))}
       </ul>
@@ -544,7 +545,7 @@ function RaceList({
             <b>{c.name}</b>
             <em>{c.abbr}</em>
           </span>
-          <span className="tabular">{c.line}</span>
+          <span className="tabular">{nx(c.line, lang)}</span>
         </div>
       ))}
       {gapLine ? <p className="chart-cap">{gapLine}</p> : null}

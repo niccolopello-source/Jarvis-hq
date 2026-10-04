@@ -111,6 +111,12 @@ export function chipsFromSnapshot(
   return chips.slice(0, 3);
 }
 
+/** Closes a fragment that may be a bare label ("Tre settimane di mestiere, già fatte") with a full stop. */
+export function endSentence(text: string): string {
+  const t = text.trim();
+  return !t || /[.!?…:]$/.test(t) ? t : `${t}.`;
+}
+
 /**
  * Joins narrative fragments without doubled punctuation ("è tuo.. Overall"), stray spaces
  * before punctuation, or double spaces. Ellipses ("…" or "...") are kept.
