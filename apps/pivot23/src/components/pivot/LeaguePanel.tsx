@@ -1,7 +1,7 @@
 
 import { memo, useState } from "react";
 import { TeamCrest, TeamLabel, TeamMark } from "@/components/pivot/TeamMark";
-import { awardNoteLabel, confLabel, seedLabel } from "@/lib/pivot/labels";
+import { awardNoteLabel, dossierPlace, seedLabel } from "@/lib/pivot/labels";
 import { nx } from "@/lib/pivot/narrative";
 import { cpuPer, mvpRaceScore, personalAwardBrief, quintetRaceScore } from "@/lib/pivot/awards-helpers";
 import { awardLabel, t, tf, useLang, type Lang as UiLang, type Msg } from "@/lib/pivot/i18n";
@@ -67,7 +67,7 @@ export function TeamDossier({
             <TeamLabel team={row} name={row.name} size={compact ? 20 : 24} />
           </div>
           <div className="text-[12px] text-muted">
-            {row.city} · {row.div} · {confLabel(row.conf, lang)}
+            {dossierPlace(row.city, row.div, row.conf, lang)}
           </div>
           <div className="text-[13px] text-wood tabular mt-0.5">
             {row.w}-{row.l}
