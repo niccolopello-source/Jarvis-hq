@@ -1,6 +1,23 @@
 # Facts
 
-Updated: 2026-10-04 (intro cut). The sections below the first one are history unless they say otherwise.
+Updated: 2026-10-04 (tip `287850b`). The sections below the first one are history unless they say otherwise.
+
+## 2026-10-04 — current tip
+
+Verified on `main` `287850b062b43caf1e5b687ff8d04bf2d9fa139a` (merge of PR #37, 2026-10-04 13:39 +0200). Tree `6832fb0`, same tree as the PR head `201d1e5`. No open pull requests at the time of this note.
+
+- GitHub Actions on that SHA: [run 37199500470](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37199500470), success. Jobs: `lint, types, unit, build, e2e (production build)` and `statistical engine checks (~4 min)`.
+- Engine label in source: `2.12.0-beta` (`apps/pivot23/src/lib/pivot/config.ts`). `SAVE_VERSION` 11. `LIVE_SAVE_VERSION` 2. `FLAGS.account`, `tokens` and `nft` are false.
+- First-visit premiere in source: `PREMIERE_MS` 12000. Returning visit and a lean device: 1600. The 9.2 s note below describes an older cut, not this tip.
+- Italian/English narrative is on this tip (PR #37). The English catalog is a separate chunk. Spanish is still in the dictionary and not offered (D-014).
+- Production `https://pivot23.vercel.app`, read 2026-10-04 12:24 UTC: `Last-Modified` is after the merge, and the HTML names `assets/index-DDwv2i6l.js`, `assets/index-xPL1_15-.css` and `assets/narrative-D8IjwUY_.js`. Those names match a production build of this same tree. The Vercel project setting itself was not read.
+- D-016 still names `89249ef` as the demo source. That decision has not been superseded. The git tip and D-016 disagree; this file does not resolve it.
+
+P1 remeasured on this tree, shipped tuning, engine `2.12.0-beta`. Not a closure of the tasks in TASKS.md.
+
+- P1-BUST: 1,500 Pro careers, seeds `200000`–`201499`, roles and paths cycled, random draft. 190 had potential ≥ 85. **0** peaked 8 or more under that potential. 8 peaked under it at all. Gap peak−potential: min −2, p10 +0.8, median +2.9, p90 +4.4. `SIM.development.bustRate` is applied to CPU stars (`world.ts`), not to the player's peak. The player's peak is capped at potential+8 (`peak.ts`).
+- P1-WORLD: same 1,500 careers, NBA titles only. Including the three `TITLE_SEED` rows (two of them Boston), Boston is 15.9% and Gini is 0.366. Excluding those rows: 23,333 simulated titles, OKC 7.7%, CLE 6.4%, BOS 6.1%, Gini 0.256, HHI 410. Spearman of the static power constant against that share: 0.95. Mean absolute drift of team power from its constant: 12.0. OKC is not the power leader at the end in 1,229 of 1,500 worlds. The 15% Boston figure is the seeded history, not the power constant.
+- P1-ROLE: 200 seeds (`500000`–`500199`), each played as PG, SG, SF, PF and C. Held: Pro, NCAA, random draft. Games-weighted NBA seasons. Mean PPG 14.0 / 12.5 / 11.2 / 10.6 / 9.3 (SG, SF, PF, PG, C). RPG 6.8 / 5.4 / 3.3 / 2.5 / 2.1 (C, PF, SF, SG, PG). APG 4.6 / 2.7 / 2.6 / 1.9 / 1.5 (PG, SF, SG, PF, C). Minutes sit at about 25 for every role. Mean peak overall is 78.1 for every role. The role weights are not dead. Equal peak overall is what `TUNING.rolePeak = "current"` does.
 
 ## 2026-10-04 — intro più lunga, pallone e suoni sullo stesso montaggio
 
