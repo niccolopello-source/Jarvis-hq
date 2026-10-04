@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { logicalCueStarts } from "../src/intro-sound/synth";
 
 /**
  * Intro sounds (src/intro-sound): three dribbles and a net swish synced to the home premiere.
@@ -114,12 +115,9 @@ const waitElapsed = (page: Page, ms: number) =>
     return r.premiereStart > 0 && performance.now() - r.premiereStart >= ms;
   }, ms);
 
-/** Groups source starts into cues (sources of one cue start within ~200 ms) and returns their premiere times. */
+/** Premiere times of the logical cues. Oscillator attacks only: the swish's closing rustle is not a fifth cue. */
 function cueTimes(r: Rec): number[] {
-  const times = r.starts.map((s) => s.at - r.premiereStart).sort((a, b) => a - b);
-  const groups: number[] = [];
-  for (const t of times) if (!groups.length || t - groups[groups.length - 1]! > 250) groups.push(t);
-  return groups;
+  return logicalCueStarts(r.starts.map((s) => ({ kind: s.kind, at: s.at - r.premiereStart })));
 }
 
 const neutral = (page: Page) => page.locator(".intro-hero .display-title");

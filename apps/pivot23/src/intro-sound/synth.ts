@@ -240,6 +240,32 @@ export function playCue(bus: Bus, name: CueKind, t: number, track?: Track): numb
   return bounce(bus, t, VOICES[name], track);
 }
 
+/**
+ * How far apart two oscillator starts must be before they are two cues.
+ * Same unit as the start times passed in. 40 ms is under the swish's closing
+ * rustle (~280 ms, a noise layer, not an oscillator) and under the 350 ms
+ * minimum gap between dribbles.
+ */
+export const CUE_ATTACK_SPLIT_MS = 40;
+
+/**
+ * Logical cue times. A dribble starts three oscillators together; the swish starts one,
+ * the net flutter, at the cue itself. Later noise layers belong to that cue.
+ * A second playCue is not hidden: it starts its own oscillator.
+ */
+export function logicalCueStarts(
+  starts: readonly { kind: string; at: number }[],
+  splitMs = CUE_ATTACK_SPLIT_MS,
+): number[] {
+  const times = starts.filter((s) => s.kind === "osc").map((s) => s.at).sort((a, b) => a - b);
+  const groups: number[] = [];
+  for (const t of times) {
+    const prev = groups[groups.length - 1];
+    if (prev === undefined || t - prev > splitMs) groups.push(t);
+  }
+  return groups;
+}
+
 export function makeBus(ctx: BaseAudioContext, out: AudioNode): Bus {
   return { ctx, out, noise: makeNoise(ctx) };
 }
