@@ -51,3 +51,34 @@ Ambiente: Chromium headless, viewport 800×600. Carriera «Playoff», playmaker,
 È comparsa un'offerta Chicago Bulls e il click l'ha accettata. Non è una free agency completata. Nessuna serie è stata aperta, quindi il refresh durante la serie non è stato eseguito. Errori JavaScript catturati: nessuno.
 
 Il seed di laboratorio 23000 resta un PASS del motore, non dell'interfaccia. Gate playoff browser: NOT RUN. Demo: NOT READY.
+
+## Playoff nel browser — 2026-10-04, notte
+
+Il paragrafo sopra resta. Non è stato riscritto.
+
+Commit e deploy di questa sessione: `f00808941e1cfe601c237679f79a2b354128d6d0`, produzione `dpl_67Cpnh8oVW4BELiMvEuqzbgMK7AZ`, READY, stesso SHA. URL `https://www.pivot23.com`. Asset serviti: `index-D7ntqA-P.js`, `rolldown-runtime-hePW80VL.js`, `react-vendor-CyDUuctK.js`, `narrative-D8IjwUY_.js`. Nessun transfer vuoto tra le risorse della pagina.
+
+Ambiente: Chromium del banco di prova, `www.pivot23.com`, italiano. Console CDP non abilitata in questo runner: nessun boundary di errore, nessun testo di crash, navigazioni 200.
+
+Differenza rispetto al resoconto atteso. In questo profilo `localStorage` aveva solo `pivot23.introSeen`. Nessuna carriera Chicago, nessuna semifinale contro Boston. Il save è locale: non viaggia tra sessioni. Non è stata ripristinata né cancellata una carriera assente. Il motore non è stato modificato.
+
+Carriera nuova, non il save Chicago: nome «Serie», playmaker, Italia, Esordio, NCAA, 13ª scelta Philadelphia 76ers, overall 64, motore `2.12.0-beta`.
+
+| Stagione | Squadra | Record | Playoff |
+|---|---|---|---|
+| 2026-27 | Philadelphia 76ers | 24-58 | Fuori. 7,9 / 1,8 / 3,6, 79 GP |
+| 2027-28 | Philadelphia 76ers | 31-51 | Fuori. 8,5 / 1,8 / 4,2, 77 GP |
+| 2028-29 | Philadelphia 76ers | 30-52 | Fuori. 10,0 / 2,0 / 4,6, 77 GP. Poi scambio accettato verso Denver |
+| 2029-30 | Denver Nuggets | 59-23, 1° Ovest | Primo turno vinto 4-1 vs Memphis. Semifinale vinta 4-3 vs San Antonio. Finali di conference perse 2-4 vs LA Clippers |
+
+Scelte di serie, non alterate a tavolino: fisico contro Memphis, uno contro uno contro San Antonio, controllo della serie contro i Clippers. Ogni serie si chiude con un click: i risultati gara per gara compaiono insieme. Non è un bug riprodotto, è il comportamento dell'interfaccia.
+
+Refresh con la semifinale aperta: Denver, 2029-30, 4-1 Memphis con le cinque gare e la scelta, avversario San Antonio, le tre scelte ancora da fare. Secondo refresh con le finali di conference aperte: 4-3 San Antonio tenuto, Clippers in attesa, stesse tre scelte. Refresh dopo l'eliminazione: esito `Elim. Finali Est/Ovest 2-4`, offerte Portland, Orlando, Clippers, Memphis ancora sul tavolo. Refresh dopo la firma: Portland, 2030-31, 4 anni a 27,6 milioni, diario del 2-4 ancora visibile.
+
+Premi individuali e di squadra: assenti, e coerenti. `mvpCount` 0, `allStarCount` 0, `titleCount` 0, `roy` false, `awards` della stagione vuoto. 11,6 punti non bastano a un premio. L'assenza non è segnata come bug. La lega assegna premi ad altri nomi (MVP Enzo Marais nel 2026-27 e 2027-28).
+
+Chiusura playoff: corretta, eliminazione in finale di conference, niente finale NBA. Quella finale non è stata percorsa. Free agency: sì, firma Portland. Ritiro: non raggiunto.
+
+Gate playoff browser: PASS sul ramo Ovest di questa carriera, fino all'eliminazione. Non PASS su Boston, non PASS sulla finale NBA. Premi: NOT EARNED, non un fallimento del pannello. Free agency: PASS sulla firma. Ritiro: NOT RUN. Demo: NOT READY.
+
+Prossimo gate: una finale NBA giocata nell'interfaccia, oppure un premio individuale effettivamente vinto e riletto dopo refresh. Safari e telefono restano bloccati. Nessuna modifica al motore in questa sessione.
