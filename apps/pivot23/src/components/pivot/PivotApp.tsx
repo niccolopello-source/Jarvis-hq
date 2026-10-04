@@ -1057,7 +1057,7 @@ export function PivotApp() {
               if (event.animationName === "cineReveal") setPremiere(false);
             }}
           >
-            <CourtMark number={23} size={132} brand premiere={premiere} />
+            <CourtMark number={23} size={168} brand premiere={premiere} />
           </div>
           <span className="eyebrow">{t("eyebrow", lang)}</span>
           <h1 className="display-title">PIVOT</h1>

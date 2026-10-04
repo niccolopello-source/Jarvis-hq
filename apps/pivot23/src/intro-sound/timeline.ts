@@ -5,10 +5,10 @@
  * custom properties on `.court-mark-live.is-premiere` (`--beat-b1`, `--beat-b2`, `--beat-b3`,
  * `--beat-swish`). The picture (ball, shadow, net, arc flare) is keyed to those same beats.
  *
- *   bounce1  1150 ms   ball hits the floor
- *   bounce2  2050 ms   second bounce, lighter
- *   bounce3  2800 ms   gather, the last dribble before the shot
- *   swish    4850 ms   the ball passes through the mark and the net flares
+ *   bounce1  1800 ms   the ball hits after the mark has drawn itself
+ *   bounce2  3120 ms   second bounce, lighter
+ *   bounce3  4320 ms   the gather
+ *   swish    7200 ms   the ball passes through the 23 and the net flares
  *
  * The 1.6 s premiere (returning visit, lean device) is too fast for a dribble, so its CSS
  * clears the bounce beats and keeps only the swish.
@@ -26,12 +26,12 @@ export const LATE_GRACE_MS = 90;
 export const TAIL_MS = 900;
 
 /** First-visit beats. Must match `--beat-*` in src/styles.css. */
-export const PREMIERE_MS = 9200;
+export const PREMIERE_MS = 12000;
 export const FULL_BEATS: Partial<Record<CueName, number>> = {
-  bounce1: 1150,
-  bounce2: 2050,
-  bounce3: 2800,
-  swish: 4850,
+  bounce1: 1800,
+  bounce2: 3120,
+  bounce3: 4320,
+  swish: 7200,
 };
 /** Returning visit / lean device. Must match the short overrides in styles.css and intro.css. */
 export const SHORT_PREMIERE_MS = 1600;
@@ -84,7 +84,7 @@ export function planRemaining(cues: readonly Cue[], elapsedMs: number, graceMs =
     .map((cue) => ({ name: cue.name, delayMs: Math.max(0, cue.at - elapsedMs) }));
 }
 
-/** Parses a CSS time list entry ("9.2s", "1150ms", "-1s") into ms. */
+/** Parses a CSS time list entry ("12s", "1800ms", "-1s") into ms. */
 export function cssTimeMs(value: string | null | undefined): number {
   const first = (value ?? "").split(",")[0]!.trim();
   const m = /^(-?[\d.]+)(ms|s)$/.exec(first);

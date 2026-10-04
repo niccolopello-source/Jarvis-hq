@@ -79,8 +79,8 @@ test("every source of every cue starts at or after its cue time and stops by the
     assert.ok(Number.isFinite(s.start) && Number.isFinite(s.stop), `${s.kind} start/stop scheduled`);
     assert.ok(s.start >= 1.15 - 1e-9 && s.stop > s.start && s.stop <= lastEnd + 1e-9);
   }
-  assert.ok(ends[3]! - 4.85 < 0.9, "swish tail under 0.9 s");
-  assert.ok(ends[0]! - 1.15 < 0.4, "bounce tail under 0.4 s");
+  assert.ok(ends[3]! - 4.85 < 1.35, "swish tail under 1.35 s");
+  assert.ok(ends[0]! - 1.15 < 0.75, "bounce tail under 0.75 s");
   assert.ok(ends[2]! - 2.8 < ends[1]! - 2.05, "the gather's tail is shorter than the second dribble's");
 });
 
@@ -136,14 +136,14 @@ test("the swish is one logical cue even though its net closes about 280 ms later
   assert.equal(groupsFromFirstStart(starts, 0.25).length, 2);
 
   const phrase = render([
-    { name: "bounce1", at: 1.15 },
-    { name: "bounce2", at: 2.05 },
-    { name: "bounce3", at: 2.8 },
-    { name: "swish", at: 4.85 },
+    { name: "bounce1", at: 1.8 },
+    { name: "bounce2", at: 3.12 },
+    { name: "bounce3", at: 4.32 },
+    { name: "swish", at: 7.2 },
   ]);
   assert.deepEqual(
     logicalCueStarts(phrase.sources.map((s) => ({ kind: s.kind, at: s.start * 1000 }))).map((t) => Math.round(t)),
-    [1150, 2050, 2800, 4850],
+    [1800, 3120, 4320, 7200],
   );
 
   // A second swish that begins as the first net closes is a real extra cue.

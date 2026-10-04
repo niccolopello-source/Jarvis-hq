@@ -13,11 +13,11 @@ function block(css: string, selector: string): string {
   return css.slice(at, css.indexOf("}", at));
 }
 
-test("the first-visit home premiere is 9.2 s, long enough for the dribble and the swish", () => {
+test("the first-visit home premiere is 12 s, long enough for the mark, the dribble and the swish", () => {
   const rule = block(styles, ".court-mark-live.is-premiere");
   const ms = Number(/--cine:\s*([\d.]+)s/.exec(rule)?.[1]) * 1000;
-  assert.equal(ms, 9200);
-  assert.ok(ms > 6300, "longer than the 6.3 s cut");
+  assert.equal(ms, 12000);
+  assert.ok(ms > 9200, "longer than the 9.2 s cut");
 });
 
 test("lean devices and returning visits keep the short 1.6 s premiere", () => {

@@ -1095,15 +1095,15 @@ body,
   overflow: visible;
 }
 .court-mark-live.is-premiere {
-  transform-origin: 50% 42%;
-  /* First-visit premiere. Was 6.3s (2026-10-03). 9.2s on 2026-10-04 so the dribble,
-     the shot and the swish can play out together, then the mark holds. Lean and
+  transform-origin: 50% 46%;
+  /* First visit. 6.3s, then 9.2s. 12s so the mark draws itself, three dribbles
+     and a shot through the 23 all read, then the logo holds. Lean and
      returning visits stay at 1.6s. */
-  --cine: 9.2s;
-  --beat-b1: 1.15s;
-  --beat-b2: 2.05s;
-  --beat-b3: 2.8s;
-  --beat-swish: 4.85s;
+  --cine: 12s;
+  --beat-b1: 1.8s;
+  --beat-b2: 3.12s;
+  --beat-b3: 4.32s;
+  --beat-swish: 7.2s;
   animation: cineReveal var(--cine) linear both;
 }
 .court-mark-live.is-premiere .mark-gleam {
@@ -1114,14 +1114,15 @@ body,
   stroke-dashoffset: 16;
   opacity: 0;
   /* The arc flare IS the ciuffo: it starts on the swish beat, not during the dribble. */
-  animation: cineArc 1.85s cubic-bezier(0.16, 1, 0.3, 1) var(--beat-swish) 1 both;
+  animation: cineArc 2.2s cubic-bezier(0.16, 1, 0.3, 1) var(--beat-swish) 1 both;
 }
 @keyframes cineReveal {
-  0% { opacity: 0; transform: scale(0.92) translateY(10px); }
-  3% { opacity: 0.7; transform: scale(0.985) translateY(3px); }
-  8% { opacity: 1; transform: scale(1) translateY(0); }
-  50% { opacity: 1; transform: scale(1) translateY(0); }
-  56% { opacity: 1; transform: scale(1.04) translateY(0); }
+  0% { opacity: 0; transform: scale(0.84) translateY(16px); }
+  6% { opacity: 1; transform: scale(1.03) translateY(0); }
+  11% { opacity: 1; transform: scale(1) translateY(0); }
+  58% { opacity: 1; transform: scale(1) translateY(0); }
+  60% { opacity: 1; transform: scale(1.08) translateY(0); }
+  67% { opacity: 1; transform: scale(1.01) translateY(0); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 @keyframes cineArc {
@@ -1132,6 +1133,16 @@ body,
 /* Ball, floor shadow and net. Times are percentages of --cine so they land on the
    same beats the synth reads from --beat-b1/b2/b3/swish. Timing is linear on purpose:
    an easing function would move the picture off the sound. */
+.court-mark-live.is-premiere .cine-ring {
+  stroke-dasharray: 218;
+  stroke-dashoffset: 218;
+  animation: cineRing var(--cine) linear both;
+}
+.court-mark-live.is-premiere .mark-arcs path {
+  stroke-dasharray: 72;
+  stroke-dashoffset: 72;
+  animation: cineArcs var(--cine) linear both;
+}
 .court-mark-live.is-premiere .cine-ball-body {
   opacity: 0;
   transform-box: fill-box;
@@ -1141,12 +1152,12 @@ body,
 .court-mark-live.is-premiere .cine-ball-body circle {
   fill: #e07a2f;
   stroke: #6c1320;
-  stroke-width: 0.7;
+  stroke-width: 0.9;
 }
 .court-mark-live.is-premiere .cine-ball-body path {
   fill: none;
   stroke: #3a2014;
-  stroke-width: 0.65;
+  stroke-width: 0.9;
   stroke-linecap: round;
 }
 .court-mark-live.is-premiere .cine-shadow {
@@ -1160,9 +1171,9 @@ body,
   color: var(--color-wood);
 }
 .court-mark-live.is-premiere .cine-net path {
-  stroke-dasharray: 16;
-  stroke-dashoffset: 8;
   opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center top;
   animation: cineNet var(--cine) linear both;
 }
 .court-mark-live.is-premiere .cine-net path:nth-child(2) { animation-name: cineNetB; }
@@ -1170,60 +1181,70 @@ body,
 .court-mark-live.is-premiere .court-mark-num {
   animation: cineNum var(--cine) linear both;
 }
+@keyframes cineRing {
+  0% { stroke-dashoffset: 218; opacity: 0.2; }
+  11% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+@keyframes cineArcs {
+  0%, 4% { stroke-dashoffset: 72; }
+  14% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 0; }
+}
 @keyframes cineBall {
-  /* translate() is in SVG user units (Chromium maps 1px to 1 viewBox unit before the viewport scale). */
-  0% { opacity: 0; transform: translate(36px, -10px) scale(0.86) rotate(-30deg); }
-  5% { opacity: 1; transform: translate(36px, 18px) scale(1) rotate(-18deg); }
-  12.5% { opacity: 1; transform: translate(36px, 68px) scale(1.22, 0.64) rotate(-6deg); }
-  13.4% { transform: translate(36px, 58px) scale(0.94, 1.12) rotate(4deg); }
-  17.4% { transform: translate(36px, 40px) scale(1) rotate(18deg); }
-  22.28% { transform: translate(36px, 70px) scale(1.14, 0.72) rotate(8deg); }
-  23.2% { transform: translate(36px, 60px) scale(0.96, 1.08) rotate(16deg); }
-  26.3% { transform: translate(37px, 50px) scale(1) rotate(28deg); }
-  30.43% { transform: translate(38px, 72px) scale(1.18, 0.68) rotate(12deg); }
-  31.3% { transform: translate(39px, 60px) scale(0.98, 1.06) rotate(24deg); }
-  36% { transform: translate(44px, 22px) scale(0.96, 1.05) rotate(80deg); }
-  42.4% { transform: translate(48px, 6px) scale(0.9) rotate(140deg); }
-  52.72% { opacity: 1; transform: translate(40px, 40px) scale(0.78) rotate(210deg); }
-  58% { opacity: 0.9; transform: translate(40px, 62px) scale(0.74) rotate(240deg); }
-  63.5% { opacity: 0; transform: translate(40px, 78px) scale(0.7) rotate(260deg); }
-  100% { opacity: 0; transform: translate(40px, 78px) scale(0.7) rotate(260deg); }
+  /* Percentages of the 12s premiere. 15/26/36/60 are the bounce and swish beats. */
+  0%, 8% { opacity: 0; transform: translate(36px, -22px) scale(0.8) rotate(-36deg); }
+  12% { opacity: 1; transform: translate(36px, 6px) scale(1) rotate(-16deg); }
+  15% { opacity: 1; transform: translate(36px, 72px) scale(1.3, 0.6) rotate(-4deg); }
+  16.6% { transform: translate(36px, 46px) scale(0.92, 1.16) rotate(10deg); }
+  21% { transform: translate(34px, 14px) scale(1) rotate(36deg); }
+  26% { transform: translate(34px, 72px) scale(1.18, 0.68) rotate(8deg); }
+  27.6% { transform: translate(35px, 42px) scale(0.96, 1.1) rotate(22deg); }
+  32% { transform: translate(37px, 16px) scale(1) rotate(48deg); }
+  36% { transform: translate(38px, 74px) scale(1.34, 0.56) rotate(10deg); }
+  40% { transform: translate(42px, 28px) scale(0.98, 1.08) rotate(70deg); }
+  48% { transform: translate(46px, -2px) scale(0.88) rotate(130deg); }
+  54% { transform: translate(43px, -10px) scale(0.82) rotate(180deg); }
+  60% { opacity: 1; transform: translate(40px, 40px) scale(0.68) rotate(230deg); }
+  66% { opacity: 0.7; transform: translate(40px, 74px) scale(0.6) rotate(270deg); }
+  71%, 100% { opacity: 0; transform: translate(40px, 88px) scale(0.56) rotate(290deg); }
 }
 @keyframes cineShadow {
-  0%, 4% { opacity: 0; transform: scaleX(0.45); }
-  12.5% { opacity: 0.32; transform: scaleX(1.2); }
-  17.4% { opacity: 0.06; transform: scaleX(0.5); }
-  22.28% { opacity: 0.26; transform: scaleX(1.05); }
-  26.3% { opacity: 0.06; transform: scaleX(0.55); }
-  30.43% { opacity: 0.34; transform: scaleX(1.25); }
-  36% { opacity: 0; transform: scaleX(0.4); }
+  0%, 10% { opacity: 0; transform: scaleX(0.4); }
+  15% { opacity: 0.38; transform: scaleX(1.35); }
+  21% { opacity: 0.05; transform: scaleX(0.45); }
+  26% { opacity: 0.28; transform: scaleX(1.1); }
+  32% { opacity: 0.05; transform: scaleX(0.5); }
+  36% { opacity: 0.42; transform: scaleX(1.4); }
+  44% { opacity: 0; transform: scaleX(0.35); }
   100% { opacity: 0; }
 }
 @keyframes cineNet {
-  0%, 49% { opacity: 0; stroke-dashoffset: 8; }
-  52.72% { opacity: 0.15; stroke-dashoffset: 4; }
-  56% { opacity: 0.9; stroke-dashoffset: -2; }
-  62% { opacity: 0; stroke-dashoffset: -14; }
+  0%, 56% { opacity: 0; transform: scaleY(0.35); }
+  60% { opacity: 1; transform: scaleY(1.2); }
+  66% { opacity: 0.75; transform: scaleY(0.82); }
+  76% { opacity: 0; transform: scaleY(1.35); }
   100% { opacity: 0; }
 }
 @keyframes cineNetB {
-  0%, 50% { opacity: 0; stroke-dashoffset: 8; }
-  53.6% { opacity: 0.2; stroke-dashoffset: 3; }
-  58% { opacity: 1; stroke-dashoffset: -6; }
-  65% { opacity: 0; stroke-dashoffset: -16; }
+  0%, 57% { opacity: 0; transform: scaleY(0.3); }
+  61% { opacity: 1; transform: scaleY(1.28); }
+  68% { opacity: 0.6; transform: scaleY(0.9); }
+  78% { opacity: 0; transform: scaleY(1.4); }
   100% { opacity: 0; }
 }
 @keyframes cineNetC {
-  0%, 51% { opacity: 0; stroke-dashoffset: 8; }
-  55% { opacity: 0.2; stroke-dashoffset: 2; }
-  60% { opacity: 0.75; stroke-dashoffset: -8; }
-  67% { opacity: 0; stroke-dashoffset: -16; }
+  0%, 58% { opacity: 0; transform: scaleY(0.4); }
+  62.5% { opacity: 0.95; transform: scaleY(1.15); }
+  70% { opacity: 0.4; transform: scaleY(0.95); }
+  80% { opacity: 0; transform: scaleY(1.3); }
   100% { opacity: 0; }
 }
 @keyframes cineNum {
-  0%, 8% { opacity: 1; }
-  12%, 50% { opacity: 0.28; }
-  66%, 100% { opacity: 1; }
+  0%, 7% { opacity: 0; }
+  14% { opacity: 1; }
+  20%, 56% { opacity: 0.62; }
+  60%, 100% { opacity: 1; }
 }
 html.pivot-lean .court-mark-live.is-premiere {
   --cine: 1.6s;
@@ -1270,6 +1291,8 @@ html.pivot-lean .court-mark-live.is-premiere .court-mark-num {
 @media (prefers-reduced-motion: reduce) {
   .court-mark-live.is-premiere,
   .court-mark-live.is-premiere .mark-gleam path,
+  .court-mark-live.is-premiere .cine-ring,
+  .court-mark-live.is-premiere .mark-arcs path,
   .court-mark-live.is-premiere .cine-ball-body,
   .court-mark-live.is-premiere .cine-shadow,
   .court-mark-live.is-premiere .cine-net path,
@@ -1277,6 +1300,7 @@ html.pivot-lean .court-mark-live.is-premiere .court-mark-num {
     animation: none;
     opacity: 1;
     transform: none;
+    stroke-dashoffset: 0;
   }
   .court-mark-live.is-premiere .cine-ball-body,
   .court-mark-live.is-premiere .cine-shadow,
