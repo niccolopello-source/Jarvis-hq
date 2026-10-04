@@ -49,6 +49,7 @@ The house priority used while building the beta, and not withdrawn: coherence, t
 | P-011 | 2026-10-03 | English demo = English interface, Italian story text, stated on the home. Full narrative translation is a separate project (~2,970 strings). | Owner decision on scope. |
 | P-012 | 2026-10-03 | Engine rule `RULES.rookieShuffle = "portable"` (seeded Fisher–Yates instead of `sort(() => rand() - 0.5)`), so a seed gives the same career on every JavaScript engine. Ship it with an engine version bump (e.g. `2.12.0-beta`). | Default off on `grokbot/demo-hardening`. 1,000 careers: distributions unchanged within noise, per-seed outcomes change. Owner decision. |
 | P-013 | 2026-10-03 | Whether the lean (≤2 cores) and returning-visit premiere (1.6 s) should also get +1.5 s. | The owner asked for +1500 ms on «the» splash; only the first-visit 4.8 s premiere was changed. Owner decision. |
+| P-014 | 2026-10-04 | Supersede only the commit pin in D-016. Keep D-016 in this table. When accepted, add D-017: the demo source is `apps/pivot23` on `main` at `d8fa56d767cb35fb2e4f624df363535dbe3d2a39`. The App Builder workspace stays a separate tree and must not be copied over the repository. The pin moves again only by a later decision, not by editing D-016. | Proposed because the owner asked for a separate update of the baseline. Not accepted until the owner says so. `d8fa56d` is the tip on 2026-10-04; CI run 37203654421 passed. |
 
 ## Superseded documents
 
