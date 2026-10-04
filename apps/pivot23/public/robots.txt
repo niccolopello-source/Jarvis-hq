@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Single-page app. The public entry is the canonical host.
+Sitemap: https://www.pivot23.com/sitemap.xml
