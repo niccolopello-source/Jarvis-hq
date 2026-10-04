@@ -33,8 +33,8 @@ Public production build is live. It is a beta demo, not a launch.
 
 Update 2026-10-04, later (verified; the note above is the previous tip):
 
-- `main` is `d8fa56d767cb35fb2e4f624df363535dbe3d2a39`, merge of pull request #39. Engine unchanged from `287850b`.
-- CI on that merge, [run 37203654421](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37203654421), succeeded (both jobs, 12:57 UTC).
+- `main` is `88ba7dc`, after docs-only merges #40, #41 and #42. The game tree is still `d8fa56d`. Engine unchanged from `287850b`.
+- Those merges did not start Actions. The last run on the game tree, [run 37203654421](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37203654421), succeeded. A local production-preview recheck the same day passed lint, types, 133 unit tests and 54 Playwright tests. The stats job was not repeated.
 - Release gates, asset inventory and the closed-beta plan: [`pivot23/RELEASE-ADDENDUM-2026-10-04.md`](pivot23/RELEASE-ADDENDUM-2026-10-04.md). Public demo on 18 October is not recommended yet.
 
 Update 2026-10-04 (verified; older SHA notes below are history):
