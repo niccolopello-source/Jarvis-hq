@@ -293,6 +293,7 @@ export function applyFx(s: PlayerState, fx: Fx) {
 }
 
 export function applyAging(s: PlayerState) {
+  lockExperimentEthic(s);
   s.age += 1;
   // Le scelte recenti pesano di più: l'impronta non resta inchiodata al tetto.
   s.choiceOvr = round2(clamp((s.choiceOvr || 0) * 0.86, SIM.choice.min, SIM.choice.max));
@@ -1583,16 +1584,22 @@ function simulateRegularSeasonInner(s: PlayerState, n: number): SeasonRow {
   const d = diffOf(s);
   const games = leagueGames(s);
   const prev = s.seasonHistory[s.seasonHistory.length - 1];
+  const exp = experimentOf(s);
+  const missRoll = randInt(-2, 3);
   const miss =
-    ((s.injuryRisk / 100) * SIM.injury.baseMiss +
-      ((100 - s.hidden.durability) / 100) * SIM.injury.durabilityWeight +
-      (s.age > SIM.injury.ageAfter ? (s.age - SIM.injury.ageAfter) * 2.6 : 0) +
-      (ovr >= 88 && s.age >= 31 ? 1.8 : 0) +
-      ((100 - s.hidden.motor) / 100) * 3.2 +
-      s.gamesPenalty +
-      randInt(-2, 3)) *
-    d.injury *
-    (games === 34 ? 0.55 : 1);
+    exp?.injury === "off"
+      ? 0
+      : exp?.injury === "forced"
+        ? 18
+        : ((s.injuryRisk / 100) * SIM.injury.baseMiss +
+            ((100 - s.hidden.durability) / 100) * SIM.injury.durabilityWeight +
+            (s.age > SIM.injury.ageAfter ? (s.age - SIM.injury.ageAfter) * 2.6 : 0) +
+            (ovr >= 88 && s.age >= 31 ? 1.8 : 0) +
+            ((100 - s.hidden.motor) / 100) * 3.2 +
+            s.gamesPenalty +
+            missRoll) *
+          d.injury *
+          (games === 34 ? 0.55 : 1);
   const gp = Math.round(clamp(games - miss, games === 34 ? 16 : 24, games));
   const rookCut = s.age <= 20 ? 0.86 : s.age === 21 ? 0.92 : 1;
   const vetCut = s.age >= 33 ? Math.max(0.74, 1 - (s.age - 32) * 0.052) : 1;
@@ -1607,6 +1614,7 @@ function simulateRegularSeasonInner(s: PlayerState, n: number): SeasonRow {
   if (prev) min = round1(clamp(min * 0.72 + prev.min * 0.28, 11.5, 37.6));
   const fit = identityFit(s);
   min = round1(clamp(min * fit.min, 11.5, 37.6));
+  min = forcedMinutes(s, min);
   const usageAge = s.age >= 34 ? (ovr >= 82 ? 0.92 : 0.84) : s.age >= 32 ? 0.93 : s.age >= 30 ? 0.97 : 1;
   const usage = clamp(
     (0.14 + (ovr - 60) * 0.0048 + (role.scoreF - 1) * 0.03 + (a.handle - 50) * 0.0004) * usageAge,
@@ -1632,11 +1640,11 @@ function simulateRegularSeasonInner(s: PlayerState, n: number): SeasonRow {
     ppg *= 1 + leap;
     rpg *= 1 + leap * 0.45;
     apg *= 1 + leap * 0.55;
-    min = round1(clamp(min * (1 + leap * 0.45), 11.5, 37.6));
+    min = forcedMinutes(s, round1(clamp(min * (1 + leap * 0.45), 11.5, 37.6)));
   }
   if (n === 1) {
     ppg *= draftOpportunity(s.draftPick, min);
-    min = round1(clamp(min * (s.draftPick <= 14 ? 1.05 : 1.02), 11.5, 34));
+    min = forcedMinutes(s, round1(clamp(min * (s.draftPick <= 14 ? 1.05 : 1.02), 11.5, 34)));
   }
   if (prev && n > 1) {
     ppg = ppg * 0.66 + prev.ppg * 0.34;
@@ -3140,6 +3148,34 @@ export interface SimOpts {
   seed?: number;
   /** Solo il laboratorio. La carriera giocata sceglie a mano. */
   draft?: "best" | "worst" | "random" | "mixed";
+  /**
+   * Laboratorio soltanto. Spento se assente: il percorso giocato non lo imposta.
+   * Non entra nel save. I minuti forzati possono stare sotto il pavimento 11.5.
+   */
+  experiment?: CareerExperiment;
+}
+
+/** Confronto controllato. Non è una regola di gioco. */
+export interface CareerExperiment {
+  minutes?: number;
+  workEthic?: number;
+  injury?: "off" | "forced";
+}
+
+const experiments = new WeakMap<PlayerState, CareerExperiment>();
+
+export function experimentOf(s: PlayerState): CareerExperiment | undefined {
+  return experiments.get(s);
+}
+
+function lockExperimentEthic(s: PlayerState) {
+  const ethic = experimentOf(s)?.workEthic;
+  if (Number.isFinite(ethic)) s.hidden.workEthic = clamp(ethic as number, 0, 100);
+}
+
+function forcedMinutes(s: PlayerState, min: number): number {
+  const forced = experimentOf(s)?.minutes;
+  return Number.isFinite(forced) ? round1(clamp(forced as number, 0, 40)) : min;
 }
 
 export interface CareerSimJob {
@@ -3195,6 +3231,8 @@ export function openCareerSim(opts: SimOpts = {}): CareerSimJob {
     });
     return player;
   });
+  if (opts.experiment) experiments.set(s, opts.experiment);
+  lockExperimentEthic(s);
   return { rng, s, n: 1, opts };
 }
 
@@ -3213,6 +3251,7 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
     if (scripted && !s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
     const ch = pick(ev.choices);
     applyFx(s, ch.fx(s));
+    lockExperimentEthic(s);
     s.choiceLog.push({ season: n, title: ev.title, pick: ch.label });
     if (!scripted && n !== 12 && shouldOfferTrade(s, n) && rand() < 0.22) {
       const t = buildTradeOffer(s);
@@ -3241,6 +3280,7 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
     }
     if (!isCareerOver(s)) {
       const summer = applyAutoOffseason(s, n);
+      lockExperimentEthic(s);
       tickContract(s);
       const freeAgent = isContractYear(s, n + 1) || s.contract.yearsRemaining <= 0;
       if (freeAgent) {
@@ -3273,6 +3313,7 @@ export function playCareerSim(opts: SimOpts = {}): PlayerState {
   const job = openCareerSim(opts);
   let done = false;
   while (!done) done = advanceCareerSim(job);
+  lockExperimentEthic(job.s);
   return job.s;
 }
 

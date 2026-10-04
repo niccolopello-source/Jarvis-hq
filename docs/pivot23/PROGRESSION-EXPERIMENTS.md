@@ -23,4 +23,14 @@ La log-normale proposta non è stata implementata. Manca la dimostrazione che il
 
 ## Controfattuali
 
-Non eseguiti in questa sessione oltre al ciclo di ruolo nel lab. Minuti, work ethic, coach e infortunio non sono argomenti di `playCareerSim`: isolarli richiede un gancio nell'engine, non uno script parallelo. Proposta: un flag di esperimento in `TUNING`, spento di default, con lo stesso seed. Non attivato.
+Eseguiti sul gancio `SimOpts.experiment`, spento se assente. Commit di lavoro: branch `grokbot/experiment-hook`. Baseline del percorso giocato invariata: fingerprint `14b5a0cf46fb45b5`, `faf83fdfa7a6894c`, `6c6b0ee4331b6c0e` sui seed 23017, 23034, 23102.
+
+Campione: 24 seed `90000+i*19`, Pro, draft random, ITA, numero 23. Non è una taratura.
+
+| Confronto | Risultato | Stato |
+|---|---|---|
+| Minuti 10 contro 28 | picco medio −0,4 per i 28 minuti; +2,5 stagioni | VERIFIED sul campione. Non è una causa grande del picco |
+| Work ethic 20 contro 90 | picco medio +2,3 per l'etica alta; lock finale vero su 24/24 | VERIFIED. Effetto piccolo |
+| Infortunio off contro forced (18 partite) | +17,6 gp/anno senza infortunio; picco medio −0,2 | VERIFIED sul miss forzato. Il picco non si muove |
+
+Il potenziale resta un argomento già esistente. Sul commit precedente, 70 contro 92 muoveva il picco di circa 23,8 e cambiava il consumo del PRNG. Non è stato rifatto qui come controfattuale pulito.
