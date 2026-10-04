@@ -6,7 +6,7 @@ Updated: 2026-10-04 (tip `d8fa56d`). The sections below the first one are histor
 
 - `main` is `d8fa56d767cb35fb2e4f624df363535dbe3d2a39`, the merge of PR #39 (14:53 +0200). PR #38 (docs) and PR #39 (EuroLeague place line) are merged. No open pull requests at the time of this note.
 - The engine files are the same as `287850b`. The P1-BUST, P1-WORLD and P1-ROLE numbers in the section below still describe this tip. They were not re-run.
-- CI on the PR head `b806f94` was green (lint, types, unit, production e2e, statistical job). CI on the merge commit `d8fa56d` is [run 37203654421](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37203654421). It was still running when this note was written. It is not recorded here as a pass.
+- CI on the merge commit `d8fa56d`: [run 37203654421](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37203654421), success, both jobs, finished 2026-10-04 12:57 UTC. The PR head `b806f94` was already green before the merge.
 - Production was not re-read after this merge. The 12:24 UTC asset check below is for the previous game tree.
 - Player and CPU names are assembled from fixed fictional lists (`world.ts` `FIRST`/`LAST`, `teams.ts` `ROOKIE_NAMES` and the face names). No external roster or stats feed is fetched. Team names and colours are the real franchises. Marks are original SVG, not league logos. Figtree is named in CSS and is not shipped as a file. Detail: `docs/pivot23/RELEASE-ADDENDUM-2026-10-04.md`. This is not a legal clearance.
 

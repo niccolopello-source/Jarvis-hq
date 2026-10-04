@@ -48,7 +48,7 @@ No new bust rate is proposed. No `world=regress`.
 | 4 | Corrupt or failed persistence handled | PASS in unit tests of that same CI | `save.test.ts` / `persistence.test.ts` are in the unit job. Not re-listed case by case here. |
 | 5 | No open P0, and no P1 that breaks the loop | PASS for crashes | No P0 reproduced. P1-BUST and P1-WORLD do not stop play. They fail the written task, not the boot. |
 | 6 | Engine matches an agreed realism bar | FAIL | The bust task asks for a measured share of 8-point misses. The share is 0. No agreed replacement bar. |
-| 7 | Automatic regression | NOT RUN on the merge | Green on PR head `b806f94`. [Run 37203654421](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37203654421) on `d8fa56d` was in progress. |
+| 7 | Automatic regression | PASS | [Run 37203654421](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37203654421) on `d8fa56d`, 2026-10-04 12:57 UTC. Both jobs success. Same result on PR #39 head `b806f94`. |
 | 8 | Real phone and desktop smoke | NOT RUN | No device in this environment. |
 | 9 | Performance against the master-prompt targets | NOT RUN | No TTI, long-task or bundle measurement on this tip. |
 | 10 | Privacy and assets | BLOCKED for sale | Privacy inventory matches a local-only guest build. Franchise names are not cleared. |
@@ -73,9 +73,27 @@ A single opinion is not a distribution. A save loss, a crash, or a result that c
 
 No accounts, no cloud, no ads, no price, no new competition, no rename of the clubs, no bust-rate change, no visual redesign.
 
+## Flag experiment, 4 October, not shipped
+
+400 Pro careers, seeds `200000`–`200399`, same seeds on every row. Engine `2.12.0-beta` as on `d8fa56d`. Flags were set only inside the offline script. `TUNING` defaults were not changed.
+
+| Setting | High pot | Peak ≤ pot−8 | Peak under pot | Median gap | Mean peak | Ended 36 | Player titles | MVP mean | Top titles (no seed history) | Gini | Spearman |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| shipped | 44 | 0 | 0 | +3.3 | 78.53 | 232 | 0.41 | 0.025 | OKC 7.6, CLE 6.6, BOS 6.0 | 0.254 | 0.95 |
+| bust=choices | 44 | 0 | 0 | +3.7 | 78.98 | 232 | 0.48 | 0.028 | OKC 7.9, CLE 6.3, BOS 6.0 | 0.253 | 0.93 |
+| bust=events | 44 | 0 | 4 | +3.3 | 78.34 | 230 | 0.40 | 0.028 | OKC 7.7, CLE 6.8, BOS 5.8 | 0.259 | 0.93 |
+| world=jitter | 44 | 0 | 2 | +3.1 | 78.61 | 251 | 0.50 | 0.028 | OKC 7.1, CLE 6.3, BOS 6.3 | 0.263 | 0.96 |
+| world=regress | 44 | 0 | 1 | +3.1 | 78.61 | 229 | 0.48 | 0.048 | OKC 7.5, CLE 5.7, NYK 5.6 | 0.215 | 0.88 |
+
+`bust=choices` and `bust=events` do not create an 8-point miss. Choices raises the peak slightly. Events reaches −1.7 at the worst in this sample. A real miss of 8 needs a different formula, which is not approved.
+
+`world=jitter` does not loosen the ranking and it moves how many careers reach 36 (232 → 251). Not recommended.
+
+`world=regress` is the only switch that spreads titles (Gini 0.254 → 0.215, Boston leaves the top three) while age and peak stay close. It also doubles the MVP mean (0.025 → 0.048). Left off.
+
 ## What would move the 18 October call
 
-1. Run 37203654421 finishes green. If it fails, the date is blocked until that failure is fixed.
-2. The owner writes that a zero 8-point bust rate and title ranks that follow the power constant are acceptable for this demo, or chooses a design. Silence is not acceptance.
+1. Done: run 37203654421 is green on `d8fa56d`.
+2. The owner writes that a zero 8-point bust rate and title ranks that follow the power constant are acceptable for this demo, or chooses a design. Silence is not acceptance. The flag experiment above is the evidence. Neither bust flag is that design.
 3. One phone (Safari, Chrome) and one desktop browser, played from boot through a save reload. Record the row.
 4. A lawyer, or an explicit "demo only, not commercial" from the owner, against D-015. The second does not clear a later sale.
