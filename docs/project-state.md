@@ -31,6 +31,13 @@ Status:
 
 Public production build is live. It is a beta demo, not a launch.
 
+Update 2026-10-04 (verified; older SHA notes below are history):
+
+- `main` is `287850b062b43caf1e5b687ff8d04bf2d9fa139a`, the merge of pull request #37. Tree `6832fb0`.
+- CI [run 37199500470](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37199500470) succeeded on that SHA (production-build e2e job and the statistical job).
+- Engine label `2.12.0-beta`. `SAVE_VERSION` 11. `LIVE_SAVE_VERSION` 2. Account, token and NFT flags are false.
+- The numbers for P1-BUST, P1-WORLD and P1-ROLE on this tip are in [`memory/FACTS.md`](memory/FACTS.md). The tasks stay open. D-016 still names `89249ef` and has not been superseded.
+
 - URL: https://pivot23.vercel.app
 - Source of the game that was verified in production on 2026-09-28: `main` at `421a4a0`, then a document-only commit `228a748` was also deployed to production.
 - Engine label in the bundle checked that day: `2.11.0-beta`
