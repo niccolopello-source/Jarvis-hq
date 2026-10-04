@@ -51,3 +51,12 @@ Ambiente: Chromium headless, viewport 800×600. Carriera «Playoff», playmaker,
 È comparsa un'offerta Chicago Bulls e il click l'ha accettata. Non è una free agency completata. Nessuna serie è stata aperta, quindi il refresh durante la serie non è stato eseguito. Errori JavaScript catturati: nessuno.
 
 Il seed di laboratorio 23000 resta un PASS del motore, non dell'interfaccia. Gate playoff browser: NOT RUN. Demo: NOT READY.
+
+
+## Serie playoff nel browser — 2026-10-04, sera
+
+Stesso deploy `ee352e3`, `dpl_HLAgmnbo6b5Hdx5JZqYkCxtLyzjo`. Chromium headless, 800×600. La carriera «Playoff» è arrivata al 2029-30: Chicago Bulls 55-27, 4° Est, 14.0/2.5/5.6, 82 GP, overall 77.
+
+Primo turno contro New York Knicks. Scelta «Alza il muro, ogni uscita». Risultato 4-3, gare 116-103, 108-109, 112-116, 98-109, 114-113, 112-109, 102-89. Il refresh a serie aperta ha ripristinato Chicago, turno 0, avversario NYK e le tre scelte. Dopo la serie il pending è round 1, Boston Celtics. Errori catturati: nessuno.
+
+Gate serie browser: PASS su questo percorso. Semifinale non completata. Premi ancora vuoti. Ritiro non raggiunto. Demo: NOT READY.
