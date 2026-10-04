@@ -31,6 +31,12 @@ Status:
 
 Public production build is live. It is a beta demo, not a launch.
 
+Update 2026-10-04, later (verified; the note above is the previous tip):
+
+- `main` is `d8fa56d767cb35fb2e4f624df363535dbe3d2a39`, merge of pull request #39. Engine unchanged from `287850b`.
+- CI on that merge, [run 37203654421](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/37203654421), was in progress when this was written.
+- Release gates, asset inventory and the closed-beta plan: [`pivot23/RELEASE-ADDENDUM-2026-10-04.md`](pivot23/RELEASE-ADDENDUM-2026-10-04.md). Public demo on 18 October is not recommended yet.
+
 Update 2026-10-04 (verified; older SHA notes below are history):
 
 - `main` is `287850b062b43caf1e5b687ff8d04bf2d9fa139a`, the merge of pull request #37. Tree `6832fb0`.
