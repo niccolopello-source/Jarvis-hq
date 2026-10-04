@@ -4,7 +4,7 @@
  * Prints one JSON report. Does not write saves and does not change tuning.
  */
 import { performance } from "node:perf_hooks";
-import { DEFINITIONS, LAB_ENGINE, roleBoxScore, runPair, sampleSeeds } from "../src/lib/pivot/lab.ts";
+import { DEFINITIONS, LAB_ENGINE, roleBoxScore, runPair, sampleSeeds } from "../src/lab/lab.ts";
 
 const count = Math.max(1, Math.min(200, Number(process.argv[2] ?? 12)));
 const base = Number(process.argv[3] ?? 23000);

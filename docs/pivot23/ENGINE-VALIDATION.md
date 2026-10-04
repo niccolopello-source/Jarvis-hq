@@ -25,4 +25,4 @@ Node v20.20.2, `npm install` locale, non il runner CI.
 
 ## Definizioni usate
 
-Allineate a `DEFINITIONS` in `src/lib/pivot/lab.ts` e a P1-BUST in `docs/memory/TASKS.md`. Non sono obiettivi di frequenza.
+Allineate a `DEFINITIONS` in `src/lab/lab.ts` e a P1-BUST in `docs/memory/TASKS.md`. Non sono obiettivi di frequenza. Il modulo sta fuori da `src/lib/pivot` perché lo scanner i18n tratta ogni stringa letterale come prosa da tradurre.

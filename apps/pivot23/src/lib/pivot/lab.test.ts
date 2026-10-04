@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DEFINITIONS, integrityIssues, roleBoxScore, runPair, sampleSeeds } from "./lab.ts";
+import { DEFINITIONS, integrityIssues, roleBoxScore, runPair, sampleSeeds } from "../../lab/lab.ts";
 
 test("lab definitions stay the ones named in the session register", () => {
   assert.equal(DEFINITIONS.bust, "potential >= 85 and peakOverall <= potential - 8");
