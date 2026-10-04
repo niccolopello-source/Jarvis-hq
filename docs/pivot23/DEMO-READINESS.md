@@ -34,3 +34,20 @@ Un solo workflow, `.github/workflows/pivot23.yml`. Su push e PR di `apps/pivot23
 ## Rollback
 
 Questo documento non cambia il gioco. Per tornare al deploy precedente, il candidato è `dpl_87uvdHTJfiCs31F4RtiaThRnbyH3` sul commit `7d41d10`.
+
+
+## Playoff nel browser — 2026-10-04, sera
+
+Deploy servito durante il test: `ee352e3`, `dpl_HLAgmnbo6b5Hdx5JZqYkCxtLyzjo`. Non è più `84d92a1`: la PR #47 era già unita. Il motore non è cambiato.
+
+Ambiente: Chromium headless, viewport 800×600. Carriera «Playoff», playmaker, Esordio, NCAA, 1ª scelta Utah Jazz, overall 64.
+
+| Stagione | Record | Playoff |
+|---|---|---|
+| 2026-27 | 20-62 | Fuori |
+| 2027-28 | 21-61 | Fuori |
+| 2028-29 | 28-54 | Fuori |
+
+È comparsa un'offerta Chicago Bulls e il click l'ha accettata. Non è una free agency completata. Nessuna serie è stata aperta, quindi il refresh durante la serie non è stato eseguito. Errori JavaScript catturati: nessuno.
+
+Il seed di laboratorio 23000 resta un PASS del motore, non dell'interfaccia. Gate playoff browser: NOT RUN. Demo: NOT READY.
