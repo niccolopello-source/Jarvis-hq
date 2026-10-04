@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { DEMO_LANGS, awardLabel, chromeGaps, demoLang, difficultyFace, msgKeys, t, tf } from "./i18n.ts";
-import { confLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel } from "./labels.ts";
+import { confLabel, dossierPlace, nationLabel, playoffResultLabel, roleLabel, roundLabel } from "./labels.ts";
 
 test("the demo offers only Italian and English", () => {
   assert.deepEqual(DEMO_LANGS, ["it", "en"]);
@@ -83,6 +83,10 @@ test("stored Italian labels are translated at render time, not rewritten", () =>
   assert.equal(playoffResultLabel(undefined, "en"), "");
   assert.equal(nationLabel("it", "it").length > 0, true);
   assert.equal(typeof roundLabel("Finale", "en"), "string");
+  assert.equal(dossierPlace("Boston", "Atlantic", "East", "it"), "Boston · Atlantic · Est");
+  assert.equal(dossierPlace("Madrid", "Eurolega", "Euro", "it"), "Madrid · Eurolega");
+  assert.equal(dossierPlace("Madrid", "Eurolega", "Euro", "en"), "Madrid · EuroLeague");
+  assert.equal(dossierPlace("—", "", "East", "it"), "— · Est");
 });
 
 test("league award notes read in English without touching Italian", async () => {

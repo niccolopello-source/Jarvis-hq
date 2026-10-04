@@ -105,6 +105,19 @@ export function confLabel(c: string | undefined, lang: UiLang): string {
   return "";
 }
 
+/** City, division, conference. Drops an empty division and does not print the league twice. */
+export function dossierPlace(city: string, div: string, conf: string | undefined, lang: UiLang): string {
+  const conference = confLabel(conf, lang);
+  const division = div.trim();
+  const leagueNamedTwice = conf === "Euro" && /eurolega|euroleague/i.test(division);
+  const parts = [city.trim()];
+  if (division && !leagueNamedTwice) parts.push(division);
+  if (conference && !parts.some((p) => p.localeCompare(conference, "it", { sensitivity: "accent" }) === 0)) {
+    parts.push(conference);
+  }
+  return parts.filter(Boolean).join(" · ");
+}
+
 const ROUND_EN: Record<string, string> = {
   "Primo turno": "First round",
   "Semifinali Est/Ovest": "Conference semifinals",
