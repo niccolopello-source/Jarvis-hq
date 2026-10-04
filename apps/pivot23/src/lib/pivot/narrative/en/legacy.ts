@@ -1,6 +1,6 @@
 /* English narrative for legacy. Key: Italian source text (see ../key.ts). */
 export const EN_LEGACY: Readonly<Record<string, string>> = {
-  "Candidato, non eletto": "Candidate, not elected",
+  "Candidato, non eletto": "Nominated, not inducted",
   "Fuori dalla Hall": "Outside the Hall",
   "Una carriera breve. Il mestiere non ha avuto il tempo di diventare abitudine.": "A short career. The craft never had time to become a habit.",
   "Quindici stagioni, o più: {0} anni di referto. La longevità, qui, non è un incidente.": "Fifteen seasons, or more: {0} years in the box scores. Longevity, here, is no accident.",
@@ -11,7 +11,7 @@ export const EN_LEGACY: Readonly<Record<string, string>> = {
   "Il Rookie of the Year c'è stato. Poi bisognava diventare altro.": "Rookie of the Year happened. Then you had to become something else.",
   "{0} volte Defensive Player of the Year. Si nota chi toglie, e tu hai tolto abbastanza da restare nei libri.": "{0}-time Defensive Player of the Year. People notice those who take away, and you took away enough to stay in the books.",
   "Defensive Player of the Year, una volta. Il rispetto che non finisce in copertina, e per questo dura.": "Defensive Player of the Year, once. The respect that never makes the cover, and that's why it lasts.",
-  "{0} MVP. Non è un premio che si eredita: si ripete, o si smentisce.": "{0} MVPs. It's not an award you inherit: you repeat it, or you're proven wrong.",
+  "{0} MVP. Non è un premio che si eredita: si ripete, o si smentisce.": "{0} MVPs. It isn't an award you inherit. You do it again, or the first one starts to look like a fluke.",
   "Un MVP. Una stagione in cui la lega ha detto il suo nome per primo.": "One MVP. A season when the league said your name first.",
   "{0} anelli. Una dinastia ha avuto il suo volto, e il volto eri tu.": "{0} rings. A dynasty had its face, and the face was yours.",
   "Due titoli. Abbastanza per non essere un incidente di calendario.": "Two titles. Enough not to be a scheduling accident.",
@@ -26,7 +26,7 @@ export const EN_LEGACY: Readonly<Record<string, string>> = {
   "Hai chiuso con un anello da veterano. Il tipo di fine che si racconta senza alzare la voce.": "You finished with a ring as a veteran. The kind of ending you tell without raising your voice.",
   "I tuoi ultimi minuti sono stati pochi. Il picco, però, resta negli occhi di chi c'era.": "Your last minutes were few. The peak, though, stays in the eyes of those who were there.",
   "La Hall of Fame ti tiene. I numeri, e il contesto, bastano.": "The Hall of Fame keeps you. The numbers, and the context, are enough.",
-  "La Hall ti discute, non ti chiude. Resta il dibattito, che è già una forma di rispetto.": "The Hall debates you; it doesn't shut you out. The debate remains, which is already a form of respect.",
+  "La Hall ti discute, non ti chiude. Resta il dibattito, che è già una forma di rispetto.": "The Hall debates you and doesn't close the case. The argument stays, and that is already a kind of respect.",
   "Fuori dalla Hall. Un picco alto non è un passaporto, e lo sai.": "Outside the Hall. A high peak isn't a passport, and you know it.",
   "{0} è restato nel discorso. Non sul referto di ogni sera: nella testa, dove le rivalità durano.": "{0} stayed in the conversation. Not on every night's box score: in your head, where rivalries last.",
   "Una svolta di mercato: {0}. Da lì la vita ha preso un'altra strada.": "A market turning point: {0}. From there, your life took another road.",

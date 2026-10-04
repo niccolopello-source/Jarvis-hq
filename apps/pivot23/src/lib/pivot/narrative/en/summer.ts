@@ -212,7 +212,7 @@ export const EN_SUMMER: Readonly<Record<string, string>> = {
   "Palazzetti più piccoli, tattica più stretta. Te lo hanno detto piano, come un rispetto.": "Smaller arenas, tighter tactics. They told you softly, as a form of respect.",
   "Un ultimo atto diverso. Il ruolo, la voce, poi — se serve — l'Europa.": "A different last act. Role, voice, then — if needed — Europe.",
   "Una voce da un altro fuso. Non hai firmato. Hai ascoltato. L'inverno, poi, deciderà.": "A voice from another time zone. You didn't sign. You listened. Winter will decide.",
-  "Europa resta una frase, per ora. Una frase che a quest'età pesa.": "Europe stays a sentence, for now. A sentence that weighs at this age.",
+  "Europa resta una frase, per ora. Una frase che a quest'età pesa.": "Europe stays talk, for now. At this age that talk carries weight.",
   "Una chiamata, nominata, non firmata. Il ruolo, qui, viene prima.": "A call, named, not signed. The role, here, comes first.",
   "Una porta in un'altra lingua. Resta sul tavolo, e pesa.": "A door in another language. It stays on the table, and it weighs.",
   "Non hai firmato. Hai ascoltato. L'inverno, poi, deciderà se quella porta serve.": "You didn't sign. You listened. Winter will decide whether that door is needed.",

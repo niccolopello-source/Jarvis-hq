@@ -18,8 +18,8 @@ export const INTRO_SEEN_KEY = "pivot23.introSeen";
 const CURTAIN_MAX_MS = 1500;
 const SKIP_FADE_MS = 160;
 const START_TIMEOUT_MS = 150;
-const DATA_CLEAR_MS = 1400;
-const PREMIERE_KEYS_MS = 8000;
+const DATA_CLEAR_MS = 2400;
+const PREMIERE_KEYS_MS = 16000;
 
 let curtain: HTMLElement | null = null;
 let mode: IntroMode = "still";

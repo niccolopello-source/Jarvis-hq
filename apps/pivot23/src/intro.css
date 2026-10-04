@@ -5,10 +5,10 @@
 html[data-intro="full"] .intro-hero > .eyebrow,
 html[data-intro="full"] .intro-hero > .display-title,
 html[data-intro="full"] .intro-hero > .lede {
-  animation: introRise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.16s backwards;
+  animation: introRise 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.9s backwards;
 }
-html[data-intro="full"] .intro-hero > .display-title { animation-delay: 0.22s; }
-html[data-intro="full"] .intro-hero > .lede { animation-delay: 0.28s; }
+html[data-intro="full"] .intro-hero > .display-title { animation-delay: 1.12s; }
+html[data-intro="full"] .intro-hero > .lede { animation-delay: 1.32s; }
 
 @keyframes introRise {
   from {
@@ -21,13 +21,33 @@ html[data-intro="full"] .intro-hero > .lede { animation-delay: 0.28s; }
   }
 }
 
-/* Returning visitor: the premiere keeps its shape but takes the short timing the lean path already uses. */
+/* Returning visitor: the premiere keeps its shape but takes the short timing the lean path already uses.
+   The long dribble beats are cleared so the synth plays only the swish, on the short landing. */
 html.pivot-intro-seen .court-mark-live.is-premiere {
+  --cine: 1.6s;
+  --beat-b1: -1s;
+  --beat-b2: -1s;
+  --beat-b3: -1s;
+  --beat-swish: 0.61s;
   animation-duration: 1.6s;
 }
 html.pivot-intro-seen .court-mark-live.is-premiere .mark-gleam path {
   animation-duration: 1s;
   animation-delay: 0.15s;
+}
+html.pivot-intro-seen .court-mark-live.is-premiere .cine-ball-body,
+html.pivot-intro-seen .court-mark-live.is-premiere .cine-shadow,
+html.pivot-intro-seen .court-mark-live.is-premiere .cine-net path,
+html.pivot-intro-seen .court-mark-live.is-premiere .court-mark-num {
+  animation: none;
+}
+html.pivot-intro-seen .court-mark-live.is-premiere .cine-ball-body,
+html.pivot-intro-seen .court-mark-live.is-premiere .cine-shadow,
+html.pivot-intro-seen .court-mark-live.is-premiere .cine-net path {
+  opacity: 0;
+}
+html.pivot-intro-seen .court-mark-live.is-premiere .court-mark-num {
+  opacity: 1;
 }
 
 /* The skip control reads as a small broadcast chip in the corner. `.intro-hero > *` made it relative and full width. */
@@ -53,4 +73,32 @@ html.pivot-intro-seen .court-mark-live.is-premiere .mark-gleam path {
   html[data-intro] .intro-hero > * {
     animation: none;
   }
+}
+
+/* Intro sounds switch (src/intro-sound): the mirror of the skip chip, top left, and it stays after the premiere. */
+.intro-hero > .sound-toggle {
+  position: absolute;
+  z-index: 2;
+  top: 4px;
+  left: 0;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-panel) 72%, transparent);
+  box-shadow: inset 0 0 0 1px var(--color-line);
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.intro-hero > .sound-toggle:hover,
+.intro-hero > .sound-toggle[aria-pressed="true"] {
+  color: var(--color-chalk);
 }

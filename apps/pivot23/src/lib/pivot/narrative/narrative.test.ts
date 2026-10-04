@@ -7,6 +7,9 @@ import { NARRATIVE_EN } from "./catalog-en.ts";
 import { extractFile } from "./extract.ts";
 import { playCareerTexts, storyPoolTexts } from "./harness.ts";
 import { t } from "../i18n.ts";
+import { playCareerSim, verdictOf } from "../engine.ts";
+import { buildLiveSave } from "../save.ts";
+import type { PlayerState } from "../types.ts";
 import { loadNarrativeEn, nx, nxCheck } from "./index.ts";
 import { LEGACY_EN_IT } from "./legacy-it.ts";
 import { EN_PROSE, IT_PROSE } from "./markers.ts";
@@ -117,4 +120,28 @@ test("stored chrome strings follow the language both ways", () => {
   // Pending scenes saved with t() keep the language of the moment; they still follow the reader.
   assert.equal(nx(t("resumeGo", "it"), "en"), t("resumeGo", "en"));
   assert.equal(nx(t("resumeGo", "en"), "it"), t("resumeGo", "it"));
+});
+
+test("a realistic Italian save round-trips and its stored prose reads in English", () => {
+  const played = playCareerSim({ seed: 8801, difficulty: "pro", name: "Marco Ferrara", nationality: "Italia", number: 23, role: "SF", path: "NCAA" });
+  const raw = JSON.parse(JSON.stringify(buildLiveSave(played, null, [], "career", "log", 1))) as { player: PlayerState };
+  const p = raw.player;
+  const end = verdictOf(p);
+  const texts = [
+    ...p.choiceLog.flatMap((c) => [c.title, c.pick]),
+    ...p.seasonHistory.flatMap((r) => [r.mood, r.playoff]),
+    end.verdict,
+    end.closing,
+  ].filter((x): x is string => typeof x === "string" && x.length > 0);
+  const misses: string[] = [];
+  const leaks: string[] = [];
+  for (const text of texts) {
+    assert.equal(nx(text, "it"), text);
+    const r = nxCheck(text, "en");
+    if (!r.ok) misses.push(text.slice(0, 120));
+    else if (IT_PROSE.test(r.text)) leaks.push(r.text.slice(0, 120));
+  }
+  console.log(`[i18n] realistic save seed 8801: ${texts.length - misses.length}/${texts.length} stored fields in English, leaks ${leaks.length}`);
+  assert.deepEqual(leaks, []);
+  assert.deepEqual(misses.slice(0, 12), []);
 });

@@ -275,8 +275,15 @@ export function CourtMark({
   }, [brand, label, premiere]);
   if (brand && label === "23") {
     return (
-      <svg ref={live} width={size} height={size} viewBox="0 0 80 80" aria-hidden className={`${cls} court-mark-live`}>
-        <circle cx="40" cy="40" r="34.6" fill="none" stroke="currentColor" strokeWidth="5.4" />
+      <svg
+        ref={live}
+        width={size}
+        height={size}
+        viewBox="0 0 80 80"
+        aria-hidden
+        className={`${cls} court-mark-live`}
+      >
+        <circle className="cine-ring" cx="40" cy="40" r="34.6" fill="none" stroke="currentColor" strokeWidth="5.4" />
         <g className="mark-arcs">
           <path d="M22.2 22.4 A22.2 22.2 0 0 1 57.8 22.4" fill="none" stroke="currentColor" strokeWidth="3.15" strokeLinecap="round" />
           <path d="M57.8 57.6 A22.2 22.2 0 0 1 22.2 57.6" fill="none" stroke="currentColor" strokeWidth="3.15" strokeLinecap="round" />
@@ -286,6 +293,20 @@ export function CourtMark({
             <path d="M22.2 22.4 A22.2 22.2 0 0 1 57.8 22.4" />
             <path d="M57.8 57.6 A22.2 22.2 0 0 1 22.2 57.6" />
           </g>
+        ) : null}
+        {premiere ? (
+          <>
+            <ellipse className="cine-shadow" cx="36" cy="76" rx="7.2" ry="1.45" />
+            <g className="cine-net" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M28 54 C29.4 70 34.2 71 36 54" />
+              <path d="M36 55 C37.8 74 42.2 74 44 55" />
+              <path d="M44 54 C45.8 70 50.6 71 52 54" />
+            </g>
+            <g className="cine-ball-body">
+              <circle r="13" />
+              <path d="M-13 0 H13 M0 -13 V13 M-9.2 -8.8 C-2.8 -3.4 2.8 -3.4 9.2 -8.8 M-9.2 8.8 C-2.8 3.4 2.8 3.4 9.2 8.8" />
+            </g>
+          </>
         ) : null}
         <line x1="4.2" y1="40" x2="16.6" y2="40" stroke="currentColor" strokeWidth="4.4" strokeLinecap="square" />
         <line x1="63.4" y1="40" x2="75.8" y2="40" stroke="currentColor" strokeWidth="4.4" strokeLinecap="square" />

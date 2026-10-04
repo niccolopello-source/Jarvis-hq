@@ -379,7 +379,7 @@ export const EN_FEEL: Readonly<Record<string, string>> = {
   "Qualcuno ha fatto il tuo nome. Tu hai fatto la valigia, poi l'hai disfatta. Per ora.": "Someone floated your name. You packed your bag, then unpacked it. For now.",
   "L'estate è già chiusa.": "The summer is already over.",
   "Una voce da un altro fuso. Palazzetti più stretti, un ultimo atto nominato, non firmato.": "A voice from another time zone. Tighter arenas, a final act mentioned, not signed.",
-  "Europa resta una frase. A quest'età le frasi pesano, e questa di più.": "Europe remains a sentence. At this age, sentences weigh, and this one more than most.",
+  "Europa resta una frase. A quest'età le frasi pesano, e questa di più.": "Europe stays talk. At this age talk carries weight, and this more than most.",
   "Il ruolo, la voce, poi — se serve — l'Europa. Per ora è solo una porta socchiusa.": "The role, the voice, then — if needed — Europe. For now it's just a door left ajar.",
   "Non hai firmato. Hai ascoltato. L'inverno, poi, deciderà.": "You didn't sign. You listened. Winter will decide.",
   "Una porta in un'altra lingua. Resta sul tavolo, e pesa.": "A door in another language. It stays on the table, and it weighs.",
