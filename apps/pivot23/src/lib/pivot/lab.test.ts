@@ -13,8 +13,8 @@ test("two plays of the same seed hash equal and stay finite", () => {
     const row = runPair({ seed, role: "SF", path: "Europa" });
     assert.equal(row.match, true, `seed ${seed} diverged`);
     assert.deepEqual(row.issues, [], `seed ${seed}: ${row.issues.join(",")}`);
-    assert.ok(row.peak >= 48 && row.peak <= 99, row.peak);
-    assert.ok(row.endAge >= 18 && row.endAge <= 36, row.endAge);
+    assert.ok(row.peak >= 48 && row.peak <= 99, `peak ${row.peak}`);
+    assert.ok(row.endAge >= 18 && row.endAge <= 36, `endAge ${row.endAge}`);
   }
 });
 
