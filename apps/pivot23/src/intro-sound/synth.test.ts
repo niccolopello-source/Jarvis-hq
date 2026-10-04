@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { BOUNCE_1, BOUNCE_2, BOUNCE_3, makeBus, makeMaster, playCue } from "./synth";
+import { BOUNCE_1, BOUNCE_2, BOUNCE_3, logicalCueStarts, makeBus, makeMaster, playCue } from "./synth";
 
 /** Minimal Web Audio stand-in: records every param automation and source start/stop. */
 type Event = { node: string; param: string; method: string; value: number; time: number };
@@ -114,4 +114,51 @@ test("the swish is noise only (no tonal rim ping): its only oscillator is the su
   assert.equal(oscs.length, 1);
   const freqs = events.filter((e) => e.node === "osc" && e.param === "frequency").map((e) => e.value);
   assert.ok(freqs.every((f) => f < 50), `flutter stays sub-audio (${freqs})`);
+});
+
+/** The old e2e rule: a source more than `window` after the group's first start opens a new cue. */
+function groupsFromFirstStart(times: number[], window: number): number[] {
+  const groups: number[] = [];
+  for (const t of [...times].sort((a, b) => a - b)) {
+    const prev = groups[groups.length - 1];
+    if (prev === undefined || t - prev > window) groups.push(t);
+  }
+  return groups;
+}
+
+test("the swish is one logical cue even though its net closes about 280 ms later", () => {
+  const one = render([{ name: "swish", at: 4.85 }]);
+  const starts = one.sources.map((s) => s.start);
+  const close = Math.max(...starts);
+  assert.ok(Math.abs(close - (4.85 + 0.28)) < 1e-9, "the closing rustle is a layer of this swish, at +280 ms");
+  assert.deepEqual(logicalCueStarts(one.sources.map((s) => ({ kind: s.kind, at: s.start * 1000 }))), [4850]);
+  // Comparing every layer to the cue's first start, with a 250 ms window, splits that rustle off.
+  assert.equal(groupsFromFirstStart(starts, 0.25).length, 2);
+
+  const phrase = render([
+    { name: "bounce1", at: 1.15 },
+    { name: "bounce2", at: 2.05 },
+    { name: "bounce3", at: 2.8 },
+    { name: "swish", at: 4.85 },
+  ]);
+  assert.deepEqual(
+    logicalCueStarts(phrase.sources.map((s) => ({ kind: s.kind, at: s.start * 1000 }))).map((t) => Math.round(t)),
+    [1150, 2050, 2800, 4850],
+  );
+
+  // A second swish that begins as the first net closes is a real extra cue.
+  // A 400 ms window, wide enough to keep the +280 ms rustle, does not report that second
+  // attack. A window that also covers the second swish's own tail hides the duplicate.
+  const twice = render([
+    { name: "swish", at: 4.85 },
+    { name: "swish", at: 4.85 + 0.28 },
+  ]);
+  const attacks = logicalCueStarts(twice.sources.map((s) => ({ kind: s.kind, at: s.start * 1000 })));
+  assert.deepEqual(attacks.map((t) => Math.round(t)), [4850, 5130]);
+  const widened = groupsFromFirstStart(
+    twice.sources.map((s) => s.start),
+    0.4,
+  ).map((t) => Math.round(t * 1000));
+  assert.ok(!widened.includes(5130), `400 ms window misses the second attack (${widened})`);
+  assert.equal(groupsFromFirstStart(twice.sources.map((s) => s.start), 0.6).length, 1);
 });
