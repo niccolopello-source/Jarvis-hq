@@ -66,6 +66,7 @@ export const EN_STORY_EXTRA: Readonly<Record<string, string>> = {
   "Minuti veri, senza il peso del quinto fallo.": "Real minutes, without the weight of the fifth foul.",
   "Un compromesso da professionista, non da slogan.": "A professional's compromise, not a slogan's.",
   "{RIVAL} firma un contratto massimo: i paragoni ripartono": "{RIVAL} signs a max contract: the comparisons start again",
+  "__RIVAL__ firma un contratto massimo: i paragoni ripartono": "__RIVAL__ signs a max contract: the comparisons start again",
   "Stessi anni, due contratti, una sola versione dei fatti.": "Same age, two contracts, only one version of the facts.",
   "Usi i suoi numeri come bersaglio": "You use his numbers as a target",
   "La rivalità torna a essere un mestiere.": "The rivalry goes back to being a craft.",

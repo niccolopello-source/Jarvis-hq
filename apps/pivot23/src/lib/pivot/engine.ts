@@ -600,9 +600,9 @@ function rookReadyFromCard(card: DraftCard) {
 
 export function finishDraft(s: PlayerState) {
   s.talent = weightedSkill(s);
+  const fit = clamp((s.talent - 62) * 0.18, -2.4, 3.2);
+  s.potential = round1(clamp(s.potential + fit, 64, 99));
   refreshOverall(s);
-  s.overall = START_OVERALL;
-  s.peakOverall = START_OVERALL;
   s.rngState = seasonRngSeed(s.seed);
 }
 
@@ -659,10 +659,6 @@ function applyOriginPathInner(s: PlayerState, path: "NCAA" | "Europa" | "G-Leagu
   s.choiceOvr = round2(clamp(drafted * 0.55 + ready * 0.22 + pathOvr, SIM.choice.min, SIM.choice.max));
   calibrateStart(s);
   refreshOverall(s);
-  if (s.overall === START_OVERALL) {
-    s.overall = START_OVERALL + (path === "G-League" ? 1 : 2);
-    s.peakOverall = s.overall;
-  }
   s.team = { ...UNSIGNED_TEAM };
   return s.overall;
 }
@@ -679,14 +675,18 @@ export function seasonRngSeed(seed: number): number {
 
 function playerDraftStock(s: PlayerState): number {
   const ready = Number.isFinite(s.rookReady) ? s.rookReady : 0;
-  let stock = ready * 1.65 + (s.potential - 72) * 0.48 + (s.overall - 60) * 0.55;
+  const skill = weightedSkill(s);
+  let stock = ready * 1.2 + (s.potential - 72) * 0.42 + (skill - 62) * 0.9 + (s.overall - 60) * 0.28;
   if (s.originPath === "NCAA") stock += 3.4;
   else if (s.originPath === "Europa") stock += 1.2;
   else if (s.originPath === "G-League") stock -= 2.2;
-  stock += (s.hidden.workEthic - 50) * 0.06;
-  stock += (s.hidden.motor - 50) * 0.03;
-  stock += (rand() - 0.5) * 12;
+  stock += (s.hidden.workEthic - 50) * 0.04;
+  stock += (rand() - 0.5) * 7;
   return stock;
+}
+
+export function draftStockOf(s: PlayerState): number {
+  return playerDraftStock(s);
 }
 
 function revealDraftLandingInner(s: PlayerState): { pick: number; team: Team } {
@@ -2466,7 +2466,7 @@ function pickOffseasonFocuses(s: PlayerState) {
   return picked.slice(0, 3);
 }
 
-function applyOffseason(s: PlayerState, n: number, id: string): DevRow {
+export function applyOffseason(s: PlayerState, n: number, id: string): DevRow {
   const { focus, gains } = previewFocus(s, id);
   const before = s.overall;
   gains.forEach((g) => {
