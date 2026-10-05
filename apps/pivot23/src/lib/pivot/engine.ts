@@ -119,7 +119,10 @@ export {
 } from "./peak";
 
 function newSeed() {
-  return ((Date.now() ^ ((Math.random() * 0xffffffff) | 0)) >>> 0) || 1;
+  const buf = new Uint32Array(1);
+  if (globalThis.crypto?.getRandomValues) globalThis.crypto.getRandomValues(buf);
+  else buf[0] = Date.now() >>> 0;
+  return ((Date.now() ^ buf[0]!) >>> 0) || 1;
 }
 
 export function withPlayer<T>(s: PlayerState, fn: () => T): T {
