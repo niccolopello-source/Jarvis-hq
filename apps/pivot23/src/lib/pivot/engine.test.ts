@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { acceptForcedPreseasonTrade, acceptForcedSummerTrade, acceptTrade, allDraftRounds, applyAutoOffseason, applyDraftCard, applyFx, ARCHIVE_KEY, buildTradeOffer, careerEndAge, eventAfterMarket, finishDraft, freshPlayer, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, offseasonStep, openCareerSim, playCareerSim, recordRetirementChoice, revealDraftLanding, saveArchive, scriptedSeasonSlot, shouldOfferExtraYear, simulateFullCareer, simulateRegularSeason, startProPath, storyEventById, toArchive, withPlayer } from "./engine";
+import { acceptForcedPreseasonTrade, acceptForcedSummerTrade, acceptOffer, acceptTrade, allDraftRounds, applyAutoOffseason, applyDraftCard, applyFx, ARCHIVE_KEY, buildTradeOffer, careerEndAge, eventAfterMarket, finishDraft, freshPlayer, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, offseasonStep, openCareerSim, playCareerSim, recordRetirementChoice, revealDraftLanding, saveArchive, scriptedSeasonSlot, shouldOfferExtraYear, simulateFullCareer, simulateRegularSeason, startProPath, storyEventById, toArchive, withPlayer } from "./engine";
 import { COACH_NAMES, RIVAL_NAMES } from "./data";
 import { pick, rand } from "./rng";
-import { NBA_TEAMS } from "./teams";
+import { EURO_TEAMS, NBA_TEAMS } from "./teams";
 import { fingerprintOf, sha256 } from "./card";
 import { SAVE_VERSION } from "./config";
 import { EURO_TITLE_LINES, playoffSeriesFormat, SERIES_WIN_LINES, seriesWinProbability, simulateSeries } from "./league";
@@ -168,6 +168,60 @@ test("the final season is played once and then the career closes", () => {
   assert.equal(accepted.seasonHistory.at(-1)?.age, 36);
   assert.equal(offseasonStep(accepted), "finish");
   assert.equal(isCareerOver(accepted), true);
+});
+
+test("a EuroLeague contract is not a national team call-up", () => {
+  const player = freshPlayer("Euro", "SF", "ITA", 23, "pro", 44001);
+  player.international = false;
+  player.medal = false;
+  acceptOffer(player, {
+    id: "euro",
+    team: EURO_TEAMS[0]!,
+    years: 2,
+    annualM: 4.2,
+    pitch: "Eurolega",
+    kind: "euro",
+  });
+  assert.equal(player.league, "EuroLega");
+  assert.equal(player.team.conf, "Euro");
+  assert.equal(player.international, false);
+  assert.equal(player.medal, false);
+
+  player.international = true;
+  acceptOffer(player, {
+    id: "euro-2",
+    team: EURO_TEAMS[1]!,
+    years: 2,
+    annualM: 3.4,
+    pitch: "Eurolega",
+    kind: "euro",
+  });
+  assert.equal(player.international, true);
+  assert.equal(player.league, "EuroLega");
+});
+
+test("accepting the national call sets the flag and refusing does not", () => {
+  const called = freshPlayer("Naz", "PG", "ITA", 7, "pro", 44002);
+  called.international = false;
+  called.league = "NBA";
+  const event = withPlayer(called, () => storyEventById(called, undefined, "nation"));
+  assert.equal(event.title, "Convocazione internazionale");
+  withPlayer(called, () => event.choices[0]!.fx(called));
+  assert.equal(called.international, true);
+  assert.equal(called.league, "NBA");
+
+  const refused = freshPlayer("Naz", "PG", "ITA", 7, "pro", 44003);
+  refused.international = false;
+  const refusal = withPlayer(refused, () => storyEventById(refused, undefined, "nation"));
+  withPlayer(refused, () => refusal.choices[1]!.fx(refused));
+  assert.equal(refused.international, false);
+
+  const reduced = freshPlayer("Naz", "PG", "ITA", 7, "pro", 44004);
+  reduced.international = false;
+  const reducedEvent = withPlayer(reduced, () => storyEventById(reduced, undefined, "nation"));
+  withPlayer(reduced, () => reducedEvent.choices[2]!.fx(reduced));
+  assert.equal(reduced.international, true);
+  assert.equal(reduced.league, "NBA");
 });
 
 test("the same seed and the same draft picks open the same career", () => {

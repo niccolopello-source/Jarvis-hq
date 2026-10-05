@@ -45,6 +45,10 @@ test("retiring at the offer leaves out the age-36 season the other choice plays"
   assert.equal(stop.extraSeason, false);
   assert.equal(play.seasonHistory.some((row) => row.age === 36), true);
   assert.equal(stop.seasonHistory.some((row) => row.age === 36), false);
+  assert.equal(play.choiceLog.some((c) => c.title === "Ritiro" && c.pick === "Gioca a 36 anni"), true);
+  assert.equal(stop.choiceLog.some((c) => c.title === "Ritiro" && c.pick === "Chiudi ora"), true);
+  assert.equal(stop.seasonHistory.filter((row) => row.age === 35).length, 1);
+  assert.equal(play.seasonHistory.filter((row) => row.age === 36).length, 1);
   assert.notEqual(identityKey(careerShape(play)), identityKey(careerShape(stop)));
 });
 

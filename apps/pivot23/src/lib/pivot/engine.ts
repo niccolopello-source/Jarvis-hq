@@ -1377,6 +1377,7 @@ function nationStory(s: PlayerState): StoryEvent {
         label: "Accetti e guidi la squadra",
         detail: "Rischi di più, per un sogno più grande.",
         fx: (p) => {
+          p.international = true;
           const medal = rand() < 0.4;
           if (medal) {
             p.medal = true;
@@ -1406,12 +1407,15 @@ function nationStory(s: PlayerState): StoryEvent {
       {
         label: "Ruolo ridotto",
         detail: "Un compromesso.",
-        fx: () => ({
-          publicImage: 3,
-          injuryRisk: 3,
-          hidden: { chemistry: 2 },
-          flavor: `Dai una mano a ${teamLabel} senza esporti troppo.`,
-        }),
+        fx: (p) => {
+          p.international = true;
+          return {
+            publicImage: 3,
+            injuryRisk: 3,
+            hidden: { chemistry: 2 },
+            flavor: `Dai una mano a ${teamLabel} senza esporti troppo.`,
+          };
+        },
       },
     ],
   };
@@ -2281,7 +2285,6 @@ export function acceptOffer(s: PlayerState, offer: MarketOffer) {
   };
   if (offer.team.conf === "Euro") {
     s.league = "EuroLega";
-    s.international = true;
   } else {
     s.league = "NBA";
   }

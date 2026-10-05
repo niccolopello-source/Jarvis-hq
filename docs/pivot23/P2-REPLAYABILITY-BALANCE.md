@@ -111,7 +111,7 @@ Peak band. Development curve. Best-of-seven. Save schema. Archive. RNG algorithm
 
 - The lottery is reachable and no longer empty, but it is 1.4% of protagonists. Most of the class is still a second-round talent, because potential averages 74. Steepening the map further would empty the late second. Left as the consequence of the stock, not tuned to a quota.
 - Superstars win a title in about three quarters of careers. That is the upper edge of this correction. Another pass that pushes it higher should be rejected.
-- "Called up" in the fingerprint rises when a player joins Europe, because that flag was already set by a Euro offer. It is not a pure national-team count.
+- "Called up" used to rise when a player joined Europe, because a EuroLeague offer set `international`. That flag means a national-team call-up (`Convocazione internazionale`, or the midweek call when the player goes). Validation 2.1 removed the EuroLeague assignment and sets the flag only when the player actually accepts the call. A EuroLeague contract is not a cap. The summer window already reads the flag, so one lab lock moved with it: seed 23102 is now `595839e7da495bac`. No title, draft, or loyalty formula was retuned.
 - Game 7s are slightly more common per career because more series are played, not because a series was pulled toward 3–3.
 - Retiring at 35 used to deal extra seasons at the same age. Those phantom seasons are gone. Any tool that counted them will see a shorter retired career. The default simulator still plays the age-36 year.
 
