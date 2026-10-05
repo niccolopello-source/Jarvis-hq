@@ -219,7 +219,8 @@ export function careerShape(s: PlayerState): CareerShape {
   };
 }
 
-/** Structural identity. The seed is intentionally absent: a collision is a real duplicate career. */
+/** Career fingerprint. The seed is absent: a collision is a duplicate career, not a similar one.
+ * Not `macroIdentity().key`. The fingerprint keeps the team list, the exact pick, the exact peak, the awards, and the national-team result. */
 export function identityKey(shape: CareerShape): string {
   return [
     shape.role,
@@ -449,7 +450,9 @@ function loyaltyOf(streak: number, teams: number): string {
   return "mixed";
 }
 
-/** Path identity. Not a random label, and not a target to optimize. */
+/** Coarse silhouette. `key` is the macro identity key, not the career fingerprint.
+ * It keeps bins only (draft band, league-path bucket, loyalty, peak band, title band).
+ * Many different fingerprints share one key. Not a target to optimize. */
 export function macroIdentity(s: PlayerState): MacroIdentity {
   const shape = careerShape(s);
   let euroSeasons = 0;

@@ -44,7 +44,7 @@ This phase changes causes. It does not chase a target histogram. Peak age stays 
 - Draft stock uses the rookie talent baseline (40), not a league-average 62. The pick map is linear in that stock: a potential-72 prospect lands around the turn, a generational stock can reach the lottery, a bust can reach the late second. Scouting noise is the same ±8 picks.
 - The simulator no longer takes the richest offer by default. Appeal weighs money, ego, trust, years on the team, a ring chase, and a buried role. Explicit `trade: "accept" | "refuse"` still overrides.
 - An optional trade is accepted only when the situation leans that way (trust, role, tier, a title chase). A forced trade no longer starts at 22%. The push is low trust, a buried veteran, ego on a non-contender, or a good player on a rebuild.
-- A EuroLeague offer also exists, before age 30, when an NBA role is not there: overall under 64 and trust under 50, or a European origin who is still buried. Stars are not pushed abroad. The league follows the team's conference, so extending in Europe stays in Europe.
+- A EuroLeague offer also exists, before age 30, when an NBA role is not there: overall under 64 and trust under 50, or a European origin who is still buried. Stars are not pushed abroad. The league follows the team's conference, so accepting a Euro team sets EuroLeague and accepting an NBA team sets the NBA. An extension of the current Euro team is not offered: the extension gate requires the NBA.
 - Playoff win chance keeps 80% of team power and adds the player only from overall 74 up, capped. The best-of-seven is untouched.
 - A fragile body can come out of the bad injury choices above the serious line. Healing above that line is slower. The event is not more common.
 - Choosing to retire at 35 closes the career. It no longer deals another season at the same age.
@@ -118,3 +118,14 @@ Peak band. Development curve. Best-of-seven. Save schema. Archive. RNG algorithm
 ## Recommendation
 
 Do not merge until the 1000-career table above is accepted. Do not start a peak-age rewrite from this branch. If a later pass touches titles, measure role players and superstars separately and revert if role players move into the teens.
+
+## Names
+
+Two different counts. Do not call both "macro identities".
+
+| Name | Code | What a collision means | This sample |
+|---|---|---|---|
+| Career fingerprint | `identityKey(careerShape(player))` | The two careers are the same shape: same teams, same pick, same peak, same awards, same national-team result. The seed is not in the key. | 1000 / 1000 unique |
+| Macro identity key | `macroIdentity(player).key` | The two careers share a silhouette: origin, draft band, league-path bucket, loyalty, peak band, title band, injury band, stat shape. Teams and exact numbers are dropped. | 577 / 1000 unique |
+
+The earlier probe figure of 621 used a wider hand-built key (it also kept national team and legacy). That number is not `macroIdentity().key`. The archive-card hash and the lab box-score hash are integrity locks. They are neither of these.
