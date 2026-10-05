@@ -31,6 +31,8 @@ import {
   seedRookieClass,
   playoffSeriesFormat,
   playoffLineScore,
+  matchupChance,
+  boundedChoiceBonus,
   simulateSeries,
   simulateLeagueSeason,
   standingOf,
@@ -1870,19 +1872,9 @@ export function beginPlayoffs(s: PlayerState) {
   return withPlayer(s, () => initPlayoffs(s, s.currentLeague!));
 }
 
-export function playoffWinChance(s: PlayerState, round: number, choiceBonus: number) {
-  const ovrAdj = (s.overall - 70) * 0.007 + Math.max(0, s.overall - 86) * 0.012;
-  const teamAdj = (s.team.power - 70) * 0.005;
-  const pens = [0.11, 0.14, 0.17, 0.21];
-  const roundPen = pens[round] ?? 0.21;
-  const clutch = (s.hidden.clutch - 50) * 0.0024;
-  const chem = (s.hidden.chemistry - 50) * 0.0014;
-  const repeatCost = s.titleCount * 0.045 + s.mvpCount * 0.012;
-  return clamp(
-    0.4 + ovrAdj + teamAdj + clutch + chem + s.form * 0.005 + choiceBonus - roundPen + diffOf(s).playoff - repeatCost,
-    0.06,
-    0.94,
-  );
+export function playoffWinChance(s: PlayerState, _round: number, choiceBonus: number, oppPower = s.team.power) {
+  const mine = s.team.power * 0.72 + (s.overall - 70) * 0.42 + s.form * 0.3 + (s.hidden.clutch - 50) * 0.03;
+  return matchupChance(mine, oppPower, boundedChoiceBonus(choiceBonus) + diffOf(s).playoff);
 }
 
 const EARLY_PLAYOFF: PlayoffChoice[] = [
@@ -2015,7 +2007,7 @@ function resolvePlayoffRoundInner(
   const oppRow: StandingRow | undefined =
     s.currentLeague ? standingOf(s.currentLeague, opponent.abbr) : undefined;
   const oppPower = oppRow?.power ?? opponent.power;
-  const chance = playoffWinChance(s, round, bonus + (s.team.power - oppPower) * 0.004);
+  const chance = playoffWinChance(s, round, bonus, oppPower);
   const format = playoffSeriesFormat(s.league, round);
   const series = simulateSeries(
     chance,
@@ -2075,6 +2067,9 @@ function resolvePlayoffRoundInner(
         s.milestones.push({ season: n, label: "Finals MVP" });
       }
       if (last) last.playoff = "Campione";
+      if (s.playoff && s.currentLeague) {
+        s.playoff.settledChampion = standingOf(s.currentLeague, s.team.abbr) ?? undefined;
+      }
       s.publicImage = clamp(s.publicImage + 8, 0, 100);
       s.hidden.clutch = clamp(s.hidden.clutch + 3, 0, 100);
       imprint(s, s.age <= 26 ? 0.42 : 0.28);

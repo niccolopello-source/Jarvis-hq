@@ -23,7 +23,7 @@ La log-normale proposta non è stata implementata. Manca la dimostrazione che il
 
 ## Controfattuali
 
-Eseguiti sul gancio `SimOpts.experiment`, spento se assente. Commit di lavoro: branch `grokbot/experiment-hook`. Baseline riallineata dopo il profilo di ruolo su `grokbot/player-development`: fingerprint `d7144a3d3263ba0e`, `91b7057c8bc91137`, `3a2c736003dbff62` sui seed 23017, 23034, 23102.
+Eseguiti sul gancio `SimOpts.experiment`, spento se assente. Baseline dopo playoff e profilo di ruolo: fingerprint `721aedfa360cbc34`, `14b31d32fe408278`, `59055ad69eb93df1` sui seed 23017, 23034, 23102.
 
 Campione: 24 seed `90000+i*19`, Pro, draft random, ITA, numero 23. Non è una taratura.
 
