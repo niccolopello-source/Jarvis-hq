@@ -21,34 +21,7 @@ html[data-intro="full"] .intro-hero > .lede { animation-delay: 1.32s; }
   }
 }
 
-/* Returning visitor: the premiere keeps its shape but takes the short timing the lean path already uses.
-   The long dribble beats are cleared so the synth plays only the swish, on the short landing. */
-html.pivot-intro-seen .court-mark-live.is-premiere {
-  --cine: 1.6s;
-  --beat-b1: -1s;
-  --beat-b2: -1s;
-  --beat-b3: -1s;
-  --beat-swish: 0.61s;
-  animation-duration: 1.6s;
-}
-html.pivot-intro-seen .court-mark-live.is-premiere .mark-gleam path {
-  animation-duration: 1s;
-  animation-delay: 0.15s;
-}
-html.pivot-intro-seen .court-mark-live.is-premiere .cine-ball-body,
-html.pivot-intro-seen .court-mark-live.is-premiere .cine-shadow,
-html.pivot-intro-seen .court-mark-live.is-premiere .cine-net path,
-html.pivot-intro-seen .court-mark-live.is-premiere .court-mark-num {
-  animation: none;
-}
-html.pivot-intro-seen .court-mark-live.is-premiere .cine-ball-body,
-html.pivot-intro-seen .court-mark-live.is-premiere .cine-shadow,
-html.pivot-intro-seen .court-mark-live.is-premiere .cine-net path {
-  opacity: 0;
-}
-html.pivot-intro-seen .court-mark-live.is-premiere .court-mark-num {
-  opacity: 1;
-}
+/* Returning visitors still get the same logo premiere. Only the boot curtain is shorter. */
 
 /* The skip control reads as a small broadcast chip in the corner. `.intro-hero > *` made it relative and full width. */
 .intro-hero > .cine-skip {

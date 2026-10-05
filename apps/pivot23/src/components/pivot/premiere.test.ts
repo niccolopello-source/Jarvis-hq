@@ -13,16 +13,17 @@ function block(css: string, selector: string): string {
   return css.slice(at, css.indexOf("}", at));
 }
 
-test("the first-visit home premiere is 12 s, long enough for the mark, the dribble and the swish", () => {
+test("the logo premiere is 4.8 s on every device and does not draw a basketball", () => {
   const rule = block(styles, ".court-mark-live.is-premiere");
   const ms = Number(/--cine:\s*([\d.]+)s/.exec(rule)?.[1]) * 1000;
-  assert.equal(ms, 12000);
-  assert.ok(ms > 9200, "longer than the 9.2 s cut");
-});
-
-test("lean devices and returning visits keep the short 1.6 s premiere", () => {
-  assert.match(block(styles, "html.pivot-lean .court-mark-live.is-premiere"), /animation-duration:\s*1\.6s/);
-  assert.match(block(intro, "html.pivot-intro-seen .court-mark-live.is-premiere"), /animation-duration:\s*1\.6s/);
+  assert.equal(ms, 4800);
+  assert.ok(ms >= 3000 && ms <= 5000);
+  assert.equal(styles.includes("cine-ball"), false);
+  assert.equal(styles.includes("cineBall"), false);
+  assert.equal(styles.includes("html.pivot-lean .court-mark-live.is-premiere"), false);
+  assert.equal(intro.includes("html.pivot-intro-seen .court-mark-live.is-premiere"), false);
+  assert.match(styles, /#C40018/);
+  assert.match(rule, /--beat-swish:\s*3\.4s/);
 });
 
 test("reduced motion switches the premiere animation off entirely", () => {

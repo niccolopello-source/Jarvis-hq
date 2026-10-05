@@ -6,7 +6,6 @@ import {
   FULL_TIMELINE,
   LATE_GRACE_MS,
   PREMIERE_MS,
-  SHORT_TIMELINE,
   cssTimeMs,
   introTimeline,
   parsePref,
@@ -27,12 +26,11 @@ function beat(css: string, name: string): number {
   return cssTimeMs(new RegExp(`${name}:\\s*(-?[\\d.]+(?:ms|s))`).exec(block(css, ".court-mark-live.is-premiere"))?.[1]);
 }
 
-test("first-visit cues sit on the picture: three dribbles then the swish", () => {
+test("logo cues are two dribbles then the swish", () => {
   assert.deepEqual(FULL_TIMELINE, [
-    { name: "bounce1", at: 1800 },
-    { name: "bounce2", at: 3120 },
-    { name: "bounce3", at: 4320 },
-    { name: "swish", at: 7200 },
+    { name: "bounce1", at: 1400 },
+    { name: "bounce2", at: 2400 },
+    { name: "swish", at: 3400 },
   ]);
 });
 
@@ -41,27 +39,23 @@ test("the timeline follows the CSS custom properties, not a guessed curve", () =
   assert.equal(cssTimeMs(/--cine:\s*([\d.]+s)/.exec(premiere)?.[1]), PREMIERE_MS);
   assert.equal(beat(styles, "--beat-b1"), FULL_BEATS.bounce1);
   assert.equal(beat(styles, "--beat-b2"), FULL_BEATS.bounce2);
-  assert.equal(beat(styles, "--beat-b3"), FULL_BEATS.bounce3);
+  assert.equal(cssTimeMs(/--beat-b3:\s*(-?[\d.]+s)/.exec(premiere)?.[1]), -1000);
   assert.equal(beat(styles, "--beat-swish"), FULL_BEATS.swish);
   assert.deepEqual(introTimeline(PREMIERE_MS, FULL_BEATS), FULL_TIMELINE);
 });
 
-test("the dribble keeps a natural rhythm and the swish is the shot, not another bounce", () => {
-  const [b1, b2, b3, sw] = FULL_TIMELINE.map((c) => c.at);
-  assert.equal(b2! - b1!, 1320);
-  assert.equal(b3! - b2!, 1200);
-  assert.ok(sw! - b3! >= 2400 && sw! - b3! <= 3400, "a readable shot flight between the gather and the net");
-  assert.ok(sw! + 1400 < PREMIERE_MS, "the swish tail ends before the premiere hands over to the sweep");
+test("the two dribbles stay apart and the swish resolves the logo before the premiere ends", () => {
+  const [b1, b2, sw] = FULL_TIMELINE.map((c) => c.at);
+  assert.equal(b2! - b1!, 1000);
+  assert.equal(sw! - b2!, 1000);
+  assert.ok(PREMIERE_MS - sw! >= 1200 && PREMIERE_MS - sw! <= 1800);
 });
 
-test("the 1.6 s premiere (returning visit, lean device) is swish only", () => {
-  assert.deepEqual(SHORT_TIMELINE, [{ name: "swish", at: 610 }]);
-  for (const css of [styles, intro]) {
-    const rule = css.includes("html.pivot-lean") ? block(css, "html.pivot-lean .court-mark-live.is-premiere") : block(css, "html.pivot-intro-seen .court-mark-live.is-premiere");
-    assert.match(rule, /animation-duration:\s*1\.6s/);
-    assert.equal(cssTimeMs(/--beat-swish:\s*(-?[\d.]+s)/.exec(rule)?.[1]), 610);
-    assert.equal(cssTimeMs(/--beat-b1:\s*(-?[\d.]+s)/.exec(rule)?.[1]), -1000);
-  }
+test("lean devices and returning visits do not get a second, shorter premiere", () => {
+  assert.equal(styles.includes("html.pivot-lean .court-mark-live.is-premiere"), false);
+  assert.equal(intro.includes("html.pivot-intro-seen .court-mark-live.is-premiere"), false);
+  assert.equal(styles.includes("cine-ball"), false);
+  assert.equal(styles.includes("cineBall"), false);
 });
 
 test("invalid timing yields no cues instead of NaN schedules", () => {
@@ -71,28 +65,26 @@ test("invalid timing yields no cues instead of NaN schedules", () => {
   assert.deepEqual(introTimeline(PREMIERE_MS, { bounce1: 100 }), []);
 });
 
-test("a gesture before the first beat schedules every cue with its remaining delay", () => {
+test("a gesture before the first beat schedules both dribbles and the swish", () => {
   assert.deepEqual(planRemaining(FULL_TIMELINE, 200), [
-    { name: "bounce1", delayMs: 1600 },
-    { name: "bounce2", delayMs: 2920 },
-    { name: "bounce3", delayMs: 4120 },
-    { name: "swish", delayMs: 7000 },
+    { name: "bounce1", delayMs: 1200 },
+    { name: "bounce2", delayMs: 2200 },
+    { name: "swish", delayMs: 3200 },
   ]);
 });
 
 test("a gesture mid-premiere plays only what is still ahead, in sync", () => {
-  assert.deepEqual(planRemaining(FULL_TIMELINE, 2000), [
-    { name: "bounce2", delayMs: 1120 },
-    { name: "bounce3", delayMs: 2320 },
-    { name: "swish", delayMs: 5200 },
+  assert.deepEqual(planRemaining(FULL_TIMELINE, 1600), [
+    { name: "bounce2", delayMs: 800 },
+    { name: "swish", delayMs: 1800 },
   ]);
-  assert.deepEqual(planRemaining(FULL_TIMELINE, 4500), [{ name: "swish", delayMs: 2700 }]);
-  assert.deepEqual(planRemaining(FULL_TIMELINE, 8000), []);
+  assert.deepEqual(planRemaining(FULL_TIMELINE, 2500), [{ name: "swish", delayMs: 900 }]);
+  assert.deepEqual(planRemaining(FULL_TIMELINE, 4000), []);
 });
 
 test("a just-missed cue (inside the grace) plays at once; an older one is skipped", () => {
-  assert.deepEqual(planRemaining(FULL_TIMELINE, 3120 + LATE_GRACE_MS - 1)[0], { name: "bounce2", delayMs: 0 });
-  assert.equal(planRemaining(FULL_TIMELINE, 3120 + LATE_GRACE_MS + 1)[0]!.name, "bounce3");
+  assert.deepEqual(planRemaining(FULL_TIMELINE, 2400 + LATE_GRACE_MS - 1)[0], { name: "bounce2", delayMs: 0 });
+  assert.equal(planRemaining(FULL_TIMELINE, 2400 + LATE_GRACE_MS + 1)[0]!.name, "swish");
   assert.deepEqual(planRemaining(FULL_TIMELINE, NaN), []);
 });
 

@@ -6,7 +6,7 @@ import "./intro.css";
  *
  * - full:  first visit, motion allowed. The dark boot field wipes off like a broadcast stinger
  *          and the home copy rises in.
- * - brief: returning visitor. The boot field fades out and the home mark premiere is shortened.
+ * - brief: returning visitor. The boot field fades out. The logo premiere is the same one.
  * - still: prefers-reduced-motion. A short opacity fade only.
  *
  * The curtain never takes pointer events: the app below is live from its first commit, and any

@@ -1,17 +1,15 @@
 /**
- * Intro sound timeline: three dribbles and a net swish, synced to the home premiere.
+ * Intro sound timeline: two dribbles and a net swish, synced to the logo premiere.
  *
  * Times are milliseconds from the start of `cineReveal` and are the same numbers as the CSS
- * custom properties on `.court-mark-live.is-premiere` (`--beat-b1`, `--beat-b2`, `--beat-b3`,
- * `--beat-swish`). The picture (ball, shadow, net, arc flare) is keyed to those same beats.
+ * custom properties on `.court-mark-live.is-premiere` (`--beat-b1`, `--beat-b2`, `--beat-swish`).
+ * `--beat-b3` stays negative so the third dribble is never scheduled.
  *
- *   bounce1  1800 ms   the ball hits after the mark has drawn itself
- *   bounce2  3120 ms   second bounce, lighter
- *   bounce3  4320 ms   the gather
- *   swish    7200 ms   the ball passes through the 23 and the net flares
+ *   bounce1  1400 ms   the outer ring closes
+ *   bounce2  2400 ms   the inner arcs close
+ *   swish    3400 ms   the 23 turns PIVOT red
  *
- * The 1.6 s premiere (returning visit, lean device) is too fast for a dribble, so its CSS
- * clears the bounce beats and keeps only the swish.
+ * One premiere for every device. There is no shorter basketball cut.
  */
 export type CueName = "bounce1" | "bounce2" | "bounce3" | "swish";
 export type Cue = { name: CueName; at: number };
@@ -25,17 +23,13 @@ export const LATE_GRACE_MS = 90;
 /** Length of the last cue's audible tail, used to suspend the AudioContext afterwards. */
 export const TAIL_MS = 900;
 
-/** First-visit beats. Must match `--beat-*` in src/styles.css. */
-export const PREMIERE_MS = 12000;
+/** Logo premiere beats. Must match `--beat-*` in src/styles.css. */
+export const PREMIERE_MS = 4800;
 export const FULL_BEATS: Partial<Record<CueName, number>> = {
-  bounce1: 1800,
-  bounce2: 3120,
-  bounce3: 4320,
-  swish: 7200,
+  bounce1: 1400,
+  bounce2: 2400,
+  swish: 3400,
 };
-/** Returning visit / lean device. Must match the short overrides in styles.css and intro.css. */
-export const SHORT_PREMIERE_MS = 1600;
-export const SHORT_BEATS: Partial<Record<CueName, number>> = { swish: 610 };
 
 /**
  * Builds the cue list from the premiere length and the beat map (both in ms).
@@ -66,10 +60,8 @@ export function introTimeline(revealMs: number, beats: Partial<Record<CueName, n
   return [...kept, swish];
 }
 
-/** The first-visit premiere. */
+/** The logo premiere. */
 export const FULL_TIMELINE = introTimeline(PREMIERE_MS, FULL_BEATS);
-/** The 1.6 s premiere: swish only. */
-export const SHORT_TIMELINE = introTimeline(SHORT_PREMIERE_MS, SHORT_BEATS);
 
 export type PlannedCue = { name: CueName; delayMs: number };
 
