@@ -157,13 +157,16 @@ export function ageCurve(age: number, apex = PEAK_AGE) {
   return Math.exp(-0.5 * ((age - apex) / sigma) ** 2);
 }
 
-/** Circa il 4.5% ha un tetto da fenomeno. Il 90+ si realizza, non si eredita. */
-export function rollPotential(): number {
+/** Circa il 4.5% ha un tetto da fenomeno. Il profilo sposta il tiro, non lo sostituisce. */
+export function rollPotential(skill = 62): number {
   const r = rand();
-  if (r < 0.045) return round1(94.6 + rand() * 4.2);
-  if (r < 0.12) return round1(86.0 + rand() * 6.0);
-  if (r < 0.54) return round1(74.4 + rand() * 8.6);
-  return round1(67.0 + rand() * 7.2);
+  let pot: number;
+  if (r < 0.045) pot = 94.6 + rand() * 4.2;
+  else if (r < 0.12) pot = 86.0 + rand() * 6.0;
+  else if (r < 0.54) pot = 74.4 + rand() * 8.6;
+  else pot = 67.0 + rand() * 7.2;
+  const bias = clamp((skill - 62) * 0.12, -2.5, 3.5);
+  return round1(clamp(pot + bias, 64, 99));
 }
 
 export function realizationOf(s: PlayerState): number {
@@ -298,7 +301,7 @@ export function computeOverall(s: PlayerState) {
     ovr = Math.min(ovr, 98.45, held - (age - 28) * 1.35);
   }
   const pot = finite(s.potential, 76);
-  ovr = Math.min(ovr, pot + 7.49, SIM.overall.max);
+  ovr = Math.min(ovr + profileDelta(s) * (age < apex ? 0.85 : 0.55), pot + 1.4, SIM.overall.max);
   return clamp(ovr, SIM.overall.min, SIM.overall.max);
 }
 
@@ -339,7 +342,7 @@ export function refreshOverall(s: PlayerState) {
       o = Math.min(o, s.peakOverall - (age - 28) * 1.05);
     }
   }
-  const potCeil = finite(s.potential, 76) + 8;
+  const potCeil = finite(s.potential, 76) + 1.4;
   o = Math.min(o, potCeil);
   let shown = displayOverall(Number.isFinite(o) ? o : START_OVERALL);
   if (shown > potCeil) shown = Math.floor(potCeil);
@@ -351,11 +354,18 @@ export function refreshOverall(s: PlayerState) {
 
 export function weightedSkill(s: PlayerState) {
   const w = ROLES[s.role]?.weights ?? ROLES.SG.weights;
+  const keys = Object.keys(w) as AttrKey[];
+  const sum = keys.reduce((a, k) => a + finite(w[k], 0), 0) || 1;
   let total = 0;
-  (Object.keys(w) as AttrKey[]).forEach((k) => {
+  keys.forEach((k) => {
     total += clampAttr(finite(s.attrs?.[k], 0)) * finite(w[k], 0);
   });
-  return clamp(total, SIM.attr.min, SIM.attr.max);
+  return clamp(total / sum, SIM.attr.min, SIM.attr.max);
+}
+
+/** Visible profile versus a neutral 62. Hidden traits stay out of this term. */
+export function profileDelta(s: PlayerState): number {
+  return clamp((weightedSkill(s) - 62) * 0.38, -5.5, 7.5);
 }
 
 /** Box avanzato, derivato dal referto. Niente campi extra nel salvataggio. */
