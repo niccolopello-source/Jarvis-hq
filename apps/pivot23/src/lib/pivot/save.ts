@@ -63,6 +63,10 @@ function isQuota(e: unknown): boolean {
   );
 }
 
+export function isStorageQuota(e: unknown): boolean {
+  return isQuota(e);
+}
+
 function isShrinkable(e: unknown): boolean {
   if (isQuota(e)) return true;
   return e instanceof RangeError;
@@ -244,6 +248,85 @@ export function stripStandings(snap: LeagueSnapshot): LeagueSnapshot {
     dpoyRace: snap.dpoyRace ?? [],
     champion: snap.champion,
   };
+}
+
+/** Archive schema written on the entry. Live SAVE_VERSION stays the player schema. */
+export const ARCHIVE_SCHEMA = 2;
+
+function clip(value: unknown, max: number): string {
+  return typeof value === "string" ? value.slice(0, max) : "";
+}
+
+/**
+ * Cold league sheet for the archive.
+ * Standings and vote boards are simulation tables: the row already keeps seed, record,
+ * awards and champion. Boards are the bulk and are not what the archive screen reads.
+ */
+export function compactLeagueSnapshot(snap: LeagueSnapshot): LeagueSnapshot {
+  return {
+    yearLabel: snap.yearLabel,
+    east: [],
+    west: [],
+    euro: [],
+    awards: (snap.awards ?? []).slice(0, 8).map((award) => ({
+      title: clip(award.title, 48),
+      name: clip(award.name, 48),
+      team: clip(award.team, 48),
+      teamAbbr: clip(award.teamAbbr, 8),
+      note: clip(award.note, 80),
+      isPlayer: !!award.isPlayer,
+    })),
+    leaders: (snap.leaders ?? []).filter((row) => row.isPlayer).slice(0, 6),
+    royRace: (snap.royRace ?? []).filter((row) => row.isPlayer).slice(0, 1),
+    dpoyRace: (snap.dpoyRace ?? []).filter((row) => row.isPlayer).slice(0, 1),
+    champion: snap.champion,
+  };
+}
+
+function compactOpponent(team: Team): Team {
+  return {
+    name: clip(team.name, 48),
+    tier: team.tier ?? "mid",
+    abbr: clip(team.abbr, 8),
+    color: clip(team.color, 16),
+    secondary: clip(team.secondary, 16),
+    city: clip(team.city, 32),
+    conf: team.conf,
+    div: clip(team.div, 24),
+    power: Number.isFinite(team.power) ? Math.round(team.power) : 0,
+    star: clip(team.star, 48),
+    note: "",
+  };
+}
+
+/** Series the archive can still show: opponent, seeds, score, games. Notes are dropped. */
+export function compactSeriesLog(series: SeasonRow["seriesLog"]): SeasonRow["seriesLog"] {
+  if (!series?.length) return series;
+  return series.slice(0, 4).map((item) => ({
+    round: item.round,
+    label: clip(item.label, 48),
+    opponent: compactOpponent(item.opponent),
+    opponentSeed: item.opponentSeed,
+    userSeed: item.userSeed,
+    wins: item.wins,
+    losses: item.losses,
+    won: item.won,
+    games: (item.games ?? []).slice(0, 7),
+  }));
+}
+
+/** One archived season: stats, awards, playoff line, contract, compact series. No full table. */
+export function compactArchiveRow(row: SeasonRow): SeasonRow {
+  const next: SeasonRow = { ...row };
+  if (row.league) next.league = compactLeagueSnapshot(row.league);
+  if (row.seriesLog) next.seriesLog = compactSeriesLog(row.seriesLog);
+  if (row.mood) next.mood = clip(row.mood, 180);
+  return next;
+}
+
+export function compactArchiveHistory(rows: SeasonRow[] | undefined): SeasonRow[] {
+  if (!rows?.length) return [];
+  return rows.slice(-24).map(compactArchiveRow);
 }
 
 function shrinkRow(row: SeasonRow, dropStandings: boolean): SeasonRow {
