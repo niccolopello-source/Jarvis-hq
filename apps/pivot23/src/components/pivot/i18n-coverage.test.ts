@@ -20,17 +20,28 @@ const NARRATIVE_EXCEPTIONS = [
 const ITALIAN = /(^|[^\p{L}])(il|lo|la|le|gli|di|che|non|una|un|sei|nel|della|alla|con|ancora|anni|stagione|scelta|carriera|squadra|tuo|tua|qui|dopo|prima|nessuna?|nessuno|è)(?=$|[^\p{L}])/iu;
 const LITERAL = /<\w[^>]*>([^<>{}]+)<|(?:title|aria-label|placeholder|label|detail|sub|alt)="([^"]+)"|(?:title|label|detail|subtitle|body|pick|result|flavor):\s*[`"]([^`"]+)[`"]/g;
 
+function componentFiles(dir: string): string[] {
+  const out: string[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...componentFiles(path));
+    else if (entry.name.endsWith(".tsx")) out.push(path);
+  }
+  return out;
+}
+
 test("component chrome has no hard-coded Italian outside the narrative list", () => {
   const dir = dirname(fileURLToPath(import.meta.url));
   const offenders: string[] = [];
-  for (const file of readdirSync(dir).filter((f) => f.endsWith(".tsx"))) {
-    const lines = readFileSync(join(dir, file), "utf8").split("\n");
+  for (const file of componentFiles(dir)) {
+    const lines = readFileSync(file, "utf8").split("\n");
+    const name = file.slice(dir.length + 1);
     lines.forEach((line, i) => {
       for (const m of line.matchAll(LITERAL)) {
         const text = (m[1] ?? m[2] ?? m[3] ?? "").trim();
         if (!text || !ITALIAN.test(text)) continue;
         if (NARRATIVE_EXCEPTIONS.some((ok) => text.includes(ok))) continue;
-        offenders.push(`${file}:${i + 1} ${text.slice(0, 80)}`);
+        offenders.push(`${name}:${i + 1} ${text.slice(0, 80)}`);
       }
     });
   }
