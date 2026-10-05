@@ -865,9 +865,21 @@ function seriesWinner(
   const pa = Number.isFinite(a.power) ? a.power : 70;
   const pb = Number.isFinite(b.power) ? b.power : 70;
   const format = playoffSeriesFormat(league, round);
-  const perGame = clamp(pa / (pa + pb + 0.01), SIM.game.winPMin, SIM.game.winPMax);
+  const perGame = matchupChance(pa, pb);
   const chance = seriesWinProbability(perGame, format, a.seed ?? 4, b.seed ?? 5);
   return rand() < chance ? a : b;
+}
+
+/** One matchup number. Opponent power enters here and nowhere else. */
+export function matchupChance(mine: number, opp: number, extra = 0): number {
+  const diff = (Number.isFinite(mine) ? mine : 70) - (Number.isFinite(opp) ? opp : 70);
+  return clamp(0.5 + diff * 0.011 + extra, 0.08, 0.9);
+}
+
+export const CHOICE_BONUS_CAP = 0.06;
+
+export function boundedChoiceBonus(bonus: number): number {
+  return clamp(Number.isFinite(bonus) ? bonus : 0, -CHOICE_BONUS_CAP, CHOICE_BONUS_CAP);
 }
 
 const QF_SEEDS: [number, number][] = [
@@ -920,56 +932,16 @@ function playoffTree(
   return q[0];
 }
 
-function winnerOfPair(
-  pair: BracketPair,
-  excludeAbbr: string,
-  league: "NBA" | "EuroLega",
-  round: number,
-): StandingRow | undefined {
-  if (pair.winnerAbbr === pair.a.abbr) return pair.a;
-  if (pair.winnerAbbr === pair.b.abbr) return pair.b;
-  const userIn = pair.a.abbr === excludeAbbr || pair.b.abbr === excludeAbbr;
-  if (userIn) return pair.a.abbr === excludeAbbr ? pair.b : pair.a;
-  return seriesWinner(pair.a, pair.b, league, round);
-}
-
-/** Continua il tabellone già giocato: niente re-roll, mai il giocatore se ha perso. */
+/** Reads the bracket that was already played. Does not start another tournament. */
 function championFromBracket(
   s: PlayerState,
   snap: LeagueSnapshot,
   league: "NBA" | "EuroLega",
 ): StandingRow | undefined {
-  const exclude = s.team.abbr;
-  const p = s.playoff;
-  if (p?.pairs?.length) {
-    const winners: StandingRow[] = [];
-    for (const pair of p.pairs) {
-      const w = winnerOfPair(pair, exclude, league, p.round);
-      if (w && w.abbr !== exclude) winners.push(w);
-    }
-    let live = winners;
-    let round = p.round + 1;
-    while (live.length > 1) {
-      const next: StandingRow[] = [];
-      for (let i = 0; i < live.length; i += 2) {
-        const a = live[i]!;
-        const b = live[i + 1];
-        next.push(b ? seriesWinner(a, b, league, round) : a);
-      }
-      live = next;
-      round += 1;
-    }
-    const confChamp = live[0];
-    const other = p.otherChamp;
-    const otherIn =
-      !!other && p.pairs.some((pair) => pair.a.abbr === other.abbr || pair.b.abbr === other.abbr);
-    if (other && other.abbr !== exclude && !otherIn && confChamp && other.abbr !== confChamp.abbr) {
-      return seriesWinner(confChamp, other, league, round);
-    }
-    if (confChamp && confChamp.abbr !== exclude) return confChamp;
-    if (other && other.abbr !== exclude) return other;
-  }
-  return pickPlayoffChampion(snap, league, exclude);
+  const settled = s.playoff?.settledChampion;
+  if (settled && settled.abbr !== s.team.abbr) return settled;
+  if (s.playoff) return undefined;
+  return pickPlayoffChampion(snap, league, s.team.abbr);
 }
 
 export function pickPlayoffChampion(
@@ -1140,7 +1112,10 @@ export function advanceBracket(s: PlayerState, userWon: boolean) {
     }
     return pair;
   });
-  if (!userWon) return;
+  if (!userWon) {
+    sealBracket(s);
+    return;
+  }
   const winners = p.pairs
     .map((pair) => (pair.winnerAbbr === pair.a.abbr ? pair.a : pair.winnerAbbr === pair.b.abbr ? pair.b : null))
     .filter((x): x is StandingRow => !!x);
@@ -1168,6 +1143,32 @@ export function advanceBracket(s: PlayerState, userWon: boolean) {
     const mine = standingOf(s.currentLeague, s.team.abbr);
     if (mine) p.pairs = [{ a: mine, b: p.otherChamp }];
   }
+}
+
+/** One close-out of the remaining CPU series. Stored so the title cannot be rolled again. */
+function sealBracket(s: PlayerState) {
+  const p = s.playoff;
+  if (!p || p.settledChampion) return;
+  const exclude = s.team.abbr;
+  let live = p.pairs
+    .map((pair) => (pair.winnerAbbr === pair.a.abbr ? pair.a : pair.winnerAbbr === pair.b.abbr ? pair.b : null))
+    .filter((row): row is StandingRow => !!row && row.abbr !== exclude);
+  let round = p.round + 1;
+  while (live.length > 1) {
+    const next: StandingRow[] = [];
+    for (let i = 0; i < live.length; i += 2) {
+      const a = live[i]!;
+      const b = live[i + 1];
+      next.push(b ? seriesWinner(a, b, s.league, round) : a);
+    }
+    live = next;
+    round += 1;
+  }
+  let champ = live[0];
+  if (p.otherChamp && champ && p.otherChamp.abbr !== champ.abbr) {
+    champ = seriesWinner(champ, p.otherChamp, s.league, round);
+  }
+  p.settledChampion = champ ?? p.otherChamp;
 }
 
 /** Player score first, then the opponent. Same order as the result strip. */
