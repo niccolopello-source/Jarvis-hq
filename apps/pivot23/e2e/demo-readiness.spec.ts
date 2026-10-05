@@ -28,7 +28,7 @@ test("the boot page is a static fallback and the home mark can sweep", async ({ 
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "PIVOT" })).toBeVisible();
   const sweep = page.locator(".court-mark-live.is-sweep .mark-arcs");
-  // The home premiere (cineReveal) lasts 12 s before the sweep mark takes over.
+  // The logo premiere (cineReveal) lasts 4.8 s before the sweep mark takes over.
   await expect(sweep).toBeVisible({ timeout: 20_000 });
   const motion = await sweep.evaluate((el) => {
     const lean = document.documentElement.classList.contains("pivot-lean");
@@ -190,7 +190,7 @@ test("a returning visit gets the brief intro and Escape skips the premiere", asy
   await expect(page.locator("html")).toHaveClass(/pivot-intro-seen/);
   const premiere = page.locator(".court-mark-live.is-premiere");
   if (await premiere.count()) {
-    expect(await premiere.evaluate((el) => getComputedStyle(el).animationDuration)).toBe("1.6s");
+    expect(await premiere.evaluate((el) => getComputedStyle(el).animationDuration)).toBe("4.8s");
   }
   expect(await page.locator(".display-title").evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
 });

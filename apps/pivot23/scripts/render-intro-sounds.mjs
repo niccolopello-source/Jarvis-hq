@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 /**
  * Renders the intro sounds offline to a WAV so they can be heard without opening the app.
- * Usage: node scripts/render-intro-sounds.mjs [out.wav] [--short]
+ * Usage: node scripts/render-intro-sounds.mjs [out.wav]
  *
  * It runs the real synth (src/intro-sound/synth.ts) in Chromium's OfflineAudioContext: the file is exactly
- * what the browser plays. t = 0 in the WAV is the start of the home premiere (cineReveal), so the cues sit
- * at their production timestamps. --short renders the 1.6 s premiere (returning visit / lean device).
+ * what the browser plays. t = 0 in the WAV is the start of the logo premiere (cineReveal).
  */
 /* global OfflineAudioContext -- page.evaluate body runs in Chromium */
 import { chromium } from "@playwright/test";
@@ -15,7 +14,6 @@ import { createServer } from "vite";
 
 const args = process.argv.slice(2);
 const out = args.find((a) => !a.startsWith("--")) ?? "intro-sounds.wav";
-const short = args.includes("--short");
 const root = fileURLToPath(new URL("..", import.meta.url));
 
 const server = await createServer({ root, configFile: `${root}/vite.config.ts`, server: { port: 0, host: "127.0.0.1", strictPort: false }, logLevel: "error" });
@@ -25,10 +23,10 @@ const browser = await chromium.launch();
 try {
   const page = await browser.newPage();
   await page.goto(`${base}src/intro-sound/timeline.ts`);
-  const result = await page.evaluate(async ({ short }) => {
+  const result = await page.evaluate(async () => {
     const synth = await import("/src/intro-sound/synth.ts");
     const tl = await import("/src/intro-sound/timeline.ts");
-    const cues = short ? tl.SHORT_TIMELINE : tl.FULL_TIMELINE;
+    const cues = tl.FULL_TIMELINE;
     const sampleRate = 48000;
     const seconds = cues[cues.length - 1].at / 1000 + 1.1;
     const ctx = new OfflineAudioContext(2, Math.ceil(sampleRate * seconds), sampleRate);
@@ -50,7 +48,7 @@ try {
     let bin = "";
     for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
     return { b64: btoa(bin), sampleRate, cues, peak };
-  }, { short });
+  });
   const data = Buffer.from(result.b64, "base64");
   const header = Buffer.alloc(44);
   header.write("RIFF", 0);

@@ -2,13 +2,13 @@ import { expect, test, type Page } from "@playwright/test";
 import { logicalCueStarts } from "../src/intro-sound/synth";
 
 /**
- * Intro sounds (src/intro-sound): three dribbles and a net swish synced to the home premiere.
+ * Intro sounds: two dribbles and a swish, synced to the logo premiere.
  * Web Audio is replaced by a recording mock, so the checks are exact and need no sound card:
  * nothing is created before a gesture, the remaining cues are scheduled in sync on the gesture,
  * mute and reduced motion are respected, Salta / Inizia stop everything and nothing replays.
  */
 
-const CUES = { bounce1: 1800, bounce2: 3120, bounce3: 4320, swish: 7200 };
+const CUES = { bounce1: 1400, bounce2: 2400, swish: 3400 };
 
 type Rec = {
   contexts: number;
@@ -158,7 +158,7 @@ test("a gesture mid-premiere schedules only the remaining cues, on the animation
   clean(errors, r);
 });
 
-test("a gesture before the first beat schedules the three dribbles and the swish", async ({ page }) => {
+test("a gesture before the first beat schedules the two dribbles and the swish", async ({ page }) => {
   const errors = await setup(page);
   await page.goto("/");
   await expect(page.locator(".court-mark-live.is-premiere")).toBeVisible();
@@ -168,10 +168,10 @@ test("a gesture before the first beat schedules the three dribbles and the swish
   await page.waitForFunction(() => (window as unknown as { __audio: Rec }).__audio.starts.length > 0);
   const r = await rec(page);
   const times = cueTimes(r);
-  expect(times).toHaveLength(4);
+  expect(times).toHaveLength(3);
   times.forEach((t, i) => expect(Math.abs(t - Object.values(CUES)[i]!)).toBeLessThan(80));
-  // Bounce: body + two ring partials. Swish: the net flutter. Three dribbles + one flutter.
-  expect(r.starts.filter((s) => s.kind === "osc")).toHaveLength(3 + 3 + 3 + 1);
+  // Bounce: body + two ring partials. Swish: the net flutter. Two dribbles + one flutter.
+  expect(r.starts.filter((s) => s.kind === "osc")).toHaveLength(3 + 3 + 1);
   clean(errors, r);
 });
 
@@ -184,7 +184,7 @@ test("muted (stored off): a gesture creates nothing; the toggle turns sound on a
   await neutral(page).click();
   await page.waitForTimeout(200);
   expect((await rec(page)).contexts).toBe(0);
-  await waitElapsed(page, 5200);
+  await waitElapsed(page, 2700);
   await toggle(page).click();
   await expect(toggle(page)).toHaveAttribute("aria-pressed", "true");
   await page.waitForFunction(() => (window as unknown as { __audio: Rec }).__audio.starts.length > 0);
@@ -273,7 +273,7 @@ test("reduced motion: off by default, gestures create nothing; the explicit swit
   const r = await rec(page);
   expect(r.contexts).toBe(1);
   const groups = r.starts.map((s) => s.at).sort((a, b) => a - b);
-  expect(groups[groups.length - 1]! - groups[0]!).toBeGreaterThan(3000); // bounce ... swish
+  expect(groups[groups.length - 1]! - groups[0]!).toBeGreaterThan(1900); // first dribble through the swish
   clean(errors, r);
 });
 
