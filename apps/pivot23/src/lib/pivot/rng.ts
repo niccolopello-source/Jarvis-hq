@@ -99,7 +99,8 @@ export function fallbackDraws() {
 function needRng(): Rng {
   if (CURRENT) return CURRENT;
   FALLBACK_DRAWS += 1;
-  // Live UI can call flavor/doors outside withPlayer; never crash the session.
+  // Presentation only. A missing career context must not open an unseeded draw,
+  // and this stream is not the career seed.
   if (!FALLBACK) FALLBACK = createRng(0x9e3779b9);
   return FALLBACK;
 }
