@@ -289,7 +289,12 @@ export function applyFx(s: PlayerState, fx: Fx) {
   if (fx.development) s.development = round1(clamp(s.development + fx.development * d.growth, -8, 16));
   if (fx.form) s.form = clamp(s.form + fx.form, -12, 12);
   if (fx.injuryRisk) s.injuryRisk = clamp(s.injuryRisk + fx.injuryRisk * d.injury, 0, 100);
-  if (fx.injuryDrag) s.injuryDrag = clamp(s.injuryDrag + fx.injuryDrag * d.injury, 0, 18);
+  if (fx.injuryDrag) {
+    const raw = fx.injuryDrag * d.injury;
+    // A structural injury does not disappear in one summer.
+    const healed = raw < 0 && s.injuryDrag >= 4 ? raw * 0.45 : raw;
+    s.injuryDrag = clamp(s.injuryDrag + healed, 0, 18);
+  }
   if (fx.publicImage) s.publicImage = clamp(s.publicImage + fx.publicImage, 0, 100);
   if (fx.coachTrust) s.coachTrust = clamp(s.coachTrust + fx.coachTrust, 0, 100);
   if (fx.rivalry) s.rivalry = clamp(s.rivalry + fx.rivalry, 0, 100);
@@ -682,7 +687,9 @@ export function seasonRngSeed(seed: number): number {
 function playerDraftStock(s: PlayerState): number {
   const ready = Number.isFinite(s.rookReady) ? s.rookReady : 0;
   const skill = weightedSkill(s);
-  let stock = ready * 1.2 + (s.potential - 72) * 0.42 + (skill - 62) * 0.9 + (s.overall - 60) * 0.28;
+  // Rookies are born at talent 40. Comparing them with a league-average 62
+  // taxed every prospect the same ~20 points and pinned the class in the second round.
+  let stock = ready * 1.2 + (s.potential - 72) * 0.42 + (skill - 40) * 0.9 + (s.overall - 60) * 0.28;
   if (s.originPath === "NCAA") stock += 3.4;
   else if (s.originPath === "Europa") stock += 1.2;
   else if (s.originPath === "G-League") stock -= 2.2;
@@ -697,8 +704,9 @@ export function draftStockOf(s: PlayerState): number {
 
 function revealDraftLandingInner(s: PlayerState): { pick: number; team: Team } {
   const stock = playerDraftStock(s);
-  const t = clamp((stock + 6) / 36, 0, 1);
-  const mean = 48 - t * 42;
+  // Reference points, not a target histogram: a talent-40 / potential-72 prospect
+  // is a late-first or early-second, a generational stock is lottery, a bust is a late second.
+  const mean = 54 - (stock - 1) * 1.45;
   const pickN = clamp(Math.round(mean + (rand() - 0.5) * 16), 1, 60);
   s.draftPick = pickN;
   const tierW =
@@ -1310,7 +1318,7 @@ function injuryStory(s: PlayerState): StoryEvent {
           development: -0.8,
           attrs: { athleticism: -2.2 },
           injuryRisk: 10,
-          injuryDrag: 2.5,
+          injuryDrag: s.hidden.durability < 48 ? 4.4 : 2.5,
           gamesPenalty: 18,
           hidden: { durability: -6, motor: -3 },
           flavor: "Torni veloce. Il primo passo non è più lo stesso.",
@@ -1345,7 +1353,7 @@ function injuryStory(s: PlayerState): StoryEvent {
             development: -2.4,
             attrs: { athleticism: -3 },
             injuryRisk: 15,
-            injuryDrag: 3.5,
+            injuryDrag: s.hidden.durability < 52 ? 5.4 : 3.6,
             gamesPenalty: 36,
             hidden: { durability: -8 },
             flavor: "La scommessa non paga: ripresa lunga e dolorosa.",
@@ -1877,7 +1885,13 @@ export function beginPlayoffs(s: PlayerState) {
 }
 
 export function playoffWinChance(s: PlayerState, _round: number, choiceBonus: number, oppPower = s.team.power) {
-  const mine = s.team.power * 0.72 + (s.overall - 70) * 0.42 + s.form * 0.3 + (s.hidden.clutch - 50) * 0.03;
+  // Full opponent power against 0.72 × team power made every user an underdog.
+  // Full power plus a second star bonus made role players champions. The team
+  // keeps most of its strength; only a real player closes or widens the gap.
+  const ovr = Number.isFinite(s.overall) ? s.overall : 70;
+  const contribution = clamp((ovr - 74) * 0.38, 0, 8);
+  const clutch = (s.hidden.clutch - 50) * 0.02;
+  const mine = s.team.power * 0.8 + contribution + s.form * 0.08 + clutch;
   return matchupChance(mine, oppPower, boundedChoiceBonus(choiceBonus) + diffOf(s).playoff);
 }
 
@@ -2207,7 +2221,11 @@ function buildFaOffersInner(s: PlayerState): MarketOffer[] {
     ], undefined, `Il contratto massimo: ${max.name}.`),
     kind: "max",
   });
-  if (s.age >= 30) {
+  const buried =
+    s.league === "NBA" && s.age >= 24 && s.overall < 64 && s.coachTrust < 50;
+  const homecoming =
+    s.league === "NBA" && s.originPath === "Europa" && s.age >= 26 && s.overall < 67 && s.coachTrust < 55;
+  if (s.age >= 30 || buried || homecoming) {
     const euro = pickCoherentTeam(s, EURO_TEAMS, { contender: 0.55, mid: 0.35, rebuilding: 0.1 }, [...used]);
     used.add(euro.name);
     offers.push({
@@ -2261,7 +2279,7 @@ export function acceptOffer(s: PlayerState, offer: MarketOffer) {
     annualM: offer.annualM,
     kind: offer.kind === "extension" ? "extension" : offer.kind === "euro" ? "fa" : "fa",
   };
-  if (offer.kind === "euro") {
+  if (offer.team.conf === "Euro") {
     s.league = "EuroLega";
     s.international = true;
   } else {
@@ -2392,11 +2410,13 @@ export function shouldOfferTrade(s: PlayerState, n: number) {
 /** Scambio chiuso dalla dirigenza: notifica, niente scelta. */
 export function shouldForceTrade(s: PlayerState) {
   return withPlayer(s, () => {
-    let p = 0.22;
-    if (s.yearsOnTeam >= 4) p += 0.16;
-    if (s.coachTrust < 38) p += 0.18;
-    if (s.hidden.ego >= 70) p += 0.08;
-    if (s.team.tier === "rebuilding" && s.overall >= 76) p += 0.12;
+    // No flat shipping rate. A content player stays; the push comes from the situation.
+    let p = 0.04;
+    if (s.yearsOnTeam >= 4 && s.coachTrust < 55) p += 0.1;
+    if (s.coachTrust < 38) p += 0.2;
+    if (s.hidden.ego >= 70 && s.team.tier !== "contender") p += 0.1;
+    if (s.team.tier === "rebuilding" && s.overall >= 76) p += 0.16;
+    if (s.team.tier === "contender" && s.overall < 64 && s.age >= 27) p += 0.1;
     return rand() < p;
   });
 }
@@ -3194,7 +3214,7 @@ export interface SimOpts {
   draft?: "best" | "worst" | "random" | "mixed";
   /** Policy del simulatore, non una regola nuova. Default: gioca i 36, come il sì in UI. */
   retirement?: "play36" | "retire";
-  /** Policy del simulatore sugli scambi non forzati. Default: accetta. */
+  /** Policy del simulatore sugli scambi non forzati. Assente: valuta ruolo, fiducia e continuità. */
   trade?: "accept" | "refuse";
   /**
    * Laboratorio soltanto. Spento se assente: il percorso giocato non lo imposta.
@@ -3284,7 +3304,63 @@ export function openCareerSim(opts: SimOpts = {}): CareerSimJob {
   return { rng, s, n: 1, opts };
 }
 
-/** Una stagione. true quando la carriera è chiusa. Cede il filo tra una chiamata e l'altra. */
+/** Why a simulated player takes an offer. Money counts. It does not decide alone. */
+function offerAppeal(s: PlayerState, offer: MarketOffer): number {
+  const market = Math.max(1.4, marketSalary(s));
+  const money = offer.annualM / market;
+  const same = offer.kind === "extension" || offer.team.name === s.team.name;
+  const ego = s.hidden.ego >= 66 ? 1.35 : 0.8;
+  let w = 0.35 + money * ego;
+  if (same) w += 0.45 + (s.coachTrust / 100) * 0.85 + Math.min(s.yearsOnTeam, 6) * 0.14;
+  if (offer.kind === "ring" && s.overall >= 74 && s.titleCount === 0) w += 0.65;
+  if (offer.kind === "max" && same === false && s.team.tier === "contender" && s.coachTrust >= 58 && s.yearsOnTeam >= 3) {
+    w *= 0.62;
+  }
+  if (offer.kind === "euro" || offer.team.conf === "Euro") {
+    const needsMinutes = s.overall < 64 && s.coachTrust < 50;
+    w += needsMinutes ? 0.7 : 0.08;
+    if (s.originPath === "Europa" && s.overall < 72) w += 0.25;
+    if (s.age >= 33) w += 0.35;
+    if (s.overall >= 76) w *= 0.35;
+  }
+  return Math.max(0.05, w);
+}
+
+function pickAppealingOffer(s: PlayerState, offers: MarketOffer[]): MarketOffer {
+  const weights = offers.map((offer) => offerAppeal(s, offer));
+  const sum = weights.reduce((a, b) => a + b, 0) || 1;
+  let r = rand() * sum;
+  for (let i = 0; i < offers.length; i++) {
+    r -= weights[i]!;
+    if (r <= 0) return offers[i]!;
+  }
+  return offers[offers.length - 1]!;
+}
+
+/**
+ * Simulated optional trade. Explicit accept/refuse policies bypass this.
+ * The lean is the situation; the roll is only the part the player cannot settle.
+ */
+function simTakesTrade(s: PlayerState, team: Team): boolean {
+  let leave = 0;
+  let stay = 0;
+  if (s.coachTrust < 42) leave += 2;
+  if (s.team.tier === "rebuilding" && s.overall >= 76) leave += 2;
+  if (s.team.tier === "contender" && s.overall < 66 && s.age >= 26) leave += 1;
+  if (s.hidden.ego >= 70 && s.team.tier !== "contender") leave += 1;
+  if (team.tier === "contender" && s.team.tier !== "contender" && s.overall >= 74 && s.titleCount === 0) leave += 1;
+  if (s.coachTrust >= 58) stay += 2;
+  if (s.yearsOnTeam >= 3) stay += 1;
+  if (s.yearsOnTeam >= 6) stay += 1;
+  if (s.team.tier === "contender" && s.overall >= 74) stay += 2;
+  if (s.contract.kind === "extension" || s.contract.kind === "rookie") stay += 1;
+  const lean = leave - stay;
+  if (lean >= 2) return rand() < 0.82;
+  if (lean <= -2) return rand() < 0.16;
+  if (lean === 1) return rand() < 0.58;
+  if (lean === -1) return rand() < 0.34;
+  return rand() < 0.42;
+}
 export function advanceCareerSim(job: CareerSimJob): boolean {
   if (job.n > 20 || isCareerOver(job.s)) {
     job.s.rngState = job.rng.getState();
@@ -3304,7 +3380,7 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
       const t = buildTradeOffer(s);
       if (shouldForceTrade(s)) {
         acceptForcedPreseasonTrade(s, t.team, n);
-      } else if ((job.opts.trade ?? "accept") === "accept") {
+      } else if ((job.opts.trade ?? "weigh") === "accept" || ((job.opts.trade ?? "weigh") !== "refuse" && simTakesTrade(s, t.team))) {
         acceptTrade(s, t.team);
         s.choiceLog.push({ season: n, title: "Scambio", pick: t.team.name });
       } else {
@@ -3348,7 +3424,9 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
         const play = (job.opts.retirement ?? "play36") === "play36";
         recordRetirementChoice(s, play);
         if (!play) {
-          job.n = n + 1;
+          // Age is still 35, so the career is not over by itself. Close it.
+          // Otherwise the next call deals another season at the same age.
+          job.n = 21;
           return;
         }
         s.extraSeason = true;
@@ -3362,8 +3440,7 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
         if (freeAgent) {
           const offers = buildFaOffers(s);
           if (offers.length) {
-            const ranked = [...offers].sort((a, b) => b.annualM - a.annualM);
-            const offer = rand() < 0.64 ? ranked[0]! : pick(offers);
+            const offer = pickAppealingOffer(s, offers);
             acceptOffer(s, offer);
             s.choiceLog.push({
               season: n,
@@ -3371,7 +3448,7 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
               pick: `${offer.team.name} · ${offer.years}×$${offer.annualM}M`,
             });
           }
-        } else if (summer.tradeDest && (summer.tradeForced || (job.opts.trade ?? "accept") === "accept")) {
+        } else if (summer.tradeDest && (summer.tradeForced || (job.opts.trade ?? "weigh") === "accept" || ((job.opts.trade ?? "weigh") !== "refuse" && simTakesTrade(s, summer.tradeDest)))) {
           acceptForcedSummerTrade(s, summer.tradeDest, n);
         }
       }

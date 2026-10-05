@@ -1,4 +1,5 @@
 import { hofTier } from "./legacy.ts";
+import { EURO_TEAMS } from "./teams.ts";
 import type { PlayerState } from "./types.ts";
 
 /**
@@ -228,6 +229,7 @@ export function identityKey(shape: CareerShape): string {
     shape.league,
     shape.teams.join(">"),
     shape.seasons,
+    shape.endAge,
     shape.peak,
     shape.apexAge,
     shape.injuryBin,
@@ -424,5 +426,75 @@ export function analyzeReplayability(players: readonly PlayerState[]): Replayabi
     highSimilarityShare: pairs ? Math.round((high / pairs) * 1000) / 1000 : 0,
     dimensions,
     collapsed,
+  };
+}
+
+const EURO_ABBR = new Set(EURO_TEAMS.map((team) => team.abbr));
+
+export interface MacroIdentity {
+  leaguePath: string;
+  loyalty: string;
+  euroSeasons: number;
+  streak: number;
+  key: string;
+  /** Null when the career does not meet a specific archetype's evidence. */
+  archetype: string | null;
+}
+
+function loyaltyOf(streak: number, teams: number): string {
+  if (teams <= 1) return "one-team";
+  if (streak >= 8) return "franchise";
+  if (streak >= 5) return "settled";
+  if (teams >= 6) return "mover";
+  return "mixed";
+}
+
+/** Path identity. Not a random label, and not a target to optimize. */
+export function macroIdentity(s: PlayerState): MacroIdentity {
+  const shape = careerShape(s);
+  let euroSeasons = 0;
+  let streak = 0;
+  let best = 0;
+  let prev = "";
+  for (const row of s.seasonHistory) {
+    if (EURO_ABBR.has(row.teamAbbr)) euroSeasons += 1;
+    if (row.teamAbbr && row.teamAbbr === prev) streak += 1;
+    else streak = 1;
+    best = Math.max(best, streak);
+    prev = row.teamAbbr;
+  }
+  const seasons = Math.max(1, shape.seasons);
+  const euroShare = euroSeasons / seasons;
+  let leaguePath = "nba-only";
+  if (euroSeasons === seasons) leaguePath = "euro-only";
+  else if (euroShare >= 0.65) leaguePath = "europe-main";
+  else if (euroSeasons >= 3 && shape.league === "NBA") leaguePath = "returned";
+  else if (euroSeasons > 0 && shape.league === "EuroLega") leaguePath = "nba-to-euro";
+  else if (euroSeasons > 0) leaguePath = "passed-through";
+  const loyalty = loyaltyOf(best, shape.teams.length);
+  const star = shape.peakBin === "star" || shape.peakBin === "superstar" || shape.peakBin === "legend";
+  const elite = shape.peakBin === "superstar" || shape.peakBin === "legend";
+  let archetype: string | null = null;
+  if (shape.injuryBin === "serious" && seasons >= 8 && shape.peakBin !== "role") archetype = "injury-comeback";
+  else if (best >= 8 && shape.titles >= 1 && star) archetype = "franchise-icon";
+  else if (shape.teamChanges === 0 && seasons >= 10 && shape.titles >= 1) archetype = "one-team";
+  else if (shape.draftPick >= 31 && elite) archetype = "draft-steal";
+  else if (euroShare >= 0.65 && seasons >= 8) archetype = "international-star";
+  else if (leaguePath === "returned" && star) archetype = "international-return";
+  else if (shape.titles >= 1 && shape.teamChanges >= 4 && best < 6) archetype = "ring-chaser";
+  else if (shape.path === "G-League" && shape.draftPick >= 25 && star) archetype = "g-league-elevator";
+  else if (star && shape.titles === 0 && shape.finalsRuns > 0) archetype = "almost-great";
+  else if (shape.teamChanges >= 5 && shape.titles === 0 && !star) archetype = "journeyman";
+  else if (seasons < 8 && star) archetype = "short-peak";
+  else if (s.potential >= 86 && shape.peak < 78 && seasons >= 8) archetype = "unfulfilled";
+  else if (best >= 6 && shape.teamChanges <= 2 && star) archetype = "loyal-star";
+  else if (shape.statShape === "defender" && (shape.dpoy > 0 || star)) archetype = "defensive-specialist";
+  return {
+    leaguePath,
+    loyalty,
+    euroSeasons,
+    streak: best,
+    key: [shape.path, shape.draftBin, leaguePath, loyalty, shape.peakBin, shape.titlesBin, shape.injuryBin, shape.statShape].join("|"),
+    archetype,
   };
 }

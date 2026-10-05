@@ -5,7 +5,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { STORY_POOL } from "./data.ts";
 import { playCareerSim } from "./engine.ts";
-import { careerShape, careerSimilarity, careerTelemetry, identityKey } from "./replayability.ts";
+import { careerShape, careerSimilarity, careerTelemetry, identityKey, macroIdentity } from "./replayability.ts";
 
 const FIXED = {
   name: "Audit",
@@ -46,6 +46,39 @@ test("retiring at the offer leaves out the age-36 season the other choice plays"
   assert.equal(play.seasonHistory.some((row) => row.age === 36), true);
   assert.equal(stop.seasonHistory.some((row) => row.age === 36), false);
   assert.notEqual(identityKey(careerShape(play)), identityKey(careerShape(stop)));
+});
+
+test("a macro archetype is earned by the career, and the same seed repeats it", () => {
+  const player = playCareerSim({ ...FIXED, seed: 4242 });
+  const again = macroIdentity(playCareerSim({ ...FIXED, seed: 4242 }));
+  const id = macroIdentity(player);
+  assert.equal(id.key, again.key);
+  assert.equal(id.archetype, again.archetype);
+  const allowed = new Set([
+    null,
+    "injury-comeback",
+    "franchise-icon",
+    "one-team",
+    "draft-steal",
+    "international-star",
+    "international-return",
+    "ring-chaser",
+    "g-league-elevator",
+    "almost-great",
+    "journeyman",
+    "short-peak",
+    "unfulfilled",
+    "loyal-star",
+    "defensive-specialist",
+  ]);
+  assert.equal(allowed.has(id.archetype), true);
+  if (id.archetype === "franchise-icon") {
+    assert.ok(player.titleCount >= 1);
+    assert.ok(id.streak >= 8);
+  }
+  if (id.archetype === "journeyman") {
+    assert.equal(player.titleCount, 0);
+  }
 });
 
 test("story pool events are not repeated inside one career", () => {
