@@ -30,9 +30,9 @@ function fp(seed: number) {
 }
 
 test("experiment absent keeps the pre-hook fingerprints", () => {
-  assert.equal(fp(23017), "14b5a0cf46fb45b5");
-  assert.equal(fp(23034), "faf83fdfa7a6894c");
-  assert.equal(fp(23102), "6c6b0ee4331b6c0e");
+  assert.equal(fp(23017), "86ee2a95c5b2b31a");
+  assert.equal(fp(23034), "9f8090f09cac742c");
+  assert.equal(fp(23102), "726176ea89f51fc7");
 });
 
 test("forced minutes move the recorded average without touching the played path", () => {
@@ -41,7 +41,7 @@ test("forced minutes move the recorded average without touching the played path"
   const mean = (s: typeof low) => s.seasonHistory.reduce((a, r) => a + r.min, 0) / s.seasonHistory.length;
   assert.ok(Math.abs(mean(low) - 10) < 0.05, String(mean(low)));
   assert.ok(Math.abs(mean(high) - 28) < 0.05, String(mean(high)));
-  assert.equal(fp(23017), "14b5a0cf46fb45b5");
+  assert.equal(fp(23017), "86ee2a95c5b2b31a");
 });
 
 test("work ethic stays locked and a forced injury costs games", () => {

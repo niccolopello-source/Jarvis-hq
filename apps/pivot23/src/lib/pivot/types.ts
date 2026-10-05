@@ -276,6 +276,8 @@ export interface PlayoffState {
   round: number;
   pairs: BracketPair[];
   otherChamp?: StandingRow;
+  /** Written once when the player's series ends. Later title reads must not reroll it. */
+  settledChampion?: StandingRow;
 }
 
 export interface TitleEntry {
