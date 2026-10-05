@@ -4,7 +4,7 @@ import { MAX_AGE } from "./peak.ts";
 import { playCareerSim } from "./engine.ts";
 
 const base = {
-  seed: 51515,
+  seed: 73117,
   difficulty: "pro" as const,
   name: "Parity",
   nationality: "ITA",

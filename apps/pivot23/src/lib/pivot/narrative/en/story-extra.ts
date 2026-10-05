@@ -341,6 +341,7 @@ export const EN_STORY_EXTRA: Readonly<Record<string, string>> = {
   "Prima i minuti, poi la cifra.": "Minutes first, then the number.",
   "Niente firma oggi. Una conversazione onesta sul tuo metro quadrato.": "No signature today. An honest conversation about your square meter.",
   "In sala video, tre azioni di {RIVAL}, una tua": "In the film room, three plays by {RIVAL}, one of yours",
+  "In sala video, tre azioni di __RIVAL__, una tua": "In the film room, three plays by __RIVAL__, one of yours",
   "Non è un confronto. È un'eco. Lo staff non dice il nome. Non serve.": "It's not a comparison. It's an echo. The staff doesn't say the name. No need.",
   "Prendi appunti, niente orgoglio": "You take notes, no pride",
   "La lettura, non la rissa.": "The read, not the fight.",

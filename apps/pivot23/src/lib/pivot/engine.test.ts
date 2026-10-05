@@ -89,6 +89,7 @@ test("late viability loss or serious injury ends a career while an eligible age-
   const at33 = {
     ...healthy,
     age: 33,
+    extraSeason: false,
     injuryDrag: 0,
     seasonHistory: [...healthy.seasonHistory.slice(0, -1), { ...healthy.seasonHistory.at(-1)!, age: 33, min: 18 }],
   };
