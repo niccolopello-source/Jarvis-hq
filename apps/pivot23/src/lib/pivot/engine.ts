@@ -45,7 +45,7 @@ import { DIFF_MAP, diffOf, type DifficultyId } from "./difficulty";
 import { seasonAtmosphere, quietYearChance, quietYearEventBits } from "./feel";
 import { lateCareerEvent } from "./story-late";
 import { createRng, gaussTrim, pick, rand, randInt, rngDepth, runWithRng, type Rng } from "./rng";
-import { newCareerId } from "./save";
+import { newCareerId, compactArchiveHistory, isStorageQuota, ARCHIVE_SCHEMA } from "./save";
 import { say, sayOr, sceneVars, fillVars, voiceKey, tooClose } from "./voice";
 import { getLang } from "./i18n";
 import { hofTier } from "./legacy";
@@ -2890,7 +2890,7 @@ export function toArchive(s: PlayerState): ArchiveCareer {
     titles: s.titleCount,
     ppg: card.ppg,
     closing: v.closing,
-    history: s.seasonHistory,
+    history: compactArchiveHistory(s.seasonHistory),
     milestones: s.milestones,
     choices: s.choiceLog,
     finalAttrs: { ...s.attrs },
@@ -2902,6 +2902,7 @@ export function toArchive(s: PlayerState): ArchiveCareer {
     engineVersion: s.engineVersion,
     card,
     fingerprint: fingerprintOf(card),
+    archiveSchema: ARCHIVE_SCHEMA,
   };
 }
 
@@ -3022,7 +3023,7 @@ function normalizeArchiveEntry(value: unknown): ArchiveCareer | null {
       && typeof item.title === "string"
       && typeof item.pick === "string")
     : [];
-  const normalized = { ...value, history, milestones, choices } as unknown as ArchiveCareer;
+  const normalized = { ...value, history: compactArchiveHistory(history as SeasonRow[]), milestones, choices, archiveSchema: ARCHIVE_SCHEMA } as unknown as ArchiveCareer;
   if (typeof value.careerId !== "string" || value.careerId.length === 0) {
     delete normalized.careerId;
   }
@@ -3068,6 +3069,40 @@ export function loadArchive(): ArchiveCareer[] {
 export const ARCHIVE_LIMIT = 8;
 
 let archiveEvicted: ArchiveCareer[] = [];
+let archiveWrite: { ok: boolean; persisted: boolean; reason?: "quota" | "unavailable" } = { ok: true, persisted: true };
+
+/** Result of the last saveArchive() call. A quota miss keeps the in-memory career. */
+export function lastArchiveWrite() {
+  return { ...archiveWrite };
+}
+
+function coldArchive(entry: ArchiveCareer): ArchiveCareer {
+  return {
+    ...entry,
+    archiveSchema: ARCHIVE_SCHEMA,
+    history: entry.history.map((row) => {
+      const next = { ...row };
+      delete next.league;
+      delete next.mood;
+      return next;
+    }),
+  };
+}
+
+function writeArchiveStore(store: Storage, serialized: string): "ok" | "quota" | "fail" {
+  try {
+    const prior = store.getItem(ARCHIVE_KEY);
+    if (prior !== null && prior !== serialized && archiveLosesData(prior)) backupArchiveRaw(store, prior);
+  } catch {
+    /* unreadable store: nothing to keep */
+  }
+  try {
+    store.setItem(ARCHIVE_KEY, serialized);
+    return store.getItem(ARCHIVE_KEY) === serialized ? "ok" : "fail";
+  } catch (error) {
+    return isStorageQuota(error) ? "quota" : "fail";
+  }
+}
 
 /** Careers pushed out of the archive by the last saveArchive() call, newest limit first. */
 export function lastArchiveEvicted(): ArchiveCareer[] {
@@ -3075,25 +3110,35 @@ export function lastArchiveEvicted(): ArchiveCareer[] {
 }
 
 export function saveArchive(entry: ArchiveCareer) {
-  const previous = loadArchive().filter((c) => c.id !== entry.id);
-  const all = [entry, ...previous].slice(0, ARCHIVE_LIMIT);
+  const compact = { ...entry, archiveSchema: ARCHIVE_SCHEMA, history: compactArchiveHistory(entry.history) };
+  const previous = loadArchive().filter((c) => c.id !== compact.id);
+  const all = [compact, ...previous].slice(0, ARCHIVE_LIMIT);
   archiveEvicted = previous.slice(ARCHIVE_LIMIT - 1);
   archiveMemory = all;
-  const serialized = JSON.stringify(all);
-  for (const store of archiveStores()) {
-    try {
-      const prior = store.getItem(ARCHIVE_KEY);
-      if (prior !== null && prior !== serialized && archiveLosesData(prior)) backupArchiveRaw(store, prior);
-    } catch {
-      /* unreadable store: nothing to keep */
-    }
-    try {
-      store.setItem(ARCHIVE_KEY, serialized);
-    } catch {
-      // Try the other store; the in-memory copy survives for the current session.
+  let serialized = JSON.stringify(all);
+  let persisted = false;
+  let quota = false;
+  const stores = archiveStores();
+  for (const store of stores) {
+    const wrote = writeArchiveStore(store, serialized);
+    if (wrote === "ok") persisted = true;
+    else if (wrote === "quota") quota = true;
+  }
+  if (!persisted && quota) {
+    const thinner = all.map(coldArchive);
+    serialized = JSON.stringify(thinner);
+    for (const store of stores) {
+      const wrote = writeArchiveStore(store, serialized);
+      if (wrote === "ok") {
+        persisted = true;
+        archiveMemory = thinner;
+      }
     }
   }
-  return all;
+  archiveWrite = persisted
+    ? { ok: true, persisted: true }
+    : { ok: false, persisted: false, reason: quota ? "quota" : "unavailable" };
+  return [...archiveMemory];
 }
 
 function persistentArchiveStores(): Storage[] {

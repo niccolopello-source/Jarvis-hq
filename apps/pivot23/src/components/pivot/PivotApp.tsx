@@ -39,6 +39,7 @@ import {
   isArchivePersisted,
   isContractYear,
   lastArchiveEvicted,
+  lastArchiveWrite,
   loadArchive,
   offseasonStep,
   pick,
@@ -950,7 +951,7 @@ export function PivotApp() {
   /** Tells the player when the archive did not persist or pushed an old career out. */
   function noteArchive(id: string) {
     if (!isArchivePersisted(id)) {
-      setArchiveNote(t("archiveUnsaved", lang));
+      setArchiveNote(t(lastArchiveWrite().reason === "quota" ? "archiveQuota" : "archiveUnsaved", lang));
       return;
     }
     const gone = lastArchiveEvicted()[0];

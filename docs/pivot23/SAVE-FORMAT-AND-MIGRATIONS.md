@@ -51,6 +51,12 @@ The archive keeps the 8 most recent careers. When a 9th is written the oldest is
 - Everything is per browser/device. Clearing site data deletes careers. Safari private mode and some in-app browsers give no persistent storage: the game says so (`storageOff`) but cannot fix it.
 - The checksum detects accidental damage, not deliberate edits (see P-006).
 
+## Archive compaction (2026-10-05)
+
+`toArchive()` and `saveArchive()` write `archiveSchema: 2`. Each season keeps stats, awards, playoff line, salary, team colors and a compact series log. League standings, MVP/All-NBA boards and opponent notes are not stored: the row already has the record, seed and awards, and those tables were the unbounded part. `loadArchive()` compacts older entries in memory; a later save writes the compact form. Live `SAVE_VERSION` stays 11.
+
+If `setItem` throws `QuotaExceededError`, the previous archive key is left as it was, the career stays in memory, and `lastArchiveWrite().reason` is `quota`. The result screen uses `archiveQuota`. A second, colder write (no league sheet, no mood) is tried once before that. Corrupt JSON is not opened and is copied to the archive backup before a newer archive replaces it.
+
 ## What the checksum does and does not protect (verified 2026-10-03)
 
 `c = sha256(JSON.stringify(body)).slice(0, 16)` (64 bits of a pure-JS SHA-256 in `card.ts`), computed over the whole live-save body (`v`, `screen`, `tab`, `player`, `pending`, `log`, `logSeq`) and checked in `isLiveSave()` after the shape checks.

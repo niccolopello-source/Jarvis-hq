@@ -488,6 +488,8 @@ export interface ArchiveCareer {
   /** Stable career identity. Absent on archives written before it existed. */
   careerId?: string;
   engineVersion?: string;
+  /** Cold archive sheet. Absent on archives written before compaction. */
+  archiveSchema?: number;
   /** Fotografia stabile. Non è il salvataggio e non è un NFT. */
   card?: import("./card").CareerCard;
   fingerprint?: string;

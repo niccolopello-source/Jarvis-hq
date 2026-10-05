@@ -7,6 +7,7 @@ import {
   advanceCareerSim,
   archiveStateOf,
   loadArchive,
+  lastArchiveWrite,
   openCareerSim,
   playCareerSim,
   resetArchiveMemory,
@@ -232,6 +233,109 @@ test("archive entries this build cannot read (newer version) are backed up, not 
     // A healthy archive is never backed up again and the backup is not overwritten.
     saveArchive(toArchive(playCareerSim({ seed: 9603, difficulty: "pro", name: "Altra" })));
     assert.deepEqual((JSON.parse(st.local.getItem(ARCHIVE_BACKUP_KEY)!) as { raws: string[] }).raws, backup.raws);
+  } finally {
+    st.restore();
+  }
+});
+
+test("compact archive keeps the career sheet and drops league tables", () => {
+  const st = install();
+  try {
+    const played = playCareerSim({ seed: 9700, difficulty: "pro", name: "Compatta" });
+    const entry = toArchive(played);
+    assert.ok(entry.history.length > 0);
+    assert.equal(entry.archiveSchema, 2);
+    for (const row of entry.history) {
+      assert.equal(row.league?.east.length ?? 0, 0);
+      assert.equal(row.league?.west.length ?? 0, 0);
+      assert.equal(row.league?.mvpBoard, undefined);
+      assert.equal(typeof row.ppg, "number");
+      assert.equal(typeof row.playoff, "string");
+      assert.ok(Array.isArray(row.awards));
+    }
+    saveArchive(entry);
+    const back = loadArchive().find((c) => c.name === "Compatta");
+    assert.equal(back?.history.length, entry.history.length);
+    assert.equal(back?.history[0]?.teamAbbr, entry.history[0]?.teamAbbr);
+    assert.equal(back?.history.at(-1)?.ppg, entry.history.at(-1)?.ppg);
+    assert.equal(back?.history.at(-1)?.playoff, entry.history.at(-1)?.playoff);
+    assert.equal(lastArchiveWrite().ok, true);
+  } finally {
+    st.restore();
+  }
+});
+
+test("a fat previous archive migrates on load and a long career stays bounded", () => {
+  const st = install();
+  try {
+    const fatRow = {
+      season: 1, yearLabel: "2026-27", age: 21, team: "Boston Celtics", teamAbbr: "BOS",
+      teamColor: "#007A33", teamSecondary: "#BA9653", overall: 70, gp: 78, min: 32,
+      ppg: 22, rpg: 5, apg: 6, awards: ["All-Star"], playoff: "Elim. Primo turno 1-4", salaryM: 8,
+      league: {
+        yearLabel: "2026-27",
+        east: Array.from({ length: 15 }, (_, i) => ({ abbr: `E${i}`, name: "x".repeat(40), note: "y".repeat(80) })),
+        west: Array.from({ length: 15 }, (_, i) => ({ abbr: `W${i}`, name: "x".repeat(40), note: "y".repeat(80) })),
+        euro: [],
+        awards: [{ title: "MVP", name: "Altro", team: "Boston", teamAbbr: "BOS", note: "n", isPlayer: false }],
+        mvpBoard: Array.from({ length: 20 }, () => ({ name: "n", abbr: "BOS", line: "z".repeat(120), score: 1 })),
+      },
+      seriesLog: [{
+        round: 0, label: "Primo turno", wins: 1, losses: 4, won: false,
+        opponentSeed: 8, userSeed: 1, games: [{ n: 1, us: 100, them: 110, win: false }],
+        opponent: { name: "New York Knicks", abbr: "NYK", color: "#006BB6", note: "n".repeat(200) },
+      }],
+    };
+    const raw = JSON.stringify([{
+      id: "old", savedAt: 1, version: 11, name: "Vecchia", role: "PG", verdict: "v", closing: "c",
+      seasons: 1, peak: 70, titles: 0, ppg: 22, history: [fatRow], milestones: [], choices: [],
+    }]);
+    st.local.setItem(ARCHIVE_KEY, raw);
+    const loaded = loadArchive();
+    assert.equal(loaded[0]?.name, "Vecchia");
+    assert.equal(loaded[0]?.history[0]?.league?.east.length, 0);
+    assert.equal(loaded[0]?.history[0]?.league?.mvpBoard, undefined);
+    assert.equal(loaded[0]?.history[0]?.seriesLog?.[0]?.wins, 1);
+    assert.equal(loaded[0]?.history[0]?.seriesLog?.[0]?.opponent.abbr, "NYK");
+    assert.equal(loaded[0]?.history[0]?.playoff, "Elim. Primo turno 1-4");
+    const played = playCareerSim({ seed: 9701, difficulty: "pro", name: "Lunga" });
+    const packed = JSON.stringify(toArchive(played));
+    assert.ok(played.seasonHistory.length >= 8);
+    assert.ok(packed.length < 80_000, `archive grew to ${packed.length}`);
+  } finally {
+    st.restore();
+  }
+});
+
+test("quota exceeded does not crash, does not replace a good archive, and keeps the career in memory", () => {
+  const st = install();
+  try {
+    const kept = toArchive(playCareerSim({ seed: 9702, difficulty: "pro", name: "Tenuta" }));
+    saveArchive(kept);
+    const before = st.local.getItem(ARCHIVE_KEY);
+    st.local.quotaKeys.add(ARCHIVE_KEY);
+    st.session.quotaKeys.add(ARCHIVE_KEY);
+    const next = toArchive(playCareerSim({ seed: 9703, difficulty: "pro", name: "Piena" }));
+    const all = saveArchive(next);
+    assert.equal(st.local.getItem(ARCHIVE_KEY), before);
+    assert.equal(lastArchiveWrite().reason, "quota");
+    assert.equal(lastArchiveWrite().persisted, false);
+    assert.ok(all.some((c) => c.name === "Piena"));
+    assert.equal(loadArchive().some((c) => c.name === "Piena"), true);
+  } finally {
+    st.restore();
+  }
+});
+
+test("corrupt archive JSON does not throw and a later save keeps a readable career", () => {
+  const st = install();
+  try {
+    st.local.setItem(ARCHIVE_KEY, "{not-json");
+    assert.doesNotThrow(() => loadArchive());
+    const entry = toArchive(playCareerSim({ seed: 9704, difficulty: "pro", name: "Dopo il guasto" }));
+    saveArchive(entry);
+    assert.equal(loadArchive()[0]?.name, "Dopo il guasto");
+    assert.equal(loadArchive()[0]?.history.length, entry.history.length);
   } finally {
     st.restore();
   }
