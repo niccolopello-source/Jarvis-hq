@@ -63,6 +63,7 @@ import {
   clamp,
   clampAttr,
   isCareerOver,
+  offseasonStep,
   overallSpine,
   refreshOverall,
   rollApexAge,
@@ -3191,6 +3192,10 @@ export interface SimOpts {
   seed?: number;
   /** Solo il laboratorio. La carriera giocata sceglie a mano. */
   draft?: "best" | "worst" | "random" | "mixed";
+  /** Policy del simulatore, non una regola nuova. Default: gioca i 36, come il sì in UI. */
+  retirement?: "play36" | "retire";
+  /** Policy del simulatore sugli scambi non forzati. Default: accetta. */
+  trade?: "accept" | "refuse";
   /**
    * Laboratorio soltanto. Spento se assente: il percorso giocato non lo imposta.
    * Non entra nel save. I minuti forzati possono stare sotto il pavimento 11.5.
@@ -3290,17 +3295,33 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
     const s = job.s;
     s.season = n;
     const scripted = scriptedSeasonEvent(s, n);
-    const ev = scripted ?? pickStoryEvent(s, n);
     if (scripted && !s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
-    const ch = pick(ev.choices);
-    applyFx(s, ch.fx(s));
-    lockExperimentEthic(s);
-    s.choiceLog.push({ season: n, title: ev.title, pick: ch.label });
-    if (!scripted && n !== 12 && shouldOfferTrade(s, n) && rand() < 0.22) {
+    if (scripted) {
+      const ch = pick(scripted.choices);
+      applyFx(s, ch.fx(s));
+      s.choiceLog.push({ season: n, title: scripted.title, pick: ch.label });
+    } else if (n !== 12 && shouldOfferTrade(s, n)) {
       const t = buildTradeOffer(s);
-      acceptTrade(s, t.team);
-      s.choiceLog.push({ season: n, title: "Scambio", pick: t.team.name });
+      if (shouldForceTrade(s)) {
+        acceptForcedPreseasonTrade(s, t.team, n);
+      } else if ((job.opts.trade ?? "accept") === "accept") {
+        acceptTrade(s, t.team);
+        s.choiceLog.push({ season: n, title: "Scambio", pick: t.team.name });
+      } else {
+        refuseTrade(s);
+        s.choiceLog.push({ season: n, title: "Scambio", pick: "Resto" });
+      }
+      const ev = pickStoryEvent(s, n);
+      const ch = pick(ev.choices);
+      applyFx(s, ch.fx(s));
+      s.choiceLog.push({ season: n, title: ev.title, pick: ch.label });
+    } else {
+      const ev = pickStoryEvent(s, n);
+      const ch = pick(ev.choices);
+      applyFx(s, ch.fx(s));
+      s.choiceLog.push({ season: n, title: ev.title, pick: ch.label });
     }
+    lockExperimentEthic(s);
     const row = simulateRegularSeason(s, n);
     if (qualifiesPlayoffs(s, row)) {
       beginPlayoffs(s);
@@ -3322,24 +3343,37 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
       settleYearTitle(s, false);
     }
     if (!isCareerOver(s)) {
-      const summer = applyAutoOffseason(s, n);
-      lockExperimentEthic(s);
-      tickContract(s);
-      const freeAgent = isContractYear(s, n + 1) || s.contract.yearsRemaining <= 0;
-      if (freeAgent) {
-        const offers = buildFaOffers(s);
-        if (offers.length) {
-          const ranked = [...offers].sort((a, b) => b.annualM - a.annualM);
-          const offer = rand() < 0.64 ? ranked[0]! : pick(offers);
-          acceptOffer(s, offer);
-          s.choiceLog.push({
-            season: n,
-            title: "Agenzia libera",
-            pick: `${offer.team.name} · ${offer.years}×$${offer.annualM}M`,
-          });
+      const step = offseasonStep(s);
+      if (step === "offer") {
+        const play = (job.opts.retirement ?? "play36") === "play36";
+        recordRetirementChoice(s, play);
+        if (!play) {
+          job.n = n + 1;
+          return;
         }
-      } else if (summer.tradeDest && (summer.tradeForced || rand() < 0.42)) {
-        acceptForcedSummerTrade(s, summer.tradeDest, n);
+        s.extraSeason = true;
+        applyFx(s, { development: 0.4, form: 1, flavor: "Un'altra stagione." });
+      }
+      if (step !== "finish") {
+        const summer = applyAutoOffseason(s, n);
+        lockExperimentEthic(s);
+        tickContract(s);
+        const freeAgent = isContractYear(s, n + 1) || s.contract.yearsRemaining <= 0;
+        if (freeAgent) {
+          const offers = buildFaOffers(s);
+          if (offers.length) {
+            const ranked = [...offers].sort((a, b) => b.annualM - a.annualM);
+            const offer = rand() < 0.64 ? ranked[0]! : pick(offers);
+            acceptOffer(s, offer);
+            s.choiceLog.push({
+              season: n,
+              title: "Agenzia libera",
+              pick: `${offer.team.name} · ${offer.years}×$${offer.annualM}M`,
+            });
+          }
+        } else if (summer.tradeDest && (summer.tradeForced || (job.opts.trade ?? "accept") === "accept")) {
+          acceptForcedSummerTrade(s, summer.tradeDest, n);
+        }
       }
     }
     job.n = n + 1;
