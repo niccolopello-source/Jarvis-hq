@@ -23,7 +23,7 @@ La log-normale proposta non è stata implementata. Manca la dimostrazione che il
 
 ## Controfattuali
 
-Eseguiti sul gancio `SimOpts.experiment`, spento se assente. Baseline dopo playoff e profilo di ruolo: fingerprint `721aedfa360cbc34`, `14b31d32fe408278`, `59055ad69eb93df1` sui seed 23017, 23034, 23102.
+Eseguiti sul gancio `SimOpts.experiment`, spento se assente. Baseline dopo il pareggio simulatore/carriera: fingerprint `2ea9a3b175d39ad7`, `3904289aecedac2c`, `965218a242acf00c` sui seed 23017, 23034, 23102.
 
 Campione: 24 seed `90000+i*19`, Pro, draft random, ITA, numero 23. Non è una taratura.
 
