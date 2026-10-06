@@ -104,7 +104,7 @@ import { advancedOf } from "@/lib/pivot/peak";
 import { defensiveMarks } from "@/lib/pivot/awards-helpers";
 import { CrashFallback } from "./CrashFallback";
 import { SoundToggle } from "@/intro-sound/SoundToggle";
-import { clearLive, hasLiveSave, lastLoadReport, loadLive, loadSwipe, logSeqFrom, persistentStorageAvailable, saveLive, saveSwipe, watchLiveConflicts, type LiveLoadReport } from "@/lib/pivot/save";
+import { clearLive, hasLiveSave, lastLoadReport, loadLive, loadSwipe, logSeqFrom, persistentStorageAvailable, releaseLiveFlush, saveLive, saveSwipe, watchLiveConflicts, type LiveLoadReport } from "@/lib/pivot/save";
 import { CAREER_TABS, SwipeTrack } from "@/components/pivot/SwipePager";
 import { careerCommentary, hofTier, palmares } from "@/lib/pivot/legacy";
 import { settleYearTitle } from "@/lib/pivot/league";
@@ -417,6 +417,15 @@ export function PivotApp() {
     const screenNow = screenRef.current;
     const playerNow = playerRef.current;
     if ((screenNow !== "draft" && screenNow !== "career") || !playerNow) return false;
+    try {
+      const raw = localStorage.getItem("pivot-v2-save");
+      if (raw) {
+        const storedId = JSON.parse(raw)?.player?.careerId;
+        if (storedId !== playerNow.careerId) return false;
+      }
+    } catch {
+      return false;
+    }
     const pendingNow = pendingRef.current;
     const logNow = logRef.current;
     saveGen.current += 1;
@@ -505,6 +514,7 @@ export function PivotApp() {
   }
 
   function startDraft() {
+    releaseLiveFlush();
     const s = freshPlayer(
       name.trim() || "Il Rookie",
       role,
@@ -539,6 +549,7 @@ export function PivotApp() {
 
   function runOneSim() {
     if (simBusy) return;
+    releaseLiveFlush();
     setSimBusy(true);
     setSimShow(false);
     setSimSlow(false);
