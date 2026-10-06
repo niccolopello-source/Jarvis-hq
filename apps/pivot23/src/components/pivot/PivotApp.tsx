@@ -360,10 +360,18 @@ export function PivotApp() {
   }, []);
 
   useEffect(() => {
-    const sync = () => document.documentElement.classList.toggle("pivot-asleep", document.hidden);
+    const sync = () => {
+      document.documentElement.classList.toggle("pivot-asleep", document.hidden);
+      if (document.visibilityState === "hidden") flushLive();
+    };
     sync();
     document.addEventListener("visibilitychange", sync);
-    return () => document.removeEventListener("visibilitychange", sync);
+    const onPageHide = () => flushLive();
+    window.addEventListener("pagehide", onPageHide);
+    return () => {
+      document.removeEventListener("visibilitychange", sync);
+      window.removeEventListener("pagehide", onPageHide);
+    };
   }, []);
 
   useEffect(() => {
@@ -398,6 +406,29 @@ export function PivotApp() {
 
   const tabRef = useRef(tab);
   tabRef.current = tab;
+  const pendingRef = useRef(pending);
+  const logRef = useRef(log);
+  const screenRef = useRef(screen);
+  pendingRef.current = pending;
+  logRef.current = log;
+  screenRef.current = screen;
+
+  function flushLive() {
+    const screenNow = screenRef.current;
+    const playerNow = playerRef.current;
+    if ((screenNow !== "draft" && screenNow !== "career") || !playerNow) return false;
+    const pendingNow = pendingRef.current;
+    const logNow = logRef.current;
+    saveGen.current += 1;
+    return saveLive({
+      player: playerNow,
+      pending: pendingNow && pendingNow.kind !== "call" ? (pendingNow as never) : pendingNow,
+      log: logNow,
+      screen: screenNow,
+      tab: tabRef.current,
+      logSeq: logSeqFrom(logNow),
+    });
+  }
 
   useEffect(() => {
     if (screen !== "draft" && screen !== "career") return;
