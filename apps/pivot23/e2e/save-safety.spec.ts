@@ -24,7 +24,9 @@ async function seedRetire(page: Page) {
     const original = Storage.prototype.setItem;
     Storage.prototype.setItem = function (key: string, value: string) {
       if (key === "pivot-v2-archive" && (w.__blockArchive || sessionStorage.getItem("__e2e_block") === "1")) {
-        throw new DOMException("quota", "QuotaExceededError");
+        // Not a quota error: the product maps QuotaExceededError to archiveQuota.
+        // This harness must fail the write as unavailable so the assert can see archiveUnsaved.
+        throw new DOMException("archive write blocked", "NotAllowedError");
       }
       return original.call(this, key, value);
     };
