@@ -572,6 +572,33 @@ export function buildLiveSave(
   return { ...payload, c };
 }
 
+const FLUSH_HOLD_KEY = "pivot-v2-flush-hold";
+
+/** A set-aside must survive the pagehide that reload itself emits. */
+export function holdLiveFlush(): void {
+  try {
+    sessionStorage.setItem(FLUSH_HOLD_KEY, "1");
+  } catch {
+    /* session storage can be unavailable; the reload still clears the live key */
+  }
+}
+
+export function releaseLiveFlush(): void {
+  try {
+    sessionStorage.removeItem(FLUSH_HOLD_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+function liveFlushHeld(): boolean {
+  try {
+    return sessionStorage.getItem(FLUSH_HOLD_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function saveLive(data: {
   player: PlayerState;
   pending: SavedPending | null;
@@ -580,6 +607,7 @@ export function saveLive(data: {
   tab: LiveSave["tab"];
   logSeq: number;
 }): boolean {
+  if (liveFlushHeld()) return false;
   let last: LiveSave | null = null;
   for (const level of [0, 1, 2, 3]) {
     try {
@@ -996,9 +1024,12 @@ export function setAsideLive(): boolean {
   }
   if (!held) {
     MEM = null;
+    holdLiveFlush();
     return true;
   }
-  return clearLive();
+  const cleared = clearLive();
+  if (cleared) holdLiveFlush();
+  return cleared;
 }
 
 /** True when a readable live save exists in a store or in memory. */

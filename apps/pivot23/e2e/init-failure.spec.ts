@@ -35,6 +35,11 @@ test("a save that crashes the screens: reload alone loops, 'set aside' opens a c
   expect(kept.live).toBeNull();
   expect(kept.aside?.reason).toBe("crashed");
   expect(kept.aside?.raw).toBe(raw);
+  const afterHide = await page.evaluate(() => {
+    window.dispatchEvent(new PageTransitionEvent("pagehide", { persisted: false }));
+    return localStorage.getItem("pivot-v2-save");
+  });
+  expect(afterHide).toBeNull();
   await page.reload();
   await expect(page.getByRole("button", { name: "Inizia", exact: true })).toBeVisible();
 });

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { t } from "@/lib/pivot/i18n";
-import { hasLiveHint, setAsideLive } from "@/lib/pivot/save";
+import { hasLiveHint, holdLiveFlush, setAsideLive } from "@/lib/pivot/save";
 
 /**
  * Error screen shared by the app-level and the career-view boundaries.
@@ -13,6 +13,9 @@ import { hasLiveHint, setAsideLive } from "@/lib/pivot/save";
 export function CrashFallback({ error }: { error: Error | null }) {
   const [asideFailed, setAsideFailed] = useState(false);
   const [canSetAside] = useState(() => hasLiveHint());
+  useEffect(() => {
+    holdLiveFlush();
+  }, []);
   return (
     <main className="min-h-screen bg-bg text-wood grid place-items-center p-6">
       <section className="max-w-md rounded-xl border border-line bg-panel p-6 shadow-sm" role="alert">
