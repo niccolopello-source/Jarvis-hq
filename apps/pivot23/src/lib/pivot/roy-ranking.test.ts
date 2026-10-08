@@ -10,7 +10,38 @@ function cpu(name: string, ppg: number): RoyCandidate {
   return { name, team: "Boston Celtics", teamAbbr: "BOS", teamColor: "#000", ppg, rpg: 3, apg: 2, score: 0, isPlayer: false };
 }
 function row(ppg: number, gp = 70): SeasonRow {
-  return { season: 1, awards: [], ppg, rpg: 3, apg: 2, gp, min: 24, league: { awards: [], royRace: [] } } as SeasonRow;
+  return {
+    season: 1,
+    yearLabel: "2026-27",
+    age: 21,
+    team: "Boston Celtics",
+    teamAbbr: "BOS",
+    teamColor: "#000",
+    teamSecondary: "#fff",
+    overall: 60,
+    gp,
+    min: 24,
+    ppg,
+    rpg: 3,
+    apg: 2,
+    spg: 0.5,
+    bpg: 0.2,
+    fg: 45,
+    tp: 35,
+    ft: 78,
+    tov: 1.2,
+    ts: 55,
+    per: 12,
+    plusMinus: 0,
+    wins: 30,
+    losses: 52,
+    seed: 10,
+    conf: "East",
+    awards: [],
+    playoff: "Fuori",
+    salaryM: 2.4,
+    league: { yearLabel: "2026-27", east: [], west: [], euro: [], awards: [], leaders: [], royRace: [] },
+  };
 }
 function player() {
   const s = freshPlayer("Roy Test", "PG", "Italia", 23, "pro", 7);
