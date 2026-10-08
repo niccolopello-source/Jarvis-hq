@@ -4,7 +4,6 @@ import { SIM } from "./config";
 import { dpoyFatigueOf, TUNING } from "./tuning";
 import { diffOf } from "./difficulty";
 import { advancedOf } from "./peak";
-import { rand } from "./rng";
 import { findTeam, NBA_TEAMS } from "./teams";
 import type { CpuStar, DpoyCandidate, LeagueAward, PlayerState, RoyCandidate, SeasonRow } from "./types";
 

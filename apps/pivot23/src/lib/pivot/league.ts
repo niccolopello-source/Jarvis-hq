@@ -2,8 +2,7 @@
 import { EURO_TEAMS, NBA_TEAMS, ROOKIE_NAMES, cloneTeam, powerToTier } from "./teams";
 import { diffOf } from "./difficulty";
 import { SIM } from "./config";
-import { pick, rand, randInt } from "./rng";
-import { RULES } from "./rules";
+import { pick, rand } from "./rng";
 import { identityModOf, liveStar, mvpScore, starOf, teamStrength } from "./world";
 import { royProductionScore } from "./awards-helpers";
 import { freshPlayer, playIsolatedDraft } from "./engine";
@@ -197,15 +196,6 @@ export function playerImpactOnTeam(s: PlayerState): number {
   bump += (s.hidden.clutch - 50) * 0.018;
   bump -= s.injuryDrag * 0.35;
   return bump * diffOf(s).impact;
-}
-
-/** Fisher–Yates on the seeded stream: length-1 draws, same order on every JavaScript engine. */
-function shuffleSeeded<T>(arr: T[]): T[] {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [arr[i], arr[j]] = [arr[j]!, arr[i]!];
-  }
-  return arr;
 }
 
 export function seedRookieClass(s: PlayerState): RoyCandidate[] {
