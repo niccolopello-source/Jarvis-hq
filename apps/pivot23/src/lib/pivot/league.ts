@@ -6,7 +6,7 @@ import { pick, rand, randInt } from "./rng";
 import { RULES } from "./rules";
 import { identityModOf, liveStar, mvpScore, starOf, teamStrength } from "./world";
 import { royProductionScore } from "./awards-helpers";
-import { freshPlayer, finishDraft } from "./engine";
+import { freshPlayer, playIsolatedDraft } from "./engine";
 import { createRng, runWithRng } from "./rng";
 import { isolatedRookieBox, roySubSeed, ROY_ROLES } from "./rookie-box";
 import { EURO_GAMES, NBA_GAMES, PLAYOFF_SEEDS, awardNoteIt } from "./data";
@@ -221,7 +221,7 @@ export function seedRookieClass(s: PlayerState): RoyCandidate[] {
       cpu.age = 21;
       cpu.league = "NBA";
       cpu.team = cloneTeam(team);
-      finishDraft(cpu);
+      playIsolatedDraft(cpu);
       return isolatedRookieBox(cpu);
     });
     classList.push({

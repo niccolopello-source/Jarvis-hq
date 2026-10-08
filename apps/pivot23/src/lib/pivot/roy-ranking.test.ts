@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { settleRoy } from "./awards-helpers";
-import { freshPlayer, playCareerSim } from "./engine";
+import { freshPlayer, playCareerSim, playIsolatedDraft } from "./engine";
 import { seedRookieClass } from "./league";
 import { createRng, runWithRng } from "./rng";
 import type { RoyCandidate, SeasonRow } from "./types";
@@ -106,4 +106,13 @@ test("a simulated career persists at most one rookie award", () => {
   const rows = career.seasonHistory.filter((r) => r.awards.includes("Rookie of the Year"));
   assert.ok(rows.length <= 1);
   if (rows.length) assert.equal(rows[0].season, 1);
+});
+
+test("an isolated draft hand changes attributes before the box", () => {
+  const s = freshPlayer("Cards", "PF", "Italia", 23, "pro", 15);
+  const shooting = s.attrs.shooting;
+  runWithRng(createRng(15), () => playIsolatedDraft(s));
+  const moved = Object.values(s.attrs).some((n) => n !== 25);
+  assert.equal(moved, true);
+  assert.notEqual(s.attrs.shooting + s.attrs.handle + s.attrs.defense, shooting * 3);
 });
