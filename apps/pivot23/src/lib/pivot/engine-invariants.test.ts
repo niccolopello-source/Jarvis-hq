@@ -189,3 +189,14 @@ test("a fresh player starts inside the attribute and overall bounds on every dif
     for (const v of Object.values(p.hidden)) assert.ok(v >= SIM.hidden.min && v <= SIM.hidden.max);
   }
 });
+
+/* PR #61 QA: the experiment baselines hash only box-score rows. This golden locks the whole
+   career (choices, milestones, titles, ROY class, world) for fixed seeds, so an engine change
+   that moves outcomes must update these values on purpose, with a reason in the commit. */
+test("golden full-career baseline for fixed seeds (engine output, not run-vs-run)", async () => {
+  const { createHash } = await import("node:crypto");
+  const golden = (o: SimOpts) => createHash("sha256").update(fingerprint(playCareerSim(o))).digest("hex").slice(0, 16);
+  resetRules();
+  assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(golden), GOLDEN);
+});
+const GOLDEN = ["6fe52cd0a7ee8c19", "bacb446a2a8bf8e3", "441bec64d2398645"];

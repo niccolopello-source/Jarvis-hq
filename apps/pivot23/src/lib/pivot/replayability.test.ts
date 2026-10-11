@@ -107,3 +107,31 @@ test("gameplay modules do not call Math.random", () => {
   walk(root);
   assert.deepEqual(offenders, []);
 });
+
+/* PR #61 QA: seed 29930 was moved out of the age-36 test. It is not a bug: after the isolated ROY
+   stream changed the career path, this journeyman (peak OVR 63) reaches the 33 summer with
+   injuryDrag 3.2 >= 2.5, so careerEndingSignal() closes the career before any 36 offer. */
+test("seed 29930 ends at 32 by the injury rule, so both retirement choices give the same career", async () => {
+  const { careerEndingSignal } = await import("./peak.ts");
+  const play = playCareerSim({ ...FIXED, seed: 29930, retirement: "play36" });
+  const stop = playCareerSim({ ...FIXED, seed: 29930, retirement: "retire" });
+  assert.equal(play.seasonHistory.at(-1)?.age, 32);
+  assert.equal(careerEndingSignal(play), "injury");
+  assert.ok(play.injuryDrag >= 2.5);
+  assert.equal(play.extraSeason, false);
+  assert.equal(stop.extraSeason, false);
+  assert.equal(identityKey(careerShape(play)), identityKey(careerShape(stop)));
+});
+
+test("every career that stops before 36 is explained by a retirement rule, never by a ghost stop", async () => {
+  const { careerEndingSignal } = await import("./peak.ts");
+  const unexplained: string[] = [];
+  for (let seed = 29900; seed < 29960; seed++) {
+    const s = playCareerSim({ ...FIXED, seed, retirement: "play36" });
+    const last = s.seasonHistory.at(-1)?.age ?? 0;
+    if (last < 36 && careerEndingSignal(s) === null) unexplained.push(`${seed}: last age ${last}`);
+    const ages = s.seasonHistory.map((r) => r.age);
+    if (new Set(ages).size !== ages.length) unexplained.push(`${seed}: repeated age`);
+  }
+  assert.deepEqual(unexplained, []);
+});
