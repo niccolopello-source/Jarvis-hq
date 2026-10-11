@@ -1,6 +1,6 @@
 /**
  * Measures the approved balance decisions on a reproducible seed sample (offline, no game change).
- * Usage: node --import=tsx scripts/measure-decisions.ts <before|after> <difficulty> <count> <seedBase>
+ * Usage: node --import=tsx scripts/measure-decisions.ts <before|after> <difficulty> <count> <seedBase> [tuningJSON]
  *   before = LEGACY_RULES (fixed story windows, cumulative DPOY fatigue, world "current"); after = shipped TUNING.
  * Prints JSON: D-09 champion Gini over NBA teams (with and without the 3 seeded titles), top champion share;
  * D-23 longest DPOY streak, DPOY total, careers with a streak >= 5; D-11 distinct story calendars.
@@ -10,9 +10,10 @@ import { TITLE_SEED } from "../src/lib/pivot/league";
 import { NBA_TEAMS } from "../src/lib/pivot/teams";
 import { LEGACY_RULES, resetTuning, TUNING } from "../src/lib/pivot/tuning";
 
-const [variant, difficulty, countArg, seedArg] = process.argv.slice(2);
+const [variant, difficulty, countArg, seedArg, extra] = process.argv.slice(2);
 resetTuning();
 if (variant === "before") Object.assign(TUNING, LEGACY_RULES);
+if (extra) Object.assign(TUNING, JSON.parse(extra));
 const roles = ["PG", "SG", "SF", "PF", "C"] as const;
 const paths = ["NCAA", "Europa", "G-League"] as const;
 const seeded = new Set(TITLE_SEED.map((t) => `${t.league}:${t.yearLabel}`));

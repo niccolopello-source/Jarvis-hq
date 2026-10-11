@@ -3,7 +3,7 @@ import test from "node:test";
 import { advanceCareerSim, ENGINE_VERSION, openCareerSim, playCareerSim } from "./engine.ts";
 import { createRng } from "./rng.ts";
 import { buildLiveSave } from "./save.ts";
-import { BALANCE_SINCE, versionAtLeast, versionCore, worldOf, WORLD_SINCE, dpoyFatigueOf, LEGACY_RULES, resetTuning, scriptSlotFor, scriptWindowsOf, TUNING, TUNING_DEFAULTS, usesBalance } from "./tuning.ts";
+import { BALANCE_SINCE, dpoyStreakStepOf, LEGACY_DPOY_STREAK_STEP, versionAtLeast, versionCore, worldOf, WORLD_SINCE, dpoyFatigueOf, LEGACY_RULES, resetTuning, scriptSlotFor, scriptWindowsOf, TUNING, TUNING_DEFAULTS, usesBalance } from "./tuning.ts";
 import type { PlayerState } from "./types.ts";
 
 /* Same seed => same career, under shipped settings and under every balance experiment. */
@@ -172,4 +172,10 @@ test("D-09 world rule: only careers created by WORLD_SINCE or later regress", ()
   assert.equal(versionAtLeast(ENGINE_VERSION, BALANCE_SINCE), true, "new careers keep D-11/D-23");
   for (const v of ["2.11.0-beta", "2.12.0-beta", "2.12.0", "", undefined]) assert.equal(worldOf({ engineVersion: v }), "current", String(v));
   for (const v of ["2.13.0-beta", "2.13.0", "3.0.0"]) assert.equal(worldOf({ engineVersion: v }), "regress", v);
+});
+
+test("D-23 step: 0.16 from 2.13.0, live 2.12 careers keep 0.12", () => {
+  for (const v of ["2.12.0-beta", "2.12.0", undefined]) assert.equal(dpoyStreakStepOf({ engineVersion: v }), LEGACY_DPOY_STREAK_STEP, String(v));
+  assert.equal(LEGACY_DPOY_STREAK_STEP, 0.12);
+  for (const v of ["2.13.0-beta", "2.13.0"]) assert.equal(dpoyStreakStepOf({ engineVersion: v }), 0.16, v);
 });

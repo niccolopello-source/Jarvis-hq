@@ -19,8 +19,9 @@ export const TUNING = {
   world: "regress" as "current" | "jitter" | "regress",
   /** D-23: DPOY voter fatigue. current = 5.5% per DPOY won, capped at 22% (rule before 2.12.0). */
   dpoyFatigue: "streak" as "current" | "steeper" | "streak",
-  /** D-23 streak: fatigue per consecutive DPOY and its cap (0.12 / 0.36 = values of the experiment). */
-  dpoyStreakStep: 0.12,
+  /** D-23 streak: fatigue per consecutive DPOY and its cap. Step 0.16 for careers from 2.13.0
+   *  (keeps DPOY totals within ~1% of the pre-2.12 rule, max streak <= 5); 0.12 before. */
+  dpoyStreakStep: 0.16,
   dpoyStreakCap: 0.36,
   /** Games needed to win the player DPOY, per competition. Only the NBA awards a player DPOY;
    *  58 is the existing rule (full availability weight at 65, see nbaDpoyScore). */
@@ -41,6 +42,9 @@ export const WORLD_SINCE = "2.13.0";
 
 /** Rules that careers created before BALANCE_SINCE (D-11/D-23) or WORLD_SINCE (D-09) keep. */
 export const LEGACY_RULES = Object.freeze({ scriptWindows: "fixed", dpoyFatigue: "current", world: "current" } as const);
+
+/** D-23 step that careers created before WORLD_SINCE (2.13.0) keep. */
+export const LEGACY_DPOY_STREAK_STEP = 0.12;
 
 /**
  * major.minor.patch of an engine version, or null when unreadable. Accepts an optional "v", a
@@ -79,6 +83,11 @@ export function dpoyFatigueOf(career: { engineVersion?: string }): Tuning["dpoyF
 /** D-09: the title-spread rule this career plays by. */
 export function worldOf(career: { engineVersion?: string }): Tuning["world"] {
   return versionAtLeast(career.engineVersion, WORLD_SINCE) ? TUNING.world : LEGACY_RULES.world;
+}
+
+/** D-23: fatigue per consecutive DPOY for this career. */
+export function dpoyStreakStepOf(career: { engineVersion?: string }): number {
+  return versionAtLeast(career.engineVersion, WORLD_SINCE) ? TUNING.dpoyStreakStep : LEGACY_DPOY_STREAK_STEP;
 }
 
 /** Restores shipped behaviour (used by tests and the comparison script). */
