@@ -230,6 +230,8 @@ test("a full career: draft to retirement to archive, with a reload in the middle
   let reloaded = false;
   let before = { seasons: 0, name: "" };
   const seen: string[] = [];
+  const checked = new Set<string>();
+  const contrast: string[] = [];
   for (let step = 0; step < 300; step += 1) {
     if (await page.locator(".result-view").isVisible().catch(() => false)) break;
     const pending = page.locator("[data-pending]").first();
@@ -245,6 +247,14 @@ test("a full career: draft to retirement to archive, with a reload in the middle
       reloaded = true;
       continue;
     }
+    // Every card the career shows (story, playoff, market, trade) is checked for AA contrast once per kind.
+    const kind = await pending.getAttribute("class");
+    if (kind && !checked.has(kind)) {
+      checked.add(kind);
+      await settle(page, 450);
+      const r = await new AxeBuilder({ page }).include("[data-pending]").withRules(["color-contrast"]).analyze();
+      contrast.push(...r.violations.flatMap((v) => v.nodes.map((n) => `${kind}: ${n.target.join(" ")} ${(n.failureSummary ?? "").slice(60, 150)}`)));
+    }
     const sig = (await pending.innerText()).slice(0, 160);
     seen.push(sig);
     const tail = seen.slice(-4);
@@ -253,6 +263,7 @@ test("a full career: draft to retirement to archive, with a reload in the middle
     await settle(page, 150);
   }
   expect(reloaded, "the career reached season 6 and was reloaded").toBe(true);
+  expect(contrast).toEqual([]);
   await expect(page.locator(".result-view")).toBeVisible();
   await expect(page.getByRole("region", { name: "Career Card" })).toContainText("Demo Completa");
   await settle(page);
@@ -264,5 +275,5 @@ test("a full career: draft to retirement to archive, with a reload in the middle
   await expect(page.getByRole("region", { name: "Career Card" })).toContainText("Demo Completa");
   expect(await page.evaluate(() => localStorage.getItem("pivot-v2-save"))).toBeNull();
   expect(errors).toEqual([]);
-  console.log(`FULL_CAREER ${JSON.stringify({ steps: seen.length, reloadedAtSeason: before.seasons })}`);
+  console.log(`FULL_CAREER ${JSON.stringify({ steps: seen.length, reloadedAtSeason: before.seasons, cardKinds: [...checked] })}`);
 });

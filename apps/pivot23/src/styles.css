@@ -2509,3 +2509,7 @@ img.court-mark-photo {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
+/* The extension offer is tinted with the club colour; plain muted text fell to 4.27:1 on it. */
+.offer-btn.ext .text-muted {
+  color: color-mix(in oklab, var(--color-chalk) 72%, var(--color-muted));
+}
