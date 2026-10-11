@@ -495,6 +495,12 @@ export interface ArchiveCareer {
   /** Fotografia stabile. Non è il salvataggio e non è un NFT. */
   card?: import("./card").CareerCard;
   fingerprint?: string;
+  /**
+   * Facts for the Career Legacy Report copied from the finished PlayerState (jersey, draft,
+   * engine totals). Optional and additive: older entries simply lack it. Not part of the card
+   * fingerprint and never read back by the engine. See legacy-report.ts.
+   */
+  legacy?: import("./legacy-report").LegacyFacts;
 }
 
 export interface Nationality {
