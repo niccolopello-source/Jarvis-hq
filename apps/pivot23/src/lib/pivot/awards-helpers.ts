@@ -4,7 +4,6 @@ import { SIM } from "./config";
 import { dpoyFatigueOf, TUNING } from "./tuning";
 import { diffOf } from "./difficulty";
 import { advancedOf } from "./peak";
-import { rand } from "./rng";
 import { findTeam, NBA_TEAMS } from "./teams";
 import type { CpuStar, DpoyCandidate, LeagueAward, PlayerState, RoyCandidate, SeasonRow } from "./types";
 
@@ -129,27 +128,22 @@ export function settleRoy(s: PlayerState, row: SeasonRow, n: number): RoyCandida
     ppg: finite(row.ppg),
     rpg: finite(row.rpg),
     apg: finite(row.apg),
-    score: finite(royPlayerScore(s, row)),
+    score: royProductionScore({ ppg: finite(row.ppg), rpg: finite(row.rpg), apg: finite(row.apg), gp: finite(row.gp), min: finite(row.min, 24) }),
     isPlayer: true,
   };
   const others = (s.royClass.length ? s.royClass : row.league?.royRace ?? [])
     .filter((c) => !c.isPlayer)
     .map((c) => ({
       ...c,
-      score: royCpuScore(c),
+      score: royProductionScore({ ppg: finite(c.ppg), rpg: finite(c.rpg), apg: finite(c.apg), gp: finite(row.gp), min: finite(row.min, 24) }),
       isPlayer: false,
     }));
   const race = [player, ...others].sort((a, b) => b.score - a.score);
   const had = row.awards.includes("Rookie of the Year") || s.roy;
-  const lead = race[0]?.isPlayer === true;
-  const caliber = finite(row.gp) >= 52 && finite(row.ppg) >= 9.45;
-  const bestCpuPpg = others.reduce((m, c) => Math.max(m, finite(c.ppg)), 0);
-  const nearBox = finite(row.ppg) + 1.6 >= bestCpuPpg;
-  const converts =
-    caliber &&
-    (lead || nearBox) &&
-    (finite(row.ppg) >= 16 ||
-      rand() < clamp(0.28 + (finite(row.ppg) - bestCpuPpg) * 0.06, 0.12, 0.46));
+  const eligible = finite(row.gp) >= 52;
+  race.sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+  const lead = eligible && race[0]?.isPlayer === true;
+  const converts = lead;
   if (converts && !had && n === 1 && s.league === "NBA") {
     s.roy = true;
     if (!row.awards.includes("Rookie of the Year")) row.awards.unshift("Rookie of the Year");
