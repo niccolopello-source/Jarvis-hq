@@ -2,10 +2,12 @@
 import { EURO_TEAMS, NBA_TEAMS, ROOKIE_NAMES, cloneTeam, powerToTier } from "./teams";
 import { diffOf } from "./difficulty";
 import { SIM } from "./config";
-import { pick, rand, randInt } from "./rng";
-import { RULES } from "./rules";
+import { pick, rand } from "./rng";
 import { identityModOf, liveStar, mvpScore, starOf, teamStrength } from "./world";
 import { royProductionScore } from "./awards-helpers";
+import { freshPlayer, playIsolatedDraft } from "./engine";
+import { createRng, runWithRng } from "./rng";
+import { isolatedRookieBox, roySubSeed, ROY_ROLES } from "./rookie-box";
 import { EURO_GAMES, NBA_GAMES, PLAYOFF_SEEDS, awardNoteIt } from "./data";
 import type {
   BracketPair,
@@ -196,45 +198,34 @@ export function playerImpactOnTeam(s: PlayerState): number {
   return bump * diffOf(s).impact;
 }
 
-/** Fisher–Yates on the seeded stream: length-1 draws, same order on every JavaScript engine. */
-function shuffleSeeded<T>(arr: T[]): T[] {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [arr[i], arr[j]] = [arr[j]!, arr[i]!];
-  }
-  return arr;
-}
-
 export function seedRookieClass(s: PlayerState): RoyCandidate[] {
   if ((s.season ?? 0) > 1) return [];
   const others = NBA_TEAMS.filter((t) => t.abbr !== s.team.abbr);
   const classList: RoyCandidate[] = [];
-  const names = (RULES.rookieShuffle === "portable" ? shuffleSeeded([...ROOKIE_NAMES]) : [...ROOKIE_NAMES].sort(() => rand() - 0.5)).slice(0, 5);
-  const bands = [
-    [10.2, 12.4],
-    [8.8, 10.6],
-    [7.4, 9.2],
-    [6.2, 7.8],
-    [5.0, 6.6],
-  ];
-  names.forEach((name, i) => {
+  for (let i = 0; i < 5; i++) {
+    const sub = roySubSeed(s.seed || 1, i);
     const team = others[(i * 5 + 2) % others.length]!;
-    const [lo, hi] = bands[i] ?? [8, 12];
-    const ppg = lo + rand() * (hi - lo);
-    const rpg = 2.2 + rand() * 4.0;
-    const apg = 1.4 + rand() * 3.4;
+    const box = runWithRng(createRng(sub), () => {
+      const cpu = freshPlayer(ROOKIE_NAMES[i % ROOKIE_NAMES.length]!, ROY_ROLES[i] || "SF", "USA", 11 + i, s.difficulty, sub);
+      cpu.draftPick = 8 + i * 7;
+      cpu.age = 21;
+      cpu.league = "NBA";
+      cpu.team = cloneTeam(team);
+      playIsolatedDraft(cpu);
+      return isolatedRookieBox(cpu);
+    });
     classList.push({
-      name,
+      name: ROOKIE_NAMES[i % ROOKIE_NAMES.length]!,
       team: team.name,
       teamAbbr: team.abbr,
       teamColor: team.color,
-      ppg: round1(ppg),
-      rpg: round1(rpg),
-      apg: round1(apg),
-      score: royProductionScore({ ppg, rpg, apg, gp: 72, min: clamp(18 + ppg * 0.8, 18, 36) }),
+      ppg: box.ppg,
+      rpg: box.rpg,
+      apg: box.apg,
+      score: royProductionScore({ ...box }),
       isPlayer: false,
     });
-  });
+  }
   s.royClass = classList;
   return classList;
 }
@@ -346,20 +337,7 @@ function finishRoyRace(s: PlayerState, box: SeasonRow, n: number): RoyCandidate[
   };
   const others = (s.royClass.length ? s.royClass : seedRookieClass(s))
     .filter((c) => !c.isPlayer)
-    .map((c) => {
-      const ppg = round1(clamp(c.ppg + (rand() - 0.5) * 1.1, 6.2, 22));
-      const rpg = round1(clamp(c.rpg + (rand() - 0.5) * 0.45, 1.4, 12));
-      const apg = round1(clamp(c.apg + (rand() - 0.5) * 0.45, 0.8, 9));
-      const min = clamp(18 + ppg * 0.8, 18, 36);
-      return {
-        ...c,
-        ppg,
-        rpg,
-        apg,
-        score: royProductionScore({ ppg, rpg, apg, gp: 70 + randInt(0, 8), min }),
-        isPlayer: false,
-      };
-    });
+    .map((c) => ({ ...c, isPlayer: false }));
   const race = [player, ...others].sort((a, b) => b.score - a.score);
   s.royClass = race;
   return race;

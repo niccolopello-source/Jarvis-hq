@@ -565,6 +565,17 @@ export function applyDraftCard(s: PlayerState, roundIndex: number, cardIndex: nu
   withPlayer(s, () => applyDraftCardInner(s, roundIndex, cardIndex));
 }
 
+/** Hypothetical draft for a discarded ROY candidate. Caller must already own the RNG stream. */
+export function playIsolatedDraft(s: PlayerState) {
+  const rounds = allDraftRounds();
+  for (let r = 0; r < rounds.length; r++) {
+    const last = Math.max(0, s.draftHand.length - 1);
+    applyDraftCardInner(s, r, randInt(0, last));
+  }
+  finishDraft(s);
+}
+
+
 function applyDraftCardInner(s: PlayerState, roundIndex: number, cardIndex: number) {
   const raw =
     s.draftHand[cardIndex] ??

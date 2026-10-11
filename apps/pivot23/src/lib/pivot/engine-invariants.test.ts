@@ -89,15 +89,16 @@ function withForeignSort<T>(fn: () => T): T {
   }
 }
 
-test("rookieShuffle: 'current' depends on the engine's sort, 'portable' does not", () => {
+test("rookie class no longer couples the career to Array.sort", () => {
   const seeds = Array.from({ length: 8 }, (_, i) => optsFor(300 + i));
   try {
     resetRules();
-    const differs = seeds.filter((o) => fingerprint(playCareerSim(o)) !== withForeignSort(() => fingerprint(playCareerSim(o))));
-    assert.ok(differs.length > 0, "the shipped shuffle changed outcome under another sort algorithm for at least one seed");
+    for (const o of seeds) {
+      assert.equal(withForeignSort(() => fingerprint(playCareerSim(o))), fingerprint(playCareerSim(o)), `current seed ${o.seed}`);
+    }
     RULES.rookieShuffle = "portable";
     for (const o of seeds) {
-      assert.equal(withForeignSort(() => fingerprint(playCareerSim(o))), fingerprint(playCareerSim(o)), `seed ${o.seed}`);
+      assert.equal(withForeignSort(() => fingerprint(playCareerSim(o))), fingerprint(playCareerSim(o)), `portable seed ${o.seed}`);
     }
   } finally {
     resetRules();

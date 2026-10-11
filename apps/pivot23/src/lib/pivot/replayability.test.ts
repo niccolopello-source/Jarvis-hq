@@ -38,7 +38,7 @@ test("a different seed diverges, and a trade decision diverges from the same see
 });
 
 test("retiring at the offer leaves out the age-36 season the other choice plays", () => {
-  const seed = 29930;
+  const seed = 2;
   const play = playCareerSim({ ...FIXED, seed, retirement: "play36" });
   const stop = playCareerSim({ ...FIXED, seed, retirement: "retire" });
   assert.equal(play.extraSeason, true);
