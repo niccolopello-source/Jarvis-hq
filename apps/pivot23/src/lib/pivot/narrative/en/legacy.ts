@@ -21,6 +21,7 @@ export const EN_LEGACY: Readonly<Record<string, string>> = {
   "Gli infortuni hanno scritto più di una pagina. Il corpo ha chiesto il conto, più di una volta.": "Injuries wrote more than one page. The body came to collect, more than once.",
   "Un anno spezzato. Si vede ancora, nel modo in cui conta i minuti.": "A broken year. It still shows, in the way you count minutes.",
   "Quattro maglie, o più. {0} città. Il mestiere è stato un viaggio, non una casa.": "Four jerseys, or more. {0} cities. The craft was a journey, not a home.",
+  "Quattro maglie, o più. {0} squadre. Il mestiere è stato un viaggio, non una casa.": "Four jerseys, or more. {0} teams. The craft was a journey, not a home.",
   "Una sola maglia: {0}. Raro, e si vede.": "A single jersey: {0}. Rare, and it shows.",
   "Due maglie. Un passaggio, non un esilio.": "Two jerseys. A move, not an exile.",
   "Hai chiuso con un anello da veterano. Il tipo di fine che si racconta senza alzare la voce.": "You finished with a ring as a veteran. The kind of ending you tell without raising your voice.",

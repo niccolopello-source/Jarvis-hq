@@ -10,6 +10,7 @@
 import { chromePairs, type Lang } from "../i18n";
 import { LEGACY_EN_IT } from "./legacy-it";
 import { EN_PROSE, IT_PROSE } from "./markers";
+import { agreeTeamsEn } from "./agreement";
 import { buildCatalog, translateWith, type Catalog } from "./translate";
 
 // The English catalog is a lazy chunk: Italian readers never download it.
@@ -50,7 +51,7 @@ export function nx(text: string | null | undefined, lang: Lang): string {
   if (!text) return text ?? "";
   if (lang === "en") {
     const r = translateWith(enCatalog(), text, IT_PROSE);
-    return r.ok ? r.text : text;
+    return r.ok ? agreeTeamsEn(r.text) : text;
   }
   // Italian prose is never sent through the reverse catalog; short English lines with no
   // give-away word ("No meeting. Just games.") still are, and only an exact full match changes them.
@@ -63,6 +64,9 @@ export function nx(text: string | null | undefined, lang: Lang): string {
 
 /** Same as nx(), also telling whether every piece was resolved. Used by the coverage tests. */
 export function nxCheck(text: string, lang: Lang): { text: string; ok: boolean } {
-  if (lang === "en") return translateWith(enCatalog(), text, IT_PROSE);
+  if (lang === "en") {
+    const r = translateWith(enCatalog(), text, IT_PROSE);
+    return { ...r, text: agreeTeamsEn(r.text) };
+  }
   return translateWith(itCatalog(), text, EN_PROSE);
 }
