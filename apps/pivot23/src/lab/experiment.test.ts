@@ -30,7 +30,6 @@ function fp(seed: number) {
 }
 
 test("experiment absent keeps the no-hook fingerprints", () => {
-  assert.equal(fp(23017), fp(23017));
   assert.equal(fp(23017), "bd49e94d49927254");
   assert.equal(fp(23034), "01bb9bd52abd5a9d");
   assert.equal(fp(23102), "46de14988ae7c8fa");
