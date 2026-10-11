@@ -400,8 +400,16 @@ export function PivotApp() {
 
   useEffect(() => {
     if (screen !== "career" || !pending) return;
-    const el = document.querySelector("[data-pending]");
-    if (el) el.scrollIntoView({ behavior: "auto", block: "nearest" });
+    const el = document.querySelector<HTMLElement>("[data-pending]");
+    if (!el) return;
+    el.scrollIntoView({ behavior: "auto", block: "nearest" });
+    // The control that was just used is gone with the old card: hand focus to the new one so a
+    // keyboard or screen-reader user continues from here instead of the top of the page.
+    const active = document.activeElement;
+    if (!active || active === document.body) {
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
+      el.focus({ preventScroll: true });
+    }
   }, [pending, log.length, screen]);
 
   const tabRef = useRef(tab);

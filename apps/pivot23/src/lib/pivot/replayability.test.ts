@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { STORY_POOL } from "./data.ts";
-import { playCareerSim } from "./engine.ts";
+import { advanceCareerSim, openCareerSim, playCareerSim } from "./engine.ts";
 import { careerShape, careerSimilarity, careerTelemetry, identityKey, macroIdentity } from "./replayability.ts";
 
 const FIXED = {
@@ -110,4 +110,40 @@ test("gameplay modules do not call Math.random", () => {
   };
   walk(root);
   assert.deepEqual(offenders, []);
+});
+
+/* PR #61 QA: seed 29930 was moved out of the age-36 test. It is not a bug: after the isolated ROY
+   stream changed the career path, this journeyman (peak OVR 63) reaches the 33 summer with
+   injuryDrag 3.2 >= 2.5, so careerEndingSignal() closes the career before any 36 offer.
+   This is a 2.12 career path: on 2.13.0 (#66, D-09 world regress) the same seed reaches 36, so the
+   check runs on a career created on 2.12.0-beta, which must still end exactly as before. */
+const legacyCareer = (opts: Parameters<typeof openCareerSim>[0]) => {
+  const job = openCareerSim(opts);
+  job.s.engineVersion = "2.12.0-beta";
+  while (!advanceCareerSim(job));
+  return job.s;
+};
+test("seed 29930 ends at 32 by the injury rule, so both retirement choices give the same career", async () => {
+  const { careerEndingSignal } = await import("./peak.ts");
+  const play = legacyCareer({ ...FIXED, seed: 29930, retirement: "play36" });
+  const stop = legacyCareer({ ...FIXED, seed: 29930, retirement: "retire" });
+  assert.equal(play.seasonHistory.at(-1)?.age, 32);
+  assert.equal(careerEndingSignal(play), "injury");
+  assert.ok(play.injuryDrag >= 2.5);
+  assert.equal(play.extraSeason, false);
+  assert.equal(stop.extraSeason, false);
+  assert.equal(identityKey(careerShape(play)), identityKey(careerShape(stop)));
+});
+
+test("every career that stops before 36 is explained by a retirement rule, never by a ghost stop", async () => {
+  const { careerEndingSignal } = await import("./peak.ts");
+  const unexplained: string[] = [];
+  for (let seed = 29900; seed < 29960; seed++) {
+    const s = playCareerSim({ ...FIXED, seed, retirement: "play36" });
+    const last = s.seasonHistory.at(-1)?.age ?? 0;
+    if (last < 36 && careerEndingSignal(s) === null) unexplained.push(`${seed}: last age ${last}`);
+    const ages = s.seasonHistory.map((r) => r.age);
+    if (new Set(ages).size !== ages.length) unexplained.push(`${seed}: repeated age`);
+  }
+  assert.deepEqual(unexplained, []);
 });
