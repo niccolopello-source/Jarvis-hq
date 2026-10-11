@@ -16,7 +16,7 @@ export const TUNING = {
   /** D-08: how much choices and injuries move the realised share of potential. */
   bust: "current" as "current" | "choices" | "events",
   /** D-09: title spread across simulated worlds. */
-  world: "current" as "current" | "jitter" | "regress",
+  world: "regress" as "current" | "jitter" | "regress",
   /** D-23: DPOY voter fatigue. current = 5.5% per DPOY won, capped at 22% (rule before 2.12.0). */
   dpoyFatigue: "streak" as "current" | "steeper" | "streak",
   /** D-23 streak: fatigue per consecutive DPOY and its cap (0.12 / 0.36 = values of the experiment). */
@@ -36,20 +36,36 @@ export const TUNING_DEFAULTS: Readonly<Tuning> = Object.freeze({ ...TUNING });
 /** First engine version whose careers use the D-11/D-23 rules above. */
 export const BALANCE_SINCE = "2.12.0";
 
-/** Rules that careers created before BALANCE_SINCE keep. */
-export const LEGACY_RULES = Object.freeze({ scriptWindows: "fixed", dpoyFatigue: "current" } as const);
+/** First engine version whose careers use the D-09 world rule (title spread). */
+export const WORLD_SINCE = "2.13.0";
 
-function versionParts(v: string): number[] {
-  const m = /^(\d+)\.(\d+)\.(\d+)/.exec(v);
-  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : [0, 0, 0];
+/** Rules that careers created before BALANCE_SINCE (D-11/D-23) or WORLD_SINCE (D-09) keep. */
+export const LEGACY_RULES = Object.freeze({ scriptWindows: "fixed", dpoyFatigue: "current", world: "current" } as const);
+
+/**
+ * major.minor.patch of an engine version, or null when unreadable. Accepts an optional "v", a
+ * missing patch ("2.13" = 2.13.0), surrounding spaces, and any pre-release/build suffix
+ * ("2.13.0-beta", "2.13.0-rc.1+abc"). A pre-release counts as its release: the game ships
+ * betas, and a "2.13.0-beta" career must play by the 2.13.0 rules.
+ */
+export function versionCore(v: unknown): [number, number, number] | null {
+  if (typeof v !== "string") return null;
+  const m = /^v?(\d+)\.(\d+)(?:\.(\d+))?(?:[-+][0-9A-Za-z.+-]*)?$/.exec(v.trim());
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3] ?? 0)] : null;
 }
 
-/** True when a career was created by BALANCE_SINCE or later. A missing or unreadable version counts as older. */
-export function usesBalance(career: { engineVersion?: string }): boolean {
-  const a = versionParts(typeof career.engineVersion === "string" ? career.engineVersion : "");
-  const b = versionParts(BALANCE_SINCE);
+/** True when `version` is `since` or later. A missing or unreadable version counts as older. */
+export function versionAtLeast(version: unknown, since: string): boolean {
+  const a = versionCore(version);
+  const b = versionCore(since);
+  if (!a || !b) return false;
   for (let i = 0; i < 3; i++) if (a[i] !== b[i]) return a[i]! > b[i]!;
   return true;
+}
+
+/** True when a career was created by BALANCE_SINCE or later. */
+export function usesBalance(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, BALANCE_SINCE);
 }
 
 export function scriptWindowsOf(career: { engineVersion?: string }): Tuning["scriptWindows"] {
@@ -58,6 +74,11 @@ export function scriptWindowsOf(career: { engineVersion?: string }): Tuning["scr
 
 export function dpoyFatigueOf(career: { engineVersion?: string }): Tuning["dpoyFatigue"] {
   return usesBalance(career) ? TUNING.dpoyFatigue : LEGACY_RULES.dpoyFatigue;
+}
+
+/** D-09: the title-spread rule this career plays by. */
+export function worldOf(career: { engineVersion?: string }): Tuning["world"] {
+  return versionAtLeast(career.engineVersion, WORLD_SINCE) ? TUNING.world : LEGACY_RULES.world;
 }
 
 /** Restores shipped behaviour (used by tests and the comparison script). */

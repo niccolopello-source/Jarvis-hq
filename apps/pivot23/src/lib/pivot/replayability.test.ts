@@ -38,7 +38,11 @@ test("a different seed diverges, and a trade decision diverges from the same see
 });
 
 test("retiring at the offer leaves out the age-36 season the other choice plays", () => {
-  const seed = 2;
+  // First seed that reaches the age-36 offer: a fixed seed (29930, then 2) broke each time an
+  // engine change moved the career path. Fails loudly if none of 1..200 does.
+  let seed = 1;
+  while (seed <= 200 && !playCareerSim({ ...FIXED, seed, retirement: "play36" }).extraSeason) seed++;
+  assert.ok(seed <= 200, "no career from seed 1..200 reaches the age-36 offer");
   const play = playCareerSim({ ...FIXED, seed, retirement: "play36" });
   const stop = playCareerSim({ ...FIXED, seed, retirement: "retire" });
   assert.equal(play.extraSeason, true);
