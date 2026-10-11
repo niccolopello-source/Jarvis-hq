@@ -48,3 +48,15 @@ Non sono nel repository. Senza questi non si sceglie un modello a pagamento.
 ## Criterio di stop
 
 Si ferma prima del codice di pagamento se manca uno di questi: testo legale approvato, divieto pay-to-win scritto nel contratto del modulo, ospite ancora completo, listino firmato da Pello, nessun segreto nel client.
+
+
+## Stato al 11 ottobre 2026 (Missione 2)
+| Elemento | Stato |
+|---|---|
+| Career Card standard, report, archivio, export PNG locale | **Operativo e gratuito** |
+| Temi «Grafite» e «Ossidiana» | **Operativi e gratuiti** |
+| Catalogo cosmetico (`cosmetics.ts`), contratto `CosmeticCatalogModule` | **Prototipo**: due temi dimostrativi dietro flag spento, non vendibili |
+| Checkout | **Non esiste**. `checkout()` risponde sempre `not-configured` |
+| Carta firmata dal server, NFT | **Dipendenza futura** (P-006, account, verifica server, parere legale) |
+
+Un checkout reale richiederebbe: provider scelto da Pello, listino approvato (M-003), testi legali e recesso, IVA/fatturazione, gestione rimborsi, entitlement salvato lato server o verificabile, consenso privacy. Nessuno di questi esiste.

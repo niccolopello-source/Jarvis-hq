@@ -47,3 +47,8 @@ Da portare a un legale, non risolti qui:
 Sessione rubata, password riusata, carriera cloud sovrascritta, export di un'altra persona, segreto nel JavaScript, nome del giocatore finito in analytics, prezzo letto dal motore.
 
 Contromisure previste e non costruite: hash, TLS, sessione che scade, limite sui tentativi, la carriera appartiene all'account, nessun segreto nel client, log senza il payload, cifratura a riposo quando ci sarà un database. Il checksum locale non è in questo elenco.
+
+
+## Aggiunte 2026-10-11
+- `pivot-v2-card-theme` (localStorage): id tema. Nessun dato personale, non esce dal dispositivo.
+- Export PNG: generato e scaricato in locale, nessun upload.

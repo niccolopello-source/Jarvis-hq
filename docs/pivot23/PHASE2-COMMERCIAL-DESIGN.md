@@ -154,3 +154,7 @@ Ipotesi, non numeri di mercato: un database, la posta di verifica, un gestore pa
 ## 11. Revisione legale, obbligatoria prima del codice
 
 GDPR, ePrivacy, età minima, trasferimento fuori dallo Spazio economico europeo, testi di consenso, conservazione, notifica di violazione, marchi delle franchigie già presenti nel client, e il fatto che un cosmetico o una carta non sia un prodotto finanziario. Questi punti non sono risolti qui.
+
+
+## Aggiornamento 11 ottobre 2026
+I temi della Career Card esistono come campo di presentazione fuori dal `PlayerState` (`pivot-v2-card-theme`). Vedi `CAREER-CARD.md` e la tabella in `MONETIZATION-STRATEGY.md`. Nessun pagamento attivo.
