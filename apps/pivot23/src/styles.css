@@ -2513,3 +2513,7 @@ img.court-mark-photo {
 .offer-btn.ext .text-muted {
   color: color-mix(in oklab, var(--color-chalk) 72%, var(--color-muted));
 }
+/* On hover the choice turns court-soft; plain muted text fell to 4.21:1 on it. */
+.choice-btn:hover .text-muted {
+  color: color-mix(in oklab, var(--color-chalk) 72%, var(--color-muted));
+}
