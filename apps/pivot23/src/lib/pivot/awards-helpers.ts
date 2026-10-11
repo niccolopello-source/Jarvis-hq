@@ -1,7 +1,7 @@
 
 /** ROY ~7% anno 1 NBA. DPOY ogni stagione NBA: stessa scala del campo, vince il box difensivo. */
 import { SIM } from "./config";
-import { dpoyFatigueOf, TUNING } from "./tuning";
+import { dpoyFatigueOf, dpoyStreakStepOf, TUNING } from "./tuning";
 import { diffOf } from "./difficulty";
 import { advancedOf } from "./peak";
 import { findTeam, NBA_TEAMS } from "./teams";
@@ -386,7 +386,7 @@ function dpoyFatigue(s: PlayerState): number {
       if (!s.seasonHistory[i]!.awards.includes("DPOY")) break;
       streak += 1;
     }
-    return Math.min(TUNING.dpoyStreakCap, streak * TUNING.dpoyStreakStep);
+    return Math.min(TUNING.dpoyStreakCap, streak * dpoyStreakStepOf(s));
   }
   return Math.min(0.22, count * 0.055);
 }
