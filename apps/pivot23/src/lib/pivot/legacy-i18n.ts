@@ -84,6 +84,7 @@ const IT = {
   tlBest: "Stagione migliore: {ppg} punti a partita",
   tlRetire: "Ritiro a {age} anni",
   footer: "Generata sul dispositivo da PIVOT 23",
+  bust: "Bust: scelta al primo giro che non è mai esplosa",
 };
 type Key = keyof typeof IT;
 
@@ -161,6 +162,7 @@ const EN: Record<Key, string> = {
   tlBest: "Best season: {ppg} points per game",
   tlRetire: "Retires at {age}",
   footer: "Generated on this device by PIVOT 23",
+  bust: "Bust: first-round pick who never broke through",
 };
 
 export type LegacyKey = Key;

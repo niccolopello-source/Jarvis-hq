@@ -167,6 +167,11 @@ export interface LegacyReport {
   closing: string;
   engineVersion: string | null;
   simulated: boolean;
+  /**
+   * D-08 bust label, end of career only. null = not evaluated: Lucille's careerBust() (bust.ts)
+   * is not on main yet. When it lands: careerBust({ draftPick, allStarCount, seasonHistory: rows }).
+   */
+  bust: boolean | null;
 }
 
 function roleCodeOf(entry: ArchiveCareer, facts: LegacyFacts | null): Role | null {
@@ -319,6 +324,7 @@ export function buildLegacyReport(entry: ArchiveCareer): LegacyReport {
     closing: entry.closing,
     engineVersion: entry.engineVersion ?? card?.engineVersion ?? null,
     simulated: !!entry.simulated,
+    bust: null,
   };
 }
 

@@ -166,6 +166,7 @@ export function LegacyReportView({ report, uid }: { report: LegacyReport; uid: s
       <h3 className="lr-title">{lt("reportTitle", lang)}</h3>
       <Section title={lt("story", lang)} id={`${uid}-story`}>
         {narrativeOf(r, lang).map((s) => <p key={s} className="lr-story">{s}</p>)}
+        {r.bust ? <p className="lr-story" data-bust>{lt("bust", lang)}</p> : null}
         <p className="lr-story lr-close">{nx(r.closing, lang)}</p>
       </Section>
       <Section title={lt("identity", lang)} id={`${uid}-id`}>
