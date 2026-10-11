@@ -51,3 +51,27 @@ Ambiente: Chromium headless, viewport 800×600. Carriera «Playoff», playmaker,
 È comparsa un'offerta Chicago Bulls e il click l'ha accettata. Non è una free agency completata. Nessuna serie è stata aperta, quindi il refresh durante la serie non è stato eseguito. Errori JavaScript catturati: nessuno.
 
 Il seed di laboratorio 23000 resta un PASS del motore, non dell'interfaccia. Gate playoff browser: NOT RUN. Demo: NOT READY.
+
+---
+
+## Demo gate — rilevazione 11 ott 2026 (Lucille, `lucille/demo-gate-stabilization`)
+
+Base misurata: `main` @ `f52ae5b` (merge #62–#65). Ambiente: box Linux condivisa, Node + pnpm 10, Chromium headless Playwright, build di produzione servita da `vite preview` (`E2E_PREVIEW=1`). **Nessun dispositivo fisico né Safari reale**: vedi `DEVICE-MANUAL-QA.md`.
+
+| Gate | Stato | Evidenza |
+|---|---|---|
+| lint / typecheck / build / check:headers | PASS | `pnpm run lint`, `typecheck`, `build`, `check:headers` exit 0 su `f52ae5b` |
+| Unit (`pnpm test`) | PASS | 188/188 |
+| Statistici (`pnpm test:stats`) | PASS | 3/3 |
+| E2E su build di produzione | PASS | 77/77 in 2,9 min su `f52ae5b` |
+| Carriera completa nel browser (draft → ritiro → archivio → riapertura, reload a metà) | PASS | `readiness.spec.ts` «a full career…» |
+| Reload con carta playoff/mercato in sospeso: stessa decisione, nessuna decisione persa o duplicata | PASS (Chromium) | nuovo `demo-gate.spec.ts`, 6/6 carriere casuali; playoff raggiunti in 2/6, mercato in 5/6 |
+| Viewport 320/360/375/390/393/430/768 + desktop + landscape: nessun overflow, target ≥24px | PASS (emulazione) | `readiness.spec.ts`, aggiunto 430×932 |
+| Salvataggi corrotti / versione futura / storage assente / archivio non scrivibile / archivio pieno | PASS | `save-safety.spec.ts` |
+| Bundle iniziale ≤ 350 kB gzip | PASS | JS caricato all'avvio (index+react-vendor+runtime) ≈ 155 kB gzip; chart/narrative/catalog-en caricati dopo |
+| Nessun analytics/ads/pagamenti/wallet/token nel bundle | PASS | scansione `dist/`: nessun dominio terzo, nessuna chiave |
+| Performance avvio (lab, 4× CPU, cache calda, localhost) | PASS lab / NOT VERIFIED reale | «Inizia» pronto P75 121 ms, P95 193 ms; tap→setup P75 155 ms; long task max P75 78 ms (avvio) |
+| Simulazione di una stagione ≤ 1,2 s | NOT RUN | |
+| iPhone/Safari iOS, Android fisico | BLOCKED | nessun dispositivo; protocollo in `DEVICE-MANUAL-QA.md` |
+
+Verdetti: demo tecnicamente giocabile **sì (Chromium)**; demo pubblica accettabile **NOT READY** finché il protocollo su dispositivo reale non è eseguito; rilascio commerciale **NOT READY**.

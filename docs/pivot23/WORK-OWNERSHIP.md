@@ -36,7 +36,7 @@ Serve soprattutto perché sul repository operano più agenti IA (Grok Bot, Grok 
 | Career Legacy Report / Career Card (Bible §5, Blocco D) | **Grok** (assegnato dalla Bible) | *non pubblicato* | — | **NON VERIFICATO** — ultimo lavoro noto: `fix/roy-isolated` (#61, unita 11 ott); prima: `grok/demo-gate/*` (#58–#60, persistenza) | 11 ott 2026 |
 | Intro / visual (Bible Blocco E — Frontend/Art) | **Da assegnare** (Frontend / Art per Bible) | — | — | Libero / da assegnare. Nota: l'intro con pallone è stata sostituita dal logo (#56); i suoni vanno riallineati alla versione finale. | 11 ott 2026 |
 | Motore / bilanciamento (oltre le PR già unite) | — | — | — | Libero. Non avviare lavoro parallelo senza aggiornare questa tabella. | 11 ott 2026 |
-| Persistenza / archive / save-load | — | — | — | Libero dopo #58–#60. | 11 ott 2026 |
+| Demo gate: stabilità app, percorso carriera, persistenza, UI responsive, QA browser, release gate (solo test/doc finché non emerge un bug riproducibile; non tocca motore né Career Card/Legacy Report/temi di Jarvis) | **Lucille** (Grok Bot, worker demo-gate) | `lucille/demo-gate-stabilization` | (questa PR) | Bozza | 11 ott 2026 |
 
 ---
 
