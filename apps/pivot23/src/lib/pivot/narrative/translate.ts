@@ -14,6 +14,8 @@ type Template = {
   re: RegExp;
   slots: string[];
   out: string;
+  /** False only for a one-sentence key that ends on a slot ("la piazza di {0}"): that slot must stay inside its sentence. */
+  multi?: boolean;
   /** Longest literal chunk, used as a cheap pre-filter. */
   needle: string;
   weight: number;
@@ -89,7 +91,7 @@ export function buildCatalog(pairs: Pairs): Catalog {
     });
     src += "$";
     if (weight < 2) continue;
-    const tpl: Template = { re: new RegExp(src, "s"), slots, out, needle, weight };
+    const tpl: Template = { re: new RegExp(src, "s"), slots, out, needle, weight, multi: SENTENCE_BREAK.test(key) || parts[parts.length - 1] !== "" };
     const head = parts[0]!;
     if (head.length >= HEAD) {
       const k = head.slice(0, HEAD).toLowerCase();
@@ -186,6 +188,9 @@ function whole(n: string, ctx: Ctx): Result | null {
         cap = !!m;
       }
       if (!m) continue;
+      // A one-sentence template ("la piazza di {0}") must not swallow the next sentences into a
+      // slot: "La piazza di Memphis ha una voce. …" would become "The Memphis has a voice. … crowd".
+      if (!tpl.multi && /[.!?…]\s+\p{Lu}/u.test(m[m.length - 1] ?? "")) continue;
       let ok = true;
       const values = m.slice(1).map((c) => {
         const r = segment(c, { ...ctx, depth: ctx.depth + 1 });

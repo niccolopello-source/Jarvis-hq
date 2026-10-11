@@ -156,7 +156,7 @@ export function careerCommentary(s: PlayerState): string {
   if (inj >= 3) bits.push("Gli infortuni hanno scritto più di una pagina. Il corpo ha chiesto il conto, più di una volta.");
   else if (inj === 1) bits.push("Un anno spezzato. Si vede ancora, nel modo in cui conta i minuti.");
 
-  if (p.teams.length >= 4) bits.push(`Quattro maglie, o più. ${p.teams.length} città. Il mestiere è stato un viaggio, non una casa.`);
+  if (p.teams.length >= 4) bits.push(`Quattro maglie, o più. ${p.teams.length} squadre. Il mestiere è stato un viaggio, non una casa.`);
   else if (p.teams.length === 1) bits.push(`Una sola maglia: ${p.teams[0]}. Raro, e si vede.`);
   else if (p.teams.length === 2) bits.push(`Due maglie. Un passaggio, non un esilio.`);
 
