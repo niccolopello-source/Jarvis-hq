@@ -326,7 +326,9 @@ test("the age-36 season is played once and the career then closes", async ({ pag
   }
 
   await expect(page.getByRole("heading", { name: "Carriera conclusa" })).toBeVisible();
-  await expect(page.getByText("36 anni")).toBeVisible();
+  // The hero line and the Legacy Report timeline both state the final age: they must agree on 36.
+  await expect(page.locator(".result-span")).toContainText("36 anni");
+  await expect(page.locator("[data-legacy-report]").getByText("Ritiro a 36 anni")).toBeVisible();
   await expect(page.getByText("1 stagione").first()).toBeVisible();
   const card = page.getByRole("region", { name: "Career Card" });
   await card.scrollIntoViewIfNeeded();

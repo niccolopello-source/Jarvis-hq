@@ -29,7 +29,6 @@ import {
   beginPlayoffs,
   buildFaOffers,
   buildTradeOffer,
-  careerCardOf,
   displayOverall,
   fillTemplate,
   finishDraft,
@@ -79,8 +78,11 @@ import { ModalDialog } from "@/components/pivot/Dialog";
 import { LazyChunk } from "@/components/pivot/ChunkBoundary";
 import { attrLabel, chipLabel, confLabel, seedLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel } from "@/lib/pivot/labels";
 import { loadNarrativeEn, nx } from "@/lib/pivot/narrative";
+import { withLegacyFacts } from "@/lib/pivot/legacy-report";
 
 const loadCareerChart = () => import("@/components/pivot/CareerChart");
+const loadLegacy = () => import("@/components/pivot/legacy/LegacyExperience");
+const pickLegacy = (m: typeof import("@/components/pivot/legacy/LegacyExperience")) => m.LegacyExperience;
 const pickCareerChart = (m: typeof import("@/components/pivot/CareerChart")) => m.CareerChart;
 import { HOLD_FINALS_MS, HOLD_MARKET_MS, HOLD_RECAP_MS, HOLD_TITLE_MS } from "@/lib/pivot/config";
 import { EURO_TEAMS, NBA_TEAMS } from "@/lib/pivot/teams";
@@ -585,7 +587,7 @@ export function PivotApp() {
           window.setTimeout(pump, 0);
           return;
         }
-        const entry = toArchive(job.s);
+        const entry = withLegacyFacts(toArchive(job.s), job.s);
         const all = saveArchive(entry);
         noteArchive(entry.id);
         simJob.current = null;
@@ -640,7 +642,7 @@ export function PivotApp() {
       startProPath(s, path);
       const land = revealDraftLanding(s);
       s.choiceLog.push({ season: 0, title: "Percorso", pick: path });
-      s.choiceLog.push({ season: 0, title: "Chiamata", pick: `${land.pick}ª` });
+      s.choiceLog.push({ season: 0, title: "Chiamata", pick: `${land.pick}ª · ${land.team.name}` });
       const flavor = `${pathFeel(path, s.team.name, s)} Sei la ${land.pick}ª scelta. Contratto: ${s.contract.years} ${s.contract.years === 1 ? "anno" : "anni"} a ${s.contract.annualM} milioni.`;
       return { pick: land.pick, flavor };
     });
@@ -991,7 +993,7 @@ export function PivotApp() {
     const key = `${s.seed}:${s.seasonHistory.length}:${s.age}`;
     if (finishedCareerKey.current === key) return;
     finishedCareerKey.current = key;
-    const entry = toArchive(s);
+    const entry = withLegacyFacts(toArchive(s), s);
     const all = saveArchive(entry);
     noteArchive(entry.id);
     setArchive(all);
@@ -1281,7 +1283,7 @@ export function PivotApp() {
       )}
 
       {screen === "result" && player && (
-        <ResultView player={player} onReplay={() => requestNewLife("replay")} onArchive={() => { setViewing(null); setScreen("archive"); }} />
+        <ResultView player={player} entry={archive.find((c) => !!c.careerId && c.careerId === player.careerId) ?? null} onReplay={() => requestNewLife("replay")} onArchive={() => { setViewing(null); setScreen("archive"); }} />
       )}
 
       {screen === "archive" && (
@@ -2297,12 +2299,27 @@ function AttrBars({ attrs }: { attrs: Record<AttrKey, number> }) {
   );
 }
 
+function LegacyBlock({ entry }: { entry: ArchiveCareer }) {
+  const lang = useLang();
+  return (
+    <LazyChunk
+      load={loadLegacy}
+      pick={pickLegacy}
+      props={{ entry }}
+      label={t("careerCardChunk", lang)}
+      fallback={<div className="legacy-experience" aria-busy="true" style={{ minHeight: 520 }} />}
+    />
+  );
+}
+
 function ResultView({
   player,
+  entry,
   onReplay,
   onArchive,
 }: {
   player: PlayerState;
+  entry: ArchiveCareer | null;
   onReplay: () => void;
   onArchive: () => void;
 }) {
@@ -2311,7 +2328,6 @@ function ResultView({
   const comment = careerCommentary(player);
   const hof = hofTier(player);
   const lang = useLang();
-  const [fullYears, setFullYears] = useState(false);
   const jerseys = useMemo(() => {
     const seen: { abbr: string; color: string; secondary: string; name: string }[] = [];
     for (const r of player.seasonHistory) {
@@ -2325,7 +2341,8 @@ function ResultView({
     }
     return seen;
   }, [player.seasonHistory]);
-  const years = fullYears ? player.seasonHistory : player.seasonHistory.slice(-8);
+  // The archived entry is the source of truth; before it lands, the same builder runs on the player.
+  const shown = useMemo(() => entry ?? withLegacyFacts(toArchive(player), player), [entry, player]);
   return (
     <section className="result-view finale-sheet">
       <div className={`result-card ${v.card}`}>
@@ -2361,80 +2378,9 @@ function ResultView({
           <h3>{t("careerDone", lang)}</h3>
           {hof === "hall" ? <p>{t("hofIn", lang)}</p> : null}
         </div>
-        <div className="result-stats">
-          {[
-            [p.avgPpg.toFixed(1), "PPG"],
-            [p.avgRpg.toFixed(1), "RPG"],
-            [p.avgApg.toFixed(1), "APG"],
-            [formatCareerTotal(p.points, lang), t("points", lang)],
-            [formatCareerTotal(p.titles, lang), t("titles", lang)],
-            [formatCareerTotal(p.mvp, lang), t("mvp", lang)],
-          ].map(([val, lab]) => (
-            <div key={String(lab)} className="result-stat">
-              <div className="tv">{val}</div>
-              <div className="tl">{lab}</div>
-            </div>
-          ))}
-        </div>
-        <div className="result-chips">
-          {[
-            p.allStar ? `${p.allStar}× ${t("allStar", lang)}` : null,
-            p.allNba ? `${p.allNba}× ${t("allNba", lang)}` : null,
-            p.fmvp ? `${p.fmvp}× ${t("fmvp", lang)}` : null,
-            p.dpoy ? `${p.dpoy}× ${t("dpoy", lang)}` : null,
-            p.roy ? t("roy", lang) : null,
-            player.medal ? t("medal", lang) : null,
-            jerseys.length ? `${jerseys.length} ${t(jerseys.length === 1 ? "jerseyOne" : "jerseyMany", lang)}` : null,
-          ]
-            .filter(Boolean)
-            .map((t) => (
-              <span key={String(t)} className="result-chip">
-                {t}
-              </span>
-            ))}
-        </div>
-        {p.best && (
-          <p className="result-best">
-            {t("bestYear", lang)}: {getSeasonDisplayLabel(p.best.season)} · {p.best.teamAbbr} · {p.best.ppg.toFixed(1)} PPG · OVR {displayOverall(p.best.overall)}
-            {p.best.awards.length ? ` · ${awardLabel(p.best.awards[0]!, lang)}` : ""}
-          </p>
-        )}
         <p className="feel-line">{nx(comment, lang)}</p>
       </div>
-      <CareerCardPanel
-        card={careerCardOf(player)}
-        history={player.seasonHistory}
-        choices={player.choiceLog}
-        careerId={player.careerId}
-      />
-      <h4 className="stats-heading">{t("winters", lang)}</h4>
-      {years.map((r) => (
-        <div
-          key={r.season}
-          className="year-line"
-          style={{ ["--club" as string]: r.teamColor }}
-        >
-          <TeamMark
-            team={{ abbr: r.teamAbbr, color: r.teamColor, secondary: r.teamSecondary || r.teamColor }}
-            size={28}
-            number={player.number}
-          />
-          <div>
-            <div className="year-line-title">{getSeasonDisplayLabel(r.season)}</div>
-            <div className="year-line-sub">
-              {r.teamAbbr} · {displayOverall(r.overall)} · {playoffResultLabel(r.playoff, lang) || "—"}
-            </div>
-          </div>
-          <div className="year-line-box">
-            {r.ppg.toFixed(1)}/{r.rpg.toFixed(1)}/{r.apg.toFixed(1)}
-          </div>
-        </div>
-      ))}
-      {!fullYears && player.seasonHistory.length > 8 && (
-        <button type="button" className="ghost-btn mt-2.5" onClick={() => setFullYears(true)}>
-          {tf("wholeCareer", { n: player.seasonHistory.length }, lang)}
-        </button>
-      )}
+      <LegacyBlock entry={shown} />
       <h4 className="stats-heading">{t("traitsRevealed", lang)}</h4>
       {(Object.keys(HIDDEN_LABELS) as HiddenKey[]).map((k) => (
         <div key={k} className="mb-2">
@@ -2484,22 +2430,7 @@ function ArchiveView({
           {viewing.difficulty ? ` · ${difficultyFace(viewing.difficulty, lang).label}` : ""}
         </p>
         <p className="italic text-muted text-[14px] mb-4">{nx(viewing.closing, lang)}</p>
-        <CareerCardPanel
-          card={viewing.card}
-          history={viewing.history}
-          choices={viewing.choices}
-          careerId={viewing.careerId}
-        />
-        {viewing.history.map((r) => (
-          <div key={r.season} className="flex justify-between py-2 border-b border-line text-[13px]">
-            <span>
-              {getSeasonDisplayLabel(r.season)} · {r.teamAbbr}
-            </span>
-            <span className="text-wood font-display">
-              {r.ppg.toFixed(1)}/{r.rpg.toFixed(1)}/{r.apg.toFixed(1)}
-            </span>
-          </div>
-        ))}
+        <LegacyBlock entry={viewing} />
         <h4 className="font-display text-[18px] mt-4 mb-2">{t("choices", lang)}</h4>
         {viewing.choices.map((c, i) => (
           <div key={i} className="text-[13px] py-1 text-muted">
@@ -2536,73 +2467,6 @@ function ArchiveView({
           </span>
         </button>
       ))}
-    </section>
-  );
-}
-
-function CareerCardPanel({
-  card,
-  history,
-  choices,
-  careerId,
-}: {
-  card: ReturnType<typeof careerCardOf> | undefined;
-  history: ArchiveCareer["history"];
-  choices: ArchiveCareer["choices"];
-  careerId?: string;
-}) {
-  const lang = useLang();
-  if (!card) return null;
-  const draft = choices.find((choice) => choice.title === "Chiamata");
-  const teams = [...new Set(history.map((season) => season.team))];
-  const awards = new Map<string, number>();
-  for (const season of history) {
-    for (const award of season.awards || []) awards.set(award, (awards.get(award) ?? 0) + 1);
-  }
-
-  return (
-    <section
-      className={`result-card career-collectible ${card.legacyTier}`}
-      data-career-card
-      data-career-id={careerId || undefined}
-      role="region"
-      aria-label="Career Card"
-    >
-      <div className="eyebrow">Career Card · {card.engineVersion}</div>
-      <h3 className="page-title text-chalk">{card.playerName}</h3>
-      <p className="result-name">{roleLabel(card.role, lang)} · {nationLabel(card.nationality, lang)}</p>
-      <p className="result-span">
-        {t("age", lang)} {card.ageStart}–{card.ageEnd} · {seasonCountLabel(card.seasons, lang)} · {t("peak", lang)} {displayOverall(card.peakOverall)}
-      </p>
-      <div className="result-stats">
-        {[
-          [card.ppg.toFixed(1), "PPG"],
-          [card.rpg.toFixed(1), "RPG"],
-          [card.apg.toFixed(1), "APG"],
-          [formatCareerTotal(card.championships, lang), t("titles", lang)],
-          [formatCareerTotal(card.allStars, lang), "All-Star"],
-          [formatCareerTotal(card.mvps, lang), "MVP"],
-        ].map(([value, label]) => (
-          <div key={String(label)} className="result-stat">
-            <div className="tv">{value}</div>
-            <div className="tl">{label}</div>
-          </div>
-        ))}
-      </div>
-      <p className="feel-line">{tf("draftLine", { v: draft?.pick ? nx(draft.pick, lang) : t("noData", lang) }, lang)}</p>
-      <p className="feel-line">{tf("teamsLine", { v: teams.length ? teams.join(" → ") : t("noData", lang) }, lang)}</p>
-      {awards.size > 0 && (
-        <p className="feel-line">
-          {tf("seasonAwardsLine", { v: [...awards].map(([name, count]) => `${count}× ${awardLabel(name, lang)}`).join(" · ") }, lang)}
-        </p>
-      )}
-      {card.milestones.length > 0 && (
-        <div className="result-chips" aria-label={t("milestonesH", lang)}>
-          {/* Labels repeat across seasons (two All-Star years): the index keeps React keys unique. */}
-          {card.milestones.map((milestone, i) => <span key={`${i}-${milestone}`} className="result-chip">{nx(milestone, lang)}</span>)}
-        </div>
-      )}
-      <p className="result-close">{nx(card.verdict, lang)} · Legacy {card.legacyTier}</p>
     </section>
   );
 }

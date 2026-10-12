@@ -51,3 +51,29 @@ Ambiente: Chromium headless, viewport 800×600. Carriera «Playoff», playmaker,
 È comparsa un'offerta Chicago Bulls e il click l'ha accettata. Non è una free agency completata. Nessuna serie è stata aperta, quindi il refresh durante la serie non è stato eseguito. Errori JavaScript catturati: nessuno.
 
 Il seed di laboratorio 23000 resta un PASS del motore, non dell'interfaccia. Gate playoff browser: NOT RUN. Demo: NOT READY.
+
+---
+
+## Demo gate — rilevazione 11 ott 2026 (Lucille, `lucille/demo-gate-stabilization`)
+
+Base misurata: `main` @ `f52ae5b` (merge #62–#65). Ambiente: box Linux condivisa, Node + pnpm 10, Chromium headless Playwright, build di produzione servita da `vite preview` (`E2E_PREVIEW=1`). **Nessun dispositivo fisico né Safari reale**: vedi `DEVICE-MANUAL-QA.md`.
+
+| Gate | Stato | Evidenza |
+|---|---|---|
+| lint / typecheck / build / check:headers | PASS | `pnpm run lint`, `typecheck`, `build`, `check:headers` exit 0 su `f52ae5b` |
+| Unit (`pnpm test`) | PASS | 188/188 |
+| Statistici (`pnpm test:stats`) | PASS | 3/3 |
+| E2E su build di produzione | PASS | 77/77 in 2,9 min su `f52ae5b` |
+| Carriera completa nel browser (draft → ritiro → archivio → riapertura, reload a metà) | PASS | `readiness.spec.ts` «a full career…» |
+| Reload con carta playoff/mercato in sospeso: stessa decisione, nessuna decisione persa o duplicata | PASS (Chromium) | nuovo `demo-gate.spec.ts`, 6/6 carriere casuali; playoff raggiunti in 2/6, mercato in 5/6 |
+| Viewport 320/360/375/390/393/430/768 + desktop + landscape: nessun overflow, target ≥24px | PASS (emulazione) | `readiness.spec.ts`, aggiunto 430×932 |
+| Salvataggi corrotti / versione futura / storage assente / archivio non scrivibile / archivio pieno | PASS | `save-safety.spec.ts` |
+| Bundle iniziale ≤ 350 kB gzip | PASS | JS caricato all'avvio (index+react-vendor+runtime) ≈ 155 kB gzip; chart/narrative/catalog-en caricati dopo |
+| Nessun analytics/ads/pagamenti/wallet/token nel bundle | PASS | scansione `dist/`: nessun dominio terzo, nessuna chiave |
+| Performance avvio (lab, 4× CPU, cache calda, localhost) | PASS lab / NOT VERIFIED reale | «Inizia» pronto P75 123 ms, P95 163 ms; tap→setup P75 117 ms (prima 155), long task max P75 0 ms (prima 78) |
+| Tap su «Inizia» (profilo CPU, 6 ripetizioni) | PASS lab | causa: `intro-sound` costruiva riverbero e rumore (`makeRoom`/`makeNoise`) dentro il click. Ora solo l'AudioContext nel gesto; i buffer solo quando una cue suona davvero. Long task del tap 125–145 → 85–116 ms; residuo ≈24 ms = `new AudioContext` (necessario nel gesto). Scelta storia: long task 69–82 → 0 ms |
+| Simulazione di una stagione ≤ 1,2 s | PASS | Node 20 (`scripts/season-timing.ts`, 935 stagioni, 60 seed): stagione regolare P95 1,6 ms, stagione completa con playoff e offseason P95 7 ms, max 14,5 ms. Browser (build prod, 4× CPU): nessun long task >50 ms nelle transizioni storia→stagione; `simulateRegularSeasonInner` ≈4 ms self-time nel profilo. Il tempo percepito (≈0,8–1,5 s) è fatto di pause volute (`HOLD_*`) |
+| Percorsi deterministici: infortunio, premi+playoff, run playoff completa, free agency (+ ritiro già coperto) | PASS (Chromium) | `e2e/paths.spec.ts` + `fixtures/make-path-saves.ts` (seed 4200/4201, stati reali del motore, SAVE_VERSION invariata), 12/12 con `--repeat-each=3`; reload a metà e doppio tap = una sola decisione |
+| iPhone/Safari iOS, Android fisico | BLOCKED | nessun dispositivo; protocollo in `DEVICE-MANUAL-QA.md` |
+
+Verdetti: demo tecnicamente giocabile **sì (Chromium)**; demo pubblica accettabile **NOT READY** finché il protocollo su dispositivo reale non è eseguito; rilascio commerciale **NOT READY**.
