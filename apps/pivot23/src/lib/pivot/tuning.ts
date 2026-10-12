@@ -13,6 +13,10 @@ export const TUNING = {
   scriptWindows: "seeded" as "fixed" | "seeded" | "seeded-wide",
   /** D-10: when low minutes or injuries end a career. */
   retirement: "current" as "current" | "graded" | "path",
+  /** A2 (proposal): from engine RETIRE_SINCE, a serious injury can end a career before 33.
+   *  Bars by summer age (the last season played is one year younger): heavier drag ends earlier.
+   *  From 33 the shipped rule (2.5) applies unchanged. */
+  injuryRetireBars: { 30: 5.0, 31: 3.6, 32: 3.2 } as Readonly<Record<number, number>>,
   /** D-08: how much choices and injuries move the realised share of potential. */
   bust: "current" as "current" | "choices" | "events",
   /** D-09: title spread across simulated worlds. */
@@ -42,6 +46,9 @@ export const WORLD_SINCE = "2.13.0";
 
 /** Rules that careers created before BALANCE_SINCE (D-11/D-23) or WORLD_SINCE (D-09) keep. */
 export const LEGACY_RULES = Object.freeze({ scriptWindows: "fixed", dpoyFatigue: "current", world: "current" } as const);
+
+/** First engine version whose careers use the A2 early-injury retirement bars. */
+export const RETIRE_SINCE = "2.14.0";
 
 /** D-23 step that careers created before WORLD_SINCE (2.13.0) keep. */
 export const LEGACY_DPOY_STREAK_STEP = 0.12;
@@ -88,6 +95,11 @@ export function worldOf(career: { engineVersion?: string }): Tuning["world"] {
 /** D-23: fatigue per consecutive DPOY for this career. */
 export function dpoyStreakStepOf(career: { engineVersion?: string }): number {
   return versionAtLeast(career.engineVersion, WORLD_SINCE) ? TUNING.dpoyStreakStep : LEGACY_DPOY_STREAK_STEP;
+}
+
+/** A2: true when this career may retire from injury before 33 (created by RETIRE_SINCE or later). */
+export function usesRetireSpread(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, RETIRE_SINCE);
 }
 
 /** Restores shipped behaviour (used by tests and the comparison script). */

@@ -16,6 +16,9 @@
 | G3-B02 | P1 | in PR (G3) | Archivio: `archiveSchema` futuro marcato come corrente e riscritto al salvataggio successivo. Fix minimo in `engine.ts`, da rivedere con Lucille |
 | G3-F03 | P3 | documentato | Il save tiene solo gli ultimi 16 campioni di lega: dopo un reload l'albo d'oro è più corto. Esiti sportivi identici (test di replay) |
 | G3-F04 | P2 | limite noto | Checksum locale ricalcolabile: un save modificato a mano si apre (anche overall 9999). Solo corruzione accidentale, mai prova di autenticità |
+| G5-F01 | P3 | documentato | Il chunk `narrative` (88 kB gzip) è in `modulepreload` nell'`index.html`: JS iniziale reale ≈249 kB gzip, non ≈155 kB come scritto l'11 ott. Sotto il budget di 350 kB; nessun controllo automatico del budget in CI. Owner: release eng. (misura), frontend (eventuale lazy-load) |
+| G5-F02 | P3 | documentato | Il campo nome ha `maxLength=20`: «Massimiliano Della Valle-Giordano» diventa «Massimiliano Della V». Comportamento voluto, non bug; protocollo dispositivi aggiornato. Decisione UX a Pello |
+| G5-F03 | P2 | aperto | Vercel MCP: `list_deployments` 403 sullo scope `jarvis-hq-vercel`. Provenienza ricavata da GitHub Deployments + confronto hash asset (identici). Nessuna riconnessione fatta |
 | P3-HTML-PROTO | P3 | aperto | `artifacts/pivot.html` e `2.html` non sono il prodotto |
 
 Owner delle approvazioni: l'utente. Nessun merge implicito.

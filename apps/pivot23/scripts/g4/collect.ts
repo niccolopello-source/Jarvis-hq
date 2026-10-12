@@ -11,8 +11,11 @@ import * as engine from "../../src/lib/pivot/engine";
 import * as peak from "../../src/lib/pivot/peak";
 import { TITLE_SEED } from "../../src/lib/pivot/league";
 import { NBA_TEAMS } from "../../src/lib/pivot/teams";
+import { TUNING } from "../../src/lib/pivot/tuning";
 
 const [difficulty, fromArg, countArg, out] = process.argv.slice(2);
+// Measurement-only override of TUNING experiments, e.g. G4_TUNING='{"retirement":"graded"}'.
+if (process.env.G4_TUNING) Object.assign(TUNING, JSON.parse(process.env.G4_TUNING));
 const roles = ["PG", "SG", "SF", "PF", "C"] as const;
 const paths = ["NCAA", "Europa", "G-League"] as const;
 const nba = new Set(NBA_TEAMS.map((t) => t.abbr));
