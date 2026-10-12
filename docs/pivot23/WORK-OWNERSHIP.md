@@ -37,6 +37,7 @@ Serve soprattutto perché sul repository operano più agenti IA (Grok Bot, Grok 
 | Intro / visual (Bible Blocco E — Frontend/Art) | **Da assegnare** (Frontend / Art per Bible) | — | — | Libero / da assegnare. Nota: l'intro con pallone è stata sostituita dal logo (#56); i suoni vanno riallineati alla versione finale. | 11 ott 2026 |
 | Motore 2.13, D-09 (titoli e dinastie), misure D-11/D-23, documento D-08 | **Lucille** | `lucille/*` (`lucille/engine-2.13-d09`, `lucille/d11-d23-evidence`, `lucille/d08-bust-design`) | [#66](https://github.com/niccolopello-source/Jarvis-hq/pull/66), [#67](https://github.com/niccolopello-source/Jarvis-hq/pull/67), [#68](https://github.com/niccolopello-source/Jarvis-hq/pull/68) | In corso. File: `engine.ts`, `config.ts`, `tuning.ts`, `world.ts` e relativi test | 11 ott 2026 |
 | Persistenza / archive / save-load | — | — | — | Libero dopo #58–#60. | 11 ott 2026 |
+| Demo gate: stabilità app, percorso carriera, persistenza, UI responsive, QA browser, release gate (solo test/doc finché non emerge un bug riproducibile; non tocca motore né Career Card/Legacy Report/temi di Jarvis) | **Lucille** (Grok Bot, worker demo-gate) | `lucille/demo-gate-stabilization` | (questa PR) | Bozza | 11 ott 2026 |
 
 ---
 

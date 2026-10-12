@@ -83,17 +83,16 @@ function audioCtor(): Ctor | undefined {
   return w.AudioContext ?? w.webkitAudioContext;
 }
 
-/** Creates or resumes the AudioContext. Only ever called from a user gesture (or work queued by one). */
-function unlock(): boolean {
+/**
+ * Creates or resumes the AudioContext. Only ever called from a user gesture (or work queued by one).
+ * Cheap on purpose: the room and noise buffers are built by ensureGraph(), outside the tap's task.
+ */
+function ensureContext(): boolean {
   try {
     if (!ctx) {
       const AC = audioCtor();
       if (!AC) return false;
       ctx = new AC({ latencyHint: "interactive" });
-      const master = makeMaster(ctx);
-      master.output.connect(ctx.destination);
-      input = master.input;
-      noise = makeNoise(ctx);
     }
     if (ctx.state !== "running") void ctx.resume().catch(() => {});
     return true;
@@ -101,6 +100,27 @@ function unlock(): boolean {
     ctx = null;
     return false;
   }
+}
+
+/** Master chain and noise buffer: tens of ms of sample generation on a slow phone, so only when a cue will play. */
+function ensureGraph(): boolean {
+  if (!ctx) return false;
+  if (input && noise) return true;
+  try {
+    const master = makeMaster(ctx);
+    master.output.connect(ctx.destination);
+    input = master.input;
+    noise = makeNoise(ctx);
+    return true;
+  } catch {
+    input = null;
+    noise = null;
+    return false;
+  }
+}
+
+function unlock(): boolean {
+  return ensureContext() && ensureGraph();
 }
 
 function elapsedMs(): number {
@@ -186,7 +206,7 @@ function schedule(plan: PlannedCue[]) {
 function syncWithPremiere() {
   if (!premiereLive || premierePlayed || !isSoundOn() || !ctx) return;
   const go = safe(() => {
-    if (!premiereLive || premierePlayed || !isSoundOn()) return;
+    if (!premiereLive || premierePlayed || !isSoundOn() || !ensureGraph()) return;
     premierePlayed = true;
     schedule(planRemaining(cues, elapsedMs()));
   });
@@ -214,9 +234,11 @@ const onAnimationStart = safe((event: AnimationEvent) => {
 const onGesture = safe((event: Event) => {
   if (event instanceof KeyboardEvent && (event.key === "Escape" || event.repeat)) return;
   if (!isSoundOn()) return;
-  if (!unlock()) return;
+  if (!ensureContext()) return;
   // Let the click finish first: if it was Salta, Inizia or the mute toggle, the premiere or the
   // preference has already changed by the time this runs, and nothing starts only to be cut off.
+  // The buffers are built by syncWithPremiere only when cues are really scheduled (a tap on Inizia
+  // used to pay for them inside the click: 60-70 ms at 4x CPU throttling).
   window.setTimeout(safe(syncWithPremiere), 0);
 });
 
