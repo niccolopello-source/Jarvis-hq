@@ -1,7 +1,8 @@
 
 /** ROY ~7% anno 1 NBA. DPOY ogni stagione NBA: stessa scala del campo, vince il box difensivo. */
 import { SIM } from "./config";
-import { dpoyFatigueOf, dpoyStreakStepOf, TUNING } from "./tuning";
+import { dpoyFatigueOf, dpoyStreakStepOf, TUNING, usesAwardsV2 } from "./tuning";
+import { AWARD_MIN_GAMES, royScoreV2 } from "./awards-v2";
 import { diffOf, awardProfile } from "./difficulty";
 import { advancedOf } from "./peak";
 import { findTeam, NBA_TEAMS } from "./teams";
@@ -120,6 +121,7 @@ export function settleRoy(s: PlayerState, row: SeasonRow, n: number): RoyCandida
     stripRoyThisSeason(s, row, n);
     return row.league?.royRace ?? [];
   }
+  if (usesAwardsV2(s)) return settleRoyV2(s, row, n);
   const player: RoyCandidate = {
     name: s.name,
     team: s.team.name,
@@ -167,6 +169,43 @@ export function settleRoy(s: PlayerState, row: SeasonRow, n: number): RoyCandida
       teamAbbr: winner?.teamAbbr ?? s.team.abbr,
       note: `${finite(winner?.ppg ?? row.ppg).toFixed(1)} / ${finite(winner?.rpg ?? row.rpg).toFixed(1)} / ${finite(winner?.apg ?? row.apg).toFixed(1)}`,
       isPlayer: !!converts,
+    });
+  }
+  return race;
+}
+
+/** AW-02/AW-04 (2.15+): every rookie is scored on his own line; under 65 games nobody wins. */
+function settleRoyV2(s: PlayerState, row: SeasonRow, n: number): RoyCandidate[] {
+  const player: RoyCandidate = {
+    name: s.name, team: s.team.name, teamAbbr: s.team.abbr, teamColor: s.team.color,
+    ppg: finite(row.ppg), rpg: finite(row.rpg), apg: finite(row.apg),
+    gp: finite(row.gp), min: finite(row.min, 24), role: s.role,
+    score: royScoreV2(row), isPlayer: true,
+  };
+  const others = (s.royClass.length ? s.royClass : row.league?.royRace ?? [])
+    .filter((c) => !c.isPlayer)
+    .map((c) => ({ ...c, score: royScoreV2({ ppg: c.ppg, rpg: c.rpg, apg: c.apg, gp: finite(c.gp, 70), min: finite(c.min, 24) }), isPlayer: false }));
+  const race = [player, ...others].sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+  const ok = (c: RoyCandidate) => finite(c.gp, 70) >= AWARD_MIN_GAMES;
+  const winner = race.find(ok) ?? race.find((c) => !c.isPlayer) ?? race[0];
+  const converts = !!winner?.isPlayer;
+  const had = row.awards.includes("Rookie of the Year") || s.roy;
+  if (converts && !had) {
+    s.roy = true;
+    row.awards.unshift("Rookie of the Year");
+    if (!s.milestones.some((m) => m.label === "Rookie of the Year")) s.milestones.push({ season: n, label: "Rookie of the Year" });
+  } else if (!converts && had) {
+    s.roy = false;
+    while (row.awards.includes("Rookie of the Year")) row.awards.splice(row.awards.indexOf("Rookie of the Year"), 1);
+    s.milestones = s.milestones.filter((m) => m.label !== "Rookie of the Year");
+  }
+  s.royClass = race;
+  if (row.league && winner) {
+    row.league.royRace = race;
+    patchAward(row.league.awards, "ROY", {
+      title: "ROY", name: winner.name, team: winner.team, teamAbbr: winner.teamAbbr,
+      note: `${finite(winner.ppg).toFixed(1)} / ${finite(winner.rpg).toFixed(1)} / ${finite(winner.apg).toFixed(1)}`,
+      isPlayer: converts,
     });
   }
   return race;
@@ -391,6 +430,8 @@ function dpoyFatigue(s: PlayerState): number {
   return Math.min(0.22, count * 0.055);
 }
 
+const NBA_ABBRS: ReadonlySet<string> = new Set(NBA_TEAMS.map((t) => t.abbr));
+
 function buildDpoyRace(s: PlayerState, row: SeasonRow): DpoyCandidate[] {
   const player: DpoyCandidate = {
     name: s.name, team: s.team.name, teamAbbr: s.team.abbr, teamColor: s.team.color,
@@ -401,7 +442,7 @@ function buildDpoyRace(s: PlayerState, row: SeasonRow): DpoyCandidate[] {
   const others: DpoyCandidate[] = [];
   const byAbbr = new Map([...(row.league?.east ?? []), ...(row.league?.west ?? [])].map((r) => [r.abbr, r]));
   // NBA award: only players on NBA rosters. Same membership test as the MVP field (league.ts nbaField).
-  const nba = new Set(NBA_TEAMS.map((t) => t.abbr));
+  const nba = NBA_ABBRS;
   for (const p of s.world?.stars ?? []) {
     if (p.retired || !nba.has(p.teamAbbr) || p.teamAbbr === s.team.abbr || seen.has(p.name)) continue;
     const stand = byAbbr.get(p.teamAbbr);
@@ -440,7 +481,8 @@ export function settleDpoy(s: PlayerState, row: SeasonRow, n: number): boolean {
       ? spg >= 1.5 * bar && (teamDef >= 1.5 || stocks >= 2.15 * bar)
       : stocks >= 1.9 * bar && (spg >= 1.15 * bar || bpg >= 0.85 * bar);
   const youthOk = s.age > 21 || stocks >= 2.9 || bpg >= 2.45;
-  const gpOk = finite(row.gp, 0) >= finite(TUNING.dpoyMinGames[s.league], 58);
+  const v2 = usesAwardsV2(s);
+  const gpOk = finite(row.gp, 0) >= (v2 ? AWARD_MIN_GAMES : finite(TUNING.dpoyMinGames[s.league], 58));
   const mine = race.find((c) => c.isPlayer);
   const myScore = finite(mine?.score);
   const marks = defensiveMarks(row);
@@ -448,10 +490,13 @@ export function settleDpoy(s: PlayerState, row: SeasonRow, n: number): boolean {
   const win =
     !!leader?.isPlayer && gpOk && shape && youthOk && marks.dws >= 3 * bar && Number.isFinite(myScore) && myScore + awardProfile(s).dpoyHelp >= fieldScore;
   if (!win) {
-    if (row.league && leader && !leader.isPlayer) {
+    // AW-06 (2.15+): if the player leads the race but misses a gate, the best CPU in the race wins,
+    // not the star of the best defensive team.
+    const cpuWinner = leader && !leader.isPlayer ? leader : v2 ? race.find((c) => !c.isPlayer) : undefined;
+    if (row.league && cpuWinner) {
       patchAward(row.league.awards, "DPOY", {
-        title: "DPOY", name: leader.name, team: leader.team, teamAbbr: leader.teamAbbr,
-        note: `${finite(leader.spg).toFixed(1)} palle rubate · ${finite(leader.bpg).toFixed(1)} stoppate`, isPlayer: false,
+        title: "DPOY", name: cpuWinner.name, team: cpuWinner.team, teamAbbr: cpuWinner.teamAbbr,
+        note: `${finite(cpuWinner.spg).toFixed(1)} palle rubate · ${finite(cpuWinner.bpg).toFixed(1)} stoppate`, isPlayer: false,
       });
     }
     return false;

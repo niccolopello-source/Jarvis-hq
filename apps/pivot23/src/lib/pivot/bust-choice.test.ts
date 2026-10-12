@@ -5,12 +5,12 @@ import { BUST_SINCE, resetTuning, TUNING, usesBustB } from "./tuning.ts";
 import type { PlayerState } from "./types.ts";
 
 const player = (over: Partial<PlayerState>) =>
-  ({ engineVersion: "2.15.0-beta", age: 24, apexAge: 27, development: 4, potential: 90, choiceOvr: 4, ...over }) as PlayerState;
+  ({ engineVersion: "2.16.0-beta", age: 24, apexAge: 27, development: 4, potential: 90, choiceOvr: 4, ...over }) as PlayerState;
 
 test("option B is off: older careers and the shipped switch never take a drag", () => {
   resetTuning();
   assert.equal(TUNING.bust, "current");
-  assert.equal(BUST_SINCE, "2.15.0");
+  assert.equal(BUST_SINCE, "2.16.0");
   assert.equal(usesBustB({ engineVersion: "2.14.0-beta" }), false, "2.14 careers (#78) never take option B");
   assert.equal(usesBustB({ engineVersion: "2.13.0-beta" }), false);
   assert.equal(bustBDrag(player({ engineVersion: "2.14.0-beta" }), 3), 0);

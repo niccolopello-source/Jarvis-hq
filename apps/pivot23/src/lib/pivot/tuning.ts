@@ -53,10 +53,17 @@ export const LEGACY_RULES = Object.freeze({ scriptWindows: "fixed", dpoyFatigue:
 /** First engine version whose careers use the A2 early-injury retirement bars. */
 export const RETIRE_SINCE = "2.14.0";
 
+/** First engine version of the 2.15 rules. Awards v2 (#86) keys its rules on 2.15.0, released
+ *  to production on 12 Oct 2026. The #83 engine decisions moved to DECISIONS_SINCE (2.16.0). */
+export const RULES_215_SINCE = "2.15.0";
+
+/** Awards v2 (MVP/ROY/DPOY/All-NBA/MIP/6MOY fixes) apply to careers created by 2.15.0 or later. */
+export const AWARDS_SINCE = RULES_215_SINCE;
+
 /** First engine version whose careers use the #83 owner decisions: the accepted age-36 season is
- *  played, ROY/MVP/All-Star/DPOY knobs depend on difficulty, D-08 option B wiring. 2.14.0 careers
- *  (from #78, already in production) keep the #78 rules exactly. */
-export const DECISIONS_SINCE = "2.15.0";
+ *  played, ROY/MVP/All-Star/DPOY knobs depend on difficulty, D-08 option B wiring. 2.14.0 (#78) and
+ *  2.15.0 (#86, awards v2) careers, both already in production, keep their rules exactly. */
+export const DECISIONS_SINCE = "2.16.0";
 
 /** First engine version whose careers use D-08 option B (still OFF via TUNING.bust). */
 export const BUST_SINCE = DECISIONS_SINCE;
@@ -121,6 +128,11 @@ export function usesRetireSpread(career: { engineVersion?: string }): boolean {
 /** D-08 option B: true when this career was created by BUST_SINCE or later. */
 export function usesBustB(career: { engineVersion?: string }): boolean {
   return versionAtLeast(career.engineVersion, BUST_SINCE);
+}
+
+/** Awards v2: true when this career was created by AWARDS_SINCE (2.15.0) or later. */
+export function usesAwardsV2(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, AWARDS_SINCE);
 }
 
 /** Restores shipped behaviour (used by tests and the comparison script). */

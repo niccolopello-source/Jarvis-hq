@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { SIM } from "./config.ts";
 import { advanceCareerSim, beginPlayoffs, freshPlayer, openCareerSim, playCareerSim, qualifiesPlayoffs, simulateRegularSeason, type SimOpts } from "./engine.ts";
+import { seedRookieClass } from "./league.ts";
 import { fallbackDraws } from "./rng.ts";
 import { RULES, RULES_DEFAULTS, resetRules } from "./rules.ts";
 import type { PlayerState } from "./types.ts";
@@ -203,17 +204,28 @@ test("golden full-career baseline for fixed seeds (engine output, not run-vs-run
   const legacy = (version: string) => (o: SimOpts) => {
     const job = openCareerSim(o);
     job.s.engineVersion = version;
+    // The rookie class is drawn at career start by the running engine: redraw it for the forced version.
+    job.s.royClass = [];
+    seedRookieClass(job.s);
     while (!advanceCareerSim(job));
     return createHash("sha256").update(fingerprint(job.s)).digest("hex").slice(0, 16);
   };
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.12.0-beta")), GOLDEN_2_12);
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.13.0-beta")), GOLDEN_2_13);
+  assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.14.0-beta")), GOLDEN_2_14);
+  assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.15.0-beta")), GOLDEN_2_15);
 });
 /* 2.13.0-beta (#66): D-09 world "regress" and the D-23 step 0.16 apply only to careers created
    on 2.13.0 or later, and they move team strength and DPOY voting, so new careers get new values.
    The #63 values are kept unchanged below as the 2.12 golden. */
-/* 2.15.0-beta (A2 from 2.14): A2 can end seed 1 at 30; the age-36 season is played once accepted;
-   award difficulty shifts votes. Seeds 2 and 3 move with those rules. 2.13 stays GOLDEN_2_13. */
-const GOLDEN = ["111b5b24e9e59b49", "bf5ae78b2043725f", "2a6e3f046602629b"];
+/* 2.14.0-beta (A2 proposal): seed 1 carries injuryDrag 3.6 and now retires after the age-30 season
+   instead of 32 (injuryRetireBars); seeds 2 and 3 are unchanged. The 2.13 values stay as GOLDEN_2_13. */
+/* 2.15.0-beta (awards v2, AW-01..AW-06): new careers get a seeded rookie class and the v2 award rules,
+   so all three seeds move. The 2.14 values are kept unchanged as GOLDEN_2_14. */
+/* 2.16.0-beta (#83 decisions on top of awards v2): age-36 season played once accepted, difficulty award knobs.
+   2.15 values kept unchanged as GOLDEN_2_15. */
+const GOLDEN = ["0189372ec67c33dd", "0e4d30c3830b37d3", "34586d8c82f286fd"];
+const GOLDEN_2_15 = ["4da0c610aba577b4", "eb62db0aef59b9a9", "ca8469ee05d836c7"];
+const GOLDEN_2_14 = ["d28207b449d5e3c1", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
 const GOLDEN_2_13 = ["9f5583418a7fa740", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
 const GOLDEN_2_12 = ["6fe52cd0a7ee8c19", "bacb446a2a8bf8e3", "441bec64d2398645"];

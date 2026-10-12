@@ -3,7 +3,7 @@ import { Component, memo, useEffect, useLayoutEffect, useMemo, useRef, useState,
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
 import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components/pivot/LeaguePanel";
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
-import { chipsFromFx, chipsFromSnapshot, consequenceSchedule, endSentence, formatCareerTotal, getSeasonDisplayLabel, tidyText, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
+import { CAREER_NAME_MAX, careerName, chipsFromFx, chipsFromSnapshot, consequenceSchedule, endSentence, formatCareerTotal, getSeasonDisplayLabel, tidyText, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
 import { pathFeel, playoffNerves, draftWho, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
@@ -541,7 +541,7 @@ export function PivotApp() {
   function startDraft() {
     releaseLiveFlush();
     const s = freshPlayer(
-      name.trim() || "Il Rookie",
+      careerName(name),
       role,
       nat,
       Number.isFinite(number) ? Math.max(0, Math.min(99, number)) : 23,
@@ -558,7 +558,7 @@ export function PivotApp() {
 
   function identity() {
     return {
-      name: name.trim() || "Il Rookie",
+      name: careerName(name),
       role,
       nationality: nat,
       number: Number.isFinite(number) ? Math.max(0, Math.min(99, number)) : 23,
@@ -1198,7 +1198,7 @@ export function PivotApp() {
           <p className="lede">{t("setupLede", lang)}</p>
           <label className="group-label" htmlFor="setup-name">{t("setupName", lang)}</label>
           <div className="group-card">
-            <input id="setup-name" className="text-input" maxLength={20} autoComplete="off" placeholder={t("namePlaceholder", lang)} value={name} onChange={(e) => setName(e.target.value)} />
+            <input id="setup-name" className="text-input" maxLength={CAREER_NAME_MAX} autoComplete="off" placeholder={t("namePlaceholder", lang)} value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <span className="group-label" id="setup-role-label">{t("setupRole", lang)}</span>
           <div className="grid grid-cols-2 gap-2 mb-6" role="group" aria-labelledby="setup-role-label">

@@ -1,14 +1,15 @@
 /**
- * Fingerprints of whole careers forced to an engine version, for the 2.15.0 gate (#83).
+ * Fingerprints of whole careers forced to an engine version, for the #83 gate (2.16.0).
  * Run on a main checkout to freeze the reference: the test replays the same careers on this
- * branch and requires identical hashes for 2.14 / 2.13 / 2.12.
+ * branch and requires identical hashes for 2.15 / 2.14 / 2.13 / 2.12.
  *   node --import=tsx scripts/version-gate-fingerprints.ts > src/lib/pivot/fixtures/version-gate-fp.json
  */
 import { createHash } from "node:crypto";
 import { advanceCareerSim, openCareerSim } from "../src/lib/pivot/engine.ts";
+import { seedRookieClass } from "../src/lib/pivot/league.ts";
 import type { PlayerState } from "../src/lib/pivot/types.ts";
 
-export const GATE_VERSIONS = ["2.14.0-beta", "2.13.0-beta", "2.12.0-beta"] as const;
+export const GATE_VERSIONS = ["2.15.0-beta", "2.14.0-beta", "2.13.0-beta", "2.12.0-beta"] as const;
 export const GATE_DIFFS = ["esordio", "pro", "allstar", "leggenda"] as const;
 export const GATE_SEEDS = Array.from({ length: 40 }, (_, i) => 9100 + i * 37);
 
@@ -32,6 +33,10 @@ export function careerFingerprint(s: PlayerState): string {
 export function playAt(seed: number, difficulty: (typeof GATE_DIFFS)[number], version: string): PlayerState {
   const job = openCareerSim({ seed, difficulty });
   job.s.engineVersion = version;
+  // The rookie class is drawn at career start with the running engine (isolated RNG); redraw it
+  // for the forced version, as scripts/awards-gate-fingerprints.ts does.
+  job.s.royClass = [];
+  seedRookieClass(job.s);
   let done = false;
   while (!done) done = advanceCareerSim(job);
   return job.s;

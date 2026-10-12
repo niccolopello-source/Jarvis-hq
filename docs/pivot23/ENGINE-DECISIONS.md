@@ -1,6 +1,6 @@
-# Decisioni del 12 ottobre — motore 2.15.0-beta
+# Decisioni del 12 ottobre — motore 2.16.0-beta
 
-Autorizzate da Niccolò. Le carriere nuove nascono su `2.15.0-beta`. Un save 2.14 (#78, già in produzione), 2.13 o più vecchio tiene le regole con cui è nato. Nessun merge, nessun deploy.
+Autorizzate da Niccolò. Le carriere nuove nascono su `2.16.0-beta`. Un save 2.15 (#86 awards v2), 2.14 (#78), entrambi già in produzione, 2.13 o più vecchio tiene le regole con cui è nato. Nessun merge, nessun deploy.
 
 ## 1. Ritiro 29–32 — accettato
 
@@ -34,7 +34,7 @@ Lo streak DPOY nei campioni è rimasto sotto 5.
 
 La formula larga di Lucille (#81) alza i bust sopra il 15% e taglia All-Star e MVP di circa un quinto, e quasi non crea bust da potenziale ≥ 85. Ne ho provata una più stretta, solo sopra potenziale 86, solo se le scelte restano sotto una barra. Su 200 Pro: zero bust di laboratorio, e i premi scendono lo stesso (MVP 80→50, DPOY 75→30 su quel campione).
 
-Resta spenta (`TUNING.bust = "current"`). Il codice c'è, gated su 2.15, e un test controlla che accendendola il drag colpisca solo un tetto alto rimasto indietro. Per un bust vero serve marcare le scelte rischiose. Non l'ho inventato.
+Resta spenta (`TUNING.bust = "current"`). Il codice c'è, gated su 2.16, e un test controlla che accendendola il drag colpisca solo un tetto alto rimasto indietro. Per un bust vero serve marcare le scelte rischiose. Non l'ho inventato.
 
 ## Cosa non è stato rifatto
 
@@ -54,3 +54,19 @@ La #78 (A2, ritiro anticipato per infortuni) è in produzione come `2.14.0-beta`
 Nessuna migrazione del save: `engineVersion` resta quello di nascita, il formato non cambia (`bustLock` è opzionale). Prova: `version-gate.test.ts` rigioca 480 carriere (seed 9100 + 37·i, i = 0…39; esordio/pro/allstar/leggenda; 2.14.0-beta, 2.13.0-beta, 2.12.0-beta) e confronta l'impronta con quella generata su `main` @ `33f0ca2` (`scripts/version-gate-fingerprints.ts` → `src/lib/pivot/fixtures/version-gate-fp.json`): tutte identiche. Sulle stesse 160 combinazioni, la 2.15 cambia 33 carriere: le nuove regole sono attive. Prima del gate, sul branch, 33/160 carriere 2.14 differivano da main.
 
 Solo presentazione, per tutte le versioni: età finale nel palmarès (`careerEndAge`) e nota «stagione a 36 anni non giocata» nel diario. Non cambiano esiti sportivi.
+
+## Aggiornamento — gate spostato a 2.16.0 (12 ott 2026, sera)
+
+Su `main` è entrata la #86 (awards v2, branch `grokbot/awards-v2`, commit `fc29b4b`, merge `6a425e5`) che porta il motore a `2.15.0-beta` e gate i premi v2 (AW-01…AW-06) su `RULES_215_SINCE`/`AWARDS_SINCE = "2.15.0"`. Il deploy di produzione di `6a425e5` e `cba5a29` è `success` (12 ott, 19:45–19:46 UTC) e il bundle servito contiene `2.15.0-beta`: esistono quindi carriere 2.15 in corso con awards v2 ma **senza** le regole #83. Per non cambiarle, le decisioni #83 passano a `DECISIONS_SINCE = "2.16.0"` e `ENGINE_VERSION = "2.16.0-beta"`. Una carriera 2.16 ha A2 (2.14) + awards v2 (2.15) + decisioni #83 (2.16).
+
+| Regola | 2.12/2.13 | 2.14 | 2.15 | 2.16 |
+|---|---|---|---|---|
+| A2 infortuni 29–31 | no | sì | sì | sì |
+| Awards v2 (#86) | no | no | sì | sì |
+| Stagione a 36 anni accettata giocata | no | no | no | sì |
+| Curva premi per difficoltà (`awardProfile`) | storica | storica | storica | nuova |
+| D-08 opzione B (spenta) | no | no | no | cablata |
+
+Interazione da rivedere (nessuna formula cambiata qui): sulle carriere 2.16 il ROY passa da `settleRoyV2`, che non legge `awardProfile().royDelta`; il ritocco ROY per difficoltà della #83 resta quindi inattivo. MVP (`mvpHelp`), All-Star (`starCut`, `awardP`) e DPOY (`dpoyBar`, `dpoyHelp`) si sommano invece alle regole v2.
+
+Prova: `version-gate.test.ts`, 640 carriere (seed 9100 + 37·i, i = 0…39; 4 difficoltà; 2.15.0-beta, 2.14.0-beta, 2.13.0-beta, 2.12.0-beta), impronte generate su `main` @ `cba5a29`: tutte identiche sul branch. Le 480 carriere 2.14/2.13/2.12 coincidono anche con `33f0ca2` (prima della #86). La classe rookie viene ridisegnata per la versione forzata, come in `awards-gate-fingerprints.ts`. Sulle stesse 160 combinazioni, la 2.16 cambia 14 carriere rispetto alla 2.15.

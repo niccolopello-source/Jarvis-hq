@@ -222,6 +222,10 @@ export interface RoyCandidate {
   apg: number;
   score: number;
   isPlayer: boolean;
+  /** Awards v2 (2.15+): the candidate's own games, minutes and position. Absent on older saves. */
+  gp?: number;
+  min?: number;
+  role?: Role;
 }
 
 export interface VoteRow {
