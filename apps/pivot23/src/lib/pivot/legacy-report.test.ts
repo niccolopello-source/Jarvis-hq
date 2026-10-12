@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { fingerprintOf, sha256 } from "./card";
 import { playCareerSim, toArchive } from "./engine";
+import { careerBust } from "./bust";
 import { buildLegacyReport, cardFaceOf, legacyFactsOf, sanitizeLegacyFacts, withLegacyFacts } from "./legacy-report";
 import { legacyKeys, narrativeOf, timelineLine } from "./legacy-i18n";
 import { CARD_THEMES, CARD_THEME_KEY, checkout, COSMETIC_FLAGS, isUsableTheme, loadCardTheme, saveCardTheme, visibleThemes } from "./cosmetics";
@@ -39,6 +40,7 @@ test("report numbers come from the career, not a second engine", () => {
     assert.equal(r.lastYear, last.yearLabel);
     assert.equal(r.timeline.at(-1)!.value, last.age);
     assert.equal(r.draftPick, s.draftPick);
+    assert.equal(r.bust, careerBust(s).bust, `bust ${seed}`);
     // Awards: counts equal the recorded season awards, nothing invented.
     const recorded = new Map<string, number>();
     for (const row of s.seasonHistory) for (const a of row.awards) recorded.set(a, (recorded.get(a) ?? 0) + 1);
@@ -98,6 +100,7 @@ test("a legacy entry without facts omits fields instead of guessing", () => {
   const r = buildLegacyReport(old);
   assert.equal(r.number, null);
   assert.equal(r.draftPick, null);
+  assert.equal(r.bust, null, "no draft pick → bust not evaluated");
   assert.equal(r.draftTeam, null);
   assert.equal(r.totals.points, undefined);
   assert.equal(r.timeline.some((x) => x.kind === "draft"), false);
