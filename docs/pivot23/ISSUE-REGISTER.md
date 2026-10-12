@@ -19,6 +19,9 @@ Aggiornamento 2026-10-12 su `main` `3bb757b` (motore 2.13.0-beta). Dettaglio e c
 | G3-F03 | P3 | documentato | Il save tiene solo gli ultimi 16 campioni di lega. Esiti sportivi identici |
 | G3-F04 | P2 | limite noto | Checksum locale ricalcolabile. Non è una prova di autenticità |
 | A1-EXTRA36 | P2 | nota in lettura | 71/4000 accettano il 36 e non lo giocano. Carta, report e riga finale usano l'ultima stagione. Il diario lo dice. La regola non è cambiata |
+| G5-F01 | P3 | documentato | Il chunk `narrative` (88 kB gzip) è in `modulepreload` nell'`index.html`: JS iniziale reale ≈249 kB gzip, non ≈155 kB come scritto l'11 ott. Sotto il budget di 350 kB; nessun controllo automatico del budget in CI. Owner: release eng. (misura), frontend (eventuale lazy-load) |
+| G5-F02 | P3 | documentato | Il campo nome ha `maxLength=20`: «Massimiliano Della Valle-Giordano» diventa «Massimiliano Della V». Comportamento voluto, non bug; protocollo dispositivi aggiornato. Decisione UX a Pello |
+| G5-F03 | P2 | aperto | Vercel MCP: `list_deployments` 403 sullo scope `jarvis-hq-vercel`. Provenienza ricavata da GitHub Deployments + confronto hash asset (identici). Nessuna riconnessione fatta |
 | P3-HTML-PROTO | P3 | aperto | `artifacts/pivot.html` e `2.html` non sono il prodotto |
 
 Owner delle approvazioni: l'utente. Nessun merge implicito.

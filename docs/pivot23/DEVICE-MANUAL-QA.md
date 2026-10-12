@@ -21,3 +21,28 @@ iPhone con Safari iOS 17+ (schermo piccolo, es. SE/13 mini) · iPhone grande (Pr
 12. Safari privato: deve comparire l'avviso che il salvataggio è disattivato, senza schermo nero.
 
 Esito: PASS solo se tutti i passi passano su quel dispositivo; altrimenti FAIL con passo, screenshot e testo dell'errore.
+
+## Handoff G5 — 12 ott 2026 (Grok Bot)
+Candidato: `https://www.pivot23.com` (= `https://pivot23.vercel.app`), SHA `3bb757bab75a18726bfc6b08756651238ed8fd68`, deploy GitHub «Production – pivot23» `success` (asset identici a una build locale dello stesso SHA).
+
+| Dispositivo | Browser / OS | Stato |
+|---|---|---|
+| iPhone piccolo (SE / 13 mini) | Safari, iOS 17+ | BLOCKED, nessun dispositivo |
+| iPhone grande (Pro Max) | Safari, iOS 17+ | BLOCKED |
+| Android fascia media (es. Pixel 6a / Galaxy A54) | Chrome stabile, Android 13+ | BLOCKED |
+| Mac | Safari 17+, macOS 14+ | BLOCKED |
+
+- Nota al passo 2: il campo nome accetta **20 caratteri**; «Massimiliano Della Valle-Giordano» diventa «Massimiliano Della V». Verificare che il nome troncato non sia tagliato a schermo.
+- Eseguibile da remoto su una device farm reale (BrowserStack/Sauce o simili, non acquistati): passi 1–6, 10, 12. Solo dispositivo fisico in mano: 7 (background reale), 8–9 (impostazioni accessibilità), 11 (modalità aereo), audio dell'intro e sensazione dei tocchi.
+- Registrare SHA del deploy al momento della prova: se `main` è avanzato, la prova vale per il nuovo SHA solo se rieseguita.
+
+## Esito riferito — 12 ott 2026, 09:54 UTC
+Pello ha riferito in chat: «iPhone funziona, Mac funziona, Android funziona».
+
+| Dispositivo | Esito | Etichetta |
+|---|---|---|
+| iPhone (Safari) | PASS | riferito da Pello, verifica manuale non osservata dagli agenti |
+| Mac (Safari) | PASS | riferito da Pello, verifica manuale non osservata dagli agenti |
+| Android (Chrome) | PASS | riferito da Pello, verifica manuale non osservata dagli agenti |
+
+Modelli, versioni di OS/browser, SHA servito al momento della prova e singoli passi del protocollo: **NON VERIFICATO** (non comunicati). Nessuno screenshot ricevuto.

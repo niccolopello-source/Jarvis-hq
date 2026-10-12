@@ -35,7 +35,22 @@ const IT_STOP = new Set([
   "sulla",
 ]);
 
+// Perf: voiceKey/tooClose are pure string functions called O(pool × recent) times per pick.
+// Results are memoised; outputs are identical to the uncached versions.
+const KEY_CACHE = new Map<string, string>();
+const CACHE_MAX = 20000;
+
 export function voiceKey(line: string): string {
+  let k = KEY_CACHE.get(line);
+  if (k === undefined) {
+    if (KEY_CACHE.size >= CACHE_MAX) KEY_CACHE.clear();
+    k = voiceKeyRaw(line);
+    KEY_CACHE.set(line, k);
+  }
+  return k;
+}
+
+function voiceKeyRaw(line: string): string {
   return line
     .toLowerCase()
     .normalize("NFD")
@@ -56,21 +71,40 @@ function heardOf(s: PlayerState): string[] {
   return s.heardLines;
 }
 
+interface KeyShape {
+  w3: string;
+  w3Full: boolean;
+  w4: string;
+  long: string[];
+  longSet: Set<string>;
+}
+const SHAPE_CACHE = new Map<string, KeyShape>();
+
+function shapeOf(a: string): KeyShape {
+  let s = SHAPE_CACHE.get(a);
+  if (!s) {
+    if (SHAPE_CACHE.size >= CACHE_MAX) SHAPE_CACHE.clear();
+    const words = a.split(" ");
+    const w3 = words.slice(0, 3).join(" ");
+    const long = words.filter((w) => w.length > 3);
+    s = { w3, w3Full: w3.split(" ").length >= 3, w4: words.slice(0, 4).join(" "), long, longSet: new Set(long) };
+    SHAPE_CACHE.set(a, s);
+  }
+  return s;
+}
+
 export function tooClose(a: string, b: string): boolean {
   if (!a || !b) return false;
   if (a === b) return true;
-  const w3a = a.split(" ").slice(0, 3).join(" ");
-  const w3b = b.split(" ").slice(0, 3).join(" ");
-  if (w3a.split(" ").length >= 3 && w3a === w3b) return true;
-  const wa = a.split(" ").slice(0, 4).join(" ");
-  const wb = b.split(" ").slice(0, 4).join(" ");
-  if (wa && wa === wb) return true;
-  const sa = a.split(" ").filter((w) => w.length > 3);
-  const sb = b.split(" ").filter((w) => w.length > 3);
+  const A = shapeOf(a);
+  const B = shapeOf(b);
+  if (A.w3Full && A.w3 === B.w3) return true;
+  if (A.w4 && A.w4 === B.w4) return true;
+  const sa = A.long;
+  const sb = B.long;
   if (sa.length < 3 || sb.length < 3) return false;
-  const setA = new Set(sa);
   let hit = 0;
-  for (const w of sb) if (setA.has(w)) hit += 1;
+  for (const w of sb) if (A.longSet.has(w)) hit += 1;
   return hit >= Math.min(4, Math.ceil(Math.min(sa.length, sb.length) * 0.7));
 }
 
