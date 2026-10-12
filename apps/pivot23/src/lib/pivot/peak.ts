@@ -1,7 +1,7 @@
 
 /** Curva d'età, picco osservato 26–28, overall intero in display. */
 import { SIM } from "./config";
-import { TUNING } from "./tuning";
+import { TUNING, usesBustB } from "./tuning";
 import { ROLES } from "./data";
 import { rand } from "./rng";
 import type { AttrKey, PlayerState, Role } from "./types";
@@ -169,6 +169,18 @@ export function rollPotential(skill = 62): number {
   return round1(clamp(pot + bias, 64, 99));
 }
 
+/** D-08 option B (2.14.0+ careers): lagging choices/training cost realisation; never a bonus. */
+export function bustBDrag(s: PlayerState, imprint: number): number {
+  if (TUNING.bust !== "choices-b" || !usesBustB(s)) return 0;
+  // Locked once, three seasons before the apex, so the drag cannot change the age of the peak.
+  if (typeof s.bustLock === "number" && Number.isFinite(s.bustLock)) return s.bustLock;
+  if (finite(s.age, 0) < apexAgeOf(s) - 3) return 0;
+  const b = TUNING.bustB;
+  const drag = Math.max(0, b.choiceRef - imprint) * b.choiceK + Math.max(0, b.devRef - finite(s.development, 0)) * b.devK;
+  s.bustLock = Math.round(drag * 1000) / 1000;
+  return s.bustLock;
+}
+
 export function realizationOf(s: PlayerState): number {
   const ethic = finite(s.hidden?.workEthic, 50) / 100;
   const cons = finite(s.hidden?.consistency, 50) / 100;
@@ -185,7 +197,8 @@ export function realizationOf(s: PlayerState): number {
       finite(s.development, 0) * (TUNING.bust === "choices" ? 0.02 : 0.01) -
       finite(s.injuryDrag, 0) * (TUNING.bust === "events" ? 0.04 : 0.018) +
       imprint * (TUNING.bust === "choices" ? 0.025 : 0.01) +
-      ready * 0.004,
+      ready * 0.004 -
+      bustBDrag(s, imprint),
     0.58,
     1.08,
   );

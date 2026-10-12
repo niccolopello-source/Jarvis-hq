@@ -13,8 +13,13 @@ export const TUNING = {
   scriptWindows: "seeded" as "fixed" | "seeded" | "seeded-wide",
   /** D-10: when low minutes or injuries end a career. */
   retirement: "current" as "current" | "graded" | "path",
+  /** D-08 option B (proposal, OFF: turn on with bust = "choices-b"): for careers from engine BUST_SINCE, a career whose choices and training lag
+   *  behind the typical path realises less of its potential. Downside only: choices above the
+   *  reference never add. Reference points are the median imprint/development of pot >= 80 careers
+   *  at their apex (G4 sample: choiceOvr 4.07, development 6.5). */
+  bustB: { choiceRef: 4.0, choiceK: 0.12, devRef: 6.0, devK: 0.04 },
   /** D-08: how much choices and injuries move the realised share of potential. */
-  bust: "current" as "current" | "choices" | "events",
+  bust: "current" as "current" | "choices" | "events" | "choices-b",
   /** D-09: title spread across simulated worlds. */
   world: "regress" as "current" | "jitter" | "regress",
   /** D-23: DPOY voter fatigue. current = 5.5% per DPOY won, capped at 22% (rule before 2.12.0). */
@@ -42,6 +47,9 @@ export const WORLD_SINCE = "2.13.0";
 
 /** Rules that careers created before BALANCE_SINCE (D-11/D-23) or WORLD_SINCE (D-09) keep. */
 export const LEGACY_RULES = Object.freeze({ scriptWindows: "fixed", dpoyFatigue: "current", world: "current" } as const);
+
+/** First engine version whose careers use D-08 option B. */
+export const BUST_SINCE = "2.14.0";
 
 /** D-23 step that careers created before WORLD_SINCE (2.13.0) keep. */
 export const LEGACY_DPOY_STREAK_STEP = 0.12;
@@ -88,6 +96,11 @@ export function worldOf(career: { engineVersion?: string }): Tuning["world"] {
 /** D-23: fatigue per consecutive DPOY for this career. */
 export function dpoyStreakStepOf(career: { engineVersion?: string }): number {
   return versionAtLeast(career.engineVersion, WORLD_SINCE) ? TUNING.dpoyStreakStep : LEGACY_DPOY_STREAK_STEP;
+}
+
+/** D-08 option B: true when this career was created by BUST_SINCE or later. */
+export function usesBustB(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, BUST_SINCE);
 }
 
 /** Restores shipped behaviour (used by tests and the comparison script). */
