@@ -1,6 +1,7 @@
 
 import type { TeamTier } from "./types";
 import { usesDecisions } from "./tuning";
+import { ROY_DELTA_V2_SCALE } from "./awards-v2";
 
 export type DifficultyId = "esordio" | "pro" | "allstar" | "leggenda";
 
@@ -165,4 +166,9 @@ export function awardProfile(s: { difficulty?: DifficultyId; engineVersion?: str
   if (usesDecisions(s ?? {})) return d;
   const starCut = d.awardOvr >= 6 ? 4 : d.awardOvr >= 4 ? 5 : d.awardOvr < 0 ? 8 : 6;
   return { ...d, awardP: LEGACY_AWARD_P[d.id], royDelta: 0, mvpHelp: -d.awardOvr * 0.8, starCut, dpoyBar: 1, dpoyHelp: 0.05 };
+}
+
+/** #83 ROY shift on the awards v2 ROY score (2.16+); 0 for older careers. */
+export function royDeltaV2(s: { difficulty?: DifficultyId; engineVersion?: string } | null | undefined): number {
+  return awardProfile(s).royDelta * ROY_DELTA_V2_SCALE;
 }

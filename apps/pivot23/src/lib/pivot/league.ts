@@ -1,6 +1,6 @@
 
 import { EURO_TEAMS, NBA_TEAMS, ROOKIE_NAMES, cloneTeam, powerToTier } from "./teams";
-import { awardProfile, diffOf } from "./difficulty";
+import { awardProfile, diffOf, royDeltaV2 } from "./difficulty";
 import { SIM } from "./config";
 import { pick, rand } from "./rng";
 import { identityModOf, liveStar, mvpScore, starOf, teamStrength } from "./world";
@@ -8,7 +8,7 @@ import { royProductionScore } from "./awards-helpers";
 import { freshPlayer, playIsolatedDraft } from "./engine";
 import { createRng, runWithRng } from "./rng";
 import { isolatedRookieBox, roySubSeed, ROY_ROLES } from "./rookie-box";
-import { usesAwardsV2 } from "./tuning";
+import { usesAwardsV2, usesDecisions } from "./tuning";
 import { AWARD_MIN_GAMES, PLAYER_KEY, lotteryLiftV2, mvpFatigueV2, mvpHistoryV2, rookieClassPlanV2, royScoreV2 } from "./awards-v2";
 import { EURO_GAMES, NBA_GAMES, PLAYOFF_SEEDS, awardNoteIt } from "./data";
 import type {
@@ -271,8 +271,16 @@ function seedRookieClassV2(s: PlayerState): RoyCandidate[] {
   return classList;
 }
 
+/** #83 + #86 (2.16+): a positive difficulty MVP bonus (Esordio, Leggenda) halves with every MVP
+ *  already won, so it helps the first award without stacking on top of the v2 repeat penalty.
+ *  Careers before 2.16 keep the flat value they shipped with. */
+export function mvpHelpOf(s: PlayerState, help: number): number {
+  if (!usesDecisions(s) || help <= 0) return help;
+  return help / 2 ** Math.max(0, s.mvpCount | 0);
+}
+
 function playerRoyScore(s: PlayerState, box: SeasonRow) {
-  if (usesAwardsV2(s)) return royScoreV2(box);
+  if (usesAwardsV2(s)) return royScoreV2(box) + royDeltaV2(s);
   return royProductionScore({
     ppg: box.ppg,
     rpg: box.rpg,
@@ -542,7 +550,7 @@ function buildAwards(
   const pScore =
     mvpScore(playerProd, box.wins, playerEff, playerImpact, box.gp, games, s.hidden.consistency, playerNar) +
     (rand() - 0.5) * SIM.awards.noise +
-    d.mvpHelp -
+    mvpHelpOf(s, d.mvpHelp) -
     repeatCost;
 
   const bestStar = bestStarsByTeam(s);

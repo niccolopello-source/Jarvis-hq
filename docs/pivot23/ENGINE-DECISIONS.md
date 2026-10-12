@@ -67,6 +67,24 @@ Su `main` è entrata la #86 (awards v2, branch `grokbot/awards-v2`, commit `fc29
 | Curva premi per difficoltà (`awardProfile`) | storica | storica | storica | nuova |
 | D-08 opzione B (spenta) | no | no | no | cablata |
 
-Interazione da rivedere (nessuna formula cambiata qui): sulle carriere 2.16 il ROY passa da `settleRoyV2`, che non legge `awardProfile().royDelta`; il ritocco ROY per difficoltà della #83 resta quindi inattivo. MVP (`mvpHelp`), All-Star (`starCut`, `awardP`) e DPOY (`dpoyBar`, `dpoyHelp`) si sommano invece alle regole v2.
+Interazione #83 × #86 risolta (vedi sotto): il bonus MVP positivo si dimezza per ogni MVP vinto, il ritocco ROY per difficoltà entra nel punteggio v2.
 
 Prova: `version-gate.test.ts`, 640 carriere (seed 9100 + 37·i, i = 0…39; 4 difficoltà; 2.15.0-beta, 2.14.0-beta, 2.13.0-beta, 2.12.0-beta), impronte generate su `main` @ `cba5a29`: tutte identiche sul branch. Le 480 carriere 2.14/2.13/2.12 coincidono anche con `33f0ca2` (prima della #86). La classe rookie viene ridisegnata per la versione forzata, come in `awards-gate-fingerprints.ts`. Sulle stesse 160 combinazioni, la 2.16 cambia 14 carriere rispetto alla 2.15.
+
+## Coerenza premi 2.16 (#83 × #86), 12 ott 2026, sera
+
+Solo carriere ≥ 2.16.0. 2.15/2.14/2.13/2.12: 640 impronte identiche a `main` @ `cba5a29`.
+
+- **MVP:** il bonus positivo per difficoltà (`mvpHelp`: Esordio +2,5, Leggenda +4,5) si dimezza a ogni MVP già vinto (`mvpHelpOf` in `league.ts`). Aiuta il primo premio, non si somma alla stanchezza v2 sui successivi. I malus (Pro −0,8, All-Star −1,2) restano fissi.
+- **ROY:** il ritocco per difficoltà (`royDelta`) ora entra nel punteggio ROY v2 del giocatore (`royDeltaV2` = `royDelta` × 0,5, `ROY_DELTA_V2_SCALE`): a scala intera il ROY Esordio saliva a 14,8% e Leggenda scendeva a 1,1%.
+
+2.000 carriere per difficoltà (seed (i+1)·1000+3, ruoli/percorsi a rotazione, draft random, classe rookie ridisegnata per la versione):
+
+| Difficoltà | 2.15 MVP max / con MVP / tot | 2.16 prima max / con MVP / tot | 2.16 dopo max / con MVP / tot | ROY 2.15 | ROY 2.16 prima | ROY 2.16 dopo |
+|---|---|---|---|---|---|---|
+| Esordio | 6 / 11,0% / 480 | **7** / 12,4% / 595 | 6 / 12,4% / 517 | 7,2% | 7,2% | 10,4% |
+| Pro | 4 / 4,8% / 150 | 5 / 6,3% / 216 | 5 / 6,3% / 216 | 8,4% | 8,4% | 7,3% |
+| All-Star | 2 / 1,4% / 33 | 3 / 2,6% / 68 | 3 / 2,6% / 68 | 8,9% | 8,9% | 4,8% |
+| Leggenda | 1 / 0,1% / 2 | 3 / 2,3% / 67 | 3 / 2,3% / 60 | 9,2% | 9,2% | 3,4% |
+
+Il test `max MVP ≤ 6 su Esordio` (test:stats) torna verde senza modifiche. Dati grezzi: `/workspace/reports/mvp/`.

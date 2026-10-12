@@ -66,3 +66,17 @@ test("2.16 careers differ from 2.15 on the same seeds (the new rules are live)",
   assert.ok(differ > 0, `2.16 must change some careers (changed ${differ}/160)`);
   console.log(`VERSION_GATE 2.16 vs 2.15: ${differ}/160 careers differ`);
 });
+
+test("2.16 award coherence: positive MVP help halves per MVP won, ROY shift on the v2 score", async () => {
+  const { mvpHelpOf } = await import("./league.ts");
+  const { royDeltaV2 } = await import("./difficulty.ts");
+  const at = (engineVersion: string, mvpCount: number) => ({ engineVersion, mvpCount }) as never;
+  assert.equal(mvpHelpOf(at("2.16.0-beta", 0), 2.5), 2.5);
+  assert.equal(mvpHelpOf(at("2.16.0-beta", 1), 2.5), 1.25);
+  assert.equal(mvpHelpOf(at("2.16.0-beta", 3), 4.5), 4.5 / 8);
+  assert.equal(mvpHelpOf(at("2.16.0-beta", 3), -0.8), -0.8, "a malus is never scaled");
+  assert.equal(mvpHelpOf(at("2.15.0-beta", 3), 2.5), 2.5, "2.15 keeps the flat value");
+  for (const v of ["2.15.0-beta", "2.14.0-beta"]) for (const id of GATE_DIFFS) assert.equal(royDeltaV2({ difficulty: id, engineVersion: v }), 0, `${v} ${id}`);
+  const r = GATE_DIFFS.map((id) => royDeltaV2({ difficulty: id, engineVersion: "2.16.0-beta" }));
+  assert.ok(r[0]! > r[1]! && r[1]! > r[2]! && r[2]! > r[3]!, `ROY shift falls with difficulty: ${r}`);
+});

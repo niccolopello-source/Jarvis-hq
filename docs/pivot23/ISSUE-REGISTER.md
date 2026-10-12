@@ -30,7 +30,7 @@ Aggiornamento 2026-10-12 su `main` `3bb757b` (motore 2.13.0-beta). Dettaglio e c
 | AW-06 | P3 | in PR (awards v2) | DPOY assegnato alla star della miglior difesa, fuori dalla corsa, quando il giocatore guida la corsa ma non passa un requisito: 11 casi (repro: Esordio seed 57919 stagione 6). 2.15: vince il miglior CPU della corsa |
 | AW-07 | P3 | documentato | `RULES.rookieShuffle` non è letto da nessuna parte (la classe non usa più un sort casuale). Flag morto, lasciato per non toccare `rules.ts` |
 | AW-08 | P3 | documentato | DPOY: striscia massima 3 su 1.000 carriere sia in 2.14 sia in 2.15 (D-23 invariato, non toccato) |
-| ENG-GATE-216 | P1 | in PR #83 | Decisioni #83 spostate su 2.16.0 (prima 2.15.0): 2.15 è già in produzione con awards v2 (#86, deploy `cba5a29`). 640 carriere 2.15/2.14/2.13/2.12 = main @ `cba5a29` (`version-gate.test.ts`). Nota in `ENGINE-DECISIONS.md` |
+| ENG-GATE-216 | P1 | in PR #83 | Decisioni #83 spostate su 2.16.0 (prima 2.15.0): 2.15 è già in produzione con awards v2 (#86, deploy `cba5a29`). 640 carriere 2.15/2.14/2.13/2.12 = main @ `cba5a29` (`version-gate.test.ts`). Nota in `ENGINE-DECISIONS.md`. Coerenza premi 2.16: bonus MVP positivo dimezzato per MVP vinto (Esordio max 7 → 6), ROY per difficoltà nel punteggio v2 |
 | P3-HTML-PROTO | P3 | aperto | `artifacts/pivot.html` e `2.html` non sono il prodotto |
 
 Owner delle approvazioni: l'utente. Nessun merge implicito.

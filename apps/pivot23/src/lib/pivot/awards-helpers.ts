@@ -3,7 +3,7 @@
 import { SIM } from "./config";
 import { dpoyFatigueOf, dpoyStreakStepOf, TUNING, usesAwardsV2 } from "./tuning";
 import { AWARD_MIN_GAMES, royScoreV2 } from "./awards-v2";
-import { diffOf, awardProfile } from "./difficulty";
+import { diffOf, awardProfile, royDeltaV2 } from "./difficulty";
 import { advancedOf } from "./peak";
 import { findTeam, NBA_TEAMS } from "./teams";
 import type { CpuStar, DpoyCandidate, LeagueAward, PlayerState, RoyCandidate, SeasonRow } from "./types";
@@ -180,7 +180,7 @@ function settleRoyV2(s: PlayerState, row: SeasonRow, n: number): RoyCandidate[] 
     name: s.name, team: s.team.name, teamAbbr: s.team.abbr, teamColor: s.team.color,
     ppg: finite(row.ppg), rpg: finite(row.rpg), apg: finite(row.apg),
     gp: finite(row.gp), min: finite(row.min, 24), role: s.role,
-    score: royScoreV2(row), isPlayer: true,
+    score: royScoreV2(row) + royDeltaV2(s), isPlayer: true,
   };
   const others = (s.royClass.length ? s.royClass : row.league?.royRace ?? [])
     .filter((c) => !c.isPlayer)

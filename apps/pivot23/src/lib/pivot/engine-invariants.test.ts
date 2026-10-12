@@ -223,8 +223,8 @@ test("golden full-career baseline for fixed seeds (engine output, not run-vs-run
 /* 2.15.0-beta (awards v2, AW-01..AW-06): new careers get a seeded rookie class and the v2 award rules,
    so all three seeds move. The 2.14 values are kept unchanged as GOLDEN_2_14. */
 /* 2.16.0-beta (#83 decisions on top of awards v2): age-36 season played once accepted, difficulty award knobs.
-   2.15 values kept unchanged as GOLDEN_2_15. */
-const GOLDEN = ["0189372ec67c33dd", "0e4d30c3830b37d3", "34586d8c82f286fd"];
+   MVP help halves per MVP won, ROY shift on the v2 score (×0.5). 2.15 values kept unchanged as GOLDEN_2_15. */
+const GOLDEN = ["860acab285591479", "0964f5e71de9c48c", "58128165ba383c2e"];
 const GOLDEN_2_15 = ["4da0c610aba577b4", "eb62db0aef59b9a9", "ca8469ee05d836c7"];
 const GOLDEN_2_14 = ["d28207b449d5e3c1", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
 const GOLDEN_2_13 = ["9f5583418a7fa740", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
