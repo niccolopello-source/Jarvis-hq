@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { bustDiagnosis, choiceShowsVoidedExtraYear, extraYearVoided } from "./career-coherence.ts";
-import { playCareerSim } from "./engine.ts";
+import { playCareerSim, toArchive } from "./engine.ts";
+import { palmares } from "./legacy.ts";
+import { buildLegacyReport } from "./legacy-report.ts";
 import { careerEndAge, careerEndingSignal } from "./peak.ts";
 import type { PlayerState } from "./types.ts";
 
@@ -74,6 +76,67 @@ test("a played age-36 season is not marked voided", () => {
   };
   assert.equal(extraYearVoided(played), false);
   assert.equal(choiceShowsVoidedExtraYear(played.choiceLog[0]!, played), false);
+});
+
+function g4(i: number, retirement: "play36" | "retire") {
+  return playCareerSim({
+    name: "G4",
+    role: ROLES[i % 5]!,
+    nationality: "ITA",
+    number: 23,
+    difficulty: "pro",
+    path: PATHS[i % 3]!,
+    seed: (i + 1) * 1000 + 17,
+    draft: "random",
+    retirement,
+  });
+}
+
+/** Card, legacy timeline and the result line must all quote the last played season. */
+function assertSameFinalAge(s: ReturnType<typeof g4>) {
+  const last = s.seasonHistory.at(-1)!.age;
+  const entry = toArchive(s);
+  const report = buildLegacyReport(entry);
+  const archive = { choices: entry.choices, history: entry.history };
+  assert.equal(careerEndAge(s), last);
+  assert.equal(entry.card?.ageEnd, last);
+  assert.equal(report.ageEnd, last);
+  assert.equal(palmares(s).endAge, last);
+  assert.equal(report.timeline.find((item) => item.kind === "retire")?.value, last);
+  assert.equal(entry.history.at(-1)?.age, last);
+  for (const choice of entry.choices) {
+    const promised = choice.pick === "Gioca a 36 anni" && !entry.history.some((row) => row.age === 36);
+    assert.equal(choiceShowsVoidedExtraYear(choice, archive), promised);
+  }
+  return { last, entry };
+}
+
+test("diary, card and result line agree on the last played season", () => {
+  const played = g4(0, "play36");
+  assert.equal(assertSameFinalAge(played).last, 36);
+  assert.equal(extraYearVoided(played), false);
+
+  const declined = g4(0, "retire");
+  assert.equal(assertSameFinalAge(declined).last, 35);
+  assert.equal(declined.extraSeason, false);
+  assert.ok(declined.choiceLog.some((choice) => choice.pick === "Chiudi ora"));
+  assert.equal(extraYearVoided(declined), false);
+
+  const voided = g4(3, "play36");
+  assert.equal(voided.age, 36, "state age is already the next summer");
+  assert.equal(assertSameFinalAge(voided).last, 35);
+  assert.equal(extraYearVoided({ choices: toArchive(voided).choices, history: toArchive(voided).history }), true);
+
+  const closedInstead = g4(3, "retire");
+  assert.equal(assertSameFinalAge(closedInstead).last, 35);
+  assert.equal(closedInstead.extraSeason, false);
+  assert.equal(extraYearVoided(closedInstead), false);
+
+  const early = g4(5, "play36");
+  assert.equal(early.age, 33, "state age is already the next summer");
+  assert.equal(assertSameFinalAge(early).last, 32);
+  assert.equal(early.choiceLog.some((choice) => choice.pick === "Gioca a 36 anni"), false);
+  assert.equal(extraYearVoided(early), false);
 });
 
 test("bust diagnosis separates opportunity from progression without touching the official label", () => {
