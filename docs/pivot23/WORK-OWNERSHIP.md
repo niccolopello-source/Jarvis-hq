@@ -1,6 +1,6 @@
 # PIVOT 23 — Registro di chi lavora su cosa
 
-**Ultimo aggiornamento:** 11 ottobre 2026  
+**Ultimo aggiornamento:** 12 ottobre 2026  
 **Riferimento:** Project Bible §11.1 — *Un solo owner modifica un determinato file o area per volta.*  
 Fonte: `/workspace/reports/chatgpt-doc-2026-10-11.txt` (Project Bible & Master Execution Plan v1.0).
 
@@ -36,7 +36,7 @@ Serve soprattutto perché sul repository operano più agenti IA (Grok Bot, Grok 
 | Career Legacy Report / Career Card / temi cosmetici (Missione 2) | **Grok Bot** (preso in carico l'11 ott; nessun lavoro di Grok trovato su branch, PR o commit non uniti) | `grokbot/career-card-figurine` | in apertura (bozza) | In corso. Riusa `card.ts`, `CareerCardPanel`, `ResultView`, `ArchiveView` già su main. Non tocca `engine.ts`, `config.ts`, `tuning.ts`, `world.ts` | 11 ott 2026 |
 | Intro / visual (Bible Blocco E — Frontend/Art) | **Da assegnare** (Frontend / Art per Bible) | — | — | Libero / da assegnare. Nota: l'intro con pallone è stata sostituita dal logo (#56); i suoni vanno riallineati alla versione finale. | 11 ott 2026 |
 | Motore 2.13, D-09 (titoli e dinastie), misure D-11/D-23, documento D-08 | **Lucille** | `lucille/*` (`lucille/engine-2.13-d09`, `lucille/d11-d23-evidence`, `lucille/d08-bust-design`) | [#66](https://github.com/niccolopello-source/Jarvis-hq/pull/66), [#67](https://github.com/niccolopello-source/Jarvis-hq/pull/67), [#68](https://github.com/niccolopello-source/Jarvis-hq/pull/68) | In corso. File: `engine.ts`, `config.ts`, `tuning.ts`, `world.ts` e relativi test | 11 ott 2026 |
-| Persistenza / archive / save-load | — | — | — | Libero dopo #58–#60. | 11 ott 2026 |
+| G3 red team: robustezza save/load, idempotenza decisioni, choice log, test di replay/determinismo e invarianti | **Grok Bot** | `grokbot/g3-redteam` | bozza (vedi PR G3) | In corso. File: `save.ts` (solo lettura), `engine.ts` **solo** `normalizeArchiveEntry`/`saveArchive` (fix minimo G3-B02, da rivedere con Lucille), `PivotApp.tsx` **solo** `takeGesture` (G3-B01), nuovi `g3-redteam.test.ts`, `e2e/g3-idempotency.spec.ts`, `docs/pivot23/G3-REDTEAM.md`. Non tocca Career Card (#70), `bust.ts` (#71), e2e Demo Gate (#72) | 12 ott 2026 |
 
 ---
 
