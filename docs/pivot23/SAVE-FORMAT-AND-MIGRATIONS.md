@@ -72,3 +72,8 @@ Does **not** protect against:
 - the archive (`pivot-v2-archive`): no checksum; entries are shape-checked by `normalizeArchiveEntry`, and the optional Career Card has its own fingerprint (also not a signature);
 - backup, hint, swipe and language keys;
 - JSON key order changes: the hash is over `JSON.stringify` of the parsed object, so it is stable for saves written by this code, but a re-serialised save with reordered keys reads as `corrupt` (kept and backed up, not lost).
+
+
+## Career Legacy facts e tema carta (2026-10-11)
+- `pivot-v2-archive`: ogni nuova voce può avere `legacy` (`LegacyFacts` v1, additivo, facoltativo, fuori dal fingerprint). Voci vecchie: campo assente, report con campi omessi. Nessuna migrazione.
+- `pivot-v2-card-theme`: id del tema della carta, solo presentazione. Valori non gratuiti o sconosciuti ricadono su `standard`.

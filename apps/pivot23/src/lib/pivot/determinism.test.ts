@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { advanceCareerSim, openCareerSim, playCareerSim } from "./engine.ts";
+import { advanceCareerSim, ENGINE_VERSION, openCareerSim, playCareerSim } from "./engine.ts";
 import { createRng } from "./rng.ts";
 import { buildLiveSave } from "./save.ts";
-import { BALANCE_SINCE, dpoyFatigueOf, LEGACY_RULES, resetTuning, scriptSlotFor, scriptWindowsOf, TUNING, TUNING_DEFAULTS, usesBalance } from "./tuning.ts";
+import { BALANCE_SINCE, dpoyStreakStepOf, LEGACY_DPOY_STREAK_STEP, versionAtLeast, versionCore, worldOf, WORLD_SINCE, dpoyFatigueOf, LEGACY_RULES, resetTuning, scriptSlotFor, scriptWindowsOf, TUNING, TUNING_DEFAULTS, usesBalance } from "./tuning.ts";
 import type { PlayerState } from "./types.ts";
 
 /* Same seed => same career, under shipped settings and under every balance experiment. */
@@ -24,11 +24,12 @@ function fingerprint(s: PlayerState) {
   });
 }
 
-test("tuning defaults: D-11 and D-23 on, every other experiment on the shipped rule", () => {
+test("tuning defaults: D-09, D-11 and D-23 on, every other experiment on the shipped rule", () => {
   assert.deepEqual({ ...TUNING }, { ...TUNING_DEFAULTS });
   assert.equal(TUNING_DEFAULTS.scriptWindows, "seeded");
   assert.equal(TUNING_DEFAULTS.dpoyFatigue, "streak");
-  for (const key of ["retirement", "bust", "world", "rolePeak"] as const) assert.equal(TUNING_DEFAULTS[key], "current", key);
+  assert.equal(TUNING_DEFAULTS.world, "regress"); // D-09, gated on WORLD_SINCE
+  for (const key of ["retirement", "bust", "rolePeak"] as const) assert.equal(TUNING_DEFAULTS[key], "current", key);
   assert.equal(TUNING_DEFAULTS.dpoyMinGames.NBA, 58, "DPOY games threshold unchanged");
   // The pre-2.12 calendar is still available, for careers created before the change.
   for (let seed = 1; seed < 50; seed++) {
@@ -151,4 +152,30 @@ test("the reader's language never changes the career or the save", async () => {
   } finally {
     setLang(before);
   }
+});
+
+test("version gate: pre-release counts as its release, unreadable counts as older", () => {
+  assert.deepEqual(versionCore("2.13.0-beta"), [2, 13, 0]);
+  assert.deepEqual(versionCore(" v2.13 "), [2, 13, 0]);
+  assert.deepEqual(versionCore("2.13.0-rc.1+abc"), [2, 13, 0]);
+  for (const bad of [undefined, null, 213, "", "beta", "2", "2.x.0", "2.13.0beta"]) assert.equal(versionCore(bad), null, String(bad));
+  assert.equal(versionAtLeast("2.13.0-beta", "2.13.0"), true);
+  assert.equal(versionAtLeast("2.13.1", "2.13.0"), true);
+  assert.equal(versionAtLeast("2.12.9", "2.13.0"), false);
+  assert.equal(versionAtLeast("2.12.0-beta", "2.13.0"), false);
+  assert.equal(versionAtLeast("10.0.0", "2.13.0"), true, "numeric, not lexicographic");
+  assert.equal(versionAtLeast("garbage", "2.13.0"), false);
+});
+
+test("D-09 world rule: only careers created by WORLD_SINCE or later regress", () => {
+  assert.equal(versionAtLeast(ENGINE_VERSION, WORLD_SINCE), true, "new careers get D-09");
+  assert.equal(versionAtLeast(ENGINE_VERSION, BALANCE_SINCE), true, "new careers keep D-11/D-23");
+  for (const v of ["2.11.0-beta", "2.12.0-beta", "2.12.0", "", undefined]) assert.equal(worldOf({ engineVersion: v }), "current", String(v));
+  for (const v of ["2.13.0-beta", "2.13.0", "3.0.0"]) assert.equal(worldOf({ engineVersion: v }), "regress", v);
+});
+
+test("D-23 step: 0.16 from 2.13.0, live 2.12 careers keep 0.12", () => {
+  for (const v of ["2.12.0-beta", "2.12.0", undefined]) assert.equal(dpoyStreakStepOf({ engineVersion: v }), LEGACY_DPOY_STREAK_STEP, String(v));
+  assert.equal(LEGACY_DPOY_STREAK_STEP, 0.12);
+  for (const v of ["2.13.0-beta", "2.13.0"]) assert.equal(dpoyStreakStepOf({ engineVersion: v }), 0.16, v);
 });
