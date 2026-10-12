@@ -22,6 +22,8 @@ const clone = <T,>(x: T): T => structuredClone(x);
 
 function live(s: PlayerState, pending: SavedPending) {
   s.simulated = false;
+  // careerId is a random UUID in freshPlayer: pin it so the fixture file is byte-stable.
+  s.careerId = `00000000-0000-4000-8000-${String(s.seed).padStart(12, "0")}`;
   return buildLiveSave(s, pending, [], "career", "log", 1);
 }
 

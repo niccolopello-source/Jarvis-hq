@@ -77,3 +77,18 @@ Base misurata: `main` @ `f52ae5b` (merge #62–#65). Ambiente: box Linux condivi
 | iPhone/Safari iOS, Android fisico | BLOCKED | nessun dispositivo; protocollo in `DEVICE-MANUAL-QA.md` |
 
 Verdetti: demo tecnicamente giocabile **sì (Chromium)**; demo pubblica accettabile **NOT READY** finché il protocollo su dispositivo reale non è eseguito; rilascio commerciale **NOT READY**.
+
+### Riverifica 12 ott 2026 — testa PR #72 dopo il merge di main (engine `2.13.0-beta`, #66, #70)
+
+Base: `7c0022c` + questo commit. Box Linux, Node 20, Chromium headless, build di produzione (`vite preview`).
+
+| Gate | Stato | Evidenza |
+|---|---|---|
+| lint / typecheck / build / check:headers | PASS | exit 0 |
+| Unit | PASS | 201/201 |
+| Statistici | PASS | 5/5 |
+| E2E build di produzione | PASS | 99 passati, 2 saltati (sonde perf, solo `PERF=1`) |
+| Fixture deterministiche con motore 2.13 | PASS | infortunio s4200/st.8, FA s4200/st.12, premi+playoff s4201/st.5 invariati; run playoff ora s4201/st.**16** (prima st.7: il motore 2.13 cambia la carriera). `careerId` fissato: file identico tra due generazioni |
+| `paths.spec.ts` ×10 (con 7c0022c di Jarvis) | PASS | 40/40 |
+| Primo tap residuo | Documentato, non modificato | i ~25–34 ms (CPU 4×) rimasti nel task sono `new AudioContext`, che va creato dentro il gesto (iOS Safari); il render del setup pesa pochi ms. Nessun guadagno sicuro lato UI senza provare su Safari reale |
+| iPhone/Safari, Android reali | BLOCKED | `DEVICE-MANUAL-QA.md` |
