@@ -126,6 +126,18 @@ export const EN_NAMES: Readonly<Record<string, string>> = {
   "Noah Berg": "Noah Berg",
   "Kobe Daramy": "Kobe Daramy",
   "Pavel Novak": "Pavel Novak",
+  "Darius Holt": "Darius Holt",
+  "Omari Wells": "Omari Wells",
+  "Felix Lindqvist": "Felix Lindqvist",
+  "Tariq Bello": "Tariq Bello",
+  "Jonah Reyes": "Jonah Reyes",
+  "Andrei Popescu": "Andrei Popescu",
+  "Cyrus Bannon": "Cyrus Bannon",
+  "Elijah Mbeki": "Elijah Mbeki",
+  "Marco Bellini": "Marco Bellini",
+  "Dante Shaw": "Dante Shaw",
+  "Kenji Arai": "Kenji Arai",
+  "Victor Lunde": "Victor Lunde",
   "PIVOT 23": "PIVOT 23",
   "Career Card": "Career Card"
 };
