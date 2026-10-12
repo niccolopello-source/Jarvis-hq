@@ -4,7 +4,7 @@ import { bustDiagnosis, choiceShowsVoidedExtraYear, extraYearVoided } from "./ca
 import { playCareerSim, toArchive } from "./engine.ts";
 import { palmares } from "./legacy.ts";
 import { buildLegacyReport } from "./legacy-report.ts";
-import { careerEndAge, careerEndingSignal } from "./peak.ts";
+import { careerEndAge, careerEndingSignal, isCareerOver } from "./peak.ts";
 import type { PlayerState } from "./types.ts";
 
 const ROLES = ["PG", "SG", "SF", "PF", "C"] as const;
@@ -51,21 +51,28 @@ test("the current retirement rule cannot fire before age 33, whatever the body s
   })), null);
 });
 
-test("G4 seeds that accepted age 36 never recorded that season (A1)", () => {
-  // Indices whose seed is (i+1)*1000+17 ∈ {4017, 23017, 49017, 65017, 74017}.
+test("an accepted age-36 season is played, even when that summer is already an injury", () => {
   for (const i of [3, 22, 48, 64, 73]) {
     const s = g4Pro(i);
     assert.equal(s.seed, [4017, 23017, 49017, 65017, 74017][[3, 22, 48, 64, 73].indexOf(i)]);
-    assert.equal(extraYearVoided(s), true, `seed ${s.seed} should be a voided extra year`);
-    assert.equal(s.seasonHistory.some((r) => r.age === 36), false);
-    assert.equal(careerEndAge(s), s.seasonHistory.at(-1)?.age);
-    assert.ok(careerEndAge(s)! < 36);
-    assert.equal(careerEndingSignal(s), "injury", `seed ${s.seed} signal`);
-    assert.ok(s.injuryDrag >= 2.5);
+    assert.equal(s.extraSeason, true);
+    assert.equal(s.seasonHistory.some((r) => r.age === 36), true, `seed ${s.seed} plays 36`);
+    assert.equal(extraYearVoided(s), false);
+    assert.equal(careerEndAge(s), 36);
     const pick = s.choiceLog.find((c) => c.pick === "Gioca a 36 anni");
-    assert.ok(pick, "the log still records the acceptance");
-    assert.equal(choiceShowsVoidedExtraYear(pick!, s), true);
+    assert.ok(pick);
+    assert.equal(choiceShowsVoidedExtraYear(pick!, s), false);
   }
+});
+
+test("the accepted final season is not erased by an injury that arrives in that summer", () => {
+  const row = { age: 35, min: 20 } as PlayerState["seasonHistory"][number];
+  const owed = shell({ age: 36, extraSeason: true, injuryDrag: 9, engineVersion: "2.14.0-beta", seasonHistory: [row] });
+  assert.equal(isCareerOver(owed), false);
+  const legacy = shell({ ...owed, engineVersion: "2.13.0-beta" });
+  assert.equal(isCareerOver(legacy), true, "a save from 2.13 keeps the season it already closed");
+  const played = shell({ ...owed, seasonHistory: [row, { ...row, age: 36 }] });
+  assert.equal(isCareerOver(played), true);
 });
 
 test("a played age-36 season is not marked voided", () => {
@@ -122,10 +129,9 @@ test("diary, card and result line agree on the last played season", () => {
   assert.ok(declined.choiceLog.some((choice) => choice.pick === "Chiudi ora"));
   assert.equal(extraYearVoided(declined), false);
 
-  const voided = g4(3, "play36");
-  assert.equal(voided.age, 36, "state age is already the next summer");
-  assert.equal(assertSameFinalAge(voided).last, 35);
-  assert.equal(extraYearVoided({ choices: toArchive(voided).choices, history: toArchive(voided).history }), true);
+  const playedFinal = g4(3, "play36");
+  assert.equal(assertSameFinalAge(playedFinal).last, 36, "an accepted final season is played");
+  assert.equal(extraYearVoided(playedFinal), false);
 
   const closedInstead = g4(3, "retire");
   assert.equal(assertSameFinalAge(closedInstead).last, 35);

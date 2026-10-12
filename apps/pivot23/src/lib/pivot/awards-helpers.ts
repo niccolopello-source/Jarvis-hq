@@ -2,7 +2,7 @@
 /** ROY ~7% anno 1 NBA. DPOY ogni stagione NBA: stessa scala del campo, vince il box difensivo. */
 import { SIM } from "./config";
 import { dpoyFatigueOf, dpoyStreakStepOf, TUNING } from "./tuning";
-import { diffOf } from "./difficulty";
+import { diffOf, awardProfile } from "./difficulty";
 import { advancedOf } from "./peak";
 import { findTeam, NBA_TEAMS } from "./teams";
 import type { CpuStar, DpoyCandidate, LeagueAward, PlayerState, RoyCandidate, SeasonRow } from "./types";
@@ -128,7 +128,7 @@ export function settleRoy(s: PlayerState, row: SeasonRow, n: number): RoyCandida
     ppg: finite(row.ppg),
     rpg: finite(row.rpg),
     apg: finite(row.apg),
-    score: royProductionScore({ ppg: finite(row.ppg), rpg: finite(row.rpg), apg: finite(row.apg), gp: finite(row.gp), min: finite(row.min, 24) }),
+    score: royProductionScore({ ppg: finite(row.ppg), rpg: finite(row.rpg), apg: finite(row.apg), gp: finite(row.gp), min: finite(row.min, 24) }) + awardProfile(s).royDelta,
     isPlayer: true,
   };
   const others = (s.royClass.length ? s.royClass : row.league?.royRace ?? [])
@@ -433,11 +433,12 @@ export function settleDpoy(s: PlayerState, row: SeasonRow, n: number): boolean {
   const guard = s.role === "PG" || s.role === "SG";
   const ident = s.world?.teams?.[s.team.abbr]?.identity;
   const teamDef = teamDefOf(ident);
+  const bar = awardProfile(s).dpoyBar;
   const shape = big
-    ? bpg >= 1.45 && stocks >= 1.85
+    ? bpg >= 1.45 * bar && stocks >= 1.85 * bar
     : guard
-      ? spg >= 1.5 && (teamDef >= 1.5 || stocks >= 2.15)
-      : stocks >= 1.9 && (spg >= 1.15 || bpg >= 0.85);
+      ? spg >= 1.5 * bar && (teamDef >= 1.5 || stocks >= 2.15 * bar)
+      : stocks >= 1.9 * bar && (spg >= 1.15 * bar || bpg >= 0.85 * bar);
   const youthOk = s.age > 21 || stocks >= 2.9 || bpg >= 2.45;
   const gpOk = finite(row.gp, 0) >= finite(TUNING.dpoyMinGames[s.league], 58);
   const mine = race.find((c) => c.isPlayer);
@@ -445,7 +446,7 @@ export function settleDpoy(s: PlayerState, row: SeasonRow, n: number): boolean {
   const marks = defensiveMarks(row);
   const fieldScore = finite(race.find((c) => !c.isPlayer)?.score, 99);
   const win =
-    !!leader?.isPlayer && gpOk && shape && youthOk && marks.dws >= 3 && Number.isFinite(myScore) && myScore + 0.05 >= fieldScore;
+    !!leader?.isPlayer && gpOk && shape && youthOk && marks.dws >= 3 * bar && Number.isFinite(myScore) && myScore + awardProfile(s).dpoyHelp >= fieldScore;
   if (!win) {
     if (row.league && leader && !leader.isPlayer) {
       patchAward(row.league.awards, "DPOY", {

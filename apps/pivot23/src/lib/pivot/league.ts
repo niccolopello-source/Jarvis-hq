@@ -1,6 +1,6 @@
 
 import { EURO_TEAMS, NBA_TEAMS, ROOKIE_NAMES, cloneTeam, powerToTier } from "./teams";
-import { diffOf } from "./difficulty";
+import { awardProfile, diffOf } from "./difficulty";
 import { SIM } from "./config";
 import { pick, rand } from "./rng";
 import { identityModOf, liveStar, mvpScore, starOf, teamStrength } from "./world";
@@ -397,7 +397,7 @@ function grantAllStarAwards(
   rank: number,
 ) {
   if (s.league !== "NBA" || rank < 0) return;
-  const starCut = d.awardOvr >= 6 ? 4 : d.awardOvr >= 4 ? 5 : d.awardOvr < 0 ? 8 : 6;
+  const starCut = d.starCut;
   const allStar =
     box.gp >= 55 && (rank < starCut || (rank < starCut + 1 && rand() < 0.12 * d.awardP));
   if (allStar && !box.awards.includes("All-Star")) {
@@ -460,7 +460,7 @@ function buildAwards(
   const top = bestRecord(table);
   const out: LeagueAward[] = [];
 
-  const d = diffOf(s);
+  const d = awardProfile(s);
   const games = s.league === "EuroLega" ? EURO_GAMES : NBA_GAMES;
   const field = nbaField(s, box, nba);
   const rank = field.findIndex((f) => f.isPlayer);
@@ -475,8 +475,8 @@ function buildAwards(
   const repeatCost = s.mvpCount * 7 + s.titleCount * 2.5;
   const pScore =
     mvpScore(playerProd, box.wins, playerEff, playerImpact, box.gp, games, s.hidden.consistency, playerNar) +
-    (rand() - 0.5) * SIM.awards.noise -
-    d.awardOvr * 0.8 -
+    (rand() - 0.5) * SIM.awards.noise +
+    d.mvpHelp -
     repeatCost;
 
   const cpu = [...table]

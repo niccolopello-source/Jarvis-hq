@@ -681,6 +681,7 @@ function isLiveSave(value: unknown): value is LiveSave {
   if (!numericFields.every((key) => finite(state[key]))) return false;
   if (state.rngState !== undefined && !finite(state.rngState)) return false;
   if (state.draftEdge !== undefined && !finite(state.draftEdge)) return false;
+  if (state.bustLock !== undefined && !finite(state.bustLock)) return false;
   if (state.careerId !== undefined && (typeof state.careerId !== "string" || state.careerId.length === 0)) return false;
   if (!["name", "nationality", "originPath", "rivalName", "coachName", "lastOffseasonId", "engineVersion"]
     .every((key) => typeof state[key] === "string")) return false;
