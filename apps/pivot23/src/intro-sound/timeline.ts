@@ -8,6 +8,11 @@
  *   bounce1  1400 ms   the outer ring closes
  *   bounce2  2400 ms   the inner arcs close
  *   swish    3400 ms   the 23 turns PIVOT red
+ *   end      4800 ms   cineReveal ends, the premiere class goes and the home is final
+ *
+ * The sound lasts exactly as long as the premiere: the swish's net settles and rings out until the
+ * end of `cineReveal`, and the whole phrase fades to silence over the last FADE_OUT_MS, landing on 0
+ * at the same millisecond the animation ends. The end is read from the same `--cine` duration.
  *
  * One premiere for every device. There is no shorter basketball cut.
  */
@@ -22,6 +27,18 @@ export const MIN_DRIBBLE_GAP_MS = 350;
 export const LATE_GRACE_MS = 90;
 /** Length of the last cue's audible tail, used to suspend the AudioContext afterwards. */
 export const TAIL_MS = 900;
+
+/** The last stretch of the premiere over which the phrase fades to silence. */
+export const FADE_OUT_MS = 360;
+
+/**
+ * When the sound fades and stops, in premiere ms, for a premiere of `revealMs` (the `--cine` length).
+ * The end is the end of the animation itself, never a separate guess.
+ */
+export function soundEnvelope(revealMs: number): { fadeAt: number; endAt: number } | null {
+  if (!Number.isFinite(revealMs) || revealMs <= FADE_OUT_MS) return null;
+  return { fadeAt: revealMs - FADE_OUT_MS, endAt: revealMs };
+}
 
 /** Logo premiere beats. Must match `--beat-*` in src/styles.css. */
 export const PREMIERE_MS = 4800;
