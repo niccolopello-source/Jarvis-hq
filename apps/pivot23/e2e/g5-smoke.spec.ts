@@ -9,9 +9,9 @@ import { join } from "node:path";
    Screenshots go to G5_SHOTS (default test-results/g5-smoke). */
 
 const SHOTS = process.env.G5_SHOTS || join("test-results", "g5-smoke");
-// The setup input caps names at 20 characters (maxLength=20): the career carries the first 20.
+// The setup input caps names at 32 characters (maxLength=32): the career carries the first 32.
 const TYPED = "Massimiliano Della Valle-Giordano";
-const NAME = TYPED.slice(0, 20);
+const NAME = TYPED.slice(0, 32);
 const settle = (page: Page, ms = 250) => page.waitForTimeout(ms);
 const shot = (page: Page, name: string) => page.screenshot({ path: join(SHOTS, `${name}.png`) });
 
