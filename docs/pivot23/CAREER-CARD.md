@@ -29,4 +29,4 @@ Canvas 2D, font atteso con `document.fonts.ready`, testo adattato/ellissato per 
 - **Interfacce:** `ArchiveCareer.legacy?: LegacyFacts` (types.ts), `withLegacyFacts(entry, player)`, `buildLegacyReport(entry)`, `CARD_THEME_KEY`.
 - **File toccati condivisi:** `PivotApp.tsx` (scrittura archivio 2 punti, log draft, ResultView/ArchiveView), `types.ts` (un campo opzionale), `i18n.ts` (una chiave), `narrative.test.ts` (esclusione dizionari bilingui), `demo-readiness.spec.ts` (selettore età 36 reso univoco: ora l'età compare anche nelle tappe).
 - **Selettori e2e stabili:** `region "Career Card"`, `[data-career-card]`, `[data-career-id]`, `[data-legacy-report]`, `[data-theme-option]`, `[data-export-png]`.
-- **Limiti:** nessuna «ragione del ritiro» nell'archivio (non registrata) → non mostrata. Etichetta bust D-08 pronta (`report.bust`, testi IT/EN) ma non valutata finché `bust.ts` di Lucille non è su main.
+- **Limiti:** nessuna «ragione del ritiro» nell'archivio (non registrata) → non mostrata. Etichetta bust D-08: valutata a fine carriera via `careerBust()` (#71 su main; wiring Legacy Report in `grokbot/bust-label-legacy`).

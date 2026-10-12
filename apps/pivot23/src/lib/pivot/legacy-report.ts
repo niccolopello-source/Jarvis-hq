@@ -9,6 +9,7 @@
  * - Nothing here imports the engine or touches RNG, formulas or the saved sporting state.
  */
 import type { ArchiveCareer, PlayerState, Role, SeasonRow } from "./types";
+import { careerBust } from "./bust";
 import { ROLES } from "./data";
 import { isUnsigned } from "./teams";
 
@@ -168,8 +169,8 @@ export interface LegacyReport {
   engineVersion: string | null;
   simulated: boolean;
   /**
-   * D-08 bust label, end of career only. null = not evaluated: Lucille's careerBust() (bust.ts)
-   * is not on main yet. When it lands: careerBust({ draftPick, allStarCount, seasonHistory: rows }).
+   * D-08 bust label (end of career only). null = not evaluated (no draft pick on the archive).
+   * Derived via careerBust() from draft pick, All-Star count and starter seasons; never invents data.
    */
   bust: boolean | null;
 }
@@ -324,7 +325,13 @@ export function buildLegacyReport(entry: ArchiveCareer): LegacyReport {
     closing: entry.closing,
     engineVersion: entry.engineVersion ?? card?.engineVersion ?? null,
     simulated: !!entry.simulated,
-    bust: null,
+    bust: draftPick !== null
+      ? careerBust({
+          draftPick,
+          allStarCount: awardCount.get("All-Star") ?? (typeof card?.allStars === "number" && Number.isFinite(card.allStars) ? card.allStars : 0),
+          seasonHistory: rows,
+        }).bust
+      : null,
   };
 }
 
