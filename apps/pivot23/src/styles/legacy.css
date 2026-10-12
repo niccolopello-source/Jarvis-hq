@@ -37,10 +37,10 @@
 .lc-meta { margin: 10px 0 0; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; color: var(--lc-muted); overflow-wrap: anywhere; }
 .lc-name { margin: 4px 0 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(28px, 8.5vw, 38px); line-height: 1.02; letter-spacing: -0.02em; color: var(--lc-ink); overflow-wrap: anywhere; }
 .lc-rule { width: 54px; height: 3px; margin: 14px 0 12px; background: var(--lc-accent); border-radius: 2px; }
-.lc-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(64px, 1fr)); gap: 8px; margin: 0; }
-.lc-stat { display: flex; flex-direction: column-reverse; min-width: 0; }
-.lc-stat dd { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(26px, 8vw, 34px); line-height: 1; font-variant-numeric: tabular-nums; color: var(--lc-ink); }
-.lc-stat dt { margin-top: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lc-muted); }
+.lc-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: 8px; margin: 0; }
+.lc-stat { display: flex; flex-direction: column-reverse; min-width: 0; container-type: inline-size; }
+.lc-stat dd { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(20px, 42cqi, 32px); line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.03em; color: var(--lc-ink); max-width: 100%; }
+.lc-stat dt { margin-top: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lc-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lc-honors { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 6px; }
 .lc-honors li { position: relative; padding-left: 14px; font-weight: 700; font-size: 15px; overflow-wrap: anywhere; }
 .lc-honors li::before { content: ""; position: absolute; left: 0; top: 0.25em; width: 4px; height: 1em; border-radius: 2px; background: var(--lc-accent); }

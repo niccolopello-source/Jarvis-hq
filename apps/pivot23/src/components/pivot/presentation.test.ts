@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { ATTR_LABELS, EURO_ROUNDS, NBA_ROUNDS } from "../../lib/pivot/data.ts";
 import {
+  CAREER_NAME_MAX,
+  careerName,
   DELTA_FADE_MS,
   DELTA_READABLE_MS,
   EUROLEAGUE_FINALS_LABEL,
@@ -141,4 +143,14 @@ test("D-14 tidyText removes doubled punctuation and keeps ellipses", async () =>
   assert.equal(tidyText("Aspetta... poi parte."), "Aspetta... poi parte.");
   assert.equal(tidyText("Uno ,  due ."), "Uno, due.");
   assert.equal(tidyText("Già finita…"), "Già finita…");
+});
+
+test("career name: 32 characters kept, longer input capped, whitespace tidied, empty falls back", () => {
+  const long = "Massimiliano Della Valle-Giordano"; // 33
+  assert.equal(CAREER_NAME_MAX, 32);
+  assert.equal(careerName(long), long.slice(0, 32));
+  assert.equal(careerName("  Ana   Maria  "), "Ana Maria");
+  assert.equal(careerName("   "), "Il Rookie");
+  assert.equal(careerName("Marco Ferrara"), "Marco Ferrara");
+  assert.equal(Array.from(careerName("é".repeat(40))).length, 32);
 });
