@@ -129,3 +129,12 @@ export function tidyText(text: string): string {
     .replace(/[ \t]{2,}/g, " ")
     .trim();
 }
+
+/** Longest career name the setup accepts (was 20 until 12 Oct 2026). Older saves with shorter names load unchanged. */
+export const CAREER_NAME_MAX = 32;
+
+/** Name used for a new career: trimmed, inner whitespace collapsed, capped at CAREER_NAME_MAX, "Il Rookie" when empty. */
+export function careerName(raw: string): string {
+  const clean = raw.replace(/\s+/g, " ").trim();
+  return Array.from(clean).slice(0, CAREER_NAME_MAX).join("").trim() || "Il Rookie";
+}

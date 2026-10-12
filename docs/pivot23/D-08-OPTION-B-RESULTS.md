@@ -14,12 +14,28 @@ Author: Lucille (Grok Bot), 2026-10-12. Follows `D-08-OPTION-B-FOLLOWUP.md`. Dra
   - The reference points are the median imprint and development of pot ≥ 80 careers at their apex.
 - **When it is judged:** three seasons before the apex, then **locked** in a new optional state field `bustLock` (validated in `save.ts`). The drag cannot change the age of the peak.
   - An unlocked version moved 36–41 of 1,000 peaks to 23–25, breaking P0-LIFE. With the lock, 1000/1000 peaks stay at 26–28.
-- **Gate:** careers from `BUST_SINCE = 2.14.0` only, **and** the switch is OFF by default (`TUNING.bust = "current"`).
-  - `ENGINE_VERSION` goes to 2.14.0-beta. With the switch off, 2.14 careers behave exactly like 2.13: all goldens unchanged.
+- **Gate:** careers from `BUST_SINCE = 2.17.0` only (rebased 2026-10-12 on main 2.15; 2.16 left free for PR #83), **and** the switch is OFF by default (`TUNING.bust = "current"`).
+  - `ENGINE_VERSION` goes to 2.17.0-beta. With the switch off, 2.17 careers behave exactly like main 2.15: all goldens unchanged.
   - 300/300 Pro careers stamped 2.13 replay bit-identical.
   - Turning it on is the one-line owner decision.
 
-## Results — 4,000 Pro careers + 1,000 each on Esordio/All-Star/Leggenda, same G4 seeds
+## Update 2026-10-12 — rebased on main 2.15.0-beta (A2 retirement spread + awards v2)
+**Gate proof:** 240 careers forced to 2.12/2.13/2.14/2.15/2.16 (4 difficulties × 12 seeds, awards-gate fingerprint incl. RNG state): main vs branch B off 240/240 identical, main vs branch B **on** 240/240 identical.
+
+Re-measured, 1,000 careers each, same seeds (`(i+1)*1000+17`):
+
+| Metric | main 2.15 | branch B off (2.17) | branch B on (2.17) |
+|---|---|---|---|
+| careerBust Pro / Leggenda | 14.1% / 15.7% | 14.1% / 15.7% | **16.8% / 17.0%** |
+| High-pot bust (pot ≥ 85, peak ≤ pot−8) Pro / Leg | 0/131 / 0/64 | same | 1/131 / 3/64 |
+| Reach potential Pro / Leg | 55.5% / 41.5% | same | 28.2% / 15.2% |
+| Gap median / p90 Pro | 0.9 / 2.6 | same | 1.9 / 3.7 |
+| All-Star / All-NBA / MVP / titles Pro | 700 / 934 / 103 / 296 | same | 555 / 766 / 78 / 256 |
+| Mean seasons Pro / Leg | 15.62 / 14.21 | same | 15.60 / 14.15 |
+
+Conclusion unchanged: B off is a no-op; B on still mostly hits non-star careers and cuts awards ~20%. Recommendation: keep OFF.
+
+## Results (original, on 2.13) — 4,000 Pro careers + 1,000 each on Esordio/All-Star/Leggenda, same G4 seeds
 `main` 3bb757b (2.13, Pro run fresh and engine-identical to G4 `f7ca03d`: 1000/1000 same fingerprints) vs this branch with `bust = "choices-b"` (2.14).
 
 | Metric | main | option B | B soft (k 0.08 / 0.02, Pro 1,000) |
@@ -50,4 +66,4 @@ High-potential bust repro seeds (option B): 300017 (pot 94.9 → peak 84) and 13
 ## Open decision for the owner
 1. Keep B off and pursue risk-tagged choices (recommended), or accept B / B soft knowing the side effects?
 2. Is a ~0% high-potential bust rate acceptable for the product (stars always become stars)?
-3. The 2.14.0 bump is shared with A2 (#78); merge them together.
+3. B is gated on 2.17.0; if #83 does not take 2.16, the gate can move down without other changes.

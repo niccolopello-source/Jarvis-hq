@@ -16,6 +16,7 @@ type Rec = {
   starts: { kind: string; at: number }[];
   stops: { at: number; callAt: number }[];
   premiereStart: number;
+  premiereEnd: number;
   violations: string[];
 };
 
@@ -29,7 +30,10 @@ async function setup(page: Page, opts: { mock?: boolean; pref?: "on" | "off" } =
     ({ mock, pref }) => {
       Object.defineProperty(navigator, "hardwareConcurrency", { configurable: true, get: () => 8 });
       if (pref) localStorage.setItem("pivot23.introSound", pref);
-      const rec = { contexts: 0, resumes: 0, starts: [] as { kind: string; at: number }[], stops: [] as { at: number; callAt: number }[], premiereStart: 0, violations: [] as string[] };
+      const rec = { contexts: 0, resumes: 0, starts: [] as { kind: string; at: number }[], stops: [] as { at: number; callAt: number }[], premiereStart: 0, premiereEnd: 0, violations: [] as string[] };
+      new MutationObserver(() => {
+        if (rec.premiereStart && !rec.premiereEnd && !document.querySelector(".court-mark-live.is-premiere")) rec.premiereEnd = performance.now();
+      }).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ["class"] });
       (window as unknown as { __audio: typeof rec }).__audio = rec;
       document.addEventListener("securitypolicyviolation", (e) => rec.violations.push(`${e.violatedDirective} ${e.blockedURI}`));
       document.addEventListener(
@@ -298,4 +302,22 @@ test("real Web Audio (no mock): a gesture mid-premiere plays without errors or C
   await page.locator(".back-link").click();
   await page.waitForTimeout(300);
   clean(errors, await rec(page));
+});
+
+test("the sound lasts exactly until the premiere ends and the home is final", async ({ page }) => {
+  const errors = await setup(page);
+  await page.goto("/");
+  await expect(page.locator(".court-mark-live.is-premiere")).toBeVisible();
+  await waitElapsed(page, 300);
+  await neutral(page).click();
+  await page.waitForFunction(() => (window as unknown as { __audio: Rec }).__audio.premiereEnd > 0, undefined, { timeout: 15_000 });
+  await expect(page.locator(".intro-hero .court-mark-live.is-premiere")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /inizia/i }).first()).toBeVisible();
+  const r = await rec(page);
+  const animEnd = r.premiereEnd - r.premiereStart;
+  const soundEnd = Math.max(...r.stops.filter((s) => s.callAt < r.premiereEnd).map((s) => s.at)) - r.premiereStart;
+  console.log(`premiere end (class removed) ${Math.round(animEnd)} ms, scheduled sound end ${Math.round(soundEnd)} ms`);
+  expect(Math.abs(animEnd - 4800)).toBeLessThan(250);
+  expect(Math.abs(soundEnd - 4800)).toBeLessThan(80);
+  clean(errors, r);
 });

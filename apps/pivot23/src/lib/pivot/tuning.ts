@@ -18,6 +18,10 @@ export const TUNING = {
    *  reference never add. Reference points are the median imprint/development of pot >= 80 careers
    *  at their apex (G4 sample: choiceOvr 4.07, development 6.5). */
   bustB: { choiceRef: 4.0, choiceK: 0.12, devRef: 6.0, devK: 0.04 },
+  /** A2 (proposal): from engine RETIRE_SINCE, a serious injury can end a career before 33.
+   *  Bars by summer age (the last season played is one year younger): heavier drag ends earlier.
+   *  From 33 the shipped rule (2.5) applies unchanged. */
+  injuryRetireBars: { 30: 5.0, 31: 3.6, 32: 3.2 } as Readonly<Record<number, number>>,
   /** D-08: how much choices and injuries move the realised share of potential. */
   bust: "current" as "current" | "choices" | "events" | "choices-b",
   /** D-09: title spread across simulated worlds. */
@@ -48,8 +52,18 @@ export const WORLD_SINCE = "2.13.0";
 /** Rules that careers created before BALANCE_SINCE (D-11/D-23) or WORLD_SINCE (D-09) keep. */
 export const LEGACY_RULES = Object.freeze({ scriptWindows: "fixed", dpoyFatigue: "current", world: "current" } as const);
 
-/** First engine version whose careers use D-08 option B. */
-export const BUST_SINCE = "2.14.0";
+/** First engine version whose careers use the A2 early-injury retirement bars. */
+export const RETIRE_SINCE = "2.14.0";
+
+/** First engine version of the 2.15 rules. Shared gate: PR #83 (engine decisions) and the awards v2
+ *  PR both key their new rules on 2.15.0, so a career is either fully 2.14 or fully 2.15. */
+export const RULES_215_SINCE = "2.15.0";
+
+/** Awards v2 (MVP/ROY/DPOY/All-NBA/MIP/6MOY fixes) apply to careers created by 2.15.0 or later. */
+export const AWARDS_SINCE = RULES_215_SINCE;
+
+/** First engine version whose careers use D-08 option B (2.16 reserved for PR #83). */
+export const BUST_SINCE = "2.17.0";
 
 /** D-23 step that careers created before WORLD_SINCE (2.13.0) keep. */
 export const LEGACY_DPOY_STREAK_STEP = 0.12;
@@ -101,6 +115,16 @@ export function dpoyStreakStepOf(career: { engineVersion?: string }): number {
 /** D-08 option B: true when this career was created by BUST_SINCE or later. */
 export function usesBustB(career: { engineVersion?: string }): boolean {
   return versionAtLeast(career.engineVersion, BUST_SINCE);
+}
+
+/** A2: true when this career may retire from injury before 33 (created by RETIRE_SINCE or later). */
+export function usesRetireSpread(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, RETIRE_SINCE);
+}
+
+/** Awards v2: true when this career was created by AWARDS_SINCE (2.15.0) or later. */
+export function usesAwardsV2(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, AWARDS_SINCE);
 }
 
 /** Restores shipped behaviour (used by tests and the comparison script). */

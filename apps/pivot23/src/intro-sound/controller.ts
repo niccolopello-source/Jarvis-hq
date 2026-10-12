@@ -3,6 +3,7 @@ import { makeMaster, makeNoise, playCue } from "./synth";
 import {
   CUE_ORDER,
   FULL_TIMELINE,
+  PREMIERE_MS,
   SOUND_PREF_KEY,
   TAIL_MS,
   cssTimeMs,
@@ -10,6 +11,7 @@ import {
   parsePref,
   planRemaining,
   soundEnabled,
+  soundEnvelope,
   type Cue,
   type CueName,
   type PlannedCue,
@@ -43,6 +45,7 @@ let suspendTimer = 0;
 
 let cues: Cue[] = [];
 let anim: Animation | null = null;
+let revealMs = PREMIERE_MS;
 let anchor = 0;
 let premiereLive = false;
 let premierePlayed = false;
@@ -181,8 +184,12 @@ function track(src: AudioScheduledSourceNode) {
   };
 }
 
-/** Schedules planned cues (delays from now). Replaces any sequence still sounding. */
-function schedule(plan: PlannedCue[]) {
+/**
+ * Schedules planned cues (delays from now). Replaces any sequence still sounding.
+ * `elapsed` is where the premiere clock stands now: the phrase then fades and ends exactly when the
+ * premiere animation (`revealMs`) does, and the swish rings out until that moment.
+ */
+function schedule(plan: PlannedCue[], elapsed?: number) {
   stopSequence();
   const c = ctx;
   if (!c || !input || !noise || plan.length === 0) return;
@@ -194,10 +201,19 @@ function schedule(plan: PlannedCue[]) {
   // Pull cues earlier by the output latency so they are heard on the visible beat.
   const lead = (c.baseLatency || 0) + ((c as { outputLatency?: number }).outputLatency || 0);
   const now = c.currentTime;
+  const env = typeof elapsed === "number" ? soundEnvelope(revealMs) : null;
+  const toCtx = (premiereMs: number) => now + (premiereMs - (elapsed ?? 0)) / 1000 - lead;
+  const until = env ? toCtx(env.endAt) : undefined;
   let end = now;
   for (const cue of plan) {
     const when = Math.max(now + 0.005, now + cue.delayMs / 1000 - lead);
-    end = Math.max(end, playCue(bus, cue.name, when, track));
+    end = Math.max(end, playCue(bus, cue.name, when, track, until));
+  }
+  if (env && until !== undefined && until > now) {
+    // One fade for the whole phrase, landing on silence at the last frame of the premiere.
+    node.gain.setValueAtTime(1, Math.max(now, toCtx(env.fadeAt)));
+    node.gain.linearRampToValueAtTime(0, until);
+    end = Math.min(end, until);
   }
   scheduleSuspend((end - now) * 1000 + TAIL_MS);
 }
@@ -208,7 +224,8 @@ function syncWithPremiere() {
   const go = safe(() => {
     if (!premiereLive || premierePlayed || !isSoundOn() || !ensureGraph()) return;
     premierePlayed = true;
-    schedule(planRemaining(cues, elapsedMs()));
+    const at = elapsedMs();
+    schedule(planRemaining(cues, at), at);
   });
   if (ctx.state === "running") go();
   else ctx.resume().then(go, () => {});
@@ -225,6 +242,7 @@ const onAnimationStart = safe((event: AnimationEvent) => {
     beats[name] = cssTimeMs(style.getPropertyValue(key));
   }
   cues = introTimeline(reveal, beats);
+  if (Number.isFinite(reveal) && reveal > 0) revealMs = reveal;
   anim = el.getAnimations?.().find((a) => (a as CSSAnimation).animationName === "cineReveal") ?? null;
   anchor = performance.now() - event.elapsedTime * 1000;
   premiereLive = true;
@@ -312,7 +330,8 @@ export function setSoundOn(on: boolean): void {
     // Outside the premiere (or under reduced motion) the explicit switch plays the cues once as a confirmation.
     const c = ctx!;
     const go = safe(() => {
-      if (isSoundOn()) schedule(planRemaining(FULL_TIMELINE, FULL_TIMELINE[0]!.at - 60));
+      const from = FULL_TIMELINE[0]!.at - 60;
+      if (isSoundOn()) schedule(planRemaining(FULL_TIMELINE, from), from);
     });
     if (c.state === "running") go();
     else c.resume().then(go, () => {});

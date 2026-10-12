@@ -8,10 +8,13 @@ import { royProductionScore } from "./awards-helpers";
 import { freshPlayer, playIsolatedDraft } from "./engine";
 import { createRng, runWithRng } from "./rng";
 import { isolatedRookieBox, roySubSeed, ROY_ROLES } from "./rookie-box";
+import { usesAwardsV2 } from "./tuning";
+import { AWARD_MIN_GAMES, PLAYER_KEY, lotteryLiftV2, mvpFatigueV2, mvpHistoryV2, rookieClassPlanV2, royScoreV2 } from "./awards-v2";
 import { EURO_GAMES, NBA_GAMES, PLAYOFF_SEEDS, awardNoteIt } from "./data";
 import type {
   BracketPair,
   Conference,
+  CpuStar,
   GameLine,
   LeagueAward,
   LeagueSnapshot,
@@ -200,6 +203,7 @@ export function playerImpactOnTeam(s: PlayerState): number {
 
 export function seedRookieClass(s: PlayerState): RoyCandidate[] {
   if ((s.season ?? 0) > 1) return [];
+  if (usesAwardsV2(s)) return seedRookieClassV2(s);
   const others = NBA_TEAMS.filter((t) => t.abbr !== s.team.abbr);
   const classList: RoyCandidate[] = [];
   for (let i = 0; i < 5; i++) {
@@ -230,7 +234,45 @@ export function seedRookieClass(s: PlayerState): RoyCandidate[] {
   return classList;
 }
 
+/** AW-02: a seeded lottery class. Each rookie keeps its own games and minutes. Isolated RNG, as v1. */
+function seedRookieClassV2(s: PlayerState): RoyCandidate[] {
+  const others = NBA_TEAMS.filter((t) => t.abbr !== s.team.abbr);
+  const plan = rookieClassPlanV2(s.seed || 1, others.length);
+  const classList: RoyCandidate[] = plan.map((slot, i) => {
+    const sub = roySubSeed(s.seed || 1, i);
+    const team = others[slot.teamIndex]!;
+    const box = runWithRng(createRng(sub), () => {
+      const cpu = freshPlayer(slot.name, slot.role, "USA", 11 + i, s.difficulty, sub);
+      cpu.draftPick = slot.pick;
+      cpu.age = 21;
+      cpu.league = "NBA";
+      cpu.team = cloneTeam(team);
+      playIsolatedDraft(cpu);
+      cpu.overall = Math.min(99, Math.round((cpu.overall + lotteryLiftV2(slot.pick)) * 10) / 10);
+      return isolatedRookieBox(cpu);
+    });
+    const line = { ppg: box.ppg, rpg: box.rpg, apg: box.apg, gp: slot.gp, min: box.min };
+    return {
+      name: slot.name,
+      team: team.name,
+      teamAbbr: team.abbr,
+      teamColor: team.color,
+      ppg: box.ppg,
+      rpg: box.rpg,
+      apg: box.apg,
+      gp: slot.gp,
+      min: box.min,
+      role: slot.role,
+      score: royScoreV2(line),
+      isPlayer: false,
+    };
+  });
+  s.royClass = classList;
+  return classList;
+}
+
 function playerRoyScore(s: PlayerState, box: SeasonRow) {
+  if (usesAwardsV2(s)) return royScoreV2(box);
   return royProductionScore({
     ppg: box.ppg,
     rpg: box.rpg,
@@ -334,6 +376,7 @@ function finishRoyRace(s: PlayerState, box: SeasonRow, n: number): RoyCandidate[
     apg: box.apg,
     score: playerRoyScore(s, box),
     isPlayer: true,
+    ...(usesAwardsV2(s) ? { gp: box.gp, min: box.min, role: s.role } : {}),
   };
   const others = (s.royClass.length ? s.royClass : seedRookieClass(s))
     .filter((c) => !c.isPlayer)
@@ -407,7 +450,8 @@ function grantAllStarAwards(
       s.milestones.push({ season: n, label: "All-Star" });
     }
   }
-  if (box.gp < 58) return;
+  const v2 = usesAwardsV2(s);
+  if (box.gp < (v2 ? AWARD_MIN_GAMES : 58)) return;
   const pm = boxPlusMinus(s, box);
   const allNbaStat = box.ppg + box.per * 0.32 + pm * 0.18;
   let team: string | null = null;
@@ -417,6 +461,14 @@ function grantAllStarAwards(
     team = "All-NBA Second Team";
   } else if (rank < 9 && s.overall >= 74 && allNbaStat >= 16.2) {
     team = "All-NBA Third Team";
+  }
+  // AW-05: a First or Second Team All-NBA player is an All-Star (top ten of the league).
+  if (v2 && team && team !== "All-NBA Third Team" && box.gp >= 55 && !box.awards.includes("All-Star")) {
+    box.awards.push("All-Star");
+    s.allStarCount += 1;
+    if (!s.milestones.some((m) => m.season === n && m.label === "All-Star")) {
+      s.milestones.push({ season: n, label: "All-Star" });
+    }
   }
   if (team && !box.awards.includes(team)) {
     box.awards.push(team);
@@ -432,6 +484,17 @@ function faceName(row: { star?: string; name?: string } | undefined, fallback = 
   if (n) return n;
   const t = (row?.name || "").trim();
   return t || fallback;
+}
+
+/** Best live star per team in one pass: same answer as liveStar() (first highest overall). */
+function bestStarsByTeam(s: PlayerState): Map<string, CpuStar> {
+  const out = new Map<string, CpuStar>();
+  for (const p of s.world?.stars ?? []) {
+    if (p.retired) continue;
+    const cur = out.get(p.teamAbbr);
+    if (!cur || p.overall > cur.overall) out.set(p.teamAbbr, p);
+  }
+  return out;
 }
 
 function polishAwards(list: LeagueAward[] | undefined) {
@@ -472,17 +535,21 @@ function buildAwards(
   const playerImpact = clamp(s.overall + pm * 1.4, 0, 130);
   const playerNar = clamp(s.publicImage * 0.5 + s.hidden.mediaSavvy * 0.5, 0, 100);
   // Un premio già vinto pesa sull'anno dopo. Vale per ogni difficoltà.
-  const repeatCost = s.mvpCount * 7 + s.titleCount * 2.5;
+  // AW-01 (2.15+): stessa stanchezza per tutti, dalla striscia di MVP; i titoli non contano.
+  const v2 = usesAwardsV2(s);
+  const mvpPast = v2 ? mvpHistoryV2(s.seasonHistory) : null;
+  const repeatCost = mvpPast ? mvpFatigueV2(mvpPast.get(PLAYER_KEY)) : s.mvpCount * 7 + s.titleCount * 2.5;
   const pScore =
     mvpScore(playerProd, box.wins, playerEff, playerImpact, box.gp, games, s.hidden.consistency, playerNar) +
     (rand() - 0.5) * SIM.awards.noise -
     d.awardOvr * 0.8 -
     repeatCost;
 
-  const cpu = [...table]
+  const bestStar = bestStarsByTeam(s);
+  const cpu = table
     .filter((r) => r.abbr !== s.team.abbr)
     .map((r) => {
-      const star = liveStar(s.world, r.abbr);
+      const star = bestStar.get(r.abbr);
       const ovr = star?.overall ?? r.power;
       const per = estPer(r.starPpg, r.starRpg, r.starApg, ovr);
       const ts = estTs(ovr, r.starPpg);
@@ -492,19 +559,20 @@ function buildAwards(
       const impact = ovr + starPm * 1.4;
       const gp = star?.gp ?? 74;
       const nar = clamp(40 + Math.max(0, r.w - 42) * 1.2, 0, 100);
-      return {
-        row: r,
-        score:
-          mvpScore(prod, r.w, eff, impact, gp, games, star?.workEthic ?? 55, nar) +
-          (rand() - 0.5) * SIM.awards.noise,
-      };
+      let score = mvpScore(prod, r.w, eff, impact, gp, games, star?.workEthic ?? 55, nar) + (rand() - 0.5) * SIM.awards.noise;
+      if (mvpPast) {
+        // AW-04: under 65 games nobody is eligible. The noise above is drawn anyway (same RNG stream).
+        if (gp < AWARD_MIN_GAMES) score -= 1000;
+        score -= mvpFatigueV2(mvpPast.get(faceName(r, r.name)));
+      }
+      return { row: r, score };
     })
     .sort((a, b) => b.score - a.score);
   const cpus = cpu;
   const cpuBest = cpus[0];
 
   const mvpPlayer =
-    s.league === "NBA" && box.awards.includes("All-Star") && box.gp >= 58 && pScore > (cpuBest?.score ?? 80) + 2;
+    s.league === "NBA" && box.awards.includes("All-Star") && box.gp >= (v2 ? AWARD_MIN_GAMES : 58) && pScore > (cpuBest?.score ?? 80) + (v2 ? 0 : 2);
 
   if (mvpPlayer) {
     out.push({
@@ -534,15 +602,15 @@ function buildAwards(
 
   // Snapshot DPOY: solo campo/CPU. settleDpoy è l'autorità sul premio giocatore
   // (niente isPlayer, box.awards, dpoyCount, milestone qui).
-  const def =
-    [...table]
-      .filter((r) => r.abbr !== s.team.abbr)
-      .map((r) => {
-        const ident = r.identity ?? s.world?.teams[r.abbr]?.identity;
-        const idBonus = ident === "defense" ? 5.2 : ident === "physical" ? 2.8 : ident === "halfCourt" ? 0.8 : 0;
-        return { r, score: 118 - r.oppPpg + r.netRtg * 0.18 + idBonus };
-      })
-      .sort((a, b) => b.score - a.score)[0]?.r ?? top;
+  let def: StandingRow = top;
+  let defBest = -Infinity;
+  for (const r of table) {
+    if (r.abbr === s.team.abbr) continue;
+    const ident = r.identity ?? s.world?.teams[r.abbr]?.identity;
+    const idBonus = ident === "defense" ? 5.2 : ident === "physical" ? 2.8 : ident === "halfCourt" ? 0.8 : 0;
+    const score = 118 - r.oppPpg + r.netRtg * 0.18 + idBonus;
+    if (score > defBest) { defBest = score; def = r; }
+  }
   if (s.league === "NBA") {
   out.push({
     title: "DPOY",
@@ -576,6 +644,7 @@ function buildAwards(
   const mipPlayer =
     last &&
     n >= 2 &&
+    (!v2 || (box.gp >= AWARD_MIN_GAMES && (last.conf === "Euro") === (box.conf === "Euro"))) &&
     last.ppg <= 16.5 &&
     last.per <= 19 &&
     (ppgJump >= 3.5 || (ppgJump >= 2.2 && perJump >= 3.6)) &&
@@ -596,7 +665,7 @@ function buildAwards(
     const pool = mid.length ? mid : table.filter((r) => r.abbr !== s.team.abbr);
     const scored = (pool.length ? pool : table)
       .map((r) => {
-        const star = liveStar(s.world, r.abbr);
+        const star = bestStar.get(r.abbr);
         const age = star?.age ?? 26;
         const ovr = star?.overall ?? r.power;
         const young = age >= 22 && age <= 27 ? 4 : 0;
@@ -617,7 +686,7 @@ function buildAwards(
 
   if (s.league === "NBA") {
     const sixthPlayer =
-      box.gp >= 52 &&
+      box.gp >= (v2 ? AWARD_MIN_GAMES : 52) &&
       box.min >= 18 &&
       box.min <= 26.8 &&
       box.ppg >= 12.2 &&

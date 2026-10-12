@@ -1,7 +1,7 @@
 
 /** Curva d'età, picco osservato 26–28, overall intero in display. */
 import { SIM } from "./config";
-import { TUNING, usesBustB } from "./tuning";
+import { TUNING, usesBustB, usesRetireSpread } from "./tuning";
 import { ROLES } from "./data";
 import { rand } from "./rng";
 import type { AttrKey, PlayerState, Role } from "./types";
@@ -38,7 +38,11 @@ export function displayOverall(n: number) {
 
 export function careerEndingSignal(s: PlayerState): "minutes" | "injury" | null {
   if (TUNING.retirement !== "current") return gradedEndingSignal(s);
-  if (s.age < MAX_AGE - 3) return null;
+  if (s.age < MAX_AGE - 3) {
+    // A2 (2.14.0+ careers only): a heavy injury load can close the career at 29–31.
+    const bar = usesRetireSpread(s) ? TUNING.injuryRetireBars[s.age] : undefined;
+    return bar !== undefined && s.injuryDrag >= bar ? "injury" : null;
+  }
   if (s.injuryDrag >= 2.5) return "injury";
   const lastSeason = s.seasonHistory.at(-1);
   if (lastSeason && lastSeason.min <= 11.5) return "minutes";
@@ -169,7 +173,7 @@ export function rollPotential(skill = 62): number {
   return round1(clamp(pot + bias, 64, 99));
 }
 
-/** D-08 option B (2.14.0+ careers): lagging choices/training cost realisation; never a bonus. */
+/** D-08 option B (2.17.0+ careers): lagging choices/training cost realisation; never a bonus. */
 export function bustBDrag(s: PlayerState, imprint: number): number {
   if (TUNING.bust !== "choices-b" || !usesBustB(s)) return 0;
   // Locked once, three seasons before the apex, so the drag cannot change the age of the peak.

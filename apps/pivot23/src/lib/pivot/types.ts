@@ -222,6 +222,10 @@ export interface RoyCandidate {
   apg: number;
   score: number;
   isPlayer: boolean;
+  /** Awards v2 (2.15+): the candidate's own games, minutes and position. Absent on older saves. */
+  gp?: number;
+  min?: number;
+  role?: Role;
 }
 
 export interface VoteRow {
@@ -414,7 +418,7 @@ export interface PlayerState {
   rookReady: number;
   /** Scarto delle carte scelte rispetto alla mano. 0 = indifferente. */
   draftEdge?: number;
-  /** D-08 option B (2.14.0+): realisation drag locked three seasons before the apex. */
+  /** D-08 option B (2.17.0+): realisation drag locked three seasons before the apex. */
   bustLock?: number;
   team: Team;
   league: "NBA" | "EuroLega";
