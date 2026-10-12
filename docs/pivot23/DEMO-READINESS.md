@@ -92,3 +92,30 @@ Base: `7c0022c` + questo commit. Box Linux, Node 20, Chromium headless, build di
 | `paths.spec.ts` ×10 (con 7c0022c di Jarvis) | PASS | 40/40 |
 | Primo tap residuo | Documentato, non modificato | i ~25–34 ms (CPU 4×) rimasti nel task sono `new AudioContext`, che va creato dentro il gesto (iOS Safari); il render del setup pesa pochi ms. Nessun guadagno sicuro lato UI senza provare su Safari reale |
 | iPhone/Safari, Android reali | BLOCKED | `DEVICE-MANUAL-QA.md` |
+
+---
+
+## G5 — release candidate, 12 ott 2026 (Grok Bot, `grokbot/g5-release-candidate-audit`)
+
+SHA verificato: `main` @ `3bb757bab75a18726bfc6b08756651238ed8fd68` (merge #74, #75, #76). Ambiente locale: box Linux, Node v20.19.2, pnpm 10.33.4, Playwright 1.63 Chromium headless, build di produzione via `vite preview`. La CI usa Node 24 / pnpm 11.19: stessi esiti.
+
+| Gate | Stato | Evidenza |
+|---|---|---|
+| CI su `3bb757b` | PASS | run [38224123937](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/38224123937): `verify` success (e2e 102 passati, 2 saltati), `engine-stats` success |
+| lint / typecheck / build / check:headers (locale) | PASS | exit 0 |
+| Unit `pnpm run test` | PASS | 235/235 |
+| Statistici `pnpm run test:stats` | PASS | 6/6 |
+| E2E build di produzione `CI=true pnpm run test:e2e:preview` | PASS | 102 passati, 0 falliti, 2 saltati (sonde perf), nessun flaky |
+| Provenienza deploy | PASS | GitHub Deployment «Production – pivot23» su `3bb757b` = `success`; asset di www.pivot23.com byte-identici (sha256) a `dist/` locale; `index.html` uguale su www e pivot23.vercel.app; pivot23.com → 308 www |
+| Vercel API (MCP) | BLOCKED | 403 sullo scope `jarvis-hq-vercel` (G5-F03) |
+| Header in produzione | PASS | CSP, HSTS, X-Frame-Options DENY, Referrer-Policy presenti |
+| Smoke completo nel browser (`e2e/g5-smoke.spec.ts`, giocato, nessuna fixture) | PASS ×3 | nome lungo, draft, percorso, doppio click, refresh+riprendi, ritiro, report, Career Card, archivio, riapertura; 0 errori console. Playoff/mercato non raggiunti in quei 3 run: coperti da `paths.spec.ts`/`demo-gate.spec.ts` (fixture deterministiche) |
+| Smoke produzione (`scripts/prod-smoke.mjs`) | PASS | www e vercel.app: 200, «Inizia» ~1,6 s, setup raggiunto, 0 errori, 0 richieste fallite |
+| Bundle iniziale gzip ≤ 350 kB | PASS | ≈249 kB JS + 14 kB CSS + 2,4 kB HTML (`narrative` è in modulepreload, G5-F01) |
+| Avvio (lab, CPU 4×, 390×844, 12 run) | PASS lab / NOT VERIFIED reale | «Inizia» pronto P75 136 ms, P95 167; tap→setup P75 134 ms; long task max P75 0, P95 103 ms |
+| Stagione simulata ≤ 1,2 s | PASS | `season-timing.ts`, Node 20, 941 stagioni: completa P95 8,2 ms, max 17,1 |
+| Resilienza save/load | PASS | suite G3 (M01–M18) + `save-safety`, `g3-idempotency`, `input-lock`, `lifecycle-flush` dentro i conteggi sopra |
+| Dispositivi reali | BLOCKED | handoff in `DEVICE-MANUAL-QA.md` |
+| Branch protection su `main` | Assente | `gh api …/branches/main/protection` → 404 |
+
+Verdetto: **NOT READY** (dispositivi reali BLOCKED). Nessun bug riprodotto nel perimetro release; nessun fix al codice di gioco.
