@@ -1,3 +1,4 @@
+/* global document */
 // Read-only production smoke (G5). Usage: node scripts/prod-smoke.mjs [url] [outDir]
 // Loads the page in headless Chromium, records console/page errors, failed requests and the
 // assets served, checks the "Inizia" button appears, and screenshots home + setup. No save is written
@@ -20,7 +21,7 @@ const t0 = Date.now();
 const res = await page.goto(url, { waitUntil: "load" });
 const start = page.getByRole("button", { name: /^(Inizia|Start)$/ });
 let startVisibleMs = null;
-try { await start.waitFor({ state: "visible", timeout: 15000 }); startVisibleMs = Date.now() - t0; } catch {}
+try { await start.waitFor({ state: "visible", timeout: 15000 }); startVisibleMs = Date.now() - t0; } catch { /* stays null: reported as failure */ }
 await page.screenshot({ path: join(out, "prod-home.png") });
 const bg = await page.evaluate(() => {
   const b = document.body.innerText.trim().length;
