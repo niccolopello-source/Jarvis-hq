@@ -35,3 +35,14 @@ Candidato: `https://www.pivot23.com` (= `https://pivot23.vercel.app`), SHA `3bb7
 - Nota al passo 2: il campo nome accetta **20 caratteri**; «Massimiliano Della Valle-Giordano» diventa «Massimiliano Della V». Verificare che il nome troncato non sia tagliato a schermo.
 - Eseguibile da remoto su una device farm reale (BrowserStack/Sauce o simili, non acquistati): passi 1–6, 10, 12. Solo dispositivo fisico in mano: 7 (background reale), 8–9 (impostazioni accessibilità), 11 (modalità aereo), audio dell'intro e sensazione dei tocchi.
 - Registrare SHA del deploy al momento della prova: se `main` è avanzato, la prova vale per il nuovo SHA solo se rieseguita.
+
+## Esito riferito — 12 ott 2026, 09:54 UTC
+Pello ha riferito in chat: «iPhone funziona, Mac funziona, Android funziona».
+
+| Dispositivo | Esito | Etichetta |
+|---|---|---|
+| iPhone (Safari) | PASS | riferito da Pello, verifica manuale non osservata dagli agenti |
+| Mac (Safari) | PASS | riferito da Pello, verifica manuale non osservata dagli agenti |
+| Android (Chrome) | PASS | riferito da Pello, verifica manuale non osservata dagli agenti |
+
+Modelli, versioni di OS/browser, SHA servito al momento della prova e singoli passi del protocollo: **NON VERIFICATO** (non comunicati). Nessuno screenshot ricevuto.

@@ -119,3 +119,10 @@ SHA verificato: `main` @ `3bb757bab75a18726bfc6b08756651238ed8fd68` (merge #74, 
 | Branch protection su `main` | Assente | `gh api …/branches/main/protection` → 404 |
 
 Verdetto: **NOT READY** (dispositivi reali BLOCKED). Nessun bug riprodotto nel perimetro release; nessun fix al codice di gioco.
+
+### Aggiornamento dispositivi reali — 12 ott 2026, 09:54 UTC
+| Gate | Stato | Evidenza |
+|---|---|---|
+| iPhone Safari / Mac Safari / Android Chrome | PASS (riferito da Pello, verifica manuale non osservata dagli agenti) | Messaggio di Pello: «iPhone funziona, Mac funziona, Android funziona». Modelli, OS, SHA e passi: NON VERIFICATO |
+
+Con questo, nessun gate della tabella G5 resta FAIL o BLOCKED, salvo l'API Vercel via MCP (provenienza comunque verificata via GitHub Deployments e hash). Il gate dispositivi poggia solo su quanto riferito: decisione di rilascio a Pello.
