@@ -53,8 +53,18 @@ export const LEGACY_RULES = Object.freeze({ scriptWindows: "fixed", dpoyFatigue:
 /** First engine version whose careers use the A2 early-injury retirement bars. */
 export const RETIRE_SINCE = "2.14.0";
 
-/** First engine version whose careers use D-08 option B. */
-export const BUST_SINCE = "2.14.0";
+/** First engine version whose careers use the #83 owner decisions: the accepted age-36 season is
+ *  played, ROY/MVP/All-Star/DPOY knobs depend on difficulty, D-08 option B wiring. 2.14.0 careers
+ *  (from #78, already in production) keep the #78 rules exactly. */
+export const DECISIONS_SINCE = "2.15.0";
+
+/** First engine version whose careers use D-08 option B (still OFF via TUNING.bust). */
+export const BUST_SINCE = DECISIONS_SINCE;
+
+/** #83 decisions: true when this career was created by DECISIONS_SINCE or later. */
+export function usesDecisions(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, DECISIONS_SINCE);
+}
 
 /** D-23 step that careers created before WORLD_SINCE (2.13.0) keep. */
 export const LEGACY_DPOY_STREAK_STEP = 0.12;

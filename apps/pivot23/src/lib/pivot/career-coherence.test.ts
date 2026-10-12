@@ -67,10 +67,11 @@ test("an accepted age-36 season is played, even when that summer is already an i
 
 test("the accepted final season is not erased by an injury that arrives in that summer", () => {
   const row = { age: 35, min: 20 } as PlayerState["seasonHistory"][number];
-  const owed = shell({ age: 36, extraSeason: true, injuryDrag: 9, engineVersion: "2.14.0-beta", seasonHistory: [row] });
+  const owed = shell({ age: 36, extraSeason: true, injuryDrag: 9, engineVersion: "2.15.0-beta", seasonHistory: [row] });
   assert.equal(isCareerOver(owed), false);
-  const legacy = shell({ ...owed, engineVersion: "2.13.0-beta" });
-  assert.equal(isCareerOver(legacy), true, "a save from 2.13 keeps the season it already closed");
+  for (const v of ["2.14.0-beta", "2.13.0-beta"]) {
+    assert.equal(isCareerOver(shell({ ...owed, engineVersion: v })), true, `a ${v} career keeps the rule it started with`);
+  }
   const played = shell({ ...owed, seasonHistory: [row, { ...row, age: 36 }] });
   assert.equal(isCareerOver(played), true);
 });

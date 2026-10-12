@@ -212,7 +212,7 @@ test("golden full-career baseline for fixed seeds (engine output, not run-vs-run
 /* 2.13.0-beta (#66): D-09 world "regress" and the D-23 step 0.16 apply only to careers created
    on 2.13.0 or later, and they move team strength and DPOY voting, so new careers get new values.
    The #63 values are kept unchanged below as the 2.12 golden. */
-/* 2.14.0-beta: A2 can end seed 1 at 30; the age-36 season is played once accepted;
+/* 2.15.0-beta (A2 from 2.14): A2 can end seed 1 at 30; the age-36 season is played once accepted;
    award difficulty shifts votes. Seeds 2 and 3 move with those rules. 2.13 stays GOLDEN_2_13. */
 const GOLDEN = ["111b5b24e9e59b49", "bf5ae78b2043725f", "2a6e3f046602629b"];
 const GOLDEN_2_13 = ["9f5583418a7fa740", "b0c282429613a5ef", "c8c2acbea10d0c1c"];

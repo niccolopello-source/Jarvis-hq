@@ -414,7 +414,7 @@ export interface PlayerState {
   rookReady: number;
   /** Scarto delle carte scelte rispetto alla mano. 0 = indifferente. */
   draftEdge?: number;
-  /** D-08 option B (2.14.0+): realisation drag locked three seasons before the apex. */
+  /** D-08 option B (2.15.0+): realisation drag locked three seasons before the apex. */
   bustLock?: number;
   team: Team;
   league: "NBA" | "EuroLega";

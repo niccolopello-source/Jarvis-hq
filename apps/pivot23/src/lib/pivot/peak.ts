@@ -1,7 +1,7 @@
 
 /** Curva d'età, picco osservato 26–28, overall intero in display. */
 import { SIM } from "./config";
-import { TUNING, usesBustB, usesRetireSpread, versionAtLeast } from "./tuning";
+import { TUNING, usesBustB, usesDecisions, usesRetireSpread } from "./tuning";
 import { ROLES } from "./data";
 import { rand } from "./rng";
 import type { AttrKey, PlayerState, Role } from "./types";
@@ -70,7 +70,7 @@ function gradedEndingSignal(s: PlayerState): "minutes" | "injury" | null {
 export function isCareerOver(s: PlayerState) {
   // The player already accepted the age-36 season. An injury that lands in that
   // summer does not erase it: the season is played once, then the career closes.
-  if (s.extraSeason && s.age === MAX_AGE && s.seasonHistory.at(-1)?.age !== MAX_AGE && versionAtLeast(s.engineVersion, "2.14.0")) return false;
+  if (s.extraSeason && s.age === MAX_AGE && s.seasonHistory.at(-1)?.age !== MAX_AGE && usesDecisions(s)) return false;
   if (careerEndingSignal(s) !== null || s.age > MAX_AGE) return true;
   if (s.age < MAX_AGE) return false;
 

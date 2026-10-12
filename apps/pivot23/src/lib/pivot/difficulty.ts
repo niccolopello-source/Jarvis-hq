@@ -1,6 +1,6 @@
 
 import type { TeamTier } from "./types";
-import { RETIRE_SINCE, versionAtLeast } from "./tuning";
+import { usesDecisions } from "./tuning";
 
 export type DifficultyId = "esordio" | "pro" | "allstar" | "leggenda";
 
@@ -156,10 +156,13 @@ export function diffOf(s: { difficulty?: DifficultyId } | null | undefined): Dif
   return DIFF_MAP[id]!;
 }
 
-/** Award knobs for this career. 2.13 and older keep the curve they shipped with. */
+/** All-Star random-slot weight that careers before DECISIONS_SINCE (2.14 and older) shipped with. */
+const LEGACY_AWARD_P: Record<DifficultyId, number> = { esordio: 1.25, pro: 1, allstar: 0.68, leggenda: 0.42 };
+
+/** Award knobs for this career. Careers before 2.15.0 (2.14 and older) keep the curve they shipped with. */
 export function awardProfile(s: { difficulty?: DifficultyId; engineVersion?: string } | null | undefined): DifficultySpec {
   const d = diffOf(s);
-  if (versionAtLeast(s?.engineVersion, RETIRE_SINCE)) return d;
+  if (usesDecisions(s ?? {})) return d;
   const starCut = d.awardOvr >= 6 ? 4 : d.awardOvr >= 4 ? 5 : d.awardOvr < 0 ? 8 : 6;
-  return { ...d, royDelta: 0, mvpHelp: -d.awardOvr * 0.8, starCut, dpoyBar: 1, dpoyHelp: 0.05 };
+  return { ...d, awardP: LEGACY_AWARD_P[d.id], royDelta: 0, mvpHelp: -d.awardOvr * 0.8, starCut, dpoyBar: 1, dpoyHelp: 0.05 };
 }

@@ -1,6 +1,6 @@
-# Decisioni del 12 ottobre — motore 2.14.0-beta
+# Decisioni del 12 ottobre — motore 2.15.0-beta
 
-Autorizzate da Niccolò. Le carriere nuove nascono su `2.14.0-beta`. Un save 2.13 o più vecchio tiene le regole con cui è nato. Nessun merge, nessun deploy.
+Autorizzate da Niccolò. Le carriere nuove nascono su `2.15.0-beta`. Un save 2.14 (#78, già in produzione), 2.13 o più vecchio tiene le regole con cui è nato. Nessun merge, nessun deploy.
 
 ## 1. Ritiro 29–32 — accettato
 
@@ -34,8 +34,23 @@ Lo streak DPOY nei campioni è rimasto sotto 5.
 
 La formula larga di Lucille (#81) alza i bust sopra il 15% e taglia All-Star e MVP di circa un quinto, e quasi non crea bust da potenziale ≥ 85. Ne ho provata una più stretta, solo sopra potenziale 86, solo se le scelte restano sotto una barra. Su 200 Pro: zero bust di laboratorio, e i premi scendono lo stesso (MVP 80→50, DPOY 75→30 su quel campione).
 
-Resta spenta (`TUNING.bust = "current"`). Il codice c'è, gated su 2.14, e un test controlla che accendendola il drag colpisca solo un tetto alto rimasto indietro. Per un bust vero serve marcare le scelte rischiose. Non l'ho inventato.
+Resta spenta (`TUNING.bust = "current"`). Il codice c'è, gated su 2.15, e un test controlla che accendendola il drag colpisca solo un tetto alto rimasto indietro. Per un bust vero serve marcare le scelte rischiose. Non l'ho inventato.
 
 ## Cosa non è stato rifatto
 
 I 7.000 G4. I numeri della tabella premi sono il campione scritto sopra, non un intervallo al 95%. La suite e2e completa non è stata rieseguita su questo branch.
+
+## Nota di migrazione — gate 2.15.0 (approvato da Pello, 12 ott 2026, 18:33 UTC)
+
+La #78 (A2, ritiro anticipato per infortuni) è in produzione come `2.14.0-beta`: esistono carriere 2.14 a metà. Per non cambiarne le regole, tutte le decisioni di questa PR sono spostate su `DECISIONS_SINCE = "2.15.0"` (`tuning.ts`, `usesDecisions`):
+
+| Regola | 2.12 / 2.13 | 2.14 (#78) | 2.15 (questa PR) |
+|---|---|---|---|
+| A2 soglie infortunio 29–31 | no | sì | sì |
+| Stagione a 36 anni accettata giocata anche con infortunio estivo | no | no | sì |
+| Premi per difficoltà (`awardProfile`: ROY, MVP, All-Star, DPOY, `awardP` All-Star/Leggenda 0,8/0,62) | curva storica | curva storica (`awardP` 0,68/0,42) | nuova curva |
+| D-08 opzione B (`BUST_SINCE`) | no | no | cablata, ma spenta (`TUNING.bust = "current"`) |
+
+Nessuna migrazione del save: `engineVersion` resta quello di nascita, il formato non cambia (`bustLock` è opzionale). Prova: `version-gate.test.ts` rigioca 480 carriere (seed 9100 + 37·i, i = 0…39; esordio/pro/allstar/leggenda; 2.14.0-beta, 2.13.0-beta, 2.12.0-beta) e confronta l'impronta con quella generata su `main` @ `33f0ca2` (`scripts/version-gate-fingerprints.ts` → `src/lib/pivot/fixtures/version-gate-fp.json`): tutte identiche. Sulle stesse 160 combinazioni, la 2.15 cambia 33 carriere: le nuove regole sono attive. Prima del gate, sul branch, 33/160 carriere 2.14 differivano da main.
+
+Solo presentazione, per tutte le versioni: età finale nel palmarès (`careerEndAge`) e nota «stagione a 36 anni non giocata» nel diario. Non cambiano esiti sportivi.
