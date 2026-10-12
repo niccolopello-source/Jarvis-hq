@@ -2992,16 +2992,23 @@ function futureArchiveEntries(raw: string | null): unknown[] {
   }
 }
 
-/** True when every future entry already sits in a raw copy under ARCHIVE_BACKUP_KEY (belt and braces). */
+/** Key-order and whitespace independent form of a JSON value, so formatting never looks like new data. */
+function canonicalJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  if (isRecord(value)) {
+    return `{${Object.keys(value).sort().map((k) => `${JSON.stringify(k)}:${canonicalJson(value[k])}`).join(",")}}`;
+  }
+  return JSON.stringify(value) ?? "null";
+}
+
+/** True when every future entry already sits, parsed and equal, in a raw copy under ARCHIVE_BACKUP_KEY. */
 function futureBackedUp(store: Storage, future: unknown[]): boolean {
   if (!future.length) return true;
   try {
     const prev = JSON.parse(store.getItem(ARCHIVE_BACKUP_KEY) ?? "null") as { raws?: unknown } | null;
     const raws = prev && Array.isArray(prev.raws) ? prev.raws.filter((r): r is string => typeof r === "string") : [];
-    return future.every((entry) => {
-      const json = JSON.stringify(entry);
-      return raws.some((raw) => raw.includes(json));
-    });
+    const backed = new Set(raws.flatMap((raw) => futureArchiveEntries(raw).map(canonicalJson)));
+    return future.every((entry) => backed.has(canonicalJson(entry)));
   } catch {
     return false;
   }
@@ -3149,7 +3156,9 @@ export function loadArchive(): ArchiveCareer[] {
 export const ARCHIVE_LIMIT = 8;
 
 let archiveEvicted: ArchiveCareer[] = [];
-let archiveWrite: { ok: boolean; persisted: boolean; reason?: "quota" | "unavailable" } = { ok: true, persisted: true };
+let archiveWrite: { ok: boolean; persisted: boolean; reason?: "quota" | "unavailable"; futureKept?: number } = { ok: true, persisted: true };
+/** Future-schema entries carried by the last archive write (they count toward its size, never trimmed). */
+let archiveFutureKept = 0;
 
 /** Result of the last saveArchive() call. A quota miss keeps the in-memory career. */
 export function lastArchiveWrite() {
@@ -3175,6 +3184,7 @@ function writeArchiveStore(store: Storage, entries: unknown[]): "ok" | "quota" |
     const prior = store.getItem(ARCHIVE_KEY);
     // G3-B02: entries from a newer build stay in this store exactly as they were.
     const future = futureArchiveEntries(prior);
+    archiveFutureKept = Math.max(archiveFutureKept, future.length);
     if (future.length) serialized = JSON.stringify([...entries, ...future]);
     if (prior !== null && prior !== serialized && (archiveLosesData(prior) || !futureBackedUp(store, future))) {
       backupArchiveRaw(store, prior);
@@ -3203,6 +3213,7 @@ export function saveArchive(entry: ArchiveCareer) {
   archiveMemory = all;
   let persisted = false;
   let quota = false;
+  archiveFutureKept = 0;
   const stores = archiveStores();
   for (const store of stores) {
     const wrote = writeArchiveStore(store, all);
@@ -3219,9 +3230,13 @@ export function saveArchive(entry: ArchiveCareer) {
       }
     }
   }
+  /* G3-B02: future entries are part of the written size and are never trimmed to make room. On a
+     quota failure the previous store (future entries included) is left untouched and the caller is
+     warned through lastArchiveWrite(). */
   archiveWrite = persisted
     ? { ok: true, persisted: true }
     : { ok: false, persisted: false, reason: quota ? "quota" : "unavailable" };
+  if (archiveFutureKept) archiveWrite.futureKept = archiveFutureKept;
   return [...archiveMemory];
 }
 

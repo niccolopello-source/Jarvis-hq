@@ -26,6 +26,7 @@ import {
   loadLive,
   saveLive,
 } from "./save.ts";
+import { SAVE_VERSION } from "./config.ts";
 import { sha256 } from "./card.ts";
 import { NBA_TEAMS } from "./teams.ts";
 import type { PlayerState } from "./types.ts";
@@ -544,4 +545,64 @@ test("synthetic benchmark: save size, write, load, archive load (Node, not a pho
   console.log(`[G3 bench] player JSON ${raw} chars → live save ${stored} chars; write ${tWrite.toFixed(1)} ms; parse+validate ${tLoad.toFixed(1)} ms; archive ${list.length} careers ${archiveBytes} chars, load ${tArchive.toFixed(1)} ms`);
   assert.ok(stored < 2_000_000);
   assert.ok(archiveBytes < 2_000_000);
+}));
+
+/* Lucille's review notes on G3-B02 (future archive entries). */
+test("M10 future detected only by version > SAVE_VERSION (current archiveSchema) is hidden and kept", () => withStores((st) => {
+  const mine = toArchive(finished(321));
+  const future = { ...toArchive(finished(322)), id: "newer-version-only", archiveSchema: ARCHIVE_SCHEMA, version: SAVE_VERSION + 1 };
+  assert.equal(archiveEntrySchema(future), "future");
+  st.local.setItem(ARCHIVE_KEY, JSON.stringify([future, mine]));
+  assert.deepEqual(loadArchive().map((e) => e.id), [mine.id]);
+  saveArchive(toArchive(finished(323)));
+  const stored = JSON.parse(st.local.getItem(ARCHIVE_KEY)!) as Record<string, unknown>[];
+  assert.deepEqual(stored.find((e) => e.id === future.id), JSON.parse(JSON.stringify(future)));
+}));
+
+test("M10 future entries only in sessionStorage survive a write there", () => withStores((st) => {
+  const future = { ...toArchive(finished(324)), id: "session-future", archiveSchema: ARCHIVE_SCHEMA + 1 };
+  st.session.setItem(ARCHIVE_KEY, JSON.stringify([future]));
+  saveArchive(toArchive(finished(325)));
+  const session = JSON.parse(st.session.getItem(ARCHIVE_KEY)!) as Record<string, unknown>[];
+  assert.deepEqual(session.find((e) => e.id === future.id), JSON.parse(JSON.stringify(future)));
+  const local = JSON.parse(st.local.getItem(ARCHIVE_KEY)!) as Record<string, unknown>[];
+  assert.ok(!local.some((e) => e.id === future.id), "not copied into a store that never had it");
+}));
+
+test("M13 storage full with future entries: previous archive untouched, future kept, quota warned", () => withStores((st) => {
+  const mine = toArchive(finished(326));
+  const future = { ...toArchive(finished(327)), id: "full-future", archiveSchema: ARCHIVE_SCHEMA + 1 };
+  const before = JSON.stringify([future, mine]);
+  st.local.setItem(ARCHIVE_KEY, before);
+  st.local.quotaKeys.add(ARCHIVE_KEY);
+  st.session.quotaKeys.add(ARCHIVE_KEY);
+  saveArchive(toArchive(finished(328)));
+  const w = lastArchiveWrite();
+  assert.equal(w.persisted, false);
+  assert.equal(w.reason, "quota");
+  assert.equal(w.futureKept, 1, "the warning says future entries were carried, not trimmed");
+  assert.equal(st.local.getItem(ARCHIVE_KEY), before, "nothing deleted to make room");
+}));
+
+test("M10 same id on a future and a current entry: both kept, only the current one shown", () => withStores((st) => {
+  const mine = toArchive(finished(329));
+  const future = { ...mine, archiveSchema: ARCHIVE_SCHEMA + 1, newField: 1 };
+  st.local.setItem(ARCHIVE_KEY, JSON.stringify([future]));
+  saveArchive(mine);
+  const stored = JSON.parse(st.local.getItem(ARCHIVE_KEY)!) as Record<string, unknown>[];
+  assert.equal(stored.filter((e) => e.id === mine.id).length, 2);
+  assert.ok(stored.some((e) => e.archiveSchema === ARCHIVE_SCHEMA + 1 && e.newField === 1));
+  assert.deepEqual(loadArchive().map((e) => e.id), [mine.id]);
+  saveArchive(mine);
+  assert.equal((JSON.parse(st.local.getItem(ARCHIVE_KEY)!) as unknown[]).length, 2, "repeat does not grow");
+}));
+
+test("M10 a reformatted future entry already in the backup does not trigger a new backup each write", () => withStores((st) => {
+  const future = { ...toArchive(finished(330)), id: "pretty-future", archiveSchema: ARCHIVE_SCHEMA + 1 };
+  st.local.setItem(ARCHIVE_KEY, JSON.stringify([future], null, 2));
+  saveArchive(toArchive(finished(331)));
+  const first = st.local.getItem(ARCHIVE_BACKUP_KEY);
+  saveArchive(toArchive(finished(332)));
+  saveArchive(toArchive(finished(333)));
+  assert.equal(st.local.getItem(ARCHIVE_BACKUP_KEY)?.replace(/"at":\d+/, ""), first?.replace(/"at":\d+/, ""));
 }));

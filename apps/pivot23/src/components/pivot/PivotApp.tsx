@@ -396,6 +396,7 @@ export function PivotApp() {
 
   useEffect(() => () => {
     if (holdTimer.current) window.clearTimeout(holdTimer.current);
+    holdTimer.current = 0;
     if (simTimer.current) window.clearTimeout(simTimer.current);
     chipTimers.current.forEach((id) => window.clearTimeout(id));
   }, []);
