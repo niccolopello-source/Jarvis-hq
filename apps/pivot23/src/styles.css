@@ -2517,3 +2517,58 @@ img.court-mark-photo {
 .choice-btn:hover .text-muted {
   color: color-mix(in oklab, var(--color-chalk) 72%, var(--color-muted));
 }
+
+/* G6: landscape phones. The home stacked logo, title and buttons in one column, so Inizia sat below
+   the first screen (844×390: bottom edge at 525 px). Two columns: the mark on the left, the rest on the right. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .intro-hero.home-screen {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+    column-gap: 24px;
+    align-content: center;
+    min-height: 0;
+    padding-top: 52px;
+  }
+  .intro-hero.home-screen > * {
+    grid-column: 2;
+  }
+  /* Absolute corner controls keep the hero as containing block, not a grid cell. */
+  .intro-hero.home-screen > .sound-toggle,
+  .intro-hero.home-screen > .cine-skip {
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .intro-hero.home-screen > .home-mark {
+    grid-column: 1;
+    grid-row: 1 / span 12;
+    align-self: center;
+  }
+  .intro-hero.home-screen .court-mark {
+    width: 132px;
+    height: 132px;
+    margin: 0 auto;
+  }
+  .intro-hero.home-screen .display-title {
+    font-size: clamp(40px, 11vh, 56px);
+    margin-bottom: 4px;
+  }
+  .intro-hero.home-screen .lede {
+    margin-bottom: 12px;
+  }
+  .intro-hero.home-screen .lang-row {
+    margin-bottom: 10px;
+  }
+  .intro-hero.home-screen .ghost-btn.mt-2\.5 {
+    margin-top: 6px;
+  }
+  .intro-hero.home-screen .totem-home {
+    margin-top: 10px;
+  }
+}
+.page-title:focus {
+  outline: none;
+}
+.page-title:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}

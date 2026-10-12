@@ -93,6 +93,16 @@ Base: `7c0022c` + questo commit. Box Linux, Node 20, Chromium headless, build di
 | Primo tap residuo | Documentato, non modificato | i ~25–34 ms (CPU 4×) rimasti nel task sono `new AudioContext`, che va creato dentro il gesto (iOS Safari); il render del setup pesa pochi ms. Nessun guadagno sicuro lato UI senza provare su Safari reale |
 | iPhone/Safari, Android reali | BLOCKED | `DEVICE-MANUAL-QA.md` |
 
+### G6 — prima impressione (12 ott 2026, `lucille/g6-intro-onboarding`)
+
+| Gate | Stato | Evidenza |
+|---|---|---|
+| Inizia visibile senza scroll su telefono orizzontale (844×390, 667×375, 640×360) | PASS (Chromium) | prima: bordo inferiore di Inizia a 525 px su 390; ora home a due colonne in landscape. `e2e/g6-onboarding.spec.ts` |
+| Inizia → creazione carriera: pagina in cima, focus sul titolo | PASS (Chromium) | prima: il setup si apriva a scrollY 300 (landscape) e il focus cadeva su `<body>` |
+| Doppio tap su Inizia, audio non disponibile, fine della premiere senza animazioni attive | PASS (Chromium) | stesso file |
+| Budget | PASS lab | JS+CSS iniziali gzip 260,4 kB (prima 260,2); avvio/tap invariati entro il rumore (2 misure alternate, CPU 4×) |
+| iPhone/Safari, Android reali | BLOCKED | `DEVICE-MANUAL-QA.md` |
+
 ---
 
 ## G5 — release candidate, 12 ott 2026 (Grok Bot, `grokbot/g5-release-candidate-audit`)
