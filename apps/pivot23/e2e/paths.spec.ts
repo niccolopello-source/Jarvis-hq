@@ -84,14 +84,21 @@ test("playoff run: play every round to the end of the run without a stall", asyn
   await open(page, "playoffFinals");
   await expect(card(page)).toHaveClass(/playoff/);
   let rounds = 0;
-  for (let i = 0; i < 6 && /playoff/.test((await card(page).getAttribute("class")) ?? ""); i += 1) {
+  // The persisted save is the source of truth: right after a click the next card can still be
+  // mid-reveal (no "playoff" class yet) and the write can land a moment later, so poll the save.
+  const settledPending = async () => {
+    await expect(page.locator(".pending-beat.is-held")).toHaveCount(0, { timeout: 10_000 });
+    let last: string | null = null;
+    await expect.poll(async () => { const p = (await saved(page)).pending; const same = p === last; last = p; return same; }, { timeout: 10_000, intervals: [500] }).toBe(true);
+    return last;
+  };
+  for (let i = 0; i < 6 && (await settledPending()) === "playoff"; i += 1) {
     if (i === 1) await reloadSame(page);
     await choose(page);
     rounds += 1;
   }
   expect(rounds).toBeGreaterThan(0);
-  const s = await saved(page);
-  expect(s.pending, "after the playoffs the career moved on").not.toBe("playoff");
+  expect(await settledPending(), "after the playoffs the career moved on").not.toBe("playoff");
   test.info().annotations.push({ type: "rounds", description: String(rounds) });
   expect(errors).toEqual([]);
 });
