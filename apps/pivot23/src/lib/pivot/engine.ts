@@ -1,5 +1,5 @@
 
-import { scriptSlotFor, scriptWindowsOf, seedHash, TUNING } from "./tuning";
+import { scriptSlotFor, scriptWindowsOf, seedHash, worldOf } from "./tuning";
 import {
   ATTR_LABELS,
   COACH_NAMES,
@@ -493,7 +493,7 @@ export function freshPlayer(
     choiceOvr: 0,
   };
   s.rngState = s.seed;
-  if (TUNING.world === "jitter") {
+  if (worldOf(s) === "jitter") {
     // Seeded spread of starting power: different worlds start from different pecking orders.
     for (const abbr of Object.keys(s.teamPower)) {
       const h = seedHash(s.seed, abbr.charCodeAt(0) * 131 + abbr.charCodeAt(1) * 17 + abbr.charCodeAt(2));

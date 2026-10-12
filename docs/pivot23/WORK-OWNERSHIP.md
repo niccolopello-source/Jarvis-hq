@@ -30,12 +30,13 @@ Serve soprattutto perché sul repository operano più agenti IA (Grok Bot, Grok 
 
 | Area | Owner | Branch | PR | Stato | Data |
 |------|-------|--------|----|-------|------|
-| Accessibilità e UI (CSS a11y, layout stretto, focus, contrasto, e2e readiness) | **Grok Bot** | `grokbot/a11y-ui-recovery` | [#62](https://github.com/niccolopello-source/Jarvis-hq/pull/62) | Bozza, CI verde | 11 ott 2026 |
-| QA indipendente della #61 (solo test: fingerprint, seed 29930, golden) | **Grok Bot** | `grokbot/pr61-qa` | [#63](https://github.com/niccolopello-source/Jarvis-hq/pull/63) | Bozza | 11 ott 2026 |
-| Copy / i18n (correzioni a render-time: accordo squadre EN, slot traduzione, grammatica) | **Grok Bot** | `grokbot/copy-review` | [#64](https://github.com/niccolopello-source/Jarvis-hq/pull/64) | Bozza | 11 ott 2026 |
-| Career Legacy Report / Career Card (Bible §5, Blocco D) | **Grok** (assegnato dalla Bible) | *non pubblicato* | — | **NON VERIFICATO** — ultimo lavoro noto: `fix/roy-isolated` (#61, unita 11 ott); prima: `grok/demo-gate/*` (#58–#60, persistenza) | 11 ott 2026 |
+| Accessibilità e UI (CSS a11y, layout stretto, focus, contrasto, e2e readiness) | **Grok Bot** | `grokbot/a11y-ui-recovery` | [#62](https://github.com/niccolopello-source/Jarvis-hq/pull/62) | Unita | 11 ott 2026 |
+| QA indipendente della #61 (solo test: fingerprint, seed 29930, golden) | **Grok Bot** | `grokbot/pr61-qa` | [#63](https://github.com/niccolopello-source/Jarvis-hq/pull/63) | Unita | 11 ott 2026 |
+| Copy / i18n (correzioni a render-time: accordo squadre EN, slot traduzione, grammatica) | **Grok Bot** | `grokbot/copy-review` | [#64](https://github.com/niccolopello-source/Jarvis-hq/pull/64) | Unita | 11 ott 2026 |
+| Career Legacy Report / Career Card / temi cosmetici (Missione 2) | **Grok Bot** | `grokbot/career-card-figurine` | nuova PR in bozza (la #69 conteneva solo questo registro) | In corso. File: `legacy-report.ts`, `legacy-i18n.ts`, `cosmetics.ts`, `components/pivot/legacy/*`, `styles/legacy.css`, `PivotApp.tsx` (ResultView/ArchiveView/scrittura archivio), `types.ts` (campo opzionale). Obiettivo verificabile: e2e `career-card.spec.ts` verde su build di produzione. Non tocca `engine.ts`, `config.ts`, `tuning.ts`, `world.ts` | 11 ott 2026 |
 | Intro / visual (Bible Blocco E — Frontend/Art) | **Da assegnare** (Frontend / Art per Bible) | — | — | Libero / da assegnare. Nota: l'intro con pallone è stata sostituita dal logo (#56); i suoni vanno riallineati alla versione finale. | 11 ott 2026 |
-| Motore / bilanciamento (oltre le PR già unite) | — | — | — | Libero. Non avviare lavoro parallelo senza aggiornare questa tabella. | 11 ott 2026 |
+| Motore 2.13, D-09 (titoli e dinastie), misure D-11/D-23, documento D-08 | **Lucille** | `lucille/*` (`lucille/engine-2.13-d09`, `lucille/d11-d23-evidence`, `lucille/d08-bust-design`) | [#66](https://github.com/niccolopello-source/Jarvis-hq/pull/66), [#67](https://github.com/niccolopello-source/Jarvis-hq/pull/67), [#68](https://github.com/niccolopello-source/Jarvis-hq/pull/68) | In corso. File: `engine.ts`, `config.ts`, `tuning.ts`, `world.ts` e relativi test | 11 ott 2026 |
+| Persistenza / archive / save-load | — | — | — | Libero dopo #58–#60. | 11 ott 2026 |
 | Demo gate: stabilità app, percorso carriera, persistenza, UI responsive, QA browser, release gate (solo test/doc finché non emerge un bug riproducibile; non tocca motore né Career Card/Legacy Report/temi di Jarvis) | **Lucille** (Grok Bot, worker demo-gate) | `lucille/demo-gate-stabilization` | (questa PR) | Bozza | 11 ott 2026 |
 
 ---

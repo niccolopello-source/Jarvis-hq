@@ -198,5 +198,18 @@ test("golden full-career baseline for fixed seeds (engine output, not run-vs-run
   const golden = (o: SimOpts) => createHash("sha256").update(fingerprint(playCareerSim(o))).digest("hex").slice(0, 16);
   resetRules();
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(golden), GOLDEN);
+  // Same seeds as a career created on 2.12.0-beta (a save in flight): the engine reads the rules
+  // from the career's own engineVersion, so these must stay the #63 values byte for byte.
+  const legacy = (o: SimOpts) => {
+    const job = openCareerSim(o);
+    job.s.engineVersion = "2.12.0-beta";
+    while (!advanceCareerSim(job));
+    return createHash("sha256").update(fingerprint(job.s)).digest("hex").slice(0, 16);
+  };
+  assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy), GOLDEN_2_12);
 });
-const GOLDEN = ["6fe52cd0a7ee8c19", "bacb446a2a8bf8e3", "441bec64d2398645"];
+/* 2.13.0-beta (#66): D-09 world "regress" and the D-23 step 0.16 apply only to careers created
+   on 2.13.0 or later, and they move team strength and DPOY voting, so new careers get new values.
+   The #63 values are kept unchanged below as the 2.12 golden. */
+const GOLDEN = ["9f5583418a7fa740", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
+const GOLDEN_2_12 = ["6fe52cd0a7ee8c19", "bacb446a2a8bf8e3", "441bec64d2398645"];

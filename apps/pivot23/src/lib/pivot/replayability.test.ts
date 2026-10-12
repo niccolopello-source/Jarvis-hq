@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { STORY_POOL } from "./data.ts";
-import { playCareerSim } from "./engine.ts";
+import { advanceCareerSim, openCareerSim, playCareerSim } from "./engine.ts";
 import { careerShape, careerSimilarity, careerTelemetry, identityKey, macroIdentity } from "./replayability.ts";
 
 const FIXED = {
@@ -38,7 +38,11 @@ test("a different seed diverges, and a trade decision diverges from the same see
 });
 
 test("retiring at the offer leaves out the age-36 season the other choice plays", () => {
-  const seed = 2;
+  // First seed that reaches the age-36 offer: a fixed seed (29930, then 2) broke each time an
+  // engine change moved the career path. Fails loudly if none of 1..200 does.
+  let seed = 1;
+  while (seed <= 200 && !playCareerSim({ ...FIXED, seed, retirement: "play36" }).extraSeason) seed++;
+  assert.ok(seed <= 200, "no career from seed 1..200 reaches the age-36 offer");
   const play = playCareerSim({ ...FIXED, seed, retirement: "play36" });
   const stop = playCareerSim({ ...FIXED, seed, retirement: "retire" });
   assert.equal(play.extraSeason, true);
@@ -110,11 +114,19 @@ test("gameplay modules do not call Math.random", () => {
 
 /* PR #61 QA: seed 29930 was moved out of the age-36 test. It is not a bug: after the isolated ROY
    stream changed the career path, this journeyman (peak OVR 63) reaches the 33 summer with
-   injuryDrag 3.2 >= 2.5, so careerEndingSignal() closes the career before any 36 offer. */
+   injuryDrag 3.2 >= 2.5, so careerEndingSignal() closes the career before any 36 offer.
+   This is a 2.12 career path: on 2.13.0 (#66, D-09 world regress) the same seed reaches 36, so the
+   check runs on a career created on 2.12.0-beta, which must still end exactly as before. */
+const legacyCareer = (opts: Parameters<typeof openCareerSim>[0]) => {
+  const job = openCareerSim(opts);
+  job.s.engineVersion = "2.12.0-beta";
+  while (!advanceCareerSim(job));
+  return job.s;
+};
 test("seed 29930 ends at 32 by the injury rule, so both retirement choices give the same career", async () => {
   const { careerEndingSignal } = await import("./peak.ts");
-  const play = playCareerSim({ ...FIXED, seed: 29930, retirement: "play36" });
-  const stop = playCareerSim({ ...FIXED, seed: 29930, retirement: "retire" });
+  const play = legacyCareer({ ...FIXED, seed: 29930, retirement: "play36" });
+  const stop = legacyCareer({ ...FIXED, seed: 29930, retirement: "retire" });
   assert.equal(play.seasonHistory.at(-1)?.age, 32);
   assert.equal(careerEndingSignal(play), "injury");
   assert.ok(play.injuryDrag >= 2.5);
