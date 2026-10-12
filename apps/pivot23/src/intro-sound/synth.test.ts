@@ -162,3 +162,19 @@ test("the swish is one logical cue even though its net closes about 280 ms later
   assert.ok(!widened.includes(5130), `400 ms window misses the second attack (${widened})`);
   assert.equal(groupsFromFirstStart(twice.sources.map((s) => s.start), 0.6).length, 1);
 });
+
+test("with an end time the swish rings out until exactly that moment, and no source outlives it", () => {
+  const fake = fakeContext();
+  const bus = makeBus(fake.ctx, makeMaster(fake.ctx).input);
+  const end = playCue(bus, "swish", 3.4, () => {}, 4.8);
+  assert.equal(end, 4.8);
+  for (const s of fake.sources) assert.ok(s.start >= 3.4 - 1e-9 && s.stop <= 4.8 + 1e-9, JSON.stringify(s));
+  assert.ok(fake.sources.some((s) => Math.abs(s.stop - 4.8) < 1e-9), "a settle layer lasts to the end");
+  for (const e of fake.events) assert.ok(Number.isFinite(e.value) && Number.isFinite(e.time) && e.time <= 4.8 + 1e-9, JSON.stringify(e));
+});
+
+test("an end time earlier than the minimum tail never cuts the swish short", () => {
+  const fake = fakeContext();
+  const bus = makeBus(fake.ctx, makeMaster(fake.ctx).input);
+  assert.equal(playCue(bus, "swish", 3.4, () => {}, 3.5), 3.4 + 1.2);
+});
