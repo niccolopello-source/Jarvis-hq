@@ -2960,12 +2960,66 @@ export function resetArchiveMemory() {
   archiveMemory = [];
 }
 
+/**
+ * G3-B02. How this build treats one stored archive entry, before any normalization:
+ * - "current": archiveSchema === ARCHIVE_SCHEMA;
+ * - "legacy": no archiveSchema, or an older integer schema: migrated in memory (stamped current);
+ * - "future": written by a newer build (archiveSchema or save version above what this build knows):
+ *   not shown, never rewritten, carried forward byte-for-byte on every archive write;
+ * - "invalid": not an object, or an archiveSchema that is not a positive integer.
+ */
+export type ArchiveEntrySchema = "current" | "legacy" | "future" | "invalid";
+
+export function archiveEntrySchema(value: unknown): ArchiveEntrySchema {
+  if (!isRecord(value)) return "invalid";
+  const schema = value.archiveSchema;
+  const version = value.version;
+  if (typeof version === "number" && Number.isInteger(version) && version > SAVE_VERSION) return "future";
+  if (schema === undefined) return "legacy";
+  if (typeof schema !== "number" || !Number.isInteger(schema) || schema < 1) return "invalid";
+  if (schema > ARCHIVE_SCHEMA) return "future";
+  return schema === ARCHIVE_SCHEMA ? "current" : "legacy";
+}
+
+/** Raw future-schema entries found in `raw`, kept verbatim so a write never drops or downgrades them. */
+function futureArchiveEntries(raw: string | null): unknown[] {
+  if (!raw) return [];
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((entry) => archiveEntrySchema(entry) === "future") : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Key-order and whitespace independent form of a JSON value, so formatting never looks like new data. */
+function canonicalJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  if (isRecord(value)) {
+    return `{${Object.keys(value).sort().map((k) => `${JSON.stringify(k)}:${canonicalJson(value[k])}`).join(",")}}`;
+  }
+  return JSON.stringify(value) ?? "null";
+}
+
+/** True when every future entry already sits, parsed and equal, in a raw copy under ARCHIVE_BACKUP_KEY. */
+function futureBackedUp(store: Storage, future: unknown[]): boolean {
+  if (!future.length) return true;
+  try {
+    const prev = JSON.parse(store.getItem(ARCHIVE_BACKUP_KEY) ?? "null") as { raws?: unknown } | null;
+    const raws = prev && Array.isArray(prev.raws) ? prev.raws.filter((r): r is string => typeof r === "string") : [];
+    const backed = new Set(raws.flatMap((raw) => futureArchiveEntries(raw).map(canonicalJson)));
+    return future.every((entry) => backed.has(canonicalJson(entry)));
+  } catch {
+    return false;
+  }
+}
+
 /** True when `raw` holds something loadArchive() would not carry forward on the next write. */
 function archiveLosesData(raw: string): boolean {
   try {
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return true;
-    return parsed.some((entry) => normalizeArchiveEntry(entry) === null);
+    return parsed.some((entry) => archiveEntrySchema(entry) !== "future" && normalizeArchiveEntry(entry) === null);
   } catch {
     return true;
   }
@@ -3022,6 +3076,9 @@ function isValidCareerCard(value: unknown): value is CareerCard {
 
 function normalizeArchiveEntry(value: unknown): ArchiveCareer | null {
   if (!isRecord(value)) return null;
+  // G3-B02: a newer or malformed archiveSchema must not be stamped as the current one.
+  const schema = archiveEntrySchema(value);
+  if (schema === "future" || schema === "invalid") return null;
   const requiredStrings = ["id", "name", "role", "verdict", "closing"];
   const requiredNumbers = ["savedAt", "version", "seasons", "peak", "titles", "ppg"];
   if (!requiredStrings.every((key) => typeof value[key] === "string")
@@ -3099,7 +3156,9 @@ export function loadArchive(): ArchiveCareer[] {
 export const ARCHIVE_LIMIT = 8;
 
 let archiveEvicted: ArchiveCareer[] = [];
-let archiveWrite: { ok: boolean; persisted: boolean; reason?: "quota" | "unavailable" } = { ok: true, persisted: true };
+let archiveWrite: { ok: boolean; persisted: boolean; reason?: "quota" | "unavailable"; futureKept?: number } = { ok: true, persisted: true };
+/** Future-schema entries carried by the last archive write (they count toward its size, never trimmed). */
+let archiveFutureKept = 0;
 
 /** Result of the last saveArchive() call. A quota miss keeps the in-memory career. */
 export function lastArchiveWrite() {
@@ -3119,10 +3178,17 @@ function coldArchive(entry: ArchiveCareer): ArchiveCareer {
   };
 }
 
-function writeArchiveStore(store: Storage, serialized: string): "ok" | "quota" | "fail" {
+function writeArchiveStore(store: Storage, entries: unknown[]): "ok" | "quota" | "fail" {
+  let serialized = JSON.stringify(entries);
   try {
     const prior = store.getItem(ARCHIVE_KEY);
-    if (prior !== null && prior !== serialized && archiveLosesData(prior)) backupArchiveRaw(store, prior);
+    // G3-B02: entries from a newer build stay in this store exactly as they were.
+    const future = futureArchiveEntries(prior);
+    archiveFutureKept = Math.max(archiveFutureKept, future.length);
+    if (future.length) serialized = JSON.stringify([...entries, ...future]);
+    if (prior !== null && prior !== serialized && (archiveLosesData(prior) || !futureBackedUp(store, future))) {
+      backupArchiveRaw(store, prior);
+    }
   } catch {
     /* unreadable store: nothing to keep */
   }
@@ -3145,29 +3211,32 @@ export function saveArchive(entry: ArchiveCareer) {
   const all = [compact, ...previous].slice(0, ARCHIVE_LIMIT);
   archiveEvicted = previous.slice(ARCHIVE_LIMIT - 1);
   archiveMemory = all;
-  let serialized = JSON.stringify(all);
   let persisted = false;
   let quota = false;
+  archiveFutureKept = 0;
   const stores = archiveStores();
   for (const store of stores) {
-    const wrote = writeArchiveStore(store, serialized);
+    const wrote = writeArchiveStore(store, all);
     if (wrote === "ok") persisted = true;
     else if (wrote === "quota") quota = true;
   }
   if (!persisted && quota) {
     const thinner = all.map(coldArchive);
-    serialized = JSON.stringify(thinner);
     for (const store of stores) {
-      const wrote = writeArchiveStore(store, serialized);
+      const wrote = writeArchiveStore(store, thinner);
       if (wrote === "ok") {
         persisted = true;
         archiveMemory = thinner;
       }
     }
   }
+  /* G3-B02: future entries are part of the written size and are never trimmed to make room. On a
+     quota failure the previous store (future entries included) is left untouched and the caller is
+     warned through lastArchiveWrite(). */
   archiveWrite = persisted
     ? { ok: true, persisted: true }
     : { ok: false, persisted: false, reason: quota ? "quota" : "unavailable" };
+  if (archiveFutureKept) archiveWrite.futureKept = archiveFutureKept;
   return [...archiveMemory];
 }
 

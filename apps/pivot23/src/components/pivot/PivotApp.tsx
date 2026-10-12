@@ -396,6 +396,7 @@ export function PivotApp() {
 
   useEffect(() => () => {
     if (holdTimer.current) window.clearTimeout(holdTimer.current);
+    holdTimer.current = 0;
     if (simTimer.current) window.clearTimeout(simTimer.current);
     chipTimers.current.forEach((id) => window.clearTimeout(id));
   }, []);
@@ -493,6 +494,10 @@ export function PivotApp() {
   }, [screen]);
 
   function takeGesture(token: string) {
+    /* G3-B01: during a hold the decision buttons are only pointer-events:none, so keyboard
+       (Enter/Space) still reaches them after the 600 ms window. A decision already taken owns
+       the hold: refuse every other decision until its transition has run. */
+    if (holdTimer.current) return false;
     const now = performance.now();
     if (gestureToken.current === token && now < gestureUntil.current) return false;
     gestureToken.current = token;

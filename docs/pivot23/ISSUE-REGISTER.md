@@ -12,6 +12,10 @@
 | P2-ROBOTS | P2 | in PR | 404 in produzione. File aggiunto, non deployato |
 | P2-CANONICAL | P2 | in PR | Canonical e OG aggiunti, non deployati |
 | P2-VERCEL-SCOPE | P2 | aperto | Lista domini ok; alcuni endpoint team rispondono 403. Riconnessione non richiesta per il resto del lavoro |
+| G3-B01 | P1 | in PR (G3) | Decisione di storia applicata due volte da tastiera durante la pausa (bottone solo `pointer-events:none`). Riprodotto in E2E, fix in `takeGesture` |
+| G3-B02 | P1 | in PR (G3) | Archivio: `archiveSchema` futuro marcato come corrente e riscritto al salvataggio successivo. Fix minimo in `engine.ts`, da rivedere con Lucille |
+| G3-F03 | P3 | documentato | Il save tiene solo gli ultimi 16 campioni di lega: dopo un reload l'albo d'oro è più corto. Esiti sportivi identici (test di replay) |
+| G3-F04 | P2 | limite noto | Checksum locale ricalcolabile: un save modificato a mano si apre (anche overall 9999). Solo corruzione accidentale, mai prova di autenticità |
 | P3-HTML-PROTO | P3 | aperto | `artifacts/pivot.html` e `2.html` non sono il prodotto |
 
 Owner delle approvazioni: l'utente. Nessun merge implicito.
