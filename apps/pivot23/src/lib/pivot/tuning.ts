@@ -50,6 +50,13 @@ export const LEGACY_RULES = Object.freeze({ scriptWindows: "fixed", dpoyFatigue:
 /** First engine version whose careers use the A2 early-injury retirement bars. */
 export const RETIRE_SINCE = "2.14.0";
 
+/** First engine version of the 2.15 rules. Shared gate: PR #83 (engine decisions) and the awards v2
+ *  PR both key their new rules on 2.15.0, so a career is either fully 2.14 or fully 2.15. */
+export const RULES_215_SINCE = "2.15.0";
+
+/** Awards v2 (MVP/ROY/DPOY/All-NBA/MIP/6MOY fixes) apply to careers created by 2.15.0 or later. */
+export const AWARDS_SINCE = RULES_215_SINCE;
+
 /** D-23 step that careers created before WORLD_SINCE (2.13.0) keep. */
 export const LEGACY_DPOY_STREAK_STEP = 0.12;
 
@@ -100,6 +107,11 @@ export function dpoyStreakStepOf(career: { engineVersion?: string }): number {
 /** A2: true when this career may retire from injury before 33 (created by RETIRE_SINCE or later). */
 export function usesRetireSpread(career: { engineVersion?: string }): boolean {
   return versionAtLeast(career.engineVersion, RETIRE_SINCE);
+}
+
+/** Awards v2: true when this career was created by AWARDS_SINCE (2.15.0) or later. */
+export function usesAwardsV2(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, AWARDS_SINCE);
 }
 
 /** Restores shipped behaviour (used by tests and the comparison script). */
