@@ -32,9 +32,11 @@ function fp(seed: number) {
 test("experiment absent keeps the no-hook fingerprints", () => {
   // Engine 2.13.0: D-09 (world "regress") moves team strength, so the player's box rows move.
   // Previous values (2.12.0 after #61): bd49e94d49927254 / 01bb9bd52abd5a9d / 46de14988ae7c8fa.
-  assert.equal(fp(23017), "88b05ca7c1f205f2");
-  assert.equal(fp(23034), "5223c1f092323ef4");
-  assert.equal(fp(23102), "61c87673b55c1bf9");
+  // Engine 2.17.0 (P1-INJ): the serious injury follows the load, so the rows move.
+  // Previous values (2.13–2.15): 88b05ca7c1f205f2 / 5223c1f092323ef4 / 61c87673b55c1bf9.
+  assert.equal(fp(23017), "be7cb73d0a40a658");
+  assert.equal(fp(23034), "f87256a4de325b61");
+  assert.equal(fp(23102), "f8cf1653b86baa80");
 });
 
 test("forced minutes move the recorded average without touching the played path", () => {
@@ -43,7 +45,7 @@ test("forced minutes move the recorded average without touching the played path"
   const mean = (s: typeof low) => s.seasonHistory.reduce((a, r) => a + r.min, 0) / s.seasonHistory.length;
   assert.ok(Math.abs(mean(low) - 10) < 0.05, String(mean(low)));
   assert.ok(Math.abs(mean(high) - 28) < 0.05, String(mean(high)));
-  assert.equal(fp(23017), "88b05ca7c1f205f2");
+  assert.equal(fp(23017), "be7cb73d0a40a658");
 });
 
 test("work ethic stays locked and a forced injury costs games", () => {

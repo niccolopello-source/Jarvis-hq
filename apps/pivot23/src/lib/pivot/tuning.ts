@@ -57,6 +57,10 @@ export const RULES_215_SINCE = "2.15.0";
 /** Awards v2 (MVP/ROY/DPOY/All-NBA/MIP/6MOY fixes) apply to careers created by 2.15.0 or later. */
 export const AWARDS_SINCE = RULES_215_SINCE;
 
+/** P1-INJ: first engine version whose careers get load-based serious injuries (injuries.ts).
+ *  2.16.0 is reserved by #83 (DECISIONS_SINCE); merge #83 first, then this. */
+export const RULES_INJURY_SINCE = "2.17.0";
+
 /** D-23 step that careers created before WORLD_SINCE (2.13.0) keep. */
 export const LEGACY_DPOY_STREAK_STEP = 0.12;
 
