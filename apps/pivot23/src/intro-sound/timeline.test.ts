@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
+  FADE_OUT_MS,
   FULL_BEATS,
   FULL_TIMELINE,
   LATE_GRACE_MS,
@@ -11,6 +12,7 @@ import {
   parsePref,
   planRemaining,
   soundEnabled,
+  soundEnvelope,
 } from "./timeline";
 
 const styles = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
@@ -107,4 +109,21 @@ test("preference: on by default, off by default under reduced motion, explicit c
   assert.equal(soundEnabled(null, true), false);
   assert.equal(soundEnabled("off", false), false);
   assert.equal(soundEnabled("on", true), true);
+});
+
+test("the sound ends exactly when the premiere animation ends (same --cine value), after a short fade", () => {
+  const cine = cssTimeMs(/--cine:\s*([\d.]+m?s)/.exec(block(styles, ".court-mark-live.is-premiere"))?.[1]);
+  assert.equal(cine, PREMIERE_MS);
+  const env = soundEnvelope(cine)!;
+  assert.equal(env.endAt, cine, "no separate guess for the end");
+  assert.equal(env.fadeAt, cine - FADE_OUT_MS);
+  const swish = FULL_TIMELINE.find((c) => c.name === "swish")!;
+  assert.ok(env.fadeAt > swish.at + 600, "the swish and its net snap are heard in full before the fade");
+  assert.ok(FADE_OUT_MS >= 200 && FADE_OUT_MS <= 600);
+});
+
+test("sound envelope rejects invalid premiere lengths", () => {
+  assert.equal(soundEnvelope(NaN), null);
+  assert.equal(soundEnvelope(0), null);
+  assert.equal(soundEnvelope(FADE_OUT_MS), null);
 });
