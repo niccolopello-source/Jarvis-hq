@@ -402,6 +402,15 @@ export function PivotApp() {
   }, []);
 
   useEffect(() => {
+    if (screen !== "setup") return;
+    // Inizia unmounts the home: without this the setup opened at the home's scroll offset (landscape
+    // phones) and keyboard focus fell back to <body>.
+    window.scrollTo(0, 0);
+    const active = document.activeElement;
+    if (!active || active === document.body) document.getElementById("setup-title")?.focus({ preventScroll: true });
+  }, [screen]);
+
+  useEffect(() => {
     if (screen !== "career" || !pending) return;
     const el = document.querySelector<HTMLElement>("[data-pending]");
     if (!el) return;
@@ -1114,6 +1123,7 @@ export function PivotApp() {
             </button>
           ) : null}
           <div
+            className="home-mark"
             onAnimationEnd={(event) => {
               if (event.animationName === "cineReveal") setPremiere(false);
             }}
@@ -1183,7 +1193,7 @@ export function PivotApp() {
           <button className="back-link" onClick={() => setScreen("intro")}>
             <ChevronLeft className="size-4" aria-hidden="true" /> {t("home", lang)}
           </button>
-          <h2 className="page-title">{t("setupTitle", lang)}</h2>
+          <h2 className="page-title" id="setup-title" tabIndex={-1}>{t("setupTitle", lang)}</h2>
           <p className="lede">{t("setupLede", lang)}</p>
           <label className="group-label" htmlFor="setup-name">{t("setupName", lang)}</label>
           <div className="group-card">

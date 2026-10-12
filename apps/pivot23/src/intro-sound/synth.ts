@@ -152,10 +152,17 @@ export function bounce(bus: Bus, t: number, v: Voice, track: Track = () => {}): 
   return end;
 }
 
-/** The ball dropping clean through the net (no rim) at context time `t`. Returns when its tail has died out. */
-export function swish(bus: Bus, t: number, track: Track = () => {}): number {
+/** Shortest swish tail; with `until` later than this the net settles and rings out until then. */
+export const SWISH_MIN_TAIL_S = 1.2;
+
+/**
+ * The ball dropping clean through the net (no rim) at context time `t`. Returns when its tail has died out.
+ * With `until` (context time) the tail is stretched to end exactly there: the net keeps swaying and the
+ * hall's air settles, so the phrase lasts as long as the logo animation instead of stopping early.
+ */
+export function swish(bus: Bus, t: number, track: Track = () => {}, until?: number): number {
   const { ctx, out } = bus;
-  const end = t + 1.2;
+  const end = typeof until === "number" && Number.isFinite(until) ? Math.max(t + SWISH_MIN_TAIL_S, until) : t + SWISH_MIN_TAIL_S;
 
   // Main swish: band-pass sweep up as the ball enters, down as it leaves the net.
   const main = noiseSource(bus, t, 1.05, 0.11, track);
@@ -223,6 +230,21 @@ export function swish(bus: Bus, t: number, track: Track = () => {}): number {
   envelope(closeGain.gain, t + 0.28, 0.46, 0.02, 0.42);
   close.connect(closeBand).connect(closeGain).connect(out);
 
+  // Settle: the net still swaying after the ball has gone, a soft rustle that slows and darkens.
+  if (typeof until === "number" && end - t > 0.9) {
+    const settle = noiseSource(bus, t + 0.6, end - t - 0.6, 0.83, track);
+    const settleBand = ctx.createBiquadFilter();
+    settleBand.type = "bandpass";
+    settleBand.Q.value = 0.7;
+    settleBand.frequency.setValueAtTime(2200, t + 0.6);
+    settleBand.frequency.exponentialRampToValueAtTime(700, end);
+    const settleGain = ctx.createGain();
+    settleGain.gain.setValueAtTime(0, t + 0.6);
+    settleGain.gain.linearRampToValueAtTime(0.16, t + 0.85);
+    settleGain.gain.exponentialRampToValueAtTime(FLOOR, end);
+    settle.connect(settleBand).connect(settleGain).connect(out);
+  }
+
   return end;
 }
 
@@ -234,9 +256,9 @@ const VOICES: Record<Exclude<CueKind, "swish">, Voice> = {
   bounce3: BOUNCE_3,
 };
 
-/** Plays one named cue into `out` at context time `t`. */
-export function playCue(bus: Bus, name: CueKind, t: number, track?: Track): number {
-  if (name === "swish") return swish(bus, t, track);
+/** Plays one named cue into `out` at context time `t`. `until` stretches the swish tail to that context time. */
+export function playCue(bus: Bus, name: CueKind, t: number, track?: Track, until?: number): number {
+  if (name === "swish") return swish(bus, t, track, until);
   return bounce(bus, t, VOICES[name], track);
 }
 
