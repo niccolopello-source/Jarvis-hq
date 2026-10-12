@@ -85,8 +85,8 @@ test("narrative and labels read naturally in Italian and English", () => {
         if (lang === "en") assert.doesNotMatch(line, italian, `${seed}: ${line}`);
         assert.match(line, /^[A-Z0-9ÀÈÉÌÒÙ]/u, line);
       }
-      if (lang === "en") for (const line of narrativeOf(r, lang)) assert.doesNotMatch(line, /the the|1 seasons|1 teams/);
-      if (lang === "it") for (const line of narrativeOf(r, lang)) assert.doesNotMatch(line, /1 stagioni|1 squadre/);
+      if (lang === "en") for (const line of narrativeOf(r, lang)) assert.doesNotMatch(line, /the the|(^|[^0-9])1 seasons|(^|[^0-9])1 teams/);
+      if (lang === "it") for (const line of narrativeOf(r, lang)) assert.doesNotMatch(line, /(^|[^0-9])1 stagioni|(^|[^0-9])1 squadre/);
     }
   }
   const k = legacyKeys();
