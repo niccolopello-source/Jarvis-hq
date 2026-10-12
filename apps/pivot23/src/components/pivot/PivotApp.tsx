@@ -73,6 +73,7 @@ import {
   withPlayer,
 } from "@/lib/pivot/engine";
 import { initLang, registerLangLoader, setLang, t, tf, useLang, awardLabel, DEMO_LANGS, difficultyFace } from "@/lib/pivot/i18n";
+import { choiceShowsVoidedExtraYear } from "@/lib/pivot/career-coherence";
 import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
 import { ModalDialog } from "@/components/pivot/Dialog";
 import { LazyChunk } from "@/components/pivot/ChunkBoundary";
@@ -2257,6 +2258,7 @@ const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
           <span>
             <span className="text-muted">{nx(c.title, lang)}: </span>
             {nx(c.pick, lang)}
+            {choiceShowsVoidedExtraYear(c, player) ? <span className="text-muted"> — {t("extraYearVoided", lang)}</span> : null}
           </span>
         </div>
       ))}
@@ -2436,6 +2438,7 @@ function ArchiveView({
         {viewing.choices.map((c, i) => (
           <div key={i} className="text-[13px] py-1 text-muted">
             {tf("seasonShort", { n: c.season }, lang)} {nx(c.title, lang)}: <span className="text-chalk">{nx(c.pick, lang)}</span>
+            {choiceShowsVoidedExtraYear(c, viewing) ? <span> — {t("extraYearVoided", lang)}</span> : null}
           </div>
         ))}
       </section>

@@ -1,0 +1,1155 @@
+{
+ "sha": "3bb757bab75a18726bfc6b08756651238ed8fd68",
+ "node": "v22.23.3",
+ "careers": 7000,
+ "errors": 0,
+ "engineVersions": {
+  "2.13.0-beta": 7000
+ },
+ "p0": {
+  "gate1000": {
+   "hist": {
+    "32": 317,
+    "33": 4,
+    "34": 51,
+    "35": 30,
+    "36": 598
+   },
+   "before34": {
+    "k": 321,
+    "n": 1000,
+    "pct": 32.1,
+    "lo": 29.3,
+    "hi": 35.1
+   },
+   "reach36": {
+    "k": 598,
+    "n": 1000,
+    "pct": 59.8,
+    "lo": 56.7,
+    "hi": 62.8
+   },
+   "signals": {
+    "injury": 385,
+    "minutes": 51,
+    "null": 564
+   },
+   "earlyBySignal": {
+    "injury": 321
+   },
+   "unexplained": [],
+   "peaks": {
+    "26": 282,
+    "27": 387,
+    "28": 331
+   },
+   "coherence": {
+    "endAgeEqualsLastRow": {
+     "k": 1000,
+     "n": 1000,
+     "pct": 100,
+     "lo": 99.6,
+     "hi": 100
+    },
+    "stateAgeMinusEndAge": {
+     "0": 615,
+     "1": 385
+    },
+    "extraWithout36Row": [
+     4017,
+     23017,
+     49017,
+     65017,
+     74017,
+     92017,
+     168017,
+     183017,
+     355017,
+     545017
+    ],
+    "row36WithoutExtra": [],
+    "rowsPast36": [],
+    "duplicateAges": [],
+    "ageGaps": [],
+    "reached35NoOfferNoSignal": []
+   }
+  },
+  "pro4000": {
+   "hist": {
+    "32": 1323,
+    "33": 19,
+    "34": 194,
+    "35": 132,
+    "36": 2332
+   },
+   "before34": {
+    "k": 1342,
+    "n": 4000,
+    "pct": 33.6,
+    "lo": 32.1,
+    "hi": 35
+   },
+   "reach36": {
+    "k": 2332,
+    "n": 4000,
+    "pct": 58.3,
+    "lo": 56.8,
+    "hi": 59.8
+   },
+   "signals": {
+    "injury": 1591,
+    "minutes": 234,
+    "null": 2175
+   },
+   "earlyBySignal": {
+    "injury": 1342
+   },
+   "peaks": {
+    "26": 1152,
+    "27": 1499,
+    "28": 1349
+   },
+   "extraListed": 10,
+   "stateAge": {
+    "0": 2409,
+    "1": 1591
+   }
+  },
+  "byChunk": {
+   "0": {
+    "k": 321,
+    "n": 1000,
+    "pct": 32.1,
+    "lo": 29.3,
+    "hi": 35.1
+   },
+   "1": {
+    "k": 340,
+    "n": 1000,
+    "pct": 34,
+    "lo": 31.1,
+    "hi": 37
+   },
+   "2": {
+    "k": 333,
+    "n": 1000,
+    "pct": 33.3,
+    "lo": 30.4,
+    "hi": 36.3
+   },
+   "3": {
+    "k": 348,
+    "n": 1000,
+    "pct": 34.8,
+    "lo": 31.9,
+    "hi": 37.8
+   }
+  },
+  "byDifficulty": {
+   "pro": {
+    "endBefore34": {
+     "k": 1342,
+     "n": 4000,
+     "pct": 33.6,
+     "lo": 32.1,
+     "hi": 35
+    },
+    "reach36": {
+     "k": 2332,
+     "n": 4000,
+     "pct": 58.3,
+     "lo": 56.8,
+     "hi": 59.8
+    }
+   },
+   "esordio": {
+    "endBefore34": {
+     "k": 10,
+     "n": 1000,
+     "pct": 1,
+     "lo": 0.5,
+     "hi": 1.8
+    },
+    "reach36": {
+     "k": 916,
+     "n": 1000,
+     "pct": 91.6,
+     "lo": 89.7,
+     "hi": 93.2
+    }
+   },
+   "allstar": {
+    "endBefore34": {
+     "k": 474,
+     "n": 1000,
+     "pct": 47.4,
+     "lo": 44.3,
+     "hi": 50.5
+    },
+    "reach36": {
+     "k": 451,
+     "n": 1000,
+     "pct": 45.1,
+     "lo": 42,
+     "hi": 48.2
+    }
+   },
+   "leggenda": {
+    "endBefore34": {
+     "k": 480,
+     "n": 1000,
+     "pct": 48,
+     "lo": 44.9,
+     "hi": 51.1
+    },
+    "reach36": {
+     "k": 371,
+     "n": 1000,
+     "pct": 37.1,
+     "lo": 34.2,
+     "hi": 40.1
+    }
+   }
+  }
+ },
+ "d08": {
+  "pro": {
+   "bustA": {
+    "k": 595,
+    "n": 4000,
+    "pct": 14.9,
+    "lo": 13.8,
+    "hi": 16
+   },
+   "lab": {
+    "k": 0,
+    "n": 419,
+    "pct": 0,
+    "lo": 0,
+    "hi": 0.9
+   },
+   "pot85": 419,
+   "opp": {
+    "k": 528,
+    "n": 595,
+    "pct": 88.7,
+    "lo": 85.9,
+    "hi": 91
+   },
+   "prog": {
+    "k": 67,
+    "n": 595,
+    "pct": 11.3,
+    "lo": 9,
+    "hi": 14.1
+   },
+   "gap": {
+    "n": 4000,
+    "mean": 0.97,
+    "ci": [
+     0.94,
+     1.01
+    ],
+    "sd": 1.19,
+    "min": -1.4,
+    "p10": -0.6,
+    "p25": 0.1,
+    "median": 1,
+    "p75": 1.7,
+    "p90": 2.5,
+    "max": 6.9
+   },
+   "gapGe3": {
+    "k": 220,
+    "n": 4000,
+    "pct": 5.5,
+    "lo": 4.8,
+    "hi": 6.3
+   },
+   "maxGap": 6.9
+  },
+  "byPot": {
+   "75-80": {
+    "k": 151,
+    "n": 985,
+    "pct": 15.3,
+    "lo": 13.2,
+    "hi": 17.7
+   },
+   "85+": {
+    "k": 0,
+    "n": 419,
+    "pct": 0,
+    "lo": 0,
+    "hi": 0.9
+   },
+   "<70": {
+    "k": 205,
+    "n": 1384,
+    "pct": 14.8,
+    "lo": 13,
+    "hi": 16.8
+   },
+   "70-75": {
+    "k": 237,
+    "n": 1026,
+    "pct": 23.1,
+    "lo": 20.6,
+    "hi": 25.8
+   },
+   "80-85": {
+    "k": 2,
+    "n": 186,
+    "pct": 1.1,
+    "lo": 0.3,
+    "hi": 3.8
+   }
+  },
+  "byRole": {
+   "PG": {
+    "k": 151,
+    "n": 800,
+    "pct": 18.9,
+    "lo": 16.3,
+    "hi": 21.7
+   },
+   "SG": {
+    "k": 131,
+    "n": 800,
+    "pct": 16.4,
+    "lo": 14,
+    "hi": 19.1
+   },
+   "SF": {
+    "k": 103,
+    "n": 800,
+    "pct": 12.9,
+    "lo": 10.7,
+    "hi": 15.4
+   },
+   "PF": {
+    "k": 95,
+    "n": 800,
+    "pct": 11.9,
+    "lo": 9.8,
+    "hi": 14.3
+   },
+   "C": {
+    "k": 115,
+    "n": 800,
+    "pct": 14.4,
+    "lo": 12.1,
+    "hi": 17
+   }
+  },
+  "byPath": {
+   "NCAA": {
+    "k": 338,
+    "n": 1334,
+    "pct": 25.3,
+    "lo": 23.1,
+    "hi": 27.7
+   },
+   "Europa": {
+    "k": 219,
+    "n": 1333,
+    "pct": 16.4,
+    "lo": 14.5,
+    "hi": 18.5
+   },
+   "G-League": {
+    "k": 38,
+    "n": 1333,
+    "pct": 2.9,
+    "lo": 2.1,
+    "hi": 3.9
+   }
+  },
+  "byPick": {
+   "31-45": {
+    "k": 0,
+    "n": 2373,
+    "pct": 0,
+    "lo": 0,
+    "hi": 0.2
+   },
+   "15-30": {
+    "k": 592,
+    "n": 1232,
+    "pct": 48.1,
+    "lo": 45.3,
+    "hi": 50.8
+   },
+   "46-60": {
+    "k": 0,
+    "n": 347,
+    "pct": 0,
+    "lo": 0,
+    "hi": 1.1
+   },
+   "1-14": {
+    "k": 3,
+    "n": 48,
+    "pct": 6.3,
+    "lo": 2.1,
+    "hi": 16.8
+   }
+  },
+  "byDiff": {
+   "pro": {
+    "k": 595,
+    "n": 4000,
+    "pct": 14.9,
+    "lo": 13.8,
+    "hi": 16
+   },
+   "esordio": {
+    "k": 77,
+    "n": 1000,
+    "pct": 7.7,
+    "lo": 6.2,
+    "hi": 9.5
+   },
+   "allstar": {
+    "k": 177,
+    "n": 1000,
+    "pct": 17.7,
+    "lo": 15.5,
+    "hi": 20.2
+   },
+   "leggenda": {
+    "k": 157,
+    "n": 1000,
+    "pct": 15.7,
+    "lo": 13.6,
+    "hi": 18.1
+   }
+  },
+  "byChunk": {
+   "0": {
+    "k": 141,
+    "n": 1000,
+    "pct": 14.1,
+    "lo": 12.1,
+    "hi": 16.4
+   },
+   "1": {
+    "k": 150,
+    "n": 1000,
+    "pct": 15,
+    "lo": 12.9,
+    "hi": 17.3
+   },
+   "2": {
+    "k": 153,
+    "n": 1000,
+    "pct": 15.3,
+    "lo": 13.2,
+    "hi": 17.7
+   },
+   "3": {
+    "k": 151,
+    "n": 1000,
+    "pct": 15.1,
+    "lo": 13,
+    "hi": 17.5
+   }
+  },
+  "comparable1200": {
+   "k": 157,
+   "n": 1200,
+   "pct": 13.1,
+   "lo": 11.3,
+   "hi": 15.1
+  }
+ },
+ "d09": {
+  "proAllTitles": {
+   "worlds": 4000,
+   "titles": 72307,
+   "franchisesWithTitle": 30,
+   "gini30": 0.406,
+   "hhi": 710,
+   "top5": [
+    "BOS 16.6%",
+    "OKC 15.1%",
+    "CLE 6.2%",
+    "NYK 4.9%",
+    "DEN 4.8%"
+   ],
+   "top3Share": 37.8,
+   "perWorldDistinctChampions": {
+    "n": 4000,
+    "mean": 10.24,
+    "ci": [
+     10.18,
+     10.3
+    ],
+    "sd": 1.91,
+    "min": 4,
+    "p10": 8,
+    "p25": 9,
+    "median": 10,
+    "p75": 12,
+    "p90": 13,
+    "max": 17
+   },
+   "perWorldTopTeamShare": {
+    "n": 4000,
+    "mean": 23.3,
+    "ci": [
+     23.08,
+     23.52
+    ],
+    "sd": 7.13,
+    "min": 9.5,
+    "p10": 15.4,
+    "p25": 17.6,
+    "median": 22.2,
+    "p75": 26.7,
+    "p90": 33.3,
+    "max": 53.3
+   },
+   "longestDynasty": {
+    "n": 4000,
+    "mean": 2.04,
+    "ci": [
+     2.02,
+     2.07
+    ],
+    "sd": 0.74,
+    "min": 1,
+    "p10": 1,
+    "p25": 2,
+    "median": 2,
+    "p75": 2,
+    "p90": 3,
+    "max": 7
+   },
+   "dynastyGe4": {
+    "k": 128,
+    "n": 4000,
+    "pct": 3.2,
+    "lo": 2.7,
+    "hi": 3.8
+   },
+   "byEraGini": {
+    "1-5": {
+     "titles": 20000,
+     "gini30": 0.8,
+     "top": [
+      "BOS",
+      8732
+     ]
+    },
+    "6-10": {
+     "titles": 20000,
+     "gini30": 0.436,
+     "top": [
+      "OKC",
+      2699
+     ]
+    },
+    "11-15": {
+     "titles": 19671,
+     "gini30": 0.226,
+     "top": [
+      "OKC",
+      1988
+     ]
+    },
+    "16+": {
+     "titles": 12636,
+     "gini30": 0.125,
+     "top": [
+      "OKC",
+      898
+     ]
+    }
+   }
+  },
+  "proSimulated": {
+   "worlds": 4000,
+   "titles": 60307,
+   "franchisesWithTitle": 30,
+   "gini30": 0.303,
+   "hhi": 473,
+   "top5": [
+    "OKC 11.4%",
+    "CLE 7.4%",
+    "BOS 6.6%",
+    "NYK 5.9%",
+    "DEN 5.7%"
+   ],
+   "top3Share": 25.5,
+   "perWorldDistinctChampions": {
+    "n": 4000,
+    "mean": 9.53,
+    "ci": [
+     9.47,
+     9.59
+    ],
+    "sd": 1.87,
+    "min": 4,
+    "p10": 7,
+    "p25": 8,
+    "median": 9,
+    "p75": 11,
+    "p90": 12,
+    "max": 16
+   },
+   "perWorldTopTeamShare": {
+    "n": 4000,
+    "mean": 23.9,
+    "ci": [
+     23.65,
+     24.14
+    ],
+    "sd": 7.8,
+    "min": 6.3,
+    "p10": 15.4,
+    "p25": 18.2,
+    "median": 22.2,
+    "p75": 27.8,
+    "p90": 33.3,
+    "max": 58.3
+   },
+   "longestDynasty": {
+    "n": 4000,
+    "mean": 2.01,
+    "ci": [
+     1.99,
+     2.04
+    ],
+    "sd": 0.74,
+    "min": 1,
+    "p10": 1,
+    "p25": 2,
+    "median": 2,
+    "p75": 2,
+    "p90": 3,
+    "max": 7
+   },
+   "dynastyGe4": {
+    "k": 127,
+    "n": 4000,
+    "pct": 3.2,
+    "lo": 2.7,
+    "hi": 3.8
+   },
+   "byEraGini": {
+    "1-5": {
+     "titles": 20000,
+     "gini30": 0.529,
+     "top": [
+      "OKC",
+      3051
+     ]
+    },
+    "6-10": {
+     "titles": 19977,
+     "gini30": 0.292,
+     "top": [
+      "OKC",
+      2235
+     ]
+    },
+    "11-15": {
+     "titles": 16336,
+     "gini30": 0.155,
+     "top": [
+      "OKC",
+      1359
+     ]
+    },
+    "16+": {
+     "titles": 3994,
+     "gini30": 0.117,
+     "top": [
+      "OKC",
+      254
+     ]
+    }
+   }
+  },
+  "proSimulatedExclPlayer": {
+   "worlds": 4000,
+   "titles": 59382,
+   "franchisesWithTitle": 30,
+   "gini30": 0.299,
+   "hhi": 469,
+   "top5": [
+    "OKC 11.3%",
+    "CLE 7.4%",
+    "BOS 6.6%",
+    "NYK 5.8%",
+    "DEN 5.7%"
+   ],
+   "top3Share": 25.2,
+   "perWorldDistinctChampions": {
+    "n": 4000,
+    "mean": 9.43,
+    "ci": [
+     9.37,
+     9.49
+    ],
+    "sd": 1.87,
+    "min": 4,
+    "p10": 7,
+    "p25": 8,
+    "median": 9,
+    "p75": 11,
+    "p90": 12,
+    "max": 16
+   },
+   "perWorldTopTeamShare": {
+    "n": 4000,
+    "mean": 23.99,
+    "ci": [
+     23.74,
+     24.23
+    ],
+    "sd": 7.8,
+    "min": 6.3,
+    "p10": 15.4,
+    "p25": 18.2,
+    "median": 22.2,
+    "p75": 27.8,
+    "p90": 33.3,
+    "max": 66.7
+   },
+   "longestDynasty": {
+    "n": 4000,
+    "mean": 2.01,
+    "ci": [
+     1.98,
+     2.03
+    ],
+    "sd": 0.74,
+    "min": 1,
+    "p10": 1,
+    "p25": 2,
+    "median": 2,
+    "p75": 2,
+    "p90": 3,
+    "max": 7
+   },
+   "dynastyGe4": {
+    "k": 121,
+    "n": 4000,
+    "pct": 3,
+    "lo": 2.5,
+    "hi": 3.6
+   },
+   "byEraGini": {
+    "1-5": {
+     "titles": 20000,
+     "gini30": 0.526,
+     "top": [
+      "OKC",
+      3018
+     ]
+    },
+    "6-10": {
+     "titles": 19961,
+     "gini30": 0.282,
+     "top": [
+      "OKC",
+      2184
+     ]
+    },
+    "11-15": {
+     "titles": 15866,
+     "gini30": 0.15,
+     "top": [
+      "OKC",
+      1283
+     ]
+    },
+    "16+": {
+     "titles": 3555,
+     "gini30": 0.116,
+     "top": [
+      "OKC",
+      224
+     ]
+    }
+   }
+  },
+  "seededTitlesPerWorld": {
+   "n": 4000,
+   "mean": 3,
+   "ci": [
+    3,
+    3
+   ],
+   "sd": 0,
+   "min": 3,
+   "p10": 3,
+   "p25": 3,
+   "median": 3,
+   "p75": 3,
+   "p90": 3,
+   "max": 3
+  },
+  "byDifficulty": {
+   "pro": {
+    "gini30": 0.303,
+    "top5": [
+     "OKC 11.4%",
+     "CLE 7.4%"
+    ],
+    "franchisesWithTitle": 30,
+    "longestDynastyMax": 7,
+    "longestDynastyMedian": 2
+   },
+   "esordio": {
+    "gini30": 0.291,
+    "top5": [
+     "OKC 11.1%",
+     "CLE 6.8%"
+    ],
+    "franchisesWithTitle": 30,
+    "longestDynastyMax": 7,
+    "longestDynastyMedian": 2
+   },
+   "allstar": {
+    "gini30": 0.303,
+    "top5": [
+     "OKC 11%",
+     "CLE 7.1%"
+    ],
+    "franchisesWithTitle": 30,
+    "longestDynastyMax": 5,
+    "longestDynastyMedian": 2
+   },
+   "leggenda": {
+    "gini30": 0.313,
+    "top5": [
+     "OKC 11.6%",
+     "CLE 7.1%"
+    ],
+    "franchisesWithTitle": 30,
+    "longestDynastyMax": 7,
+    "longestDynastyMedian": 2
+   }
+  },
+  "topFranchiseByChunk": {
+   "0": "OKC 11.6%",
+   "1": "OKC 11.7%",
+   "2": "OKC 11.2%",
+   "3": "OKC 11.3%"
+  }
+ },
+ "awards": {
+  "pro": {
+   "n": 4000,
+   "awardCounts": {
+    "All-NBA First Team": 827,
+    "All-NBA Second Team": 1206,
+    "All-NBA Third Team": 1114,
+    "All-Star": 2208,
+    "DPOY": 218,
+    "MVP": 35,
+    "Most Improved Player": 232,
+    "Rookie of the Year": 1224,
+    "Sixth Man": 1074
+   },
+   "dpoy": {
+    "total": 218,
+    "careersWith": {
+     "k": 98,
+     "n": 4000,
+     "pct": 2.5,
+     "lo": 2,
+     "hi": 3
+    },
+    "max": 6,
+    "maxStreak": 4,
+    "streakHist": {
+     "1": 71,
+     "2": 26,
+     "4": 1
+    },
+    "top1pctShare": 66.1
+   },
+   "mvp": {
+    "total": 35,
+    "max": 2,
+    "maxStreak": 1
+   }
+  },
+  "byDiff": {
+   "pro": {
+    "dpoy": {
+     "total": 218,
+     "careersWith": {
+      "k": 98,
+      "n": 4000,
+      "pct": 2.5,
+      "lo": 2,
+      "hi": 3
+     },
+     "max": 6,
+     "maxStreak": 4,
+     "streakHist": {
+      "1": 71,
+      "2": 26,
+      "4": 1
+     },
+     "top1pctShare": 66.1
+    },
+    "mvp": {
+     "total": 35,
+     "max": 2,
+     "maxStreak": 1
+    }
+   },
+   "esordio": {
+    "dpoy": {
+     "total": 143,
+     "careersWith": {
+      "k": 51,
+      "n": 1000,
+      "pct": 5.1,
+      "lo": 3.9,
+      "hi": 6.6
+     },
+     "max": 8,
+     "maxStreak": 3,
+     "streakHist": {
+      "1": 32,
+      "2": 17,
+      "3": 2
+     },
+     "top1pctShare": 38.5
+    },
+    "mvp": {
+     "total": 64,
+     "max": 3,
+     "maxStreak": 2
+    }
+   },
+   "allstar": {
+    "dpoy": {
+     "total": 12,
+     "careersWith": {
+      "k": 10,
+      "n": 1000,
+      "pct": 1,
+      "lo": 0.5,
+      "hi": 1.8
+     },
+     "max": 2,
+     "maxStreak": 1,
+     "streakHist": {
+      "1": 10
+     },
+     "top1pctShare": 100
+    },
+    "mvp": {
+     "total": 2,
+     "max": 1,
+     "maxStreak": 1
+    }
+   },
+   "leggenda": {
+    "dpoy": {
+     "total": 1,
+     "careersWith": {
+      "k": 1,
+      "n": 1000,
+      "pct": 0.1,
+      "lo": 0,
+      "hi": 0.6
+     },
+     "max": 1,
+     "maxStreak": 1,
+     "streakHist": {
+      "1": 1
+     },
+     "top1pctShare": 100
+    },
+    "mvp": {
+     "total": 0,
+     "max": 0,
+     "maxStreak": 0
+    }
+   }
+  },
+  "dpoyByRole": {
+   "PG": {
+    "dpoyTotal": 1,
+    "careersWith": {
+     "k": 1,
+     "n": 800,
+     "pct": 0.1,
+     "lo": 0,
+     "hi": 0.7
+    },
+    "maxStreak": 1
+   },
+   "SG": {
+    "dpoyTotal": 2,
+    "careersWith": {
+     "k": 1,
+     "n": 800,
+     "pct": 0.1,
+     "lo": 0,
+     "hi": 0.7
+    },
+    "maxStreak": 1
+   },
+   "SF": {
+    "dpoyTotal": 23,
+    "careersWith": {
+     "k": 17,
+     "n": 800,
+     "pct": 2.1,
+     "lo": 1.3,
+     "hi": 3.4
+    },
+    "maxStreak": 1
+   },
+   "PF": {
+    "dpoyTotal": 36,
+    "careersWith": {
+     "k": 20,
+     "n": 800,
+     "pct": 2.5,
+     "lo": 1.6,
+     "hi": 3.8
+    },
+    "maxStreak": 2
+   },
+   "C": {
+    "dpoyTotal": 156,
+    "careersWith": {
+     "k": 59,
+     "n": 800,
+     "pct": 7.4,
+     "lo": 5.8,
+     "hi": 9.4
+    },
+    "maxStreak": 4
+   }
+  },
+  "coherence": {
+   "MVP": {
+    "n": 35,
+    "ppgWith": 28.3,
+    "ppgWithout": 7.5,
+    "rpgWith": 5.6,
+    "rpgWithout": 2.8,
+    "ovrWith": 92,
+    "ovrWithout": 63,
+    "minWith": 37.3,
+    "gpWithMin": 65
+   },
+   "DPOY": {
+    "n": 218,
+    "ppgWith": 20.3,
+    "ppgWithout": 7.5,
+    "rpgWith": 10.8,
+    "rpgWithout": 2.8,
+    "ovrWith": 90,
+    "ovrWithout": 63,
+    "minWith": 37.3,
+    "gpWithMin": 60
+   },
+   "ROY": {
+    "n": 0,
+    "ppgWithout": 7.5,
+    "rpgWithout": 2.8,
+    "ovrWithout": 63,
+    "gpWithMin": null
+   }
+  },
+  "calendars": 21,
+  "sequences": 4000,
+  "jaccard": 0.129,
+  "choicePaths": 4000
+ },
+ "role": {
+  "PG": {
+   "n": 11964,
+   "ppg": 8.11,
+   "ppgMed": 7,
+   "rpg": 1.76,
+   "rpgMed": 1.7,
+   "apg": 3.7,
+   "apgMed": 3.3,
+   "minMed": 21.4,
+   "ovr80": {
+    "n": 705,
+    "ppg": 19.2,
+    "rpg": 3.1,
+    "apg": 7.7
+   }
+  },
+  "SG": {
+   "n": 12109,
+   "ppg": 10.54,
+   "ppgMed": 9.3,
+   "rpg": 2.11,
+   "rpgMed": 2,
+   "apg": 2.07,
+   "apgMed": 1.9,
+   "minMed": 21.6,
+   "ovr80": {
+    "n": 618,
+    "ppg": 24.6,
+    "rpg": 3.7,
+    "apg": 4.2
+   }
+  },
+  "SF": {
+   "n": 12061,
+   "ppg": 9.31,
+   "ppgMed": 8.1,
+   "rpg": 2.79,
+   "rpgMed": 2.6,
+   "apg": 2.11,
+   "apgMed": 1.9,
+   "minMed": 21.5,
+   "ovr80": {
+    "n": 649,
+    "ppg": 23,
+    "rpg": 5,
+    "apg": 4.5
+   }
+  },
+  "PF": {
+   "n": 12132,
+   "ppg": 8.28,
+   "ppgMed": 7.3,
+   "rpg": 4.52,
+   "rpgMed": 4.2,
+   "apg": 1.45,
+   "apgMed": 1.3,
+   "minMed": 21.5,
+   "ovr80": {
+    "n": 601,
+    "ppg": 19.8,
+    "rpg": 8,
+    "apg": 3
+   }
+  },
+  "C": {
+   "n": 12041,
+   "ppg": 6.89,
+   "ppgMed": 6,
+   "rpg": 5.71,
+   "rpgMed": 5.3,
+   "apg": 1.16,
+   "apgMed": 1,
+   "minMed": 21.2,
+   "ovr80": {
+    "n": 614,
+    "ppg": 16.9,
+    "rpg": 10.4,
+    "apg": 2.5
+   }
+  }
+ }
+}

@@ -1,6 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { careerEndAge, playCareerSim } from "./engine";
+import { careerEndingSignal } from "./peak";
+import { bustDiagnosis, extraYearVoided } from "./career-coherence";
+
+function histOf(xs: number[]) {
+  const m = new Map<number, number>();
+  for (const x of xs) m.set(x, (m.get(x) ?? 0) + 1);
+  return m;
+}
 
 /*
  * Statistical engine checks moved verbatim from engine.test.ts (D-22): together they take ~250 s,
@@ -31,6 +39,22 @@ test("1,000 Pro careers meet the P0-LIFE age distribution without changing the p
   assert.ok(new Set(endingAges).size > 1, `all careers ended at age ${endingAges[0]}`);
   assert.ok(careers.every((career) => career.apexAge >= 26 && career.apexAge <= 28), "peak age left 26–28");
   assert.ok(early.every((career) => career.injuryDrag >= 2.5 || (career.seasonHistory.at(-1)?.min ?? Number.POSITIVE_INFINITY) <= 11.5));
+  // Measured again on main 3bb757 (engine 2.13.0-beta), same seeds. These counts document
+  // the current distribution. They are not targets: a retirement or bust change must
+  // replace them with a new measurement, not by nudging a constant until they pass.
+  assert.deepEqual(
+    Object.fromEntries([...histOf(endingAges)].sort((a, b) => Number(a[0]) - Number(b[0]))),
+    { 32: 317, 33: 4, 34: 51, 35: 30, 36: 598 },
+  );
+  assert.equal(endingAges.filter((age) => age < 32).length, 0, "a career ended before the age-33 signal floor");
+  const voided = careers.filter(extraYearVoided);
+  assert.equal(voided.length, 17, "accepted age-36 seasons that were never played");
+  assert.ok(voided.every((career) => careerEndingSignal(career) === "injury"));
+  const diagnosed = careers.map(bustDiagnosis);
+  assert.equal(diagnosed.filter((d) => d.labMiss).length, 0, "lab progression bust (pot≥85, peak≤pot−8)");
+  assert.equal(diagnosed.filter((d) => d.official).length, 141);
+  assert.equal(diagnosed.filter((d) => d.kind === "opportunity").length, 128);
+  assert.equal(diagnosed.filter((d) => d.kind === "progression").length, 13);
 });
 
 

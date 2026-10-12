@@ -1,21 +1,24 @@
 # ISSUE REGISTER — 2026-10-04
 
+Aggiornamento 2026-10-12 su `main` `3bb757b` (motore 2.13.0-beta). Dettaglio e campioni: `ENGINE-CLOSURE.md`. Nessuna soglia di gioco è stata spostata.
+
 | ID | Sev | Stato | Note |
 |---|---|---|---|
-| P0-LIFE | P0 | sorvegliato | Soglie in `TASKS.md`. Non rieseguite su `fde5b74` |
-| P0-BLACK | P1 | non riprodotto | Schermo nero storico. Fallback di boot presenti, causa non chiusa |
-| P1-BUST | P1 | aperto | Definizione adottata dal lab, tasso non misurato su 1.000 |
-| P1-WORLD | P1 | aperto | Non toccato |
-| P1-ROLE | P1 | aperto | Il lab stampa la tabella. Non è una chiusura |
-| P1-IP | P1 | aperto | Nomi franchigia NBA nel bundle. Rischio commerciale |
-| P1-INTRO | P1 | aperto | Direzione a due palleggi non implementata. Manca l'audio da misurare |
-| P2-ROBOTS | P2 | in PR | 404 in produzione. File aggiunto, non deployato |
-| P2-CANONICAL | P2 | in PR | Canonical e OG aggiunti, non deployati |
-| P2-VERCEL-SCOPE | P2 | aperto | Lista domini ok; alcuni endpoint team rispondono 403. Riconnessione non richiesta per il resto del lavoro |
-| G3-B01 | P1 | in PR (G3) | Decisione di storia applicata due volte da tastiera durante la pausa (bottone solo `pointer-events:none`). Riprodotto in E2E, fix in `takeGesture` |
-| G3-B02 | P1 | in PR (G3) | Archivio: `archiveSchema` futuro marcato come corrente e riscritto al salvataggio successivo. Fix minimo in `engine.ts`, da rivedere con Lucille |
-| G3-F03 | P3 | documentato | Il save tiene solo gli ultimi 16 campioni di lega: dopo un reload l'albo d'oro è più corto. Esiti sportivi identici (test di replay) |
-| G3-F04 | P2 | limite noto | Checksum locale ricalcolabile: un save modificato a mano si apre (anche overall 9999). Solo corruzione accidentale, mai prova di autenticità |
+| P0-LIFE | P0 | PASS, con A2 aperto | Riverificato: 321/1000 Pro < 34, 598 a 36, picchi 26–28. Il cliff a 32 anni non è stato corretto: è una decisione di design (D-1) |
+| P0-BLACK | P1 | non riprodotto | Schermo nero storico. Fallback di boot presenti, causa non chiusa. Non rieseguito qui |
+| P1-BUST | P1 | misurato, aperto come prodotto | Laboratorio 0/419 su potenziale ≥ 85. Option A 14,9% Pro, di cui 88,7% opportunità e non progressione |
+| P1-WORLD | P1 | PARTIAL | Gini titoli simulati 0,303. OKC 11,4% complessivo, 15,3% nelle stagioni 1–5. Aperto |
+| P1-ROLE | P1 | PASS | I ruoli separano il box score a minuti uguali. Tabella in ENGINE-CLOSURE.md |
+| P1-IP | P1 | aperto | Nomi franchigia NBA nel bundle. Rischio commerciale. Fuori da questo passaggio |
+| P1-INTRO | P1 | in bozza #77 | Suoni dell'intro. Non è questo branch |
+| P2-ROBOTS | P2 | non rieseguito | Voce del 4 ottobre. Non verificata di nuovo |
+| P2-CANONICAL | P2 | non rieseguito | Voce del 4 ottobre. Non verificata di nuovo |
+| P2-VERCEL-SCOPE | P2 | aperto | Lista domini ok; alcuni endpoint team rispondono 403 |
+| G3-B01 | P1 | unito #74 | Doppio invio da tastiera. Fix in `takeGesture` |
+| G3-B02 | P1 | unito #74 | `archiveSchema` futuro non viene più riscritto. Rivisto con Lucille nel commit `25d8dfa` |
+| G3-F03 | P3 | documentato | Il save tiene solo gli ultimi 16 campioni di lega. Esiti sportivi identici |
+| G3-F04 | P2 | limite noto | Checksum locale ricalcolabile. Non è una prova di autenticità |
+| A1-EXTRA36 | P2 | nota in lettura | 71/4000 accettano il 36 e non lo giocano. La carta era già onesta sull'età; il diario ora lo dice. La regola non è cambiata |
 | P3-HTML-PROTO | P3 | aperto | `artifacts/pivot.html` e `2.html` non sono il prodotto |
 
 Owner delle approvazioni: l'utente. Nessun merge implicito.
