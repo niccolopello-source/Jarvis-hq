@@ -1,5 +1,6 @@
 
 import type { PlayerState, SeasonRow } from "./types";
+import { careerEndAge } from "./peak";
 
 function clamp(v: number, min: number, max: number) {
   return Math.max(min, Math.min(max, v));
@@ -90,7 +91,7 @@ export function palmares(s: PlayerState) {
   return {
     seasons: n,
     startAge: s.startAge,
-    endAge: s.age,
+    endAge: careerEndAge(s),
     teams: teamsWorn(s),
     games: rows.reduce((a, r) => a + r.gp, 0),
     points: s.careerPoints,

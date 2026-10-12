@@ -18,7 +18,7 @@ Aggiornamento 2026-10-12 su `main` `3bb757b` (motore 2.13.0-beta). Dettaglio e c
 | G3-B02 | P1 | unito #74 | `archiveSchema` futuro non viene più riscritto. Rivisto con Lucille nel commit `25d8dfa` |
 | G3-F03 | P3 | documentato | Il save tiene solo gli ultimi 16 campioni di lega. Esiti sportivi identici |
 | G3-F04 | P2 | limite noto | Checksum locale ricalcolabile. Non è una prova di autenticità |
-| A1-EXTRA36 | P2 | nota in lettura | 71/4000 accettano il 36 e non lo giocano. La carta era già onesta sull'età; il diario ora lo dice. La regola non è cambiata |
+| A1-EXTRA36 | P2 | nota in lettura | 71/4000 accettano il 36 e non lo giocano. Carta, report e riga finale usano l'ultima stagione. Il diario lo dice. La regola non è cambiata |
 | P3-HTML-PROTO | P3 | aperto | `artifacts/pivot.html` e `2.html` non sono il prodotto |
 
 Owner delle approvazioni: l'utente. Nessun merge implicito.

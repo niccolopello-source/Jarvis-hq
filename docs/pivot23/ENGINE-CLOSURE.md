@@ -5,7 +5,8 @@ File del motore di Lucille non toccati: `engine.ts`, `config.ts`, `tuning.ts`, `
 
 | | |
 |---|---|
-| SHA iniziale e finale del codice misurato | `3bb757bab75a18726bfc6b08756651238ed8fd68` (`main` al momento della misura; coincide con il riferimento della missione) |
+| SHA del codice misurato | `3bb757bab75a18726bfc6b08756651238ed8fd68` |
+| `main` su cui è basato il branch | `3c5ad92d8f584c4775b6f45025af62ecd6754c61` (include #77, solo suoni dell'intro). `git diff 3bb757b 3c5ad92 -- apps/pivot23/src/lib/pivot` è vuoto: la misura dei 7.000 non è stata ripetuta, e non c'è nulla da ripetere sul motore |
 | Motore | `2.13.0-beta` su 7.000/7.000 carriere |
 | Ambiente | Node v22.23.3, `tsx` da `apps/pivot23/node_modules` |
 | Comando | da `apps/pivot23`: `scripts/g4/collect.ts <difficulty> <from> <count> <out.jsonl>` poi `scripts/g4/analyze.ts` |
@@ -75,13 +76,22 @@ Il percorso spiega il draft: NCAA finisce molto più spesso al primo giro. Il bu
 Solo coerenza di lettura, zero esiti sportivi cambiati.
 
 - `career-coherence.ts`: `extraYearVoided` e `bustDiagnosis`. Il secondo non sostituisce `careerBust()`.
-- Diario scelte (carriera in corso e archivio): accanto a «Gioca a 36 anni», se quella stagione non c'è, la riga aggiunge «Accettata, ma la stagione a 36 anni non risulta giocata.» / inglese equivalente. Non inventa la causa.
+- Diario scelte (carriera in corso e archivio): accanto a «Gioca a 36 anni», se quella stagione non c'è, la riga aggiunge «Accettata, ma la stagione a 36 anni non risulta giocata.» / inglese equivalente. Non inventa la causa. Decisione autorizzata: la nota resta.
+- Riga finale del risultato (`palmares.endAge` in `legacy.ts`): prima usava `PlayerState.age`, già l'estate successiva. Sul seed 4017 diceva 36 mentre l'ultima stagione, la carta e il report dicevano 35. Ora usa `careerEndAge`, cioè l'ultima stagione giocata. Sul seed 1017, dove il 36 si gioca, resta 36. Non cambia chi gioca e chi chiude.
+- Test sui percorsi adiacenti, stessi seed G4: 1017 gioca il 36; 1017 con «Chiudi ora» finisce a 35 senza nota; 4017 accetta e non gioca (nota sì, età 35 ovunque); 4017 con «Chiudi ora» non ha la nota; 6017 chiude a 32 per infortunio prima di ogni offerta, e l'età mostrata è 32 anche se lo stato è già a 33.
 - Test veloci sui cinque seed G4 e sulla soglia d'età del segnale.
 - Il test statistico dei 1.000 Pro, che già girava, ora blocca anche l'istogramma misurato (32:317, 33:4, 34:51, 35:30, 36:598), i 17 trentasei annullati e lo split bust 128 opportunità / 13 progressione / 0 miss di laboratorio. Sono conteggi, non obiettivi di bilanciamento: una modifica approvata del motore deve sostituirli con una misura nuova.
 
-## Decisioni che chiedono approvazione
+## Decisioni autorizzate il 12 ottobre
 
-Nessuna di queste è stata applicata.
+1. Tenere la nota quando «Gioca a 36 anni» non ha una stagione corrispondente. Fatta.
+2. Non cambiare ritiro, crescita, soglie bust, potenza delle franchigie, tassi DPOY/ROY. Non fatto.
+3. Non toccare i file di Lucille. Non toccati.
+4. Niente merge e niente deploy.
+
+## Decisioni che restano aperte
+
+Nessuna di queste è in questo branch. Lucille ha già due bozze, non unite: [#78](https://github.com/niccolopello-source/Jarvis-hq/pull/78) (ritiro 29–32, spento, gated 2.14.0) e [#81](https://github.com/niccolopello-source/Jarvis-hq/pull/81) (bust option B, spento, gated 2.14.0). Non le ho modificate.
 
 ### D-1 — A2, ritiro prima dei 33 (era P-2 / D-10)
 
@@ -91,12 +101,12 @@ Nessuna di queste è stata applicata.
 - **Alternativa 2:** `TUNING.retirement = "graded"` è già nel codice (`peak.ts`, soglia minuti che sale dai 31, infortunio più severo sotto i 33). Va acceso solo dietro una versione motore nuova, con lo stesso harness G4. Gate da tenere: ≥ 150/1000 prima dei 34 e almeno una carriera a 36.
 - **Impatto gameplay:** le carriere corte si distribuiscono. Alcuni save vivi cambierebbero esito se non si versiona.
 - **Impatto test:** l'istogramma bloccato in `engine.stats.test.ts` va rimisurato, non allentato.
-- **Raccomandazione:** dopo la demo del 18 ottobre, su un branch di Lucille, perché tocca `peak.ts` / `tuning.ts`.
+- **Raccomandazione:** dopo la demo del 18 ottobre. La bozza è [#78](https://github.com/niccolopello-source/Jarvis-hq/pull/78), non questo branch.
 
 ### D-2 — A1, il 36 accettato e non giocato (era P-1)
 
-- **Oggi:** 71/4000 accettano e non giocano. La carta dice l'età vera. Il diario, prima di questa PR, no.
-- **Alternativa 1 (questa PR):** solo la nota in lettura. Gli esiti restano. Il diario resta «Gioca a 36 anni» più la precisazione.
+- **Oggi:** 71/4000 accettano e non giocano. Carta, report e — con questa PR — anche la riga finale del risultato usano l'ultima stagione. Il diario tiene la scelta e aggiunge la nota.
+- **Alternativa 1 (autorizzata, questa PR):** solo lettura. Gli esiti restano.
 - **Alternativa 2:** non registrare l'accettazione finché la stagione da 36 non inizia; se l'invecchiamento fa scattare l'infortunio, scrivere una chiusura diversa. Tocca `engine.ts` (Lucille) e il testo del choice log. Gli esiti delle stagioni non cambiano.
 - **Alternativa 3:** giocare comunque il 36 se l'accettazione è già avvenuta. Cambia chi arriva a 36. Serve versione motore e rimisura di P0-LIFE.
 - **Raccomandazione:** tenere l'alternativa 1 per la demo. L'alternativa 3 è una decisione di design, non un fix.
@@ -116,14 +126,29 @@ Nessuna di queste è stata applicata.
 
 ### D-5 — bust di sviluppo (A3 / option B)
 
-Già scritto in `D-08-OPTION-B-FOLLOWUP.md`. Non applicato. L'etichetta option A resta quella ufficiale. `bustDiagnosis` serve a non confonderla con il laboratorio.
+Già scritto in `D-08-OPTION-B-FOLLOWUP.md` e proposto in [#81](https://github.com/niccolopello-source/Jarvis-hq/pull/81). Non applicato qui. L'etichetta option A resta quella ufficiale. `bustDiagnosis` serve a non confonderla con il laboratorio.
 
 ## Problemi ancora aperti
 
-- A2, A4, option B, O-1, O-2: in attesa di una decisione. Non sono bug tecnici rimasti nel perimetro di questa PR.
-- Il diario salva ancora la scelta originale. La nota è solo in lettura.
-- E2E browser e ascolto device: **NOT RUN** in questo passaggio (non sono il motore).
-- `TASKS.md` è dei proprietari John/James: non l'ho riscritto. Le righe suggerite da G4 restano valide, con SHA aggiornato a `3bb757` e gli stessi numeri.
+- A2, A4, option B, O-1, O-2: decisioni di prodotto. Fermati qui. Le bozze #78 e #81 non fanno parte di questa PR.
+- Il choice log salvato resta «Gioca a 36 anni». La nota è solo in lettura. Cambiare il log è l'alternativa 2 di D-2 e tocca `engine.ts`.
+- `TASKS.md` è di John/James: non riscritto.
+
+## Verifica di chiusura
+
+Ambiente: Node v22.23.3, da `apps/pivot23`, 12 ottobre 2026. Base `3c5ad92`.
+
+| Comando | Esito |
+|---|---|
+| `pnpm exec eslint` sui file toccati, poi `pnpm run lint` | **PASS** |
+| `pnpm run typecheck` | **PASS** |
+| `pnpm test` (244 test, include coerenza 36, premi, playoff, invarianti) | **PASS**, 0 fail |
+| `node --import=tsx --test --test-name-pattern "1,000 Pro careers"` | **PASS** (istogramma 317/4/51/30/598, 17 trentasei annullati) |
+| `pnpm run build` | **PASS**, 1,34 s |
+| `playwright test e2e/demo-readiness.spec.ts -g "the age-36 season is played once"` sul dev server Vite :8080 | **PASS** (8,1 s). Carta e report restano a 36 quando la stagione si gioca |
+| Suite e2e completa, `test:stats` dei 2.000 Esordio, ascolto device, i 7.000 ricampionati su `3c5ad92` | **NOT RUN**. Il diff del motore tra `3bb757` e `3c5ad92` è vuoto, quindi il campione vecchio resta valido per le formule |
+
+Il secondo test di `engine.stats.test.ts` (MVP su 2.000 Esordio) non è stato rieseguito: questo diff non tocca i premi.
 
 ## Prossime azioni
 
