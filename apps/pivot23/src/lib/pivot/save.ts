@@ -118,6 +118,8 @@ function holds(s: Storage, key: string, value: string): boolean {
 }
 
 function writeStore(s: Storage, key: string, value: string): boolean {
+  /* SR-02: a save this build could not open and could not back up is never written over. */
+  if (key === SAVE_KEY && !releaseUnsaved(s)) return false;
   const memory = remembered(s);
   /* The cache is only a hint: a second tab or a second module instance can overwrite the key.
      Skip the write only when the store really holds the same string. */
@@ -204,6 +206,10 @@ function removeAll(key: string): boolean {
   let clean = true;
   for (const s of stores()) {
     if (!s) continue;
+    if (key === SAVE_KEY && !releaseUnsaved(s)) {
+      clean = false;
+      continue;
+    }
     try {
       s.removeItem(key);
     } catch {
@@ -819,17 +825,30 @@ export function lastLoadReport(): LiveLoadReport {
   return { ...LAST_LOAD };
 }
 
+/** Previous backup, moved here before BACKUP_KEY receives a different save (SR-03). One level kept. */
+export const BACKUP_PREV_KEY = "pivot-v2-save-backup-prev";
+
 function backupRaw(raw: string, reason: LiveLoadState): boolean {
   const s = storage() ?? sessionStore();
   if (!s) return false;
+  let prevRaw: unknown;
+  let prev: string | null = null;
   try {
-    const prev = s.getItem(BACKUP_KEY);
-    if (prev) {
-      const rec = JSON.parse(prev) as { raw?: unknown };
-      if (rec && rec.raw === raw) return true;
-    }
+    prev = s.getItem(BACKUP_KEY);
+    prevRaw = prev ? (JSON.parse(prev) as { raw?: unknown } | null)?.raw : undefined;
   } catch {
-    /* overwrite an unreadable backup */
+    prevRaw = undefined; /* unreadable backup: overwrite it */
+  }
+  if (prevRaw === raw) return true;
+  if (prev && typeof prevRaw === "string") {
+    /* SR-03: a different readable backup (for example a save from a newer build) is moved aside
+       first. If it cannot be moved, nothing is overwritten. */
+    try {
+      s.setItem(BACKUP_PREV_KEY, prev);
+      if (s.getItem(BACKUP_PREV_KEY) !== prev) return false;
+    } catch {
+      return false;
+    }
   }
   const value = JSON.stringify({ v: 1, reason, at: Date.now(), raw });
   try {
@@ -838,6 +857,38 @@ function backupRaw(raw: string, reason: LiveLoadState): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * SR-02: raw saves found by loadLive() that could not be opened and could not be backed up, per store.
+ * Writing or removing SAVE_KEY in that store first retries the backup; while it fails, the raw stays.
+ */
+const unsaved = new WeakMap<Storage, string>();
+
+function releaseUnsaved(s: Storage): boolean {
+  const raw = unsaved.get(s);
+  if (raw === undefined) return true;
+  let current: string | null;
+  try {
+    current = s.getItem(SAVE_KEY);
+  } catch {
+    return false;
+  }
+  if (current !== raw || backupRaw(raw, "corrupt")) {
+    unsaved.delete(s);
+    return true;
+  }
+  return false;
+}
+
+/** True when a save that could not be opened is still kept only under the live key (no backup room). */
+export function liveSaveUnprotected(): boolean {
+  return stores().some((s) => !!s && unsaved.has(s));
+}
+
+function backupRawHolds(raw: string): boolean {
+  const b = readLiveBackup();
+  return !!b && b.raw === raw;
 }
 
 /** Raw backup string, if one exists. */
@@ -937,6 +988,10 @@ export function loadLive(): LiveSave | null {
         report.state = c.state;
         report.version = c.version;
         report.backedUp = backupRaw(raw, c.state);
+      }
+      if (c.state !== "ok" && c.state !== "migrated") {
+        if (backupRawHolds(raw)) unsaved.delete(s);
+        else unsaved.set(s, raw);
       }
     }
     if (found.length) {
