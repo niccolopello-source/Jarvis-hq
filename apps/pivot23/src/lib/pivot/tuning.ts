@@ -17,8 +17,11 @@ export const TUNING = {
    *  Bars by summer age (the last season played is one year younger): heavier drag ends earlier.
    *  From 33 the shipped rule (2.5) applies unchanged. */
   injuryRetireBars: { 30: 5.0, 31: 3.6, 32: 3.2 } as Readonly<Record<number, number>>,
-  /** D-08: how much choices and injuries move the realised share of potential. */
-  bust: "current" as "current" | "choices" | "events",
+  /** D-08 option B, on for careers from BUST_SINCE. High ceilings only. Downside only. */
+  bustB: { potFloor: 86, choiceRef: 5.0, choiceSlope: 0.04, choiceK: 0.1, devRef: 7, devK: 0.012, cap: 0.1 },
+  /** D-08 option B stays off. The high-ceiling drag is in the code; turning it on
+   *  (`bust: "choices-b"`) did not create pot≥86 busts and cut award counts. */
+  bust: "current" as "current" | "choices" | "events" | "choices-b",
   /** D-09: title spread across simulated worlds. */
   world: "regress" as "current" | "jitter" | "regress",
   /** D-23: DPOY voter fatigue. current = 5.5% per DPOY won, capped at 22% (rule before 2.12.0). */
@@ -50,15 +53,28 @@ export const LEGACY_RULES = Object.freeze({ scriptWindows: "fixed", dpoyFatigue:
 /** First engine version whose careers use the A2 early-injury retirement bars. */
 export const RETIRE_SINCE = "2.14.0";
 
-/** First engine version of the 2.15 rules. Shared gate: PR #83 (engine decisions) and the awards v2
- *  PR both key their new rules on 2.15.0, so a career is either fully 2.14 or fully 2.15. */
+/** First engine version of the 2.15 rules. Awards v2 (#86) keys its rules on 2.15.0, released
+ *  to production on 12 Oct 2026. The #83 engine decisions moved to DECISIONS_SINCE (2.16.0). */
 export const RULES_215_SINCE = "2.15.0";
 
 /** Awards v2 (MVP/ROY/DPOY/All-NBA/MIP/6MOY fixes) apply to careers created by 2.15.0 or later. */
 export const AWARDS_SINCE = RULES_215_SINCE;
 
+/** First engine version whose careers use the #83 owner decisions: the accepted age-36 season is
+ *  played, ROY/MVP/All-Star/DPOY knobs depend on difficulty, D-08 option B wiring. 2.14.0 (#78) and
+ *  2.15.0 (#86, awards v2) careers, both already in production, keep their rules exactly. */
+export const DECISIONS_SINCE = "2.16.0";
+
+/** First engine version whose careers use D-08 option B (still OFF via TUNING.bust). */
+export const BUST_SINCE = DECISIONS_SINCE;
+
+/** #83 decisions: true when this career was created by DECISIONS_SINCE or later. */
+export function usesDecisions(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, DECISIONS_SINCE);
+}
+
 /** P1-INJ: first engine version whose careers get load-based serious injuries (injuries.ts).
- *  2.16.0 is reserved by #83 (DECISIONS_SINCE); merge #83 first, then this. */
+ *  Comes after DECISIONS_SINCE (2.16.0, #83): 2.17 careers get the #83 decisions plus load-based injuries. */
 export const RULES_INJURY_SINCE = "2.17.0";
 
 /** D-23 step that careers created before WORLD_SINCE (2.13.0) keep. */
@@ -111,6 +127,11 @@ export function dpoyStreakStepOf(career: { engineVersion?: string }): number {
 /** A2: true when this career may retire from injury before 33 (created by RETIRE_SINCE or later). */
 export function usesRetireSpread(career: { engineVersion?: string }): boolean {
   return versionAtLeast(career.engineVersion, RETIRE_SINCE);
+}
+
+/** D-08 option B: true when this career was created by BUST_SINCE or later. */
+export function usesBustB(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, BUST_SINCE);
 }
 
 /** Awards v2: true when this career was created by AWARDS_SINCE (2.15.0) or later. */

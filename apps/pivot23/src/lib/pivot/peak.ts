@@ -1,7 +1,7 @@
 
 /** Curva d'età, picco osservato 26–28, overall intero in display. */
 import { SIM } from "./config";
-import { TUNING, usesRetireSpread } from "./tuning";
+import { TUNING, usesBustB, usesDecisions, usesRetireSpread } from "./tuning";
 import { ROLES } from "./data";
 import { rand } from "./rng";
 import type { AttrKey, PlayerState, Role } from "./types";
@@ -68,6 +68,9 @@ function gradedEndingSignal(s: PlayerState): "minutes" | "injury" | null {
 }
 
 export function isCareerOver(s: PlayerState) {
+  // The player already accepted the age-36 season. An injury that lands in that
+  // summer does not erase it: the season is played once, then the career closes.
+  if (s.extraSeason && s.age === MAX_AGE && s.seasonHistory.at(-1)?.age !== MAX_AGE && usesDecisions(s)) return false;
   if (careerEndingSignal(s) !== null || s.age > MAX_AGE) return true;
   if (s.age < MAX_AGE) return false;
 
@@ -173,6 +176,29 @@ export function rollPotential(skill = 62): number {
   return round1(clamp(pot + bias, 64, 99));
 }
 
+/**
+ * D-08 option B, careers from 2.14.0. Only a high ceiling can pay a realisation drag,
+ * and only when choices or training sit under the bar for that ceiling. A careful
+ * player pays nothing. Locked three seasons before the apex so the peak age does not move.
+ */
+export function bustBDrag(s: PlayerState, imprint: number): number {
+  if (TUNING.bust !== "choices-b" || !usesBustB(s)) return 0;
+  if (typeof s.bustLock === "number" && Number.isFinite(s.bustLock)) return s.bustLock;
+  if (finite(s.age, 0) < apexAgeOf(s) - 3) return 0;
+  const b = TUNING.bustB;
+  const pot = finite(s.potential, 0);
+  if (pot < b.potFloor) {
+    s.bustLock = 0;
+    return 0;
+  }
+  const choiceRef = b.choiceRef + (pot - b.potFloor) * b.choiceSlope;
+  const raw =
+    Math.max(0, choiceRef - imprint) * b.choiceK +
+    Math.max(0, b.devRef - finite(s.development, 0)) * b.devK;
+  s.bustLock = Math.round(Math.min(b.cap, raw) * 1000) / 1000;
+  return s.bustLock;
+}
+
 export function realizationOf(s: PlayerState): number {
   const ethic = finite(s.hidden?.workEthic, 50) / 100;
   const cons = finite(s.hidden?.consistency, 50) / 100;
@@ -189,7 +215,8 @@ export function realizationOf(s: PlayerState): number {
       finite(s.development, 0) * (TUNING.bust === "choices" ? 0.02 : 0.01) -
       finite(s.injuryDrag, 0) * (TUNING.bust === "events" ? 0.04 : 0.018) +
       imprint * (TUNING.bust === "choices" ? 0.025 : 0.01) +
-      ready * 0.004,
+      ready * 0.004 -
+      bustBDrag(s, imprint),
     0.58,
     1.08,
   );
