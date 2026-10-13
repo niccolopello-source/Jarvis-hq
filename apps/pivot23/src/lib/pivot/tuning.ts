@@ -22,6 +22,10 @@ export const TUNING = {
    *  Bars by summer age (the last season played is one year younger): heavier drag ends earlier.
    *  From 33 the shipped rule (2.5) applies unchanged. */
   injuryRetireBars: { 30: 5.0, 31: 3.6, 32: 3.2 } as Readonly<Record<number, number>>,
+  /** P1-INJ recalibration (careers from RULES_INJURY_SINCE, 2.19.0): load-based injuries spread the
+   *  drag differently, so the A2 bars above let only ~190/1000 careers close at 29-32 (2.18: 336).
+   *  These bars replace them for 2.19+ careers only; target 300-340/1000 on the fixed stats seeds. */
+  injuryRetireBars219: { 30: 3.6, 31: 2.0, 32: 1.0 } as Readonly<Record<number, number>>,
   /** D-08 option B, on for careers from BUST_SINCE. High ceilings only. Downside only. */
   bustB: { potFloor: 86, choiceRef: 5.0, choiceSlope: 0.04, choiceK: 0.1, devRef: 7, devK: 0.012, cap: 0.1 },
   /** D-08 option B stays off. The high-ceiling drag is in the code; turning it on
@@ -140,6 +144,11 @@ export function usesBustB(career: { engineVersion?: string }): boolean {
 /** A2: true when this career may retire from injury before 33 (created by RETIRE_SINCE or later). */
 export function usesRetireSpread(career: { engineVersion?: string }): boolean {
   return versionAtLeast(career.engineVersion, RETIRE_SINCE);
+}
+
+/** P1-INJ: retirement bars before 33 for this career (2.19.0+ use the recalibrated bars). */
+export function injuryRetireBarsOf(career: { engineVersion?: string }): Readonly<Record<number, number>> {
+  return versionAtLeast(career.engineVersion, RULES_INJURY_SINCE) ? TUNING.injuryRetireBars219 : TUNING.injuryRetireBars;
 }
 
 /** PR #81: true when this career was created by BUST_B81_SINCE (2.18.0) or later. */

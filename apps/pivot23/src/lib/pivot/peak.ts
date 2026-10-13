@@ -1,7 +1,7 @@
 
 /** Curva d'età, picco osservato 26–28, overall intero in display. */
 import { SIM } from "./config";
-import { TUNING, usesBustB, usesBustB81, usesDecisions, usesRetireSpread } from "./tuning";
+import { TUNING, injuryRetireBarsOf, usesBustB, usesBustB81, usesDecisions, usesRetireSpread } from "./tuning";
 import { ROLES } from "./data";
 import { rand } from "./rng";
 import type { AttrKey, PlayerState, Role } from "./types";
@@ -40,7 +40,7 @@ export function careerEndingSignal(s: PlayerState): "minutes" | "injury" | null 
   if (TUNING.retirement !== "current") return gradedEndingSignal(s);
   if (s.age < MAX_AGE - 3) {
     // A2 (2.14.0+ careers only): a heavy injury load can close the career at 29–31.
-    const bar = usesRetireSpread(s) ? TUNING.injuryRetireBars[s.age] : undefined;
+    const bar = usesRetireSpread(s) ? injuryRetireBarsOf(s)[s.age] : undefined;
     return bar !== undefined && s.injuryDrag >= bar ? "injury" : null;
   }
   if (s.injuryDrag >= 2.5) return "injury";
