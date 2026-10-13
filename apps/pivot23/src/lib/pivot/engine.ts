@@ -3126,7 +3126,14 @@ function normalizeArchiveEntry(value: unknown): ArchiveCareer | null {
     // Unreadable card: hidden from view, flagged; archiveLosesData() backs the raw store up before a write.
     if (value.card !== undefined && value.card !== null) issues.push("card-dropped");
     delete normalized.card;
-  } else if (typeof value.fingerprint === "string" && value.fingerprint !== fingerprintOf(value.card)) {
+  } else if (typeof value.fingerprint !== "string") {
+    // G1 DEF-02: every card this game writes carries a fingerprint. One without it cannot be checked:
+    // kept as stored, flagged, and never given a fresh fingerprint that would make it look verified.
+    issues.push("card-unverified");
+    if (!recordMatchesCard(value, value.card)) issues.push("record-mismatch");
+    const lastAge = history.at(-1)?.age;
+    if (isFiniteNumber(lastAge) && value.card.ageEnd !== lastAge) normalized.card = { ...value.card, ageEnd: lastAge };
+  } else if (value.fingerprint !== fingerprintOf(value.card)) {
     // G1-D2: kept as stored and flagged. The fingerprint detects corruption, not tampering (no key).
     issues.push("card-mismatch");
   } else {
@@ -3145,10 +3152,12 @@ function normalizeArchiveEntry(value: unknown): ArchiveCareer | null {
  * G1 integrity flags of a loaded archive entry (in memory only, never written):
  * - "card-dropped": the stored card was unreadable and is not shown (the raw store is backed up first);
  * - "card-mismatch": the card no longer matches its fingerprint;
+ * - "card-unverified": the card has no fingerprint, so it cannot be checked at all;
  * - "record-mismatch": the record's summary (name, seasons, titles, ppg) disagrees with its card.
- * The SHA-256 fingerprint covers only the card and has no key: it detects corruption, not tampering.
+ * The SHA-256 fingerprint covers only the card and has no key: it is a local integrity check that
+ * detects corruption, not a proof of authenticity (anyone with storage access can recompute it).
  */
-export type ArchiveIssue = "card-dropped" | "card-mismatch" | "record-mismatch";
+export type ArchiveIssue = "card-dropped" | "card-mismatch" | "card-unverified" | "record-mismatch";
 const archiveIssueMap = new WeakMap<object, ArchiveIssue[]>();
 
 export function archiveIssues(entry: ArchiveCareer): ArchiveIssue[] {
@@ -3162,21 +3171,47 @@ function recordMatchesCard(value: Record<string, unknown>, card: CareerCard): bo
     && typeof value.ppg === "number" && Math.abs(value.ppg - card.ppg) < 0.05;
 }
 
+/**
+ * G1 DEF-03: what the last loadArchive() could not read. `unreadable`: a stored archive is not valid
+ * JSON or not a list; `dropped`: entries skipped as unreadable. The raw text is untouched by the load and
+ * is copied to ARCHIVE_BACKUP_KEY before any write replaces it (writeArchiveStore). In memory only.
+ */
+let archiveLoad = { unreadable: false, dropped: 0 };
+export function lastArchiveLoad() {
+  return { ...archiveLoad };
+}
+
 export function loadArchive(): ArchiveCareer[] {
   const stored: ArchiveCareer[][] = [];
   let readable = false;
+  const problem = { unreadable: false, dropped: 0 };
   for (const store of archiveStores()) {
     try {
       const raw = store.getItem(ARCHIVE_KEY);
       if (raw === null) continue;
-      const parsed: unknown = JSON.parse(raw);
-      if (!Array.isArray(parsed)) continue;
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(raw);
+      } catch {
+        problem.unreadable = true;
+        continue;
+      }
+      if (!Array.isArray(parsed)) {
+        problem.unreadable = true;
+        continue;
+      }
       readable = true;
-      stored.push(parsed.map(normalizeArchiveEntry).filter((entry): entry is ArchiveCareer => entry !== null));
+      const kept = parsed.map(normalizeArchiveEntry);
+      problem.dropped = Math.max(
+        problem.dropped,
+        parsed.filter((entry, i) => kept[i] === null && archiveEntrySchema(entry) !== "future").length,
+      );
+      stored.push(kept.filter((entry): entry is ArchiveCareer => entry !== null));
     } catch {
       // Keep trying the other browser store before falling back to memory.
     }
   }
+  archiveLoad = problem;
   if (!readable) return [...archiveMemory];
   const unique = new Map<string, ArchiveCareer>();
   for (const entry of [...archiveMemory, ...stored.flat()]) if (!unique.has(entry.id)) unique.set(entry.id, entry);
