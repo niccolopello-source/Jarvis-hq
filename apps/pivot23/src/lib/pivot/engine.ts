@@ -3030,8 +3030,8 @@ function archiveLosesData(raw: string): boolean {
   }
 }
 
-/** Keeps `raw` under ARCHIVE_BACKUP_KEY in `store` before it is overwritten. Best effort. */
-function backupArchiveRaw(store: Storage, raw: string) {
+/** Keeps `raw` under ARCHIVE_BACKUP_KEY in `store` before it is overwritten. True when the copy is there. */
+function backupArchiveRaw(store: Storage, raw: string): boolean {
   try {
     let raws: string[] = [];
     try {
@@ -3040,11 +3040,14 @@ function backupArchiveRaw(store: Storage, raw: string) {
     } catch {
       /* unreadable backup: start a new one */
     }
-    if (raws.includes(raw)) return;
+    if (raws.includes(raw)) return true;
     raws = [...raws, raw].slice(-ARCHIVE_BACKUP_KEEP);
-    store.setItem(ARCHIVE_BACKUP_KEY, JSON.stringify({ v: 1, at: Date.now(), raws }));
+    const value = JSON.stringify({ v: 1, at: Date.now(), raws });
+    store.setItem(ARCHIVE_BACKUP_KEY, value);
+    return store.getItem(ARCHIVE_BACKUP_KEY) === value;
   } catch {
-    /* full or blocked storage: the write below is attempted anyway, as before */
+    /* full or blocked storage */
+    return false;
   }
 }
 
@@ -3254,7 +3257,8 @@ function writeArchiveStore(store: Storage, entries: unknown[]): "ok" | "quota" |
     archiveFutureKept = Math.max(archiveFutureKept, future.length);
     if (future.length) serialized = JSON.stringify([...entries, ...future]);
     if (prior !== null && prior !== serialized && (archiveLosesData(prior) || !futureBackedUp(store, future))) {
-      backupArchiveRaw(store, prior);
+      // SR-01: without a copy, an archive this build cannot fully read is never written over.
+      if (!backupArchiveRaw(store, prior)) return "quota";
     }
   } catch {
     /* unreadable store: nothing to keep */
