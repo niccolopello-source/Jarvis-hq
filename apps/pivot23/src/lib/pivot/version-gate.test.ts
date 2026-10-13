@@ -28,7 +28,7 @@ for (const v of GATE_VERSIONS) {
 }
 
 test("new careers are 2.16 and get the #83 rules; 2.15 and 2.14 keep theirs", () => {
-  assert.equal(ENGINE_VERSION, "2.16.0-beta");
+  assert.equal(ENGINE_VERSION, "2.18.0-beta");
   assert.equal(DECISIONS_SINCE, "2.16.0");
   assert.equal(AWARDS_SINCE, "2.15.0", "#86 gate unchanged");
   assert.equal(RETIRE_SINCE, "2.14.0", "#78 gate unchanged");

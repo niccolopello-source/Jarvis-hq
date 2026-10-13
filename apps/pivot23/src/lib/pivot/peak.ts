@@ -1,7 +1,7 @@
 
 /** Curva d'età, picco osservato 26–28, overall intero in display. */
 import { SIM } from "./config";
-import { TUNING, usesBustB, usesDecisions, usesRetireSpread } from "./tuning";
+import { TUNING, usesBustB, usesBustB81, usesDecisions, usesRetireSpread } from "./tuning";
 import { ROLES } from "./data";
 import { rand } from "./rng";
 import type { AttrKey, PlayerState, Role } from "./types";
@@ -185,6 +185,13 @@ export function bustBDrag(s: PlayerState, imprint: number): number {
   if (TUNING.bust !== "choices-b" || !usesBustB(s)) return 0;
   if (typeof s.bustLock === "number" && Number.isFinite(s.bustLock)) return s.bustLock;
   if (finite(s.age, 0) < apexAgeOf(s) - 3) return 0;
+  if (usesBustB81(s)) {
+    // PR #81 variant (2.18.0+ careers): lagging choices/training cost realisation; never a bonus.
+    const c = TUNING.bustB81;
+    const drag81 = Math.max(0, c.choiceRef - imprint) * c.choiceK + Math.max(0, c.devRef - finite(s.development, 0)) * c.devK;
+    s.bustLock = Math.round(drag81 * 1000) / 1000;
+    return s.bustLock;
+  }
   const b = TUNING.bustB;
   const pot = finite(s.potential, 0);
   if (pot < b.potFloor) {
