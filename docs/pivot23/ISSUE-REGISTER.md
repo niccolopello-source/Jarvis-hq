@@ -31,6 +31,10 @@ Aggiornamento 2026-10-12 su `main` `3bb757b` (motore 2.13.0-beta). Dettaglio e c
 | AW-07 | P3 | documentato | `RULES.rookieShuffle` non è letto da nessuna parte (la classe non usa più un sort casuale). Flag morto, lasciato per non toccare `rules.ts` |
 | AW-08 | P3 | documentato | DPOY: striscia massima 3 su 1.000 carriere sia in 2.14 sia in 2.15 (D-23 invariato, non toccato) |
 | ENG-GATE-216 | P1 | in PR #83 | Decisioni #83 spostate su 2.16.0 (prima 2.15.0): 2.15 è già in produzione con awards v2 (#86, deploy `cba5a29`). 640 carriere 2.15/2.14/2.13/2.12 = main @ `cba5a29` (`version-gate.test.ts`). Nota in `ENGINE-DECISIONS.md`. Coerenza premi 2.16: bonus MVP positivo dimezzato per MVP vinto (Esordio max 7 → 6), ROY per difficoltà nel punteggio v2 |
+| G1-R1 | P2 | in PR (G1) | Ultima decisione persa se la scheda viene uccisa senza `pagehide` entro 360 ms + idle (≤900 ms) dal click. Repro e2e `g1-persistence.spec.ts` (playoff/FA/scambio): storage ancora sulla carta vecchia 100 ms dopo il click. Fix: salvataggio sincrono quando la carta pendente cambia (decisione confermata); resto invariato, differito |
+| G1-R2 | P3 | documentato | Due schede su carriere diverse: `flushLive` non sovrascrive l'altra carriera su `pagehide`; vale l'ultimo salvataggio (avviso `otherTab` già presente). Il salvataggio immediato di G1-R1 segue la stessa regola del differito. Nessun cambio |
+| G1-D1 | P3 | in PR (G1) | Archivio: riepilogo (titoli, ppg, stagioni, nome) diverso dalla Career Card accettato in silenzio (repro: titles 99, ppg 99). Fix: segnalato in archivio («da verificare»), dati conservati |
+| G1-D2 | P3 | in PR (G1) | Archivio: Career Card con impronta errata rimossa in silenzio e persa alla scrittura successiva. Fix: carta conservata e segnalata; carta illeggibile nascosta, segnalata e archivio grezzo salvato in `pivot-v2-archive-backup` prima della scrittura. L'impronta SHA-256 copre solo la carta e non ha chiave: rileva corruzione, non manomissione. Formato salvataggi invariato |
 | P3-HTML-PROTO | P3 | aperto | `artifacts/pivot.html` e `2.html` non sono il prodotto |
 
 Owner delle approvazioni: l'utente. Nessun merge implicito.
