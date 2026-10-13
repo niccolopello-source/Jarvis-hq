@@ -27,6 +27,10 @@
 | AW-06 | P3 | in PR (awards v2) | DPOY assegnato alla star della miglior difesa, fuori dalla corsa, quando il giocatore guida la corsa ma non passa un requisito: 11 casi (repro: Esordio seed 57919 stagione 6). 2.15: vince il miglior CPU della corsa |
 | AW-07 | P3 | documentato | `RULES.rookieShuffle` non è letto da nessuna parte (la classe non usa più un sort casuale). Flag morto, lasciato per non toccare `rules.ts` |
 | AW-08 | P3 | documentato | DPOY: striscia massima 3 su 1.000 carriere sia in 2.14 sia in 2.15 (D-23 invariato, non toccato) |
+| G1-R1 | P2 | in PR (G1) | Ultima decisione persa se la scheda viene uccisa senza `pagehide` entro 360 ms + idle (≤900 ms) dal click. Repro e2e `g1-persistence.spec.ts` (playoff/FA/scambio): storage ancora sulla carta vecchia 100 ms dopo il click. Fix: salvataggio sincrono quando la carta pendente cambia (decisione confermata); resto invariato, differito |
+| G1-R2 | P3 | documentato | Due schede su carriere diverse: `flushLive` non sovrascrive l'altra carriera su `pagehide`; vale l'ultimo salvataggio (avviso `otherTab` già presente). Il salvataggio immediato di G1-R1 segue la stessa regola del differito. Nessun cambio |
+| G1-D1 | P3 | in PR (G1) | Archivio: riepilogo (titoli, ppg, stagioni, nome) diverso dalla Career Card accettato in silenzio (repro: titles 99, ppg 99). Fix: segnalato in archivio («da verificare»), dati conservati |
+| G1-D2 | P3 | in PR (G1) | Archivio: Career Card con impronta errata rimossa in silenzio e persa alla scrittura successiva. Fix: carta conservata e segnalata; carta illeggibile nascosta, segnalata e archivio grezzo salvato in `pivot-v2-archive-backup` prima della scrittura. L'impronta SHA-256 copre solo la carta e non ha chiave: rileva corruzione, non manomissione. Formato salvataggi invariato |
 | P3-HTML-PROTO | P3 | aperto | `artifacts/pivot.html` e `2.html` non sono il prodotto |
 
 Owner delle approvazioni: l'utente. Nessun merge implicito.
