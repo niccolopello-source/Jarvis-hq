@@ -43,7 +43,9 @@ export function careerEndingSignal(s: PlayerState): "minutes" | "injury" | null 
     const bar = usesRetireSpread(s) ? injuryRetireBarsOf(s)[s.age] : undefined;
     return bar !== undefined && s.injuryDrag >= bar ? "injury" : null;
   }
-  if (s.injuryDrag >= 2.5) return "injury";
+  // From 33 the shipped bar is 2.5. Only 2.19.0+ bars (per difficulty) may set their own value here.
+  const lateBar = usesRetireSpread(s) ? injuryRetireBarsOf(s)[s.age] : undefined;
+  if (s.injuryDrag >= (lateBar ?? 2.5)) return "injury";
   const lastSeason = s.seasonHistory.at(-1);
   if (lastSeason && lastSeason.min <= 11.5) return "minutes";
   return null;
