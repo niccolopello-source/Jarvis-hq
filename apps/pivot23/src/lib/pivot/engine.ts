@@ -3019,7 +3019,12 @@ function archiveLosesData(raw: string): boolean {
   try {
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return true;
-    return parsed.some((entry) => archiveEntrySchema(entry) !== "future" && normalizeArchiveEntry(entry) === null);
+    return parsed.some((entry) => {
+      if (archiveEntrySchema(entry) === "future") return false;
+      const kept = normalizeArchiveEntry(entry);
+      // An unreadable card is not carried forward either: keep the raw copy.
+      return kept === null || archiveIssueMap.get(kept)?.includes("card-dropped") === true;
+    });
   } catch {
     return true;
   }
@@ -3116,18 +3121,45 @@ function normalizeArchiveEntry(value: unknown): ArchiveCareer | null {
   }
 
   // A broken optional card must not hide an otherwise readable legacy career.
+  const issues: ArchiveIssue[] = [];
   if (!isValidCareerCard(value.card)) {
+    // Unreadable card: hidden from view, flagged; archiveLosesData() backs the raw store up before a write.
+    if (value.card !== undefined && value.card !== null) issues.push("card-dropped");
     delete normalized.card;
   } else if (typeof value.fingerprint === "string" && value.fingerprint !== fingerprintOf(value.card)) {
-    delete normalized.card;
+    // G1-D2: kept as stored and flagged. The fingerprint detects corruption, not tampering (no key).
+    issues.push("card-mismatch");
   } else {
+    if (!recordMatchesCard(value, value.card)) issues.push("record-mismatch");
     const lastAge = history.at(-1)?.age;
     if (isFiniteNumber(lastAge) && value.card.ageEnd !== lastAge) {
       normalized.card = { ...value.card, ageEnd: lastAge };
       normalized.fingerprint = fingerprintOf(normalized.card);
     }
   }
+  if (issues.length) archiveIssueMap.set(normalized, issues);
   return normalized;
+}
+
+/**
+ * G1 integrity flags of a loaded archive entry (in memory only, never written):
+ * - "card-dropped": the stored card was unreadable and is not shown (the raw store is backed up first);
+ * - "card-mismatch": the card no longer matches its fingerprint;
+ * - "record-mismatch": the record's summary (name, seasons, titles, ppg) disagrees with its card.
+ * The SHA-256 fingerprint covers only the card and has no key: it detects corruption, not tampering.
+ */
+export type ArchiveIssue = "card-dropped" | "card-mismatch" | "record-mismatch";
+const archiveIssueMap = new WeakMap<object, ArchiveIssue[]>();
+
+export function archiveIssues(entry: ArchiveCareer): ArchiveIssue[] {
+  return [...(archiveIssueMap.get(entry) ?? [])];
+}
+
+function recordMatchesCard(value: Record<string, unknown>, card: CareerCard): boolean {
+  return value.name === card.playerName
+    && value.seasons === card.seasons
+    && value.titles === card.championships
+    && typeof value.ppg === "number" && Math.abs(value.ppg - card.ppg) < 0.05;
 }
 
 export function loadArchive(): ArchiveCareer[] {
