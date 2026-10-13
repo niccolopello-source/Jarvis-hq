@@ -159,7 +159,7 @@ export const EN_WORLD: Readonly<Record<string, string>> = {
   "{DEST} punta su {NAME}. {OLD} resta fuori dal quadro.": "{DEST} bets on {NAME}. {OLD} is out of the picture.",
   "Cambio di faccia a {DEST}: entra {NAME}, esce {OLD}.": "A new face in {DEST}: {NAME} in, {OLD} out.",
   "{NAME} chiude. Non c'era più un ruolo da stella.": "{NAME} calls it a career. There was no star role left.",
-  "{NAME} si ferma. Il mestiere, per lui, è finito.": "{NAME} stops. The craft, for him, is over.",
+  "{NAME} si ferma. Il mestiere, per lui, è finito.": "{NAME} calls it a career.",
   "Niente nuova maglia per {NAME}. Solo la chiusura.": "No new jersey for {NAME}. Just the ending.",
   "{NAME} si ritira a {AGE} anni. {TEAM} perde la sua faccia.": "{NAME} retires at {AGE}. {TEAM} loses its face.",
   "{NAME} appende le scarpe a {AGE} anni. {TEAM} deve trovare un altro volto.": "{NAME} hangs up his shoes at {AGE}. {TEAM} has to find another face.",

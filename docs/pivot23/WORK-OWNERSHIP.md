@@ -44,6 +44,7 @@ Serve soprattutto perché sul repository operano più agenti IA (Grok Bot, Grok 
 | Lunghezza nome carriera (20 → 32): `CAREER_NAME_MAX`/`careerName` in `presentation.ts`, input setup in `PivotApp.tsx`, `e2e/name-length.spec.ts` | **Grok Bot** | `grokbot/name-length` | [#82](https://github.com/niccolopello-source/Jarvis-hq/pull/82) | In corso. Non tocca motore né formato save | 12 ott 2026 |
 | Demo gate: stabilità app, percorso carriera, persistenza, UI responsive, QA browser, release gate | **Lucille** | `lucille/demo-gate-stabilization` | [#75](https://github.com/niccolopello-source/Jarvis-hq/pull/75) | Unita. Il motore resta di Lucille | 12 ott 2026 |
 | Persistenza e recovery dei salvataggi (SR-01..03): `save-recovery.test.ts`, `e2e/save-recovery.spec.ts`, funzioni di persistenza in `engine.ts` (nessun gameplay), utility backup/archivio | **Lucille** | `lucille/save-recovery-audit` | [#90](https://github.com/niccolopello-source/Jarvis-hq/pull/90) | In corso (bozza). Non tocca motore, RNG, schema save | 13 ott 2026 |
+| Revisione testi IT/EN e glossario (`i18n.ts` IT/EN, valori EN in `narrative/en/*.ts`, test di copy). Nessun testo IT narrativo salvato; voci EN di `legacy.ts` (area Jarvis) segnalate per review | **Lucille** | `lucille/copy-review-it-en` | bozza | In corso | 13 ott 2026 |
 
 ---
 

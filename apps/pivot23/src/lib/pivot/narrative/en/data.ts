@@ -331,7 +331,7 @@ export const EN_DATA: Readonly<Record<string, string>> = {
   "Il nuovo attacco gira intorno alle tue letture.": "The new offense runs through your reads.",
   "Chiedi i tuoi isolamenti": "You ask for your isolations",
   "Il tuo gioco ha portato fin qui.": "Your game is what got you here.",
-  "Ottieni possessi. Lo staff segna la resistenza.": "You get possessions. The staff notes the resistance.",
+  "Ottieni possessi. Lo staff segna la resistenza.": "You get touches. The staff notes the pushback.",
   "Studi in silenzio": "You study in silence",
   "Niente dichiarazioni, solo compiti.": "No statements, just homework.",
   "Nessun titolo. Un giocatore diverso a marzo.": "No headlines. A different player by March.",

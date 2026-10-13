@@ -54,3 +54,30 @@ test("rendered careers in Italian and English pass the copy checks", () => {
   assert.ok(seen > 5000, `only ${seen} rendered strings`);
   assert.deepEqual([...bad], []);
 });
+
+/* Copy review IT/EN 2026-10-13: English is rewritten by meaning; the Italian source (stored in saves) is untouched. */
+test("copy review 2026-10-13: priority narrative lines read as idiomatic English", () => {
+  const cases: [string, string][] = [
+    ["Il primo tempo morto perso", "The first timeout that's on you"],
+    ["Parla il campo, non la voce.", "Let your game do the talking."],
+    ["Una gara da 40 punti, zero vittoria", "40 points in a loss"],
+    ["Meno gioco in post, più transizione. I tifosi comprano le schiacciate.", "Less post play, more transition. Dunks sell tickets."],
+    ["Studi i possessi sul tavolino", "You study film on the tray table"],
+    ["Meno possessi, più senso. I giovani ascoltano.", "Fewer touches, more meaning. The young guys listen."],
+    ["Durare è già un mestiere.", "Lasting is a skill in itself."],
+  ];
+  for (const [it, en] of cases) {
+    assert.equal(nx(it, "it"), it);
+    assert.equal(nx(it, "en"), en);
+  }
+});
+
+test("copy review 2026-10-13: 'craft' is no longer the default for il mestiere", async () => {
+  const { NARRATIVE_EN } = await import("./catalog-en.ts");
+  const left = Object.entries(NARRATIVE_EN).filter(([, v]) => /\bcraft\b/i.test(v)).map(([k]) => k);
+  // Two lines are still open as NEEDS SEMANTIC VERIFICATION in the register.
+  assert.ok(left.length <= 2, left.join(" | "));
+  for (const v of Object.values(NARRATIVE_EN)) {
+    assert.doesNotMatch(v, /Fans buy dunks|zero win\b|first lost timeout|not your mouth|playoff doors/i);
+  }
+});
