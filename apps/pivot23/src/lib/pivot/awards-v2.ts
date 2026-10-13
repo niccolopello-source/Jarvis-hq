@@ -117,3 +117,7 @@ export function mvpFatigueV2(rec: { count: number; streak: number } | undefined)
   if (!rec) return 0;
   return Math.min(9, rec.streak * 3) + Math.min(10, rec.count * 2);
 }
+
+/** Share of the #83 difficulty ROY shift (`awardProfile().royDelta`, tuned on the v1 score) applied
+ *  to the v2 ROY score. 0 for careers before 2.16 (awardProfile gives royDelta 0 there). */
+export const ROY_DELTA_V2_SCALE = 0.5;

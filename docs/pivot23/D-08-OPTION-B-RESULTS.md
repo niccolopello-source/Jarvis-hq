@@ -14,8 +14,8 @@ Author: Lucille (Grok Bot), 2026-10-12. Follows `D-08-OPTION-B-FOLLOWUP.md`. Dra
   - The reference points are the median imprint and development of pot ≥ 80 careers at their apex.
 - **When it is judged:** three seasons before the apex, then **locked** in a new optional state field `bustLock` (validated in `save.ts`). The drag cannot change the age of the peak.
   - An unlocked version moved 36–41 of 1,000 peaks to 23–25, breaking P0-LIFE. With the lock, 1000/1000 peaks stay at 26–28.
-- **Gate:** careers from `BUST_SINCE = 2.17.0` only (rebased 2026-10-12 on main 2.15; 2.16 left free for PR #83), **and** the switch is OFF by default (`TUNING.bust = "current"`).
-  - `ENGINE_VERSION` goes to 2.17.0-beta. With the switch off, 2.17 careers behave exactly like main 2.15: all goldens unchanged.
+- **Gate:** careers from `BUST_B81_SINCE = 2.18.0` only (was 2.17.0; 2.16 is #83, 2.17 is #87) (rebased 2026-10-12 on main 2.15; 2.16 left free for PR #83), **and** the switch is OFF by default (`TUNING.bust = "current"`).
+  - `ENGINE_VERSION` goes to 2.18.0-beta on this branch. With the switch off, 2.18 careers behave exactly like main 2.15: all goldens unchanged.
   - 300/300 Pro careers stamped 2.13 replay bit-identical.
   - Turning it on is the one-line owner decision.
 
@@ -66,4 +66,8 @@ High-potential bust repro seeds (option B): 300017 (pot 94.9 → peak 84) and 13
 ## Open decision for the owner
 1. Keep B off and pursue risk-tagged choices (recommended), or accept B / B soft knowing the side effects?
 2. Is a ~0% high-potential bust rate acceptable for the product (stars always become stars)?
-3. B is gated on 2.17.0; if #83 does not take 2.16, the gate can move down without other changes.
+3. B (#81 formula) is gated on 2.18.0. Main's #83 high-ceiling drag (`BUST_SINCE = DECISIONS_SINCE = 2.16.0`, also OFF) keeps applying to 2.16–2.17 careers when the switch is on; #81 replaces it only from 2.18.
+
+## Update 2026-10-13 — merged main (#83 2.16, #84, #88)
+- `TUNING.bustB` now belongs to #83; this PR's coefficients moved to `TUNING.bustB81`, gate `BUST_B81_SINCE = 2.18.0`, `usesBustB81()`.
+- `ENGINE_VERSION` 2.18.0-beta on the branch; switch still OFF by default.

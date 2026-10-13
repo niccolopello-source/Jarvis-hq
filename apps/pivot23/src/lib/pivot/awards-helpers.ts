@@ -3,7 +3,7 @@
 import { SIM } from "./config";
 import { dpoyFatigueOf, dpoyStreakStepOf, TUNING, usesAwardsV2 } from "./tuning";
 import { AWARD_MIN_GAMES, royScoreV2 } from "./awards-v2";
-import { diffOf } from "./difficulty";
+import { diffOf, awardProfile, royDeltaV2 } from "./difficulty";
 import { advancedOf } from "./peak";
 import { findTeam, NBA_TEAMS } from "./teams";
 import type { CpuStar, DpoyCandidate, LeagueAward, PlayerState, RoyCandidate, SeasonRow } from "./types";
@@ -130,7 +130,7 @@ export function settleRoy(s: PlayerState, row: SeasonRow, n: number): RoyCandida
     ppg: finite(row.ppg),
     rpg: finite(row.rpg),
     apg: finite(row.apg),
-    score: royProductionScore({ ppg: finite(row.ppg), rpg: finite(row.rpg), apg: finite(row.apg), gp: finite(row.gp), min: finite(row.min, 24) }),
+    score: royProductionScore({ ppg: finite(row.ppg), rpg: finite(row.rpg), apg: finite(row.apg), gp: finite(row.gp), min: finite(row.min, 24) }) + awardProfile(s).royDelta,
     isPlayer: true,
   };
   const others = (s.royClass.length ? s.royClass : row.league?.royRace ?? [])
@@ -180,7 +180,7 @@ function settleRoyV2(s: PlayerState, row: SeasonRow, n: number): RoyCandidate[] 
     name: s.name, team: s.team.name, teamAbbr: s.team.abbr, teamColor: s.team.color,
     ppg: finite(row.ppg), rpg: finite(row.rpg), apg: finite(row.apg),
     gp: finite(row.gp), min: finite(row.min, 24), role: s.role,
-    score: royScoreV2(row), isPlayer: true,
+    score: royScoreV2(row) + royDeltaV2(s), isPlayer: true,
   };
   const others = (s.royClass.length ? s.royClass : row.league?.royRace ?? [])
     .filter((c) => !c.isPlayer)
@@ -474,11 +474,12 @@ export function settleDpoy(s: PlayerState, row: SeasonRow, n: number): boolean {
   const guard = s.role === "PG" || s.role === "SG";
   const ident = s.world?.teams?.[s.team.abbr]?.identity;
   const teamDef = teamDefOf(ident);
+  const bar = awardProfile(s).dpoyBar;
   const shape = big
-    ? bpg >= 1.45 && stocks >= 1.85
+    ? bpg >= 1.45 * bar && stocks >= 1.85 * bar
     : guard
-      ? spg >= 1.5 && (teamDef >= 1.5 || stocks >= 2.15)
-      : stocks >= 1.9 && (spg >= 1.15 || bpg >= 0.85);
+      ? spg >= 1.5 * bar && (teamDef >= 1.5 || stocks >= 2.15 * bar)
+      : stocks >= 1.9 * bar && (spg >= 1.15 * bar || bpg >= 0.85 * bar);
   const youthOk = s.age > 21 || stocks >= 2.9 || bpg >= 2.45;
   const v2 = usesAwardsV2(s);
   const gpOk = finite(row.gp, 0) >= (v2 ? AWARD_MIN_GAMES : finite(TUNING.dpoyMinGames[s.league], 58));
@@ -487,7 +488,7 @@ export function settleDpoy(s: PlayerState, row: SeasonRow, n: number): boolean {
   const marks = defensiveMarks(row);
   const fieldScore = finite(race.find((c) => !c.isPlayer)?.score, 99);
   const win =
-    !!leader?.isPlayer && gpOk && shape && youthOk && marks.dws >= 3 && Number.isFinite(myScore) && myScore + 0.05 >= fieldScore;
+    !!leader?.isPlayer && gpOk && shape && youthOk && marks.dws >= 3 * bar && Number.isFinite(myScore) && myScore + awardProfile(s).dpoyHelp >= fieldScore;
   if (!win) {
     // AW-06 (2.15+): if the player leads the race but misses a gate, the best CPU in the race wins,
     // not the star of the best defensive team.

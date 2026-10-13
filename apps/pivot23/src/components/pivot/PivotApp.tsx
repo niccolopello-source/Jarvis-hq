@@ -25,6 +25,7 @@ import {
   applyDraftCard,
   applyFx,
   ARCHIVE_LIMIT,
+  archiveIssues,
   archiveStateOf,
   beginPlayoffs,
   buildFaOffers,
@@ -73,6 +74,7 @@ import {
   withPlayer,
 } from "@/lib/pivot/engine";
 import { initLang, registerLangLoader, setLang, t, tf, useLang, awardLabel, DEMO_LANGS, difficultyFace } from "@/lib/pivot/i18n";
+import { choiceShowsVoidedExtraYear } from "@/lib/pivot/career-coherence";
 import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
 import { ModalDialog } from "@/components/pivot/Dialog";
 import { LazyChunk } from "@/components/pivot/ChunkBoundary";
@@ -465,8 +467,14 @@ export function PivotApp() {
     saveSwipe({ tab, dir: prev?.dir || "next", hint: prev?.hint ?? false });
   }, [tab, screen]);
 
+  /* G1-R1: the pending card this save effect last saw. When it changes, the player has just confirmed
+     a decision: that save is written at once, so a tab killed right after the click (no pagehide, e.g. a
+     mobile browser evicting it) still has the decision. Other changes keep the deferred, idle-time save. */
+  const savedPendingRef = useRef(pending);
   useEffect(() => {
     if ((screen !== "draft" && screen !== "career") || !player) return;
+    const decided = savedPendingRef.current !== null && savedPendingRef.current !== pending;
+    savedPendingRef.current = pending;
     const gen = ++saveGen.current;
     const run = () => {
       if (gen !== saveGen.current) return;
@@ -484,6 +492,10 @@ export function PivotApp() {
       requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
       cancelIdleCallback?: (id: number) => void;
     };
+    if (decided) {
+      run();
+      return;
+    }
     let idle = 0;
     const t = window.setTimeout(() => {
       if (gen !== saveGen.current) return;
@@ -2267,6 +2279,7 @@ const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
           <span>
             <span className="text-muted">{nx(c.title, lang)}: </span>
             {nx(c.pick, lang)}
+            {choiceShowsVoidedExtraYear(c, player) ? <span className="text-muted"> — {t("extraYearVoided", lang)}</span> : null}
           </span>
         </div>
       ))}
@@ -2440,12 +2453,18 @@ function ArchiveView({
           {viewing.apexAge ? tf("atAge", { n: viewing.apexAge }, lang) : ""} · {viewing.titles} {t(viewing.titles === 1 ? "titleOne" : "titleMany", lang)}
           {viewing.difficulty ? ` · ${difficultyFace(viewing.difficulty, lang).label}` : ""}
         </p>
+        {archiveIssues(viewing).map((issue) => (
+          <p key={issue} className="app-notice" role="status" data-archive-issue={issue}>
+            {t(issue === "card-dropped" ? "archiveCardDropped" : issue === "card-mismatch" ? "archiveCardMismatch" : "archiveRecordMismatch", lang)}
+          </p>
+        ))}
         <p className="italic text-muted text-[14px] mb-4">{nx(viewing.closing, lang)}</p>
         <LegacyBlock entry={viewing} />
         <h4 className="font-display text-[18px] mt-4 mb-2">{t("choices", lang)}</h4>
         {viewing.choices.map((c, i) => (
           <div key={i} className="text-[13px] py-1 text-muted">
             {tf("seasonShort", { n: c.season }, lang)} {nx(c.title, lang)}: <span className="text-chalk">{nx(c.pick, lang)}</span>
+            {choiceShowsVoidedExtraYear(c, viewing) ? <span> — {t("extraYearVoided", lang)}</span> : null}
           </div>
         ))}
       </section>
@@ -2475,6 +2494,7 @@ function ArchiveView({
             {c.titles ? ` · ${c.titles} ${t(c.titles === 1 ? "titleOne" : "titleMany", lang)}` : ""}
             {c.difficulty ? ` · ${difficultyFace(c.difficulty, lang).label}` : ""}
             {c.simulated ? " · sim" : ""}
+            {archiveIssues(c).length ? ` · ⚠ ${t("archiveIntegrityFlag", lang)}` : ""}
           </span>
         </button>
       ))}
