@@ -136,3 +136,19 @@ Verdetto: **NOT READY** (dispositivi reali BLOCKED). Nessun bug riprodotto nel p
 | iPhone Safari / Mac Safari / Android Chrome | PASS (riferito da Pello, verifica manuale non osservata dagli agenti) | Messaggio di Pello: «iPhone funziona, Mac funziona, Android funziona». Modelli, OS, SHA e passi: NON VERIFICATO |
 
 Con questo, nessun gate della tabella G5 resta FAIL o BLOCKED, salvo l'API Vercel via MCP (provenienza comunque verificata via GitHub Deployments e hash). Il gate dispositivi poggia solo su quanto riferito: decisione di rilascio a Pello.
+
+
+## Rilevazione 2026-10-13 — audit indipendente (Grok Bot (Jarvis) — audit indipendente)
+
+Commit: `39129c959ce05b60f2ea8d8f88f26b99681f00de` (main = produzione, sha256 10/10 asset). ENGINE 2.19.0-beta, SAVE_VERSION 11. Ambiente: box Linux, Playwright Chromium + WebKit Linux, produzione www.pivot23.com. Le rilevazioni sopra restano storiche.
+
+Stato: **CONDITIONALLY READY** per demo tecnica. Dettaglio, criteri, owner: `INDEPENDENT-DEMO-GATE-REPORT.md`.
+
+| Gate | Stato | Evidenza (39129c9) | Prossima azione |
+|---|---|---|---|
+| Build/lint/types/unit/stats/E2E | PASS | unit 290/290, stats 7/7, E2E build prod 120/0 (2 skip), WebKit 39/39, CI run 38388305189 | — |
+| Percorsi carriera in produzione | PASS (automatico) | 68/69 spec in prod; il fallito è artefatto del test (host ≠ localhost) | prova manuale Pello |
+| Decisioni una volta / save / archivio | PASS (Chromium, WebKit Linux) | g1-story-reload, save-safety, lifecycle in prod e locale | Safari reale |
+| Mobile emulato 320–1440 + landscape | PASS | readiness viewport in prod | — |
+| Dispositivi fisici | BLOCKED (agenti) | solo riferito da Pello, build precedente | Pello |
+| Ritiri 2.19 (29–32 anni) | FAIL vs 300–340‰ | 184‰ (IC 161–209) vs 323‰ su 2.18, 1000 carriere stessi seed | Lucille/Pello |

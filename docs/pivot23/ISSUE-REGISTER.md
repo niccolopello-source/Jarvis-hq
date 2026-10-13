@@ -38,3 +38,14 @@ Aggiornamento 2026-10-12 su `main` `3bb757b` (motore 2.13.0-beta). Dettaglio e c
 | P3-HTML-PROTO | P3 | aperto | `artifacts/pivot.html` e `2.html` non sono il prodotto |
 
 Owner delle approvazioni: l'utente. Nessun merge implicito.
+
+
+## Rilevazione 2026-10-13 — audit indipendente su `39129c9` (Grok Bot (Jarvis) — audit indipendente)
+
+| ID | Sev | Stato | Evidenza |
+|---|---|---|---|
+| P1-INJ (infortunio grave sempre presente) | P1 | CHIUSO su carriere 2.19 | 0/1000 senza grave su 2.18 → 300/1000 su 2.19; stagioni 2–18; rischio cresce col carico (4,9%→10,3%/stagione); carriere 2.12–2.18 invariate 1120/1120 |
+| BAL-RET-219 (ritiri 29–32 dopo #87) | P1 bilanciamento | APERTO | 184/1000 vs obiettivo approvato 300–340; ricalibrazione decisa il 13/10 non inclusa nel merge (`git diff 7cb99f9 39129c9` vuoto). Owner Lucille |
+| BUG-B2-01 (career-card "no network" vs produzione) | P3 test | APERTO | la spec considera esterno ogni host ≠ localhost; 0 richieste a terze parti osservate |
+| PR90-CONFLICT | P2 processo | APERTO | #90 draft in conflitto con main |
+| BUST/WORLD/ROLE su 2.19 | — | NON RIMISURATO | ultimi dati su 6ab885e |

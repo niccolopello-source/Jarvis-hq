@@ -43,6 +43,7 @@ Serve soprattutto perché sul repository operano più agenti IA (Grok Bot, Grok 
 | G5 release engineering: CI, verifica deploy/provenienza, smoke e integrazione, documenti di readiness (solo test/doc/script; non tocca motore, Career Card, intro) | **Grok Bot** | `grokbot/g5-release-candidate-audit` | [#80](https://github.com/niccolopello-source/Jarvis-hq/pull/80) | Unita. File: `e2e/g5-smoke.spec.ts`, `scripts/prod-smoke.mjs`, `docs/pivot23/RELEASE-CHECKLIST.md`, `DEMO-READINESS.md`, `ISSUE-REGISTER.md` (righe G5), `DEVICE-MANUAL-QA.md` (handoff), questa riga | 12 ott 2026 |
 | Lunghezza nome carriera (20 → 32): `CAREER_NAME_MAX`/`careerName` in `presentation.ts`, input setup in `PivotApp.tsx`, `e2e/name-length.spec.ts` | **Grok Bot** | `grokbot/name-length` | [#82](https://github.com/niccolopello-source/Jarvis-hq/pull/82) | In corso. Non tocca motore né formato save | 12 ott 2026 |
 | Demo gate: stabilità app, percorso carriera, persistenza, UI responsive, QA browser, release gate | **Lucille** | `lucille/demo-gate-stabilization` | [#75](https://github.com/niccolopello-source/Jarvis-hq/pull/75) | Unita. Il motore resta di Lucille | 12 ott 2026 |
+| Audit indipendente demo gate (Bot 2): solo `INDEPENDENT-DEMO-GATE-REPORT.md`, nuove rilevazioni datate in `DEMO-READINESS.md` e `ISSUE-REGISTER.md`, questa riga. Non tocca codice, motore né persistenza | **Grok Bot** (Bot 2) | `grokbot/bot2-independent-gate` | bozza | In corso | 13 ott 2026 |
 
 ---
 
