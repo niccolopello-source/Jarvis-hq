@@ -13,17 +13,17 @@ const opts = (seed: number, d: (typeof DIFFS)[number] = "pro") => ({
 });
 const injuries = (s: PlayerState) => s.usedEventIds.filter((id) => /^injury-\d+/.test(id));
 
-test("P1-INJ gate: only careers created on 2.17.0 or later", () => {
-  assert.equal(INJURY_EVENTS_SINCE, "2.17.0");
+test("P1-INJ gate: only careers created on 2.19.0 or later (2.18 shipped without them)", () => {
+  assert.equal(INJURY_EVENTS_SINCE, "2.19.0");
   assert.equal(versionAtLeast(ENGINE_VERSION, INJURY_EVENTS_SINCE), true, "new careers get load-based injuries");
-  for (const v of ["2.11.0-beta", "2.12.0", "2.13.0-beta", "2.14.0-beta", "2.15.0-beta", "2.16.0-beta", "2.16.9", undefined]) assert.equal(usesInjuryEvents({ engineVersion: v }), false, String(v));
-  for (const v of ["2.17.0-beta", "2.17.0", "3.0.0"]) assert.equal(usesInjuryEvents({ engineVersion: v }), true, v);
+  for (const v of ["2.11.0-beta", "2.12.0", "2.13.0-beta", "2.14.0-beta", "2.15.0-beta", "2.16.0-beta", "2.16.9", "2.17.0-beta", "2.18.0-beta", "2.18.0", undefined]) assert.equal(usesInjuryEvents({ engineVersion: v }), false, String(v));
+  for (const v of ["2.19.0-beta", "2.19.0", "3.0.0"]) assert.equal(usesInjuryEvents({ engineVersion: v }), true, v);
 });
 
-test("P1-INJ: 2.14/2.15/2.16 careers keep the 7–9 seed window and the single legacy card", () => {
+test("P1-INJ: 2.14/2.15/2.16/2.18 careers keep the 7–9 seed window and the single legacy card", () => {
   for (let seed = 500; seed < 540; seed++) {
     const job = openCareerSim(opts(seed));
-    job.s.engineVersion = ["2.14.0-beta", "2.15.0-beta", "2.16.0-beta"][seed % 3]!;
+    job.s.engineVersion = ["2.14.0-beta", "2.15.0-beta", "2.16.0-beta", "2.18.0-beta"][seed % 4]!;
     while (!advanceCareerSim(job));
     const ids = injuries(job.s);
     assert.equal(ids.length, 1, `seed ${seed}`);

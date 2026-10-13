@@ -27,13 +27,13 @@ for (const v of GATE_VERSIONS) {
   });
 }
 
-test("new careers (2.17) get the #83 rules; 2.15 and 2.14 keep theirs", () => {
-  assert.equal(ENGINE_VERSION, "2.17.0-beta", "P1-INJ (#87) on top of the 2.16 decisions");
+test("new careers (2.19) get the #83 rules; 2.15 and 2.14 keep theirs", () => {
+  assert.equal(ENGINE_VERSION, "2.19.0-beta", "P1-INJ (#87) on top of 2.18");
   assert.equal(DECISIONS_SINCE, "2.16.0");
   assert.equal(AWARDS_SINCE, "2.15.0", "#86 gate unchanged");
   assert.equal(RETIRE_SINCE, "2.14.0", "#78 gate unchanged");
   assert.equal(openCareerSim({ seed: 9100 }).s.engineVersion, ENGINE_VERSION);
-  for (const v of ["2.17.0-beta", "2.16.0-beta", "2.16.0", "3.0.0"]) {
+  for (const v of ["2.19.0-beta", "2.18.0-beta", "2.16.0-beta", "2.16.0", "3.0.0"]) {
     assert.equal(usesDecisions({ engineVersion: v }), true, v);
     assert.equal(usesBustB({ engineVersion: v }), true, v);
     assert.equal(usesRetireSpread({ engineVersion: v }), true, v);

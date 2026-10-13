@@ -26,6 +26,7 @@ import {
   applyFx,
   ARCHIVE_LIMIT,
   archiveIssues,
+  lastArchiveLoad,
   archiveStateOf,
   beginPlayoffs,
   buildFaOffers,
@@ -221,6 +222,12 @@ function hydratePending(raw: SavedPending | Pending | null, s: PlayerState): Pen
   return raw as Pending;
 }
 
+/** The pending card a live save stores. An answered story card (still on screen during its hold) is stored as none. */
+function savedPendingOf(p: Pending | null, resolved: Pending | null): SavedPending | null {
+  if (p !== null && p === resolved) return null;
+  return p as SavedPending | null;
+}
+
 let bootReport: LiveLoadReport = { state: "none", version: undefined, backedUp: false };
 
 type NewLifeOrigin = "intro" | "replay";
@@ -312,6 +319,8 @@ export function PivotApp() {
       return [];
     }
   });
+  // G1 DEF-03: an archive the boot load could not read is reported, never dropped in silence.
+  const [archiveLoadNote] = useState(() => lastArchiveLoad());
 
   function holdThen(ms: number, fn: () => void) {
     if (holdTimer.current) window.clearTimeout(holdTimer.current);
@@ -429,6 +438,10 @@ export function PivotApp() {
   const tabRef = useRef(tab);
   tabRef.current = tab;
   const pendingRef = useRef(pending);
+  /* G1 DEF-01: the story card whose option was just applied. It stays on screen during the hold, but
+     the player already carries its effects: a save written in that window stores no pending card, so a
+     reload resumes past the decision instead of offering it (and its effects) a second time. */
+  const resolvedPendingRef = useRef<Pending | null>(null);
   const logRef = useRef(log);
   const screenRef = useRef(screen);
   pendingRef.current = pending;
@@ -453,7 +466,7 @@ export function PivotApp() {
     saveGen.current += 1;
     return saveLive({
       player: playerNow,
-      pending: pendingNow && pendingNow.kind !== "call" ? (pendingNow as never) : pendingNow,
+      pending: savedPendingOf(pendingNow, resolvedPendingRef.current),
       log: logNow,
       screen: screenNow,
       tab: tabRef.current,
@@ -473,14 +486,16 @@ export function PivotApp() {
   const savedPendingRef = useRef(pending);
   useEffect(() => {
     if ((screen !== "draft" && screen !== "career") || !player) return;
-    const decided = savedPendingRef.current !== null && savedPendingRef.current !== pending;
+    const decided =
+      (savedPendingRef.current !== null && savedPendingRef.current !== pending) ||
+      (pending !== null && pending === resolvedPendingRef.current);
     savedPendingRef.current = pending;
     const gen = ++saveGen.current;
     const run = () => {
       if (gen !== saveGen.current) return;
       const wrote = saveLive({
         player,
-        pending: pending && pending.kind !== "call" ? (pending as never) : pending,
+        pending: savedPendingOf(pending, resolvedPendingRef.current),
         log,
         screen,
         tab: tabRef.current,
@@ -983,6 +998,7 @@ export function PivotApp() {
     const before = s.overall;
     const outcome = withPlayer(s, () => opt.run(s));
     s.choiceLog.push({ season: s.season, title: pending?.kind === "story" ? pending.title : "Scelta", pick: opt.label });
+    resolvedPendingRef.current = pending;
     setPlayer(s);
     pushLog({
       kind: "decision",
@@ -1118,6 +1134,10 @@ export function PivotApp() {
             </p>
             <button type="button" className="ghost-btn" onClick={() => setLoadNotice(null)}>{t("dismiss", lang)}</button>
           </div>
+        ) : null}
+        {screen === "intro" && archiveLoadNote.unreadable ? <p className="app-notice" data-archive-load="unreadable">{t("archiveUnreadable", lang)}</p> : null}
+        {screen === "intro" && !archiveLoadNote.unreadable && archiveLoadNote.dropped > 0 ? (
+          <p className="app-notice" data-archive-load="dropped">{archiveLoadNote.dropped === 1 ? t("archiveDroppedOne", lang) : tf("archiveDropped", { n: archiveLoadNote.dropped }, lang)}</p>
         ) : null}
         {otherTab && (screen === "career" || screen === "draft") ? <p className="app-notice">{t("otherTab", lang)}</p> : null}
         {saveMissed && screen === "draft" ? <p className="app-notice">{t("saveMiss", lang)}</p> : null}
@@ -2455,7 +2475,7 @@ function ArchiveView({
         </p>
         {archiveIssues(viewing).map((issue) => (
           <p key={issue} className="app-notice" role="status" data-archive-issue={issue}>
-            {t(issue === "card-dropped" ? "archiveCardDropped" : issue === "card-mismatch" ? "archiveCardMismatch" : "archiveRecordMismatch", lang)}
+            {t(issue === "card-dropped" ? "archiveCardDropped" : issue === "card-mismatch" ? "archiveCardMismatch" : issue === "card-unverified" ? "archiveCardUnverified" : "archiveRecordMismatch", lang)}
           </p>
         ))}
         <p className="italic text-muted text-[14px] mb-4">{nx(viewing.closing, lang)}</p>
