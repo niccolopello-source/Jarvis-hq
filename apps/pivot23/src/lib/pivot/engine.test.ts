@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { acceptForcedPreseasonTrade, acceptForcedSummerTrade, acceptTrade, allDraftRounds, applyAutoOffseason, applyDraftCard, applyFx, ARCHIVE_KEY, buildTradeOffer, careerEndAge, eventAfterMarket, finishDraft, freshPlayer, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, offseasonStep, openCareerSim, playCareerSim, recordRetirementChoice, revealDraftLanding, saveArchive, scriptedSeasonSlot, shouldOfferExtraYear, simulateFullCareer, simulateRegularSeason, startProPath, storyEventById, toArchive, withPlayer } from "./engine";
+import { acceptForcedPreseasonTrade, advanceCareerSim, acceptForcedSummerTrade, acceptTrade, allDraftRounds, applyAutoOffseason, applyDraftCard, applyFx, ARCHIVE_KEY, buildTradeOffer, careerEndAge, eventAfterMarket, finishDraft, freshPlayer, isArchivePersisted, isCareerOver, isPlayoffSeed, loadArchive, offseasonStep, openCareerSim, playCareerSim, recordRetirementChoice, revealDraftLanding, saveArchive, scriptedSeasonSlot, shouldOfferExtraYear, simulateFullCareer, simulateRegularSeason, startProPath, storyEventById, toArchive, withPlayer } from "./engine";
 import { COACH_NAMES, RIVAL_NAMES } from "./data";
 import { pick, rand } from "./rng";
 import { NBA_TEAMS } from "./teams";
@@ -667,8 +667,20 @@ test("the simulator offers the same scripted seasons as the game", () => {
   assert.equal(at("rookie"), 1);
   assert.equal(titleAt(1), "Rookie of the Year");
   assert.match(titleAt(at("rival")), /^Lo scontro con /);
-  assert.equal(titleAt(at("injury")), "Un infortunio serio");
+  // P1-INJ (2.17.0): no fixed injury window any more; when the load brings one, it names a body part.
+  const inj = at("injury");
+  if (inj) assert.doesNotMatch(titleAt(inj), /^Un infortunio serio$/);
   assert.equal(titleAt(at("nation")), "Convocazione internazionale");
+});
+
+test("a 2.15 career keeps its seeded serious-injury card in the simulator", () => {
+  const job = openCareerSim(demoCareer);
+  job.s.engineVersion = "2.15.0-beta";
+  while (!advanceCareerSim(job));
+  const player = job.s;
+  const at = (slot: string) => Array.from({ length: 20 }, (_, i) => i + 1).find((n) => scriptedSeasonSlot(player, n) === slot)!;
+  assert.ok(at("injury") >= 7 && at("injury") <= 9);
+  assert.equal(player.choiceLog.find((c) => c.season === at("injury"))?.title, "Un infortunio serio");
 });
 
 test("the closing note speaks to the player", () => {
@@ -681,6 +693,8 @@ test("the closing note speaks to the player", () => {
 
 test("a trade follow-up keeps the scripted card of that season", () => {
   const job = openCareerSim({ ...demoCareer, seed: 3017, role: "SF", path: "G-League" });
+  // Seed-window injury card: careers created before 2.17.0 (P1-INJ). See injuries.test.ts for 2.17.
+  job.s.engineVersion = "2.15.0-beta";
   const injurySeason = Array.from({ length: 20 }, (_, i) => i + 1).find((n) => scriptedSeasonSlot(job.s, n) === "injury")!;
   const plainSeason = Array.from({ length: 20 }, (_, i) => i + 2).find((n) => scriptedSeasonSlot(job.s, n) === null)!;
   job.s.season = injurySeason;

@@ -214,6 +214,7 @@ test("golden full-career baseline for fixed seeds (engine output, not run-vs-run
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.13.0-beta")), GOLDEN_2_13);
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.14.0-beta")), GOLDEN_2_14);
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.15.0-beta")), GOLDEN_2_15);
+  assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.16.0-beta")), GOLDEN_2_16);
 });
 /* 2.13.0-beta (#66): D-09 world "regress" and the D-23 step 0.16 apply only to careers created
    on 2.13.0 or later, and they move team strength and DPOY voting, so new careers get new values.
@@ -224,7 +225,10 @@ test("golden full-career baseline for fixed seeds (engine output, not run-vs-run
    so all three seeds move. The 2.14 values are kept unchanged as GOLDEN_2_14. */
 /* 2.16.0-beta (#83 decisions on top of awards v2): age-36 season played once accepted, difficulty award knobs.
    MVP help halves per MVP won, ROY shift on the v2 score (×0.5). 2.15 values kept unchanged as GOLDEN_2_15. */
-const GOLDEN = ["860acab285591479", "0964f5e71de9c48c", "58128165ba383c2e"];
+const GOLDEN_2_16 = ["860acab285591479", "0964f5e71de9c48c", "58128165ba383c2e"];
+/* 2.17.0-beta (P1-INJ): the serious injury follows the load of earlier seasons instead of a 7–9
+   seed window, so new careers move (recomputed on top of the 2.16 decisions). The 2.16 values stay as GOLDEN_2_16. */
+const GOLDEN = ["80b3ae7194aec564", "a636bf327e11d835", "c07def159324228f"];
 const GOLDEN_2_15 = ["4da0c610aba577b4", "eb62db0aef59b9a9", "ca8469ee05d836c7"];
 const GOLDEN_2_14 = ["d28207b449d5e3c1", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
 const GOLDEN_2_13 = ["9f5583418a7fa740", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
