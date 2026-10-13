@@ -79,8 +79,11 @@ export function usesDecisions(career: { engineVersion?: string }): boolean {
 }
 
 /** PR #81 (D-08 option B, choice-driven variant): replaces the #83 drag for careers created by
- *  2.18.0 or later, only when TUNING.bust === "choices-b" (OFF by default). 2.17 is taken by #87. */
+ *  2.18.0 or later, only when TUNING.bust === "choices-b" (OFF by default).  */
 export const BUST_B81_SINCE = "2.18.0";
+/** P1-INJ (#87): first engine version whose careers get load-based serious injuries (injuries.ts).
+ *  Moved from 2.17.0 to 2.19.0 after #81 shipped 2.18.0 without injuries, so 2.18 careers stay identical. */
+export const RULES_INJURY_SINCE = "2.19.0";
 
 /** D-23 step that careers created before WORLD_SINCE (2.13.0) keep. */
 export const LEGACY_DPOY_STREAK_STEP = 0.12;

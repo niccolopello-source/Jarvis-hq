@@ -1,5 +1,6 @@
 
 import { scriptSlotFor, scriptWindowsOf, seedHash, worldOf } from "./tuning";
+import { INJURY_KINDS, INJURY_SEVERITY, loadInjuryAt, usesInjuryEvents, type InjuryKind } from "./injuries";
 import {
   ATTR_LABELS,
   COACH_NAMES,
@@ -1252,6 +1253,8 @@ export function storyEventById(s: PlayerState, id?: string, script?: SavedStoryS
         const built = proceduralFromId(s, id);
         if (built) return built;
       }
+      const inj = /^injury-\d+-([a-z]+)$/.exec(id);
+      if (inj && (INJURY_KINDS as readonly string[]).includes(inj[1]!)) return injuryStory(s, inj[1] as InjuryKind);
     }
     if (script === "late" || (id && id.startsWith("late-"))) return lateCareerEvent(s);
     if (script === "rival") return rivalStory(s);
@@ -1313,7 +1316,40 @@ function rivalStory(s: PlayerState): StoryEvent {
   };
 }
 
-function injuryStory(s: PlayerState): StoryEvent {
+/** P1-INJ (2.17.0): what each injury looks like on the card. */
+const INJURY_CARD: Readonly<Record<InjuryKind, { title: string; subtitle: string }>> = {
+  caviglia: {
+    title: "Distorsione alta alla caviglia",
+    subtitle: "Atterri sul piede di un avversario. La caviglia gira, e non torna subito al suo posto.",
+  },
+  coscia: {
+    title: "Stiramento alla coscia",
+    subtitle: "Uno scatto in contropiede, poi una fitta dietro la coscia. Troppi minuti nelle gambe.",
+  },
+  spalla: {
+    title: "La spalla esce",
+    subtitle: "Un contatto a rimbalzo, la spalla si sposta. Rientra, ma il braccio non risponde.",
+  },
+  ginocchio: {
+    title: "Il menisco cede",
+    subtitle: "Un cambio di direzione come mille altri. Stavolta il ginocchio si blocca.",
+  },
+  schiena: {
+    title: "La schiena si blocca",
+    subtitle: "Mesi di voli e di contatti. Una mattina non riesci ad allacciarti le scarpe.",
+  },
+  piede: {
+    title: "Frattura da stress al piede",
+    subtitle: "Il dolore al piede c'era da settimane. La risonanza dice frattura da stress.",
+  },
+  achille: {
+    title: "Il tendine d'Achille",
+    subtitle: "Senti un colpo dietro la caviglia, come un calcio. Non c'è nessuno dietro di te.",
+  },
+};
+
+function injuryStory(s: PlayerState, kind?: InjuryKind): StoryEvent {
+  if (kind) return injuryKindStory(s, kind);
   return {
     id: `injury-${s.season}`,
     phase: "prime",
@@ -1375,6 +1411,25 @@ function injuryStory(s: PlayerState): StoryEvent {
   };
 }
 
+/** P1-INJ (2.17.0): the same three answers, scaled by how serious this injury is. */
+function injuryKindStory(s: PlayerState, kind: InjuryKind): StoryEvent {
+  const base = injuryStory(s);
+  const sev = INJURY_SEVERITY[kind];
+  const card = INJURY_CARD[kind];
+  const scale = (fx: Fx): Fx => ({
+    ...fx,
+    gamesPenalty: fx.gamesPenalty === undefined ? undefined : Math.round(fx.gamesPenalty * sev),
+    injuryDrag: fx.injuryDrag === undefined ? undefined : round1(fx.injuryDrag * sev),
+  });
+  return {
+    ...base,
+    id: `injury-${s.season}-${kind}`,
+    title: card.title,
+    subtitle: (s.injuryRisk > 50 ? "Il fisico aveva già dato segnali. " : "") + card.subtitle,
+    choices: base.choices.map((c) => ({ ...c, fx: (p: PlayerState) => scale(c.fx(p)) })),
+  };
+}
+
 function nationStory(s: PlayerState): StoryEvent {
   const teamLabel =
     s.nationality === "Italia" ? "la Nazionale Italiana" : s.nationality === "USA" ? "Team USA" : "la tua Nazionale";
@@ -1432,7 +1487,7 @@ export function eventAfterMarket(s: PlayerState): { event: StoryEvent; script: S
   const scripted = scriptedSeasonEvent(s, s.season);
   if (scripted) {
     if (!s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
-    const script: SavedStoryScript = scriptSlotFor(s.seed, s.season, scriptWindowsOf(s)) ?? "pool";
+    const script: SavedStoryScript = scriptedSeasonSlot(s, s.season) ?? "pool";
     return { event: scripted, script };
   }
   const event = pickStoryEvent(s, s.season);
@@ -1446,11 +1501,19 @@ export function eventAfterMarket(s: PlayerState): { event: StoryEvent; script: S
 
 /** Scripted story slot for season n ("rookie" | "rival" | "injury" | "nation") or null. */
 export function scriptedSeasonSlot(s: PlayerState, n: number): SavedStoryScript | null {
-  return scriptSlotFor(s.seed, n, scriptWindowsOf(s));
+  const slot = scriptSlotFor(s.seed, n, scriptWindowsOf(s));
+  if (!usesInjuryEvents(s)) return slot;
+  // P1-INJ: from 2.17.0 the injury has no window; it comes from the load of earlier seasons.
+  if (slot && slot !== "injury") return slot;
+  return loadInjuryAt(s, n) ? "injury" : null;
 }
 
 export function scriptedSeasonEvent(s: PlayerState, n: number): StoryEvent | null {
   const slot = scriptSlotFor(s.seed, n, scriptWindowsOf(s));
+  if (usesInjuryEvents(s) && (!slot || slot === "injury")) {
+    const kind = loadInjuryAt(s, n);
+    return kind ? injuryStory(s, kind) : null;
+  }
   if (slot === "rookie") return rookieStory();
   if (slot === "rival") return rivalStory(s);
   if (slot === "injury") return injuryStory(s);

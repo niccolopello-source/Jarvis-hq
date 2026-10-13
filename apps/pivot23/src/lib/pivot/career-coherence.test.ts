@@ -52,9 +52,12 @@ test("the current retirement rule cannot fire before age 33, whatever the body s
 });
 
 test("an accepted age-36 season is played, even when that summer is already an injury", () => {
-  for (const i of [3, 22, 48, 64, 73]) {
+  // Seeds whose injury load already says "stop" (injuryDrag >= 2.5) in the age-36 summer.
+  // Engine 2.17.0 (P1-INJ) moves the load, so the set moved: 2.16 used 3, 22, 48, 64, 73.
+  for (const i of [9, 13, 31, 109]) {
     const s = g4Pro(i);
-    assert.equal(s.seed, [4017, 23017, 49017, 65017, 74017][[3, 22, 48, 64, 73].indexOf(i)]);
+    assert.equal(s.seed, (i + 1) * 1000 + 17);
+    assert.ok(s.injuryDrag >= 2.5, `seed ${s.seed} carries the injury load`);
     assert.equal(s.extraSeason, true);
     assert.equal(s.seasonHistory.some((r) => r.age === 36), true, `seed ${s.seed} plays 36`);
     assert.equal(extraYearVoided(s), false);
@@ -130,16 +133,18 @@ test("diary, card and result line agree on the last played season", () => {
   assert.ok(declined.choiceLog.some((choice) => choice.pick === "Chiudi ora"));
   assert.equal(extraYearVoided(declined), false);
 
-  const playedFinal = g4(3, "play36");
+  // Engine 2.17.0 (P1-INJ): index 3 now ends at 33 on load, so the injury-summer case is index 9.
+  const playedFinal = g4(9, "play36");
   assert.equal(assertSameFinalAge(playedFinal).last, 36, "an accepted final season is played");
   assert.equal(extraYearVoided(playedFinal), false);
 
-  const closedInstead = g4(3, "retire");
+  const closedInstead = g4(9, "retire");
   assert.equal(assertSameFinalAge(closedInstead).last, 35);
   assert.equal(closedInstead.extraSeason, false);
   assert.equal(extraYearVoided(closedInstead), false);
 
-  const early = g4(5, "play36");
+  // Engine 2.17.0: index 5 now stops at 30, index 2 is the career that ends at 32.
+  const early = g4(2, "play36");
   assert.equal(early.age, 33, "state age is already the next summer");
   assert.equal(assertSameFinalAge(early).last, 32);
   assert.equal(early.choiceLog.some((choice) => choice.pick === "Gioca a 36 anni"), false);
