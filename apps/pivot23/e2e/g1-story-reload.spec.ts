@@ -37,7 +37,7 @@ async function toFirstStory(page: Page, name: string) {
   await settled(page);
 }
 
-for (const ms of [0, 400, 800]) {
+for (const ms of [0, 150, 400, 800, 1500, 2000]) {
   test(`G1 DEF-01 story: reload ${ms} ms after the click applies the decision exactly once`, async ({ page }) => {
     test.setTimeout(120_000);
     await toFirstStory(page, `G1 Story ${ms}`);
@@ -63,7 +63,8 @@ for (const ms of [0, 400, 800]) {
     } else {
       expect(taken(after)).toHaveLength(1);
       expect(taken(after)[0]!.pick).toContain(pick.slice(0, 8));
-      await expect(card(page)).not.toContainText(title);
+      // The next beat can quote the same words (e.g. an award name), so check the live pending beat, not page text.
+      expect(after.kind === "story" && after.title === title).toBe(false);
       await card(page).locator("button").first().click(); // resume card or the next beat
       await settled(page);
     }

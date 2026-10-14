@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { careerEndAge, playCareerSim } from "./engine";
 import { bustDiagnosis, extraYearVoided } from "./career-coherence";
+import { careerEndingSignal } from "./peak";
 
 function histOf(xs: number[]) {
   const m = new Map<number, number>();
@@ -37,7 +38,9 @@ test("1,000 Pro careers meet the P0-LIFE age distribution without changing the p
     "career ending age differs from the last recorded season");
   assert.ok(new Set(endingAges).size > 1, `all careers ended at age ${endingAges[0]}`);
   assert.ok(careers.every((career) => career.apexAge >= 26 && career.apexAge <= 28), "peak age left 26–28");
-  assert.ok(early.every((career) => career.injuryDrag >= 2.5 || (career.seasonHistory.at(-1)?.min ?? Number.POSITIVE_INFINITY) <= 11.5));
+  // Every early ending has a cause: the injury load or the minutes bar. From 2.19.0 (P1-INJ) the
+  // injury bars before 33 are injuryRetireBars219, some below 2.5, so the cause is read from the rule itself.
+  assert.ok(early.every((career) => careerEndingSignal(career) !== null || career.injuryDrag >= 2.5 || (career.seasonHistory.at(-1)?.min ?? Number.POSITIVE_INFINITY) <= 11.5));
   // The exact age histogram is measured on 2.15 (A2 spread from 2.14 + the played age-36 season from 2.15).
   // It is replaced when those rules change. It is not a tuning target.
   const hist = Object.fromEntries([...histOf(endingAges)].sort((a, b) => Number(a[0]) - Number(b[0])));

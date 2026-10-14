@@ -54,7 +54,8 @@ test("the current retirement rule cannot fire before age 33, whatever the body s
 test("an accepted age-36 season is played, even when that summer is already an injury", () => {
   // Seeds whose injury load already says "stop" (injuryDrag >= 2.5) in the age-36 summer.
   // Engine 2.17.0 (P1-INJ) moves the load, so the set moved: 2.16 used 3, 22, 48, 64, 73.
-  for (const i of [9, 13, 31, 109]) {
+  // 2.19 retirement recalibration (injuryRetireBars219): 13, 31 and 109 now close before 33.
+  for (const i of [9, 163, 177]) {
     const s = g4Pro(i);
     assert.equal(s.seed, (i + 1) * 1000 + 17);
     assert.ok(s.injuryDrag >= 2.5, `seed ${s.seed} carries the injury load`);
@@ -144,8 +145,10 @@ test("diary, card and result line agree on the last played season", () => {
   assert.equal(extraYearVoided(closedInstead), false);
 
   // Engine 2.17.0: index 5 now stops at 30, index 2 is the career that ends at 32.
+  // 2.19 recalibration: with the lower bar at 32 the career closes right after the age-32 season,
+  // before the summer, so the state age stays 32. The card still quotes the last played season.
   const early = g4(2, "play36");
-  assert.equal(early.age, 33, "state age is already the next summer");
+  assert.equal(early.age, 32, "closed right after the age-32 season");
   assert.equal(assertSameFinalAge(early).last, 32);
   assert.equal(early.choiceLog.some((choice) => choice.pick === "Gioca a 36 anni"), false);
   assert.equal(extraYearVoided(early), false);

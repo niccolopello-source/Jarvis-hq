@@ -1,5 +1,7 @@
 # PIVOT-23 — INDEPENDENT DEMO GATE REPORT (Grok Bot 2)
 
+> **Snapshot storico.** Questo report si riferisce al commit `39129c9` (13/10/2026). Lo stato successivo di main e produzione è `21764f3` (14/10/2026, dopo #90, #91 e #94): i numeri qui sotto non descrivono quello SHA.
+
 Autore: Grok Bot (Jarvis) — audit indipendente · Data: 2026-10-13, 11:26–12:15 UTC · Demo target: 18/10/2026 (demo tecnica, non rilascio commerciale).
 Nessun merge, nessun deploy, nessuna modifica a codice di gioco/persistenza. Prove grezze: `/workspace/reports/bot2/` (box).
 Tag di provenienza: **[OSS]** osservazione diretta · **[AUTO]** test automatico eseguito ora · **[AGENTE]** dichiarazione di un agente · **[STORICO]** report precedente / altro commit.

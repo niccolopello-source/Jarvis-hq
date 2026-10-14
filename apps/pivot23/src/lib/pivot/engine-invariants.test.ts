@@ -228,7 +228,11 @@ test("golden full-career baseline for fixed seeds (engine output, not run-vs-run
 const GOLDEN_2_16 = ["860acab285591479", "0964f5e71de9c48c", "58128165ba383c2e"];
 /* 2.17.0-beta (P1-INJ): the serious injury follows the load of earlier seasons instead of a 7–9
    seed window, so new careers move (recomputed on top of the 2.16 decisions). The 2.16 values stay as GOLDEN_2_16. */
-const GOLDEN = ["80b3ae7194aec564", "a636bf327e11d835", "c07def159324228f"];
+/* 2.19.0-beta retirement recalibration (injuryRetireBars219): seeds 1 and 3 now close earlier on the
+   injury load; seed 2 is unchanged. Before the recalibration: 80b3ae7194aec564, a636bf327e11d835, c07def159324228f. */
+/* 2.19.0-beta per-difficulty bars (Pello's targets): seed 1 (pro) moves with the Pro bars; seeds 2 (allstar)
+   and 3 (leggenda) are unchanged. Single-set value for seed 1: 58e91328e9526064. */
+const GOLDEN = ["cec0d46789bf3a75", "a636bf327e11d835", "32807885e3d2fe70"];
 const GOLDEN_2_15 = ["4da0c610aba577b4", "eb62db0aef59b9a9", "ca8469ee05d836c7"];
 const GOLDEN_2_14 = ["d28207b449d5e3c1", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
 const GOLDEN_2_13 = ["9f5583418a7fa740", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
