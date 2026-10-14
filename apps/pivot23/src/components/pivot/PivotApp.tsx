@@ -5,6 +5,7 @@ import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
 import { CAREER_NAME_MAX, careerName, chipsFromFx, chipsFromSnapshot, consequenceSchedule, endSentence, formatCareerTotal, getSeasonDisplayLabel, tidyText, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
+import { SideRail, adBreakAtSeasonEnd } from "@/ads";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
 import { pathFeel, playoffNerves, draftWho, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
 import {
@@ -1122,7 +1123,7 @@ export function PivotApp() {
 
   return (
     <div className="pivot-stage">
-      <aside className="ad-rail" aria-hidden="true"><span>{t("adReserved", lang)}</span></aside>
+      <SideRail side="left" lang={lang} placeholder={t("adReserved", lang)} />
       <div className={screen === "career" ? "pivot-app career-mode" : "pivot-app"}>
       <div className="app-notices" role="status" aria-live="polite">
         {storageOff && screen !== "result" && screen !== "archive" ? <p className="app-notice">{t("storageOff", lang)}</p> : null}
@@ -1368,7 +1369,7 @@ export function PivotApp() {
         {newLife?.error ? <p className="confirm-error" role="alert">{newLife.error}</p> : null}
       </ModalDialog>
       </div>
-      <aside className="ad-rail" aria-hidden="true"><span>{t("adReserved", lang)}</span></aside>
+      <SideRail side="right" lang={lang} placeholder={t("adReserved", lang)} />
       <div className="ad-foot">
         <p className="totem-credit">Powered by Totem</p>
       </div>
@@ -1773,7 +1774,7 @@ function PendingBlock(props: {
         qualified={pending.qualified}
         awardNote={pending.awardNote}
         door={pending.door}
-        onGo={() => props.onRecap(pending.qualified)}
+        onGo={() => adBreakAtSeasonEnd(() => props.onRecap(pending.qualified))}
       />
     );
   }
