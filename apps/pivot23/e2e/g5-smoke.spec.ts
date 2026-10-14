@@ -78,11 +78,11 @@ test("G5 smoke: long-name career, draft to archive, refresh resume, double activ
       await shot(page, `05-card-${kinds.size}`);
     }
     if (!resumed && (await save()).seasons >= 2) {
-      // Save + refresh: home offers "Riprendi la vita", the same career and season come back.
+      // Save + refresh: home offers "Riprendi la carriera", the same career and season come back.
       await page.waitForTimeout(1500);
       const before = await save();
       await page.reload();
-      const resume = page.getByRole("button", { name: /Riprendi la vita/ });
+      const resume = page.getByRole("button", { name: /Riprendi la carriera/ });
       if (await resume.isVisible({ timeout: 8_000 }).catch(() => false)) await resume.click();
       await expect(page.locator("[data-pending]").first()).toBeVisible({ timeout: 15_000 });
       await expect(page.locator(".career-chrome")).toContainText(NAME);

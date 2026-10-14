@@ -45,6 +45,7 @@ Serve soprattutto perché sul repository operano più agenti IA (Grok Bot, Grok 
 | Demo gate: stabilità app, percorso carriera, persistenza, UI responsive, QA browser, release gate | **Lucille** | `lucille/demo-gate-stabilization` | [#75](https://github.com/niccolopello-source/Jarvis-hq/pull/75) | Unita. Il motore resta di Lucille | 12 ott 2026 |
 | Audit indipendente demo gate (Bot 2): solo `INDEPENDENT-DEMO-GATE-REPORT.md`, nuove rilevazioni datate in `DEMO-READINESS.md` e `ISSUE-REGISTER.md`, questa riga. Non tocca codice, motore né persistenza | **Grok Bot** (Bot 2) | `grokbot/bot2-independent-gate` | [#92](https://github.com/niccolopello-source/Jarvis-hq/pull/92) | Unita il 14 ott 2026 (approvata da Pello) | 13 ott 2026 |
 | Persistenza e recovery dei salvataggi (SR-01..03): `save-recovery.test.ts`, `e2e/save-recovery.spec.ts`, funzioni di persistenza in `engine.ts` (nessun gameplay), utility backup/archivio | **Lucille** | `lucille/save-recovery-audit` | [#90](https://github.com/niccolopello-source/Jarvis-hq/pull/90) | In corso (bozza). Non tocca motore, RNG, schema save | 13 ott 2026 |
+| Revisione testi IT/EN e glossario (`i18n.ts` IT/EN, valori EN in `narrative/en/*.ts`, test di copy). Nessun testo IT narrativo salvato; voci EN di `legacy.ts` (area Jarvis) segnalate per review | **Lucille** | `lucille/copy-review-it-en` | bozza | In corso | 13 ott 2026 |
 
 ---
 

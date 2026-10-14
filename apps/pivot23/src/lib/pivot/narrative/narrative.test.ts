@@ -165,3 +165,17 @@ test("a realistic Italian save round-trips and its stored prose reads in English
   assert.deepEqual(leaks, []);
   assert.deepEqual(misses.slice(0, 12), []);
 });
+
+test("owner decisions 2026-10-14 (L-05/L-06/L-07/L-11/S03-S06): old and new Italian both reach correct English", async () => {
+  await loadNarrativeEn();
+  // L-07: Italian note left unchanged (stored in seasonHistory); English stays DWS
+  assert.equal(nx("1.9 palle rubate · 2.4 stoppate · 4.1 vittorie difensive · 70 partite", "en"), "1.9 steals · 2.4 blocks · 4.1 defensive win shares · 70 games");
+  // L-11: old stored detail still translated, new detail mentions shooting
+  assert.equal(nx("Recupero prima della luce.", "en"), "Recovery before daylight.");
+  assert.match(nx("Recupero, testa lucida e mano più ferma al tiro.", "en"), /clear head.*shooting/);
+  assert.equal(nx("Chiedi i possessi della difesa", "en"), "You ask for the defensive film");
+  assert.equal(nx("La tregua del mestiere", "en"), "A break from the grind");
+  assert.equal(nx("Giugno è in una foto. Oggi è ottobre, e L'anello non copre i possessi.", "en").includes("won't play the minutes for you"), true);
+  const all = Object.values(NARRATIVE_EN).join("\n");
+  assert.doesNotMatch(all, /\bkilos?\b|the last possessions, cheaply|truce of the craft/i);
+});

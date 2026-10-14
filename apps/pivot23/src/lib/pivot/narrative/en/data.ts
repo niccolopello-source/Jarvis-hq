@@ -309,6 +309,8 @@ export const EN_DATA: Readonly<Record<string, string>> = {
   "Il corpo chiede sonno, la testa gira.": "The body wants sleep, the head is spinning.",
   "Chiudi tutto e dormi": "You shut everything off and sleep",
   "Recupero prima della luce.": "Recovery before daylight.",
+  // L-11 (2026-10-14): new detail hints at the real fx (form, iq, shooting); old key kept for stored saves.
+  "Recupero, testa lucida e mano più ferma al tiro.": "Recovery, a clear head and a steadier shooting hand.",
   "Arrivi lucido. Poco contenuto per i social.": "You arrive sharp. Not much content for social media.",
   "Accetti l'evento e paghi dopo": "You do the event and pay later",
   "Visibilità ora, gambe dopo.": "Exposure now, legs later.",
@@ -331,7 +333,7 @@ export const EN_DATA: Readonly<Record<string, string>> = {
   "Il nuovo attacco gira intorno alle tue letture.": "The new offense runs through your reads.",
   "Chiedi i tuoi isolamenti": "You ask for your isolations",
   "Il tuo gioco ha portato fin qui.": "Your game is what got you here.",
-  "Ottieni possessi. Lo staff segna la resistenza.": "You get possessions. The staff notes the resistance.",
+  "Ottieni possessi. Lo staff segna la resistenza.": "You get touches. The staff notes the pushback.",
   "Studi in silenzio": "You study in silence",
   "Niente dichiarazioni, solo compiti.": "No statements, just homework.",
   "Nessun titolo. Un giocatore diverso a marzo.": "No headlines. A different player by March.",

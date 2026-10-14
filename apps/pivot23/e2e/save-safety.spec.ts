@@ -61,7 +61,7 @@ test("finished career with archive written: live save removed, Un'altra vita nee
   await expect(page.getByRole("button", { name: "Inizia", exact: true })).toBeVisible();
   // Reload: nothing to resume, the archive still holds the career.
   await page.reload();
-  await expect(page.getByRole("button", { name: "Riprendi la vita" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Riprendi la carriera" })).toHaveCount(0);
   expect(await archiveLen(page)).toBe(1);
 });
 
@@ -70,7 +70,7 @@ test("finished career is not resumed as if it were still running", async ({ page
   await retireNow(page);
   await page.getByRole("button", { name: "Archivio", exact: true }).click();
   await page.getByRole("button", { name: /Home/ }).click();
-  await expect(page.getByRole("button", { name: "Riprendi la vita" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Riprendi la carriera" })).toHaveCount(0);
   await page.getByRole("button", { name: "Rivedi il finale" }).click();
   await expect(page.getByRole("button", { name: /Un'altra vita/ })).toBeVisible();
 });

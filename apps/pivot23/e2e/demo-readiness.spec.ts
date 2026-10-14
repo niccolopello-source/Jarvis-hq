@@ -240,7 +240,7 @@ test("the year sheet explains the main stats and hides the advanced ones", async
   await expect(page.getByRole("heading", { name: /Stagione 1 ·/ })).toBeVisible({ timeout: 20_000 });
 
   await page.getByRole("button", { name: "Anno", exact: true }).click();
-  await expect(page.getByText("PPG punti, RPG rimbalzi, APG assist, a partita.")).toBeVisible();
+  await expect(page.getByText("PPG, RPG e APG: punti, rimbalzi e assist a partita.")).toBeVisible();
   const advanced = page.locator(".adv-stats");
   await expect(advanced).toBeVisible();
   await expect(advanced.getByText("USG%")).toBeHidden();
