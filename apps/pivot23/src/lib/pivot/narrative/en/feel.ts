@@ -602,7 +602,7 @@ export const EN_FEEL: Readonly<Record<string, string>> = {
   "La stanza senza microfoni": "The room without microphones",
   "Dopo il rumore, prima del prossimo": "After the noise, before the next",
   "Un appello senza nome": "A roll call with no name",
-  "La tregua del mestiere": "The truce of the craft",
+  "La tregua del mestiere": "A break from the grind",
   "Niente tesi da vendere": "No thesis to sell",
   "Un ottobre senza copertina": "An October without a cover",
   "La settimana che non ha un nome": "The week without a name",

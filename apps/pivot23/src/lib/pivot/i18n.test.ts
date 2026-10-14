@@ -130,3 +130,12 @@ test("copy review 2026-10-13: Italian and English chrome carry the same placehol
   const bad = msgKeys().filter((k) => slots(t(k, "it")) !== slots(t(k, "en")));
   assert.deepEqual(bad, []);
 });
+
+test("owner decisions 2026-10-14: guide4Body (L-01), difficulty EN (L-02), es off", () => {
+  assert.match(t("guide4Body", "it"), /riprendi esattamente da dove eri/);
+  assert.match(t("guide4Body", "en"), /pick up exactly where you left off/);
+  for (const l of ["it", "en"] as const) assert.doesNotMatch(t("guide4Body", l), /stessa carta|same card/);
+  assert.equal(difficultyFace("esordio", "en").desc, "Generous growth, rare injuries, more open playoffs. Made for learning the game.");
+  assert.equal(difficultyFace("leggenda", "en").desc, "Injuries pile up and the playoffs are a war. Only the special ones survive.");
+  assert.ok(!(DEMO_LANGS as readonly string[]).includes("es"));
+});

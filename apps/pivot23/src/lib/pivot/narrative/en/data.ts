@@ -309,6 +309,8 @@ export const EN_DATA: Readonly<Record<string, string>> = {
   "Il corpo chiede sonno, la testa gira.": "The body wants sleep, the head is spinning.",
   "Chiudi tutto e dormi": "You shut everything off and sleep",
   "Recupero prima della luce.": "Recovery before daylight.",
+  // L-11 (2026-10-14): new detail hints at the real fx (form, iq, shooting); old key kept for stored saves.
+  "Recupero, testa lucida e mano più ferma al tiro.": "Recovery, a clear head and a steadier shooting hand.",
   "Arrivi lucido. Poco contenuto per i social.": "You arrive sharp. Not much content for social media.",
   "Accetti l'evento e paghi dopo": "You do the event and pay later",
   "Visibilità ora, gambe dopo.": "Exposure now, legs later.",

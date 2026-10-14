@@ -40,7 +40,7 @@ export const EN_STORY_EXTRA: Readonly<Record<string, string>> = {
   "Rivendichi il tuo impatto": "You claim your impact",
   "Senza di te era peggio.": "Without you it would have been worse.",
   "Hai ragione. Non è il tipo di ragione che unisce.": "You're right. It's not the kind of right that brings people together.",
-  "Chiedi i possessi della difesa": "You ask for the defensive possessions",
+  "Chiedi i possessi della difesa": "You ask for the defensive film",
   "I 40 non coprono le coperture sbagliate. Si studiano, a volume basso.": "The 40 don't cover the blown coverages. You study them, volume down.",
   "A mezzanotte sei ancora in sala video.": "At midnight you're still in the film room.",
   "La dirigenza vuole «più spettacolo»": "The front office wants \"more show\"",

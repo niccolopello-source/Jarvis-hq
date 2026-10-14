@@ -249,3 +249,23 @@ Selettori e2e aggiornati solo dove il testo è cambiato: `g5-smoke.spec.ts`, `sa
 ## 8. Cosa non cambia
 
 Nessun file di motore, premi, RNG, salvataggio o configurazione è modificato. Il testo IT narrativo (salvato nelle carriere) è intatto; cambiano solo il dizionario chrome IT/EN e i valori EN del catalogo narrativo, letti a render-time. Spagnolo non toccato.
+
+## 9. Decisioni del proprietario — 2026-10-14 (da LOC-AUDIT-B, PR #94)
+
+| ID | Decisione | Applicato | Dettaglio |
+|---|---|---|---|
+| L-01 / S01 | Applicare | SÌ | `guide4Body` IT «Una carriera alla volta. Se chiudi la pagina, riprendi esattamente da dove eri.» / EN «One career at a time. Close the page and you pick up exactly where you left off.» (chrome, non salvato). ES non toccato. S01 chiuso. |
+| L-02 | Applicare | SÌ | EN difficoltà: esordio «Generous growth, rare injuries, more open playoffs. Made for learning the game.»; leggenda «Injuries pile up and the playoffs are a war. Only the special ones survive.» (`i18n.ts` + `narrative/en/difficulty.ts`). IT invariato. |
+| L-05 | Applicare | SÌ | EN «kilos» → «weight/weights», «degrees (of motion)» → «mobility / range of motion» in `summer.ts`, `story-feel.ts`, `story-late.ts`. Chiavi IT invariate. |
+| L-06 / S07 | Applicare | SÌ | «Chiedi i possessi della difesa» → EN «You ask for the defensive film» (fx defense+iq, sala video). |
+| L-07 | «Decidi tu» | **NO (IT invariato)** | La nota DPOY IT è scritta nel `seasonHistory` di ogni carriera, anche 2.12–2.18. Provata la modifica del generatore: rompe 5 test di parità byte-a-byte (`2.12–2.15 careers replay identical to main`, `2.14/2.13/2.12 byte-identical before awards v2`). Separarla per versione richiederebbe un gate nel motore, fuori perimetro. «Vittorie difensive» resta come resa IT delle defensive win shares; l'EN («defensive win shares») e `dpoyCap` sono corretti. Revertito. |
+| L-11 | Cambiare il testo | SÌ | `an6` «Chiudi tutto e dormi»: label invariata (salvata in `choiceLog`); detail IT «Recupero prima della luce.» → «Recupero, testa lucida e mano più ferma al tiro.» / EN «Recovery, a clear head and a steadier shooting hand.» (fx reali: form+0.6, iq+0.35, shooting+0.2, consistency+2 — invariati). Chiave vecchia mantenuta nel catalogo EN per eventi pendenti nei salvataggi (`storyOptionsPlain` salva `detail`). |
+| S03 | Risolto dal codice | SÌ (EN) | Scelta «Chiami casa» (morale+5, flavor «Lei non chiede i punti»): «la voce» = casa. EN «Home before the job, even at seven.» |
+| S04 | Risolto dal codice | SÌ (EN) | Titolo nel pool delle settimane tranquille (`feel.ts`): tregua dal lavoro. EN «A break from the grind». |
+| S05 | Risolto dal codice | SÌ (EN) | `{0}` = trofeo già vinto; il senso è «il passato non gioca per te». EN «…and {0} won't play the minutes for you.» Placeholder invariato. |
+| S06 | Risolto dal codice | SÌ (EN) | Offerte europee a fine carriera: «gli ultimi possessi» = ciò che resta della carriera. EN «it buys what you have left (cheaply)» ×4. «Gli ultimi possessi» in `engine.ts` (clutch, fine partita) resta letterale e corretto. |
+| ES | Resta spento | — | `DEMO_LANGS = ["it","en"]`; nessuna modifica allo spagnolo (test). |
+
+Testo IT narrativo salvato: nessuna chiave IT modificata tranne il `detail` di an6 (vecchia chiave conservata). Nessuna migrazione, nessun cambio a effetti, RNG, bilanciamento, serializzazione o versioni.
+
+Test (2026-10-14, dopo merge di main 21764f3): typecheck OK, lint OK, `pnpm test` 315/315, `test:stats` 12/12, fingerprint 400 carriere (seed 91000+13i) identico a main `3313f58d…`, e2e chromium `--workers=1` (a11y-i18n, narrative-lang, g6-onboarding, g5-smoke, demo) 17/17. Non eseguiti: WebKit/Firefox, dispositivi reali.

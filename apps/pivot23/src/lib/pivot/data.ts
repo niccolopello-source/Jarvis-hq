@@ -1343,7 +1343,7 @@ export const STORY_EVENTS: StoryEvent[] = [
     choices: [
       {
         label: "Chiudi tutto e dormi",
-        detail: "Recupero prima della luce.",
+        detail: "Recupero, testa lucida e mano più ferma al tiro.",
         fx: () => ({
           form: 0.6,
           attrs: { iq: 0.35, shooting: 0.2 },

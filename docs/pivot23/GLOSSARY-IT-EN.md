@@ -44,3 +44,13 @@ Complemento di [`COPY-STYLE-GUIDE.md`](./COPY-STYLE-GUIDE.md) e del registro [`C
 | Cancellazione | cancellare dal browser | delete from this browser | — | — | `nlConfirm` |
 | Hall of Fame | Hall of Fame, «nella Hall» | Hall of Fame, «In the Hall» | — | — | `hof*` |
 | Ritiro | ritiro, lasciare il parquet | retire, walk away | call it a career | «go down», «leave the court here» | `retire*` |
+
+### Aggiunte 2026-10-14
+| Ambito | IT preferito | EN preferito | Alternative accettate | Vietato / ambiguo | Contesto |
+|---|---|---|---|---|---|
+| Pesi / palestra | chili, pesi | weight, weights | pounds (lbs) | «kilos» in EN | narrativa estate |
+| Mobilità | gradi di movimento | mobility, range of motion | — | «degrees» da solo | estate |
+| Video | sala video, possessi della difesa | film, defensive film | clips | «defensive possessions» per il video | story-extra |
+| Fine carriera | gli ultimi possessi (metafora) | what you have left | — | «the last possessions» fuori dal contesto di partita | story-late |
+| Il mestiere (riposo) | la tregua del mestiere | a break from the grind | — | «the truce of the craft» | feel |
+| DPOY | vittorie difensive (nota salvata) | defensive win shares (DWS) | DWS | «defensive wins» | nota premio, dpoyCap |
