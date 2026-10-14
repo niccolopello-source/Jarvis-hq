@@ -321,3 +321,33 @@ test("the sound lasts exactly until the premiere ends and the home is final", as
   expect(Math.abs(soundEnd - 4800)).toBeLessThan(80);
   clean(errors, r);
 });
+
+test("a long task right before the gesture does not push the cues off the beat", async ({ page }) => {
+  // Regression for the parallel-load flake (92 vs 80 ms): the frame-frozen animation clock lagged
+  // behind a busy main thread. The live clock keeps the scheduled cues exact under load.
+  const errors = await setup(page);
+  await page.goto("/");
+  await waitElapsed(page, 850);
+  await page.evaluate(
+    () =>
+      new Promise<void>((done) =>
+        requestAnimationFrame(() =>
+          setTimeout(() => {
+            const t0 = performance.now();
+            while (performance.now() - t0 < 200) {
+              /* busy main thread, no frame in between */
+            }
+            (document.querySelector(".intro-hero .display-title") as HTMLElement).click();
+            done();
+          }, 0),
+        ),
+      ),
+  );
+  await page.waitForFunction(() => (window as unknown as { __audio: Rec }).__audio.starts.length > 0);
+  const r = await rec(page);
+  const times = cueTimes(r);
+  expect(times.length).toBeGreaterThan(0);
+  const beats = Object.values(CUES).slice(-times.length);
+  times.forEach((t, i) => expect(Math.abs(t - beats[i]!)).toBeLessThan(5));
+  clean(errors, r);
+});
