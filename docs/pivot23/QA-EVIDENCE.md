@@ -1,60 +1,45 @@
-# QA evidence
+# QA evidence — Bot C
 
-SHA under test: `ae9f1d0228cad53a2e9d0b2a5112d3d131055f98`
-Date: 2026-10-13, after 22:43 CEST.
-Machine: Linux sandbox, Node v22.23.3, Playwright Chromium headless.
-Not a phone. Not Safari. Not Firefox.
-
-Production identity at the start and end of this pass: etag `6eee7648efc9264ded0536fe9b1d7c39`, last-modified `Tue, 13 Oct 2026 20:18:15 GMT`. Boot assets `index-6wnsWQXd.js`, `narrative-CsQjyxez.js`, `react-vendor-CyDUuctK.js`, `rolldown-runtime-hePW80VL.js`, `index-PE9pBNvO.css`.
+SHA `21764f3c6de01c447191f98c3f45a211aad008fc`. Worktree `/workspace/botc`, box: 8 vCPU Intel Xeon, Linux, headless Chromium (Playwright 1.62), Node + pnpm 10.34.6. Shared box, other agents running: timings are lab numbers, not device numbers. Raw logs: `/workspace/reports/botc/`.
 
 ## Commands and results
 
-| Command | Where | Result |
-|---|---|---|
-| CI run [38454905618](https://github.com/niccolopello-source/Jarvis-hq/actions/runs/38454905618) | GitHub, this SHA | PASS. 306 unit, 0 fail. 125 e2e passed, 2 skipped (`e2e/perf-probe.spec.ts` without `PERF=1`). 12 stats, 0 fail |
-| `node --import=tsx scripts/season-timing.ts` | `apps/pivot23`, this SHA | PASS vs checklist (≤ 1.2 s). 937 seasons. Regular season ms p50 0.5 / p95 4.7 / max 19.4. Full step p50 1.7 / p95 12.3 / max 31.9 |
-| `node --import=tsx --test src/lib/pivot/save-recovery.test.ts` | this SHA | PASS 16/16. Includes SR-01, SR-02, SR-03 and quota. Storage is a fake `localStorage` |
-| `CI=true PERF=1 E2E_PREVIEW=1 E2E_PORT=4173 pnpm exec playwright test e2e/perf-probe.spec.ts` | local preview of this SHA, Chromium, 390×844, CPU ×4 | PASS 2/2 in 35.0 s. See numbers below |
-| `pnpm exec playwright test e2e/a11y-i18n.spec.ts e2e/save-recovery.spec.ts --config=/tmp/pw-a11y.config.ts` | baseURL production | PASS 6/6 in 34.8 s |
-| English career script `/tmp/en-career.mjs` | production, Chromium 390×844 | PASS. One run. Completed, 0 console errors |
-| `g5-smoke` on production | earlier this evening, 1 run, then `--repeat-each=2` | PASS 3/3. No flake in these three |
+| Command (in `apps/pivot23`) | Result |
+|---|---|
+| `pnpm install --frozen-lockfile` | OK |
+| `pnpm build` | OK; sha256 11/11 equal to production |
+| `pnpm test` | 308 pass, 0 fail |
+| `pnpm lint` | exit 0 |
+| `E2E_PREVIEW=1 E2E_PORT=4391 pnpm exec playwright test` ×3 | 125 pass, 2 skip (perf probes), 0 fail, each run (7.1 / 5.5 / 5.2 min) |
+| `PERF=1 E2E_PREVIEW=1 pnpm exec playwright test perf-probe` ×3 | 2/2 each run |
+| a11y spec copied with viewport 320×640, separate config, outside repo | 2/2 (IT, EN), 0 axe violations |
+| `node --import=tsx scripts/lab-runner.ts 200 23000` ×3 | 400 careers each, 8.9–12.1 s, 0 mismatches, 0 integrity failures |
+| CI run 38512203898 (push, 21764f3c6de01c447191f98c3f45a211aad008fc) | success, both jobs |
 
-## Perf probe (lab)
+`pnpm test:stats` and `typecheck` were not rerun separately by Bot C: `build` runs `tsc --noEmit`, and CI ran stats on this SHA.
 
-12 startups, CPU ×4, viewport 390×844, local preview:
+## Performance (4× CPU throttling via CDP, 390×844, preview build)
 
-| Metric | p50 | p75 | p95 |
-|---|---:|---:|---:|
-| Time until Inizia | 236 ms | 305 ms | 408 ms |
-| FCP | 84 ms | 100 ms | 128 ms |
-| DOMContentLoaded | 72 ms | 74 ms | 129 ms |
-| Tap Inizia → setup heading | 246 ms | 265 ms | 349 ms |
-| Longest long task | 0 ms | 59 ms | 136 ms |
+Startup probe, 12 cold loads per run, 3 runs:
 
-Profile wall clock, same throttle: Inizia tap 228 ms (one 81 ms long task); story choice 1691 ms (long tasks 95, 70, 59); next card 878 ms (no long task). The 1691 ms and 878 ms include waiting until the card text changes, so they include the product's hold. They are not the season-sim time. Season sim is the Node table above.
+| Metric | run 1 p50/p95 | run 2 | run 3 |
+|---|---|---|---|
+| ready (Inizia visible) | 150 / 206 ms | 155 / 273 | 153 / 240 |
+| FCP | 64 / 100 | 68 / 124 | 68 / 92 |
+| DCL | 51 / 78 | 53 / 88 | 54 / 72 |
+| tap Inizia → setup | 143 / 253 | 133 / 234 | 135 / 236 |
+| max long task | 0 / 116 | 0 / 110 | 0 / 101 |
 
-`jsTransfer` printed `1200`. That is `transferSize` on a warm preview cache. The boot payload from `pnpm run build` of this SHA is html 2.36 + css 14.23 + runtime 0.42 + react 68.25 + narrative 89.43 + index 96.44 = **271 kB gzip**. Checklist line is 350 kB.
+Profiled taps (single measurement per run): tap-inizia 238 / 184 / 233 ms; story choice 1573 / 1572 / 1539 ms (includes the designed hold before the next card); next card 828 / 827 / 811 ms. Node simulation: ~22–30 ms per full career under load. `jsTransfer: 1200` from the probe is a cached transferSize, not bundle size.
 
-## English career (production)
+## Saves and storage
 
-`html lang=en`. Draft, NCAA, gym. Double-click on the first choice added 0 log entries (the guard ate it; the loop then continued). Resume at 2 seasons stayed at 2, same name. Ending: Point guard, Italy, 2026–2042, age 21–36, 16 seasons, peak 68, no title. Card, on-screen report and archive all say that. Reopen after reload shows the same card. Console errors: none.
+Reused existing specs only (`save-safety`, `save-recovery`, `lifecycle-flush`, `init-failure`, `demo-readiness` "failed write"): damaged JSON kept, newer-version save not opened nor deleted, no-storage notice, full archive warning, quota error keeps previous save. All 3/3. A real full device disk was NOT RUN.
 
-## Axe and recovery (production)
+## Flakiness
 
-- `main screens pass axe in it`: pass, zero violations reported by the test.
-- `main screens pass axe in en`: pass.
-- reduced motion: 0 running animations longer than 50 ms.
-- CSP: `securitypolicyviolation` list empty on the retire save, three tabs, production headers. This run is the one that has a real CSP.
-- SR-02: a future save whose backup cannot be written stays byte-for-byte after starting another career and after reload. The new career stays in the tab.
-- SR-C7: a truncated archive stays untouched and the notice is still there after reload.
-
-A real device with a full disk was not used.
+0 intermittent failures in 3 full local runs (375 test executions). CI on #93 (run 38534610852) failed `demo-readiness.spec.ts:225 year sheet` twice (with retry) — that is on #93's branch, not on main; owned by Lucille.
 
 ## Limits
 
-- iPhone Safari, Android Chrome, desktop Safari: NOT RUN.
-- Firefox: NOT RUN.
-- Memory growth over a long session: NOT RUN.
-- Filling the real browser quota until the disk is full: NOT RUN. The quota tests throw `QuotaExceededError` from a stub or from `setItem`.
-- #93 and #94 are not in this build. The English career is the English that is already in production, not the copy branch.
-- Game rules, OVR, awards and save format were not modified.
+No physical device. No Safari/WebKit by Bot C (parallel task covers WebKit). Prod Playwright run of the parallel task (`/workspace/reports/jarvis-prod-e2e/run.log`, 538 pass, some fail) not yet analysed by its owner; see QA-07.
