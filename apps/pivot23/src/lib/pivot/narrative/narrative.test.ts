@@ -54,6 +54,24 @@ test("English entries only use placeholders that exist in their Italian key", ()
   assert.deepEqual(bad, []);
 });
 
+test("loc-followup 2026-10-13: every Italian slot reaches the English text (no silently dropped values)", () => {
+  // The rookie-contract line folds {3} ("anno"/"anni") into the English plural {2|year|years}: documented, allowed.
+  const ALLOWED = new Set(["{0} Sei la {1}ª scelta. Contratto: {2} {3} a {4} milioni."]);
+  const bad: string[] = [];
+  for (const [k, v] of Object.entries(NARRATIVE_EN)) {
+    if (ALLOWED.has(k)) continue;
+    const used = new Set([...v.matchAll(/\{([\w$]+)(?::ord)?(?:\|[^}]*)?\}/g)].map((m) => m[1]));
+    for (const m of k.matchAll(/\{([\w$]+)\}/g)) if (!used.has(m[1])) bad.push(`${k.slice(0, 60)} -/-> {${m[1]}}`);
+  }
+  assert.deepEqual(bad, []);
+});
+
+test("loc-followup 2026-10-13: English copy fixes outside PR #93 stay in place", () => {
+  assert.match(NARRATIVE_EN["Eliminati da {OPP}, {SCORE}. Si torna a casa con i possessi sbagliati in testa."]!, /replaying the bad possessions/);
+  assert.match(NARRATIVE_EN["{0} punti · PER {1} · il salto sull'anno prima"]!, /from last season/);
+  assert.doesNotMatch(Object.values(NARRATIVE_EN).join("\n"), /wrong possessions|the jump on last year/);
+});
+
 test("English entries carry no Italian prose", () => {
   const bad = Object.entries(NARRATIVE_EN)
     .filter(([k, v]) => k !== v && IT_PROSE.test(v.replace(/\{[^}]+\}/g, " ")))
