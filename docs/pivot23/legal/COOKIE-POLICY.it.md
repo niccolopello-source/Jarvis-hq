@@ -1,7 +1,7 @@
 > ⚠️ **BOZZA — NON PUBBLICARE.** Deve essere verificata da un legale prima della pubblicazione. Le voci **DA VERIFICARE** non sono confermate.
 
 # Cookie Policy — PIVOT 23 (www.pivot23.com)
-Ultimo aggiornamento: [DATA] · Titolare: [TITOLARE], [INDIRIZZO], [EMAIL CONTATTO]
+Ultimo aggiornamento: [DATA] · Titolare: Niccolò Pelizzon, Via della Cava 2, 31049 Valdobbiadene (TV), Italia, [EMAIL PRIVACY DEDICATA — DA CREARE]
 
 Riferimenti: art. 122 D.Lgs. 196/2003; Linee guida cookie e altri strumenti di tracciamento del Garante, 10/06/2021 (https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9677876); GDPR.
 
@@ -32,8 +32,8 @@ Solo su computer desktop, e solo se la pubblicità è attiva, il sito carica Goo
 ## 3. Le tue scelte
 - Banner al primo accesso (desktop): "Accetta", "Rifiuta" con pari evidenza, chiusura con X = rifiuto, "Gestisci opzioni" per scelte granulari. Lo scroll non vale come consenso. Nessun cookie wall: il gioco funziona anche se rifiuti.
 - Dopo un rifiuto il banner non viene riproposto per almeno 6 mesi, salvo cambi rilevanti.
-- Puoi cambiare idea in ogni momento con il link "Preferenze cookie" [POSIZIONE NEL SITO — DA DEFINIRE].
+- Puoi cambiare idea in ogni momento con il link "Preferenze cookie" presente in modo permanente nel footer/menu della home page; il banner di consenso compare alla prima visita e di nuovo dopo aggiornamenti sostanziali di questa informativa.
 - Puoi cancellare i dati dalle impostazioni del browser (questo cancella anche le carriere salvate).
 
 ## 4. Contatti
-[EMAIL CONTATTO]. Vedi anche l'Informativa privacy.
+[EMAIL PRIVACY DEDICATA — DA CREARE]. Vedi anche l'Informativa privacy.
