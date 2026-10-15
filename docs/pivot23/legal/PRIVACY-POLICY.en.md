@@ -4,7 +4,7 @@
 Last updated: [DATE]
 
 ## 1. Controller
-Niccolò Pelizzon — Via della Cava 2, 31049 Valdobbiadene (TV), Italy — Email: niccolo.pello@gmail.com. Data Protection Officer: [DPO, if appointed — DA VERIFICARE whether required].
+Niccolò Pelizzon — Via della Cava 2, 31049 Valdobbiadene (TV), Italy — Email: [DEDICATED PRIVACY EMAIL — TBD]. Data Protection Officer: [DPO, if appointed — DA VERIFICARE whether required].
 
 ## 2. In short
 - PIVOT 23 is played without an account or sign-up.
@@ -36,13 +36,13 @@ In Italy a person may consent to online services from age **14** (art. 2-quinqui
 ## 6. Retention
 - Browser data: until you delete it (clear site data or start a new career).
 - Consent: stored by the CMP; after a refusal the banner is not shown again for at least 6 months unless something material changes (Garante guidelines, 10 June 2021). Google cookie durations: see Cookie Policy — **DA VERIFICARE**.
-- Hosting logs: [DURATION] — **DA VERIFICARE**.
+- Hosting logs: Vercel retains runtime logs for 1 hour (Hobby plan), 1 day (Pro), 30 days (with Observability Plus) — **DA VERIFICARE** against the project's actual plan. <!-- Source: https://vercel.com/docs/observability/runtime-logs (Limits section), accessed 2026-10-15 -->
 
 ## 7. Recipients
 Hosting provider (Vercel Inc., [role: processor under art. 28 — DA VERIFICARE]); Google and the vendors listed in the CMP (desktop only, when ads are on).
 
 ## 8. Your rights
-Access, rectification, erasure, restriction, objection, portability (arts. 15–22 GDPR); withdraw consent anytime via the "Cookie preferences" link, without affecting prior lawfulness. Complaint to the Italian DPA (Garante, www.garanteprivacy.it) or your local authority. Contact: niccolo.pello@gmail.com. Game data lives only in your browser; the controller cannot access it and you can delete it in browser settings.
+Access, rectification, erasure, restriction, objection, portability (arts. 15–22 GDPR); withdraw consent anytime via the "Cookie preferences" link, without affecting prior lawfulness. Complaint to the Italian DPA (Garante, www.garanteprivacy.it) or your local authority. Contact: [DEDICATED PRIVACY EMAIL — TBD]. Game data lives only in your browser; the controller cannot access it and you can delete it in browser settings.
 
 ## 9. Changes
 Changes will be posted here with the update date.
