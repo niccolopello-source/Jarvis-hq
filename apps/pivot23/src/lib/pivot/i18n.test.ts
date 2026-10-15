@@ -97,3 +97,45 @@ test("league award notes read in English without touching Italian", async () => 
   assert.equal(awardNoteLabel("Da 8.1 a 15.0 punti", "en"), "From 8.1 to 15.0 points");
   assert.equal(awardNoteLabel("1.9 palle rubate · 2.4 stoppate · 4.1 vittorie difensive", "en"), "1.9 steals · 2.4 blocks · 4.1 defensive win shares");
 });
+
+/* Copy review IT/EN 2026-10-13 (docs/pivot23/COPY-REVIEW-IT-EN-2026-10-13.md). */
+test("copy review 2026-10-13: corrected chrome lines keep their verified meaning", () => {
+  assert.equal(t("resume", "it"), "Riprendi la carriera");
+  assert.equal(t("resume", "en"), "Resume career");
+  assert.equal(t("setupTitle", "en"), "Create your player");
+  // MVP: 65 games on awards v2 (AWARD_MIN_GAMES), 58 only on careers before 2.15.
+  assert.match(t("raceMvpCap", "it"), /65 partite \(58 /);
+  assert.match(t("raceMvpCap", "en"), /65 games \(58 /);
+  // DPOY: the metric is an estimate of defensive win shares (awards-helpers.ts nbaDpoyScore), not team wins.
+  for (const l of ["it", "en"] as const) {
+    assert.match(t("dpoyCap", l), /defensive win shares/);
+    assert.doesNotMatch(t("dpoyCap", l), /vittorie difensive|defensive wins\b/);
+  }
+  assert.match(t("raceNbaCap", "en"), /All-NBA First, Second and Third Team/);
+  assert.match(t("raceMipCap", "en"), /points per game/);
+  // Draft: 10 rounds, 3 cards dealt out of 4, one picked (PivotApp DraftView, data.ts + draft-character.ts).
+  assert.match(t("guide1Body", "it"), /dieci round/);
+  assert.match(t("guide1Body", "en"), /ten rounds, and in each one you pick one of the three cards/);
+});
+
+test("copy review 2026-10-13: English chrome avoids the known calques", () => {
+  const banned = [/\bcraft\b/i, /playoff doors/i, /Resume this life/, /defensive wins\b/, /roll of honour/i, /lift the ring/i, /\bthe year too many\b/, /\bsuffer it\b/];
+  const bad: string[] = [];
+  for (const k of msgKeys()) for (const re of banned) if (re.test(t(k, "en"))) bad.push(`${k}: ${t(k, "en")}`);
+  assert.deepEqual(bad, []);
+});
+
+test("copy review 2026-10-13: Italian and English chrome carry the same placeholders", () => {
+  const slots = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(",");
+  const bad = msgKeys().filter((k) => slots(t(k, "it")) !== slots(t(k, "en")));
+  assert.deepEqual(bad, []);
+});
+
+test("owner decisions 2026-10-14: guide4Body (L-01), difficulty EN (L-02), es off", () => {
+  assert.match(t("guide4Body", "it"), /riprendi esattamente da dove eri/);
+  assert.match(t("guide4Body", "en"), /pick up exactly where you left off/);
+  for (const l of ["it", "en"] as const) assert.doesNotMatch(t("guide4Body", l), /stessa carta|same card/);
+  assert.equal(difficultyFace("esordio", "en").desc, "Generous growth, rare injuries, more open playoffs. Made for learning the game.");
+  assert.equal(difficultyFace("leggenda", "en").desc, "Injuries pile up and the playoffs are a war. Only the special ones survive.");
+  assert.ok(!(DEMO_LANGS as readonly string[]).includes("es"));
+});

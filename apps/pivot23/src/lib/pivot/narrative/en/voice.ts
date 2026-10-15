@@ -6,5 +6,5 @@ export const EN_VOICE: Readonly<Record<string, string>> = {
   "l'allenatore": "the coach",
   "il rivale": "the rival",
   "il palazzetto di {0}": "the {0} arena",
-  "Il mestiere resta.": "The craft remains."
+  "Il mestiere resta.": "The work remains."
 };

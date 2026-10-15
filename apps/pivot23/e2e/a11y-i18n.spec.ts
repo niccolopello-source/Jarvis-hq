@@ -19,7 +19,7 @@ test.beforeAll(() => {
 
 const TEXT = {
   it: { start: "Inizia", setup: "Chi sei sul parquet", retire: "L'ultimo inverno", retireNow: "Chiudi ora", archive: "Archivio", tabs: ["Storia", "Anno", "Lega", "Vita"], how: "Come si gioca", name: "Nome", draft: "Gioca il Draft" },
-  en: { start: "Start", setup: "Who you are on the floor", retire: "The last winter", retireNow: "Retire now", archive: "Archive", tabs: ["Story", "Year", "League", "Life"], how: "How to play", name: "Name", draft: "Enter the Draft" },
+  en: { start: "Start", setup: "Create your player", retire: "The last winter", retireNow: "Retire now", archive: "Archive", tabs: ["Story", "Year", "League", "Life"], how: "How to play", name: "Name", draft: "Enter the Draft" },
 } as const;
 
 async function axe(page: Page, label: string) {

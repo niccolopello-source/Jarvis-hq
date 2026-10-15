@@ -10,7 +10,7 @@ export const EN_TEAMS: Readonly<Record<string, string>> = {
   "Brooklyn": "Brooklyn",
   "Ricostruzione nera. Minuti per chi vuole un ruolo, non un anello.": "A hard rebuild. Minutes for anyone who wants a role, not a ring.",
   "Toronto": "Toronto",
-  "Identità difensiva, classifica a metà. Un posto dove imparare il mestiere.": "A defensive identity, mid-table standing. A place to learn the craft.",
+  "Identità difensiva, classifica a metà. Un posto dove imparare il mestiere.": "A defensive identity, middle of the standings. A place to learn the trade.",
   "Cleveland": "Cleveland",
   "Central": "Central",
   "L'Est passa da qui: ritmo, difesa, ambizione da testata.": "The East runs through here: pace, defense, headline ambitions.",
