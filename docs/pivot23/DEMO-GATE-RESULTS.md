@@ -4,6 +4,8 @@ SHA: `21764f3c6de01c447191f98c3f45a211aad008fc` (main, merge #94). Engine `2.19.
 Production www.pivot23.com: `index.html` and all 10 JS/CSS assets in `dist/assets` match a local `pnpm build` of this SHA (sha256, 11/11, 2026-10-14 ~08:35 UTC). Etag `3bfc95753562f867d4abd27d7787d80e`, last-modified 08:11:23 GMT. Vercel API not used (403).
 Replaces the `ae9f1d0` version of this file.
 
+**Update 2026-10-15 (Grok Bot):** candidate is now `e7cc321` (main, prod verified 18/18 assets sha256). G12 resolved: #92/#95 merged. See `monetization/FREEZE-DEMO-REPORT-2026-10-15.md`.
+
 **Recommendation: CONDITIONALLY READY.** Not READY: G7 (physical devices) is BLOCKED, G12 is open until #92/#95 land.
 
 | Gate | Status | Evidence on this SHA | Blocker / closure | Owner |
@@ -15,6 +17,7 @@ Replaces the `ae9f1d0` version of this file.
 | G5 Persistence | PASS (simulated) | `save-safety`, `save-recovery`, `lifecycle-flush`, `init-failure` e2e 3/3; unit 308/308 | real full disk NOT RUN | Bot C |
 | G6 Sim/UI coherence | PASS (lab) | `career-card`, `archive-integrity`, `career-coherence` tests green | none | Bot C |
 | G7 Mobile physical | BLOCKED | no iPhone/Android available to agents. Earlier "funziona" was on older builds | Pello runs the checklist in `QA-EXECUTION-PLAN.md` on this SHA | Pello |
+| G7 addendum 2026-10-15 | NOT VERIFIED (declared) | On 2026-10-14 Pello stated in chat that the game works on iPhone, Mac and Android. No device models, OS/browser versions, build SHA or checklist steps were recorded, and the statement predates the current candidate `e7cc321`. Recorded exactly as declared by Pello; not converted to PASS. | Pello reruns the `QA-EXECUTION-PLAN.md` checklist on `e7cc321` and notes model/OS/browser | Pello |
 | G8 A11y + locale | PASS (Chromium) | axe WCAG 2.1 A/AA IT+EN, 0 violations at 390×844 (suite, 3/3) and 320×640 (extra run). Reduced motion pass | prod-run axe EN failure in parallel task is INCONCLUSIVE (QA-07) | Bot C / Bot B for copy |
 | G9 Performance | PASS vs written thresholds | see QA-EVIDENCE: tap→setup p50 133–143 ms; max long task p95 101–116 ms; story choice 1.54–1.57 s incl. designed hold | lab, not a phone | Bot C |
 | G10 Production safety | PASS (scope checked) | CSP e2e in suite 3/3; same-origin assets; byte match | none | Bot C |
