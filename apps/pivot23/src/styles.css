@@ -1,5 +1,7 @@
 
 @import "tailwindcss";
+/* Ads code ships its own CSS (src/ads/ads.css) only with the flag ON; keep it out of the utility scan. */
+@source not "./ads";
 @import "./styles/deluxe.css";
 
 @theme {

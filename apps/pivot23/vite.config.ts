@@ -2,7 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 
 /** Same security headers as production (vercel.json), so `vite preview` and the e2e run catch CSP breaks. */
 function productionHeaders(): Record<string, string> {
@@ -13,12 +13,23 @@ function productionHeaders(): Record<string, string> {
   return Object.fromEntries((global?.headers ?? []).map((h) => [h.key, h.value]));
 }
 
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  // Ads are OFF unless VITE_ADS_ENABLED=true at build time (see src/ads/config.ts).
+  const env = { ...loadEnv(mode, process.cwd(), "VITE_"), ...process.env };
+  return {
+  define: {
+    __PIVOT_ADS_ENABLED__: JSON.stringify(env.VITE_ADS_ENABLED === "true"),
+    __PIVOT_ADSENSE_CLIENT__: JSON.stringify(env.VITE_ADSENSE_CLIENT ?? ""),
+  },
   plugins: [react(), tailwindcss()],
   resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
+    alias: [
+      // Flag OFF: "@/ads" resolves to a placeholder-only stub, so the ads code is not even emitted.
+      ...(env.VITE_ADS_ENABLED === "true"
+        ? []
+        : [{ find: /^@\/ads$/, replacement: fileURLToPath(new URL("./src/ads/off.tsx", import.meta.url)) }]),
+      { find: "@", replacement: fileURLToPath(new URL("./src", import.meta.url)) },
+    ],
   },
   server: {
     host: "0.0.0.0",
@@ -52,4 +63,5 @@ export default defineConfig({
       },
     },
   },
+};
 });
