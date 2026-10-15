@@ -4,7 +4,7 @@
 Last updated: [DATE]
 
 ## 1. Controller
-[TITOLARE] — [INDIRIZZO] — Email: [EMAIL CONTATTO]. Data Protection Officer: [DPO, if appointed — DA VERIFICARE whether required].
+Niccolò Pelizzon — Via della Cava 2, 31049 Valdobbiadene (TV), Italy — Email: niccolo.pello@gmail.com. Data Protection Officer: [DPO, if appointed — DA VERIFICARE whether required].
 
 ## 2. In short
 - PIVOT 23 is played without an account or sign-up.
@@ -42,7 +42,7 @@ In Italy a person may consent to online services from age **14** (art. 2-quinqui
 Hosting provider (Vercel Inc., [role: processor under art. 28 — DA VERIFICARE]); Google and the vendors listed in the CMP (desktop only, when ads are on).
 
 ## 8. Your rights
-Access, rectification, erasure, restriction, objection, portability (arts. 15–22 GDPR); withdraw consent anytime via the "Cookie preferences" link, without affecting prior lawfulness. Complaint to the Italian DPA (Garante, www.garanteprivacy.it) or your local authority. Contact: [EMAIL CONTATTO]. Game data lives only in your browser; the controller cannot access it and you can delete it in browser settings.
+Access, rectification, erasure, restriction, objection, portability (arts. 15–22 GDPR); withdraw consent anytime via the "Cookie preferences" link, without affecting prior lawfulness. Complaint to the Italian DPA (Garante, www.garanteprivacy.it) or your local authority. Contact: niccolo.pello@gmail.com. Game data lives only in your browser; the controller cannot access it and you can delete it in browser settings.
 
 ## 9. Changes
 Changes will be posted here with the update date.

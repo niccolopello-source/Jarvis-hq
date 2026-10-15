@@ -4,7 +4,7 @@
 Ultimo aggiornamento: [DATA]
 
 ## 1. Titolare del trattamento
-[TITOLARE] — [INDIRIZZO] — Email: [EMAIL CONTATTO]. Responsabile della protezione dei dati (RPD/DPO): [DPO, se nominato — DA VERIFICARE se obbligatorio].
+Niccolò Pelizzon — Via della Cava 2, 31049 Valdobbiadene (TV), Italia — Email: niccolo.pello@gmail.com. Responsabile della protezione dei dati (RPD/DPO): [DPO, se nominato — DA VERIFICARE se obbligatorio].
 
 ## 2. In breve
 - PIVOT 23 si gioca senza account e senza registrazione.
@@ -42,7 +42,7 @@ Il gioco può interessare minori. In Italia il consenso al trattamento nei servi
 Fornitore di hosting (Vercel Inc., [ruolo: responsabile ex art. 28 — DA VERIFICARE]); Google e i fornitori elencati nella CMP (solo desktop, con pubblicità attiva).
 
 ## 8. I tuoi diritti
-Accesso, rettifica, cancellazione, limitazione, opposizione, portabilità (artt. 15–22 GDPR), revoca del consenso in ogni momento tramite il link "Preferenze cookie" nel sito, senza pregiudicare la liceità precedente. Reclamo al Garante per la protezione dei dati personali (www.garanteprivacy.it). Contatto: [EMAIL CONTATTO]. Nota: i dati di gioco sono solo nel tuo browser e il titolare non può accedervi; puoi cancellarli tu dalle impostazioni del browser.
+Accesso, rettifica, cancellazione, limitazione, opposizione, portabilità (artt. 15–22 GDPR), revoca del consenso in ogni momento tramite il link "Preferenze cookie" nel sito, senza pregiudicare la liceità precedente. Reclamo al Garante per la protezione dei dati personali (www.garanteprivacy.it). Contatto: niccolo.pello@gmail.com. Nota: i dati di gioco sono solo nel tuo browser e il titolare non può accedervi; puoi cancellarli tu dalle impostazioni del browser.
 
 ## 9. Modifiche
 Pubblicheremo qui ogni modifica, con la data di aggiornamento.

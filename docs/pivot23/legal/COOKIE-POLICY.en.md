@@ -1,7 +1,7 @@
 > ⚠️ **DRAFT — DO NOT PUBLISH.** Must be reviewed by a lawyer before publishing. Items marked **DA VERIFICARE** (to be verified) are unconfirmed.
 
 # Cookie Policy — PIVOT 23 (www.pivot23.com)
-Last updated: [DATE] · Controller: [TITOLARE], [INDIRIZZO], [EMAIL CONTATTO]
+Last updated: [DATE] · Controller: Niccolò Pelizzon, Via della Cava 2, 31049 Valdobbiadene (TV), Italy, niccolo.pello@gmail.com
 
 References: art. 122 Italian Privacy Code; Italian DPA (Garante) guidelines on cookies and other tracking tools, 10 June 2021 (https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9677876); GDPR.
 
@@ -36,4 +36,4 @@ Only on desktop, and only when ads are on, the site loads Google AdSense / H5 Ga
 - Clearing site data in your browser also deletes saved careers.
 
 ## 4. Contact
-[EMAIL CONTATTO]. See also the Privacy Policy.
+niccolo.pello@gmail.com. See also the Privacy Policy.
