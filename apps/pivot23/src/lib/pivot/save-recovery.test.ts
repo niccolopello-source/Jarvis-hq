@@ -347,3 +347,32 @@ test("SR-C12 eight careers, one damaged: the seven others survive load, a new wr
   const kept = (JSON.parse(backup.raws.at(-1)!) as { name: string }[]).find((x) => x.name === "Multi 3");
   assert.ok(kept, "the damaged entry is still recoverable from the raw copy");
 }));
+
+/* DEF-01 legacy ---------------- story pick applied but card still pending (pre-#89 builds) ---------------- */
+function storyPending(title: string) {
+  return { kind: "story", title, subtitle: "sub", options: [{ label: "Uso aggressivo", detail: "" }, { label: "Calma", detail: "" }] } as never;
+}
+test("DEF-01 legacy: a save with the pick already in choiceLog and the same card pending reopens past the card", run((st) => {
+  const p = midCareer(7200);
+  p.choiceLog.push({ season: p.season, title: "Rookie of the Year", pick: "Uso aggressivo" });
+  const raw = JSON.stringify(buildLiveSave(p, storyPending("Rookie of the Year"), [], "career", "log", 3));
+  st.l.setItem(SAVE_KEY, raw);
+  const live = loadLive();
+  assert.ok(live);
+  assert.equal(lastLoadReport().state, "ok");
+  assert.equal(live!.pending, null, "the already-applied card is not offered again");
+  assert.equal(live!.player.choiceLog.length, p.choiceLog.length, "choice logged once");
+  assert.deepEqual(live!.player.attrs, p.attrs, "effects untouched");
+  assert.equal(live!.player.rngState, p.rngState);
+  assert.equal(st.l.getItem(SAVE_KEY), raw, "opening does not rewrite it");
+}));
+test("DEF-01 legacy: a pending card not yet chosen (other title, other season or unknown pick) stays pending", run((st) => {
+  const cases: [string, number, string][] = [["Altro", 0, "Uso aggressivo"], ["Rookie of the Year", -1, "Uso aggressivo"], ["Rookie of the Year", 0, "Nessuna"]];
+  for (const [title, dSeason, pick] of cases) {
+    const p = midCareer(7300);
+    p.choiceLog.push({ season: p.season + dSeason, title, pick });
+    st.l.setItem(SAVE_KEY, JSON.stringify(buildLiveSave(p, storyPending("Rookie of the Year"), [], "career", "log", 3)));
+    const live = loadLive();
+    assert.equal((live!.pending as { kind?: string } | null)?.kind, "story", `${title}/${dSeason}/${pick}`);
+  }
+}));
