@@ -15,7 +15,7 @@ Sequenza main del 2026-10-15 (merged_by `niccolopello-source`; Pello ha conferma
 | Locale, build flag ON con ID segnaposto, host ads bloccati | e7cc321 | `VITE_ADS_ENABLED=true VITE_ADSENSE_CLIENT=ca-pub-0000000000000000 E2E_PREVIEW=1 E2E_PORT=8312 pnpm exec playwright test e2e/ads-desktop.spec.ts --workers=1` | **PASS** 5/5 (phone, tablet 1366, iPad-as-Mac: 0 richieste ads; desktop: solo CMP prima del consenso). Build locale, cancellata dopo il test; nulla in Vercel |
 | CI GitHub | 4f5d6ac (#96) | run 38709439148 / 38709433685 | **PASS** |
 | CI GitHub | 9dfe365 (main dopo #97) | run 38710513296 | **PASS** |
-| CI GitHub | e7cc321 (main) | run 38710846106 | in corso al momento della verifica (09:2x UTC) → vedi PR |
+| CI GitHub | e7cc321 (main) | run 38710846106 | **PASS** (completed 2026-10-15T09:27:42Z, conclusion success) |
 | Produzione www.pivot23.com | e7cc321 | sha256 di ogni file di `dist/` (esclusi .map) vs build locale | **PASS** 18/18 identici; pivot23.vercel.app index identico. (Solo integrità/provenienza tecnica, non autenticità) |
 | Produzione, annunci | e7cc321 | grep bundle `googlesyndication|adsbygoogle|doubleclick|fundingchoices|ca-pub-|adBreak` | **PASS** 0 occorrenze; nessun chunk `loader`/`AdRail` |
 | Produzione, rete (Playwright) | e7cc321 | Chromium desktop 1440, Pixel 7, tablet 1366 touch; WebKit iPhone 13, desktop 1440 | **PASS** unico host `www.pivot23.com`, 0 richieste ads, unico script `index-dAeexC5A.js` |
@@ -36,7 +36,10 @@ DEF-01 (decisione applicata una volta dopo reload): e2e `g1-story-reload` PASS s
 - G7 dispositivi reali: solo dichiarazione di Pello (NOT VERIFIED).
 - P3 WebKit: il grafico non si ricarica con "Riprova" dopo errore chunk; ricaricare la pagina risolve (da report prod-e2e precedente).
 - Percorso errore quota su Safari: NOT VERIFIED.
-- CI di main e7cc321: in corso al momento del rapporto.
+- CI di main e7cc321: **PASS** (run 38710846106, success 09:27:42Z). Condizione (1) del freeze chiusa.
 
 ## Decisione proposta
-**CONDITIONALLY READY.** Proposta di freeze su `e7cc321` il 17/10 quando: (1) CI main e7cc321 verde; (2) Pello ripete la checklist `QA-EXECUTION-PLAN.md` su e7cc321 annotando modello/OS/browser. Niente altro in main fino al 18/10 salvo fix bloccanti approvati.
+**CONDITIONALLY READY.** Condizione (1) chiusa: CI main `e7cc321` verde. Proposta di freeze su `e7cc321` il 17/10 quando Pello ripete la checklist `QA-EXECUTION-PLAN.md` su e7cc321 annotando modello/OS/browser. Niente altro in main fino al 18/10 salvo fix bloccanti approvati.
+
+## Riesame produzione 2026-10-15 ~11:28 UTC
+Ri-verifica live su www.pivot23.com (SHA produzione `e7cc321`): CSP `script-src 'self'`; bundle `index-dAeexC5A.js` senza stringhe ads; route `/privacy`, `/cookie`, `/privacy-policy`, `/cookie-policy` = 404; nessun PR aperto su main.
