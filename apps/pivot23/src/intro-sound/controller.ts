@@ -127,6 +127,13 @@ function unlock(): boolean {
 }
 
 function elapsedMs(): number {
+  // Live premiere clock. `currentTime` is frozen at the last rendered frame, so on a busy main
+  // thread it lags by a whole long frame (80-90 ms seen in parallel e2e) and the cues land late.
+  // `startTime` shares performance.now()'s origin (document timeline), so this stays exact.
+  const start = anim?.startTime;
+  if (typeof start === "number" && Number.isFinite(start) && anim?.playState === "running") {
+    return (performance.now() - start) * (anim.playbackRate || 1);
+  }
   const t = anim?.currentTime;
   if (typeof t === "number" && Number.isFinite(t)) return t;
   return performance.now() - anchor;

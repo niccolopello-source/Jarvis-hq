@@ -2193,16 +2193,14 @@ img.court-mark-photo {
     align-items: flex-end;
     justify-content: center;
     padding: 24px 16px 28px;
-    color: color-mix(in oklab, var(--color-muted) 70%, transparent);
+    /* WCAG AA: full muted ink (light 4.8:1 on bg, dark 6:1); no extra alpha */
+    color: var(--color-muted);
     font-size: 10px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     border-inline: 1px solid color-mix(in oklab, var(--color-line) 80%, transparent);
     pointer-events: none;
     user-select: none;
-  }
-  .ad-rail span {
-    opacity: 0.7;
   }
   .ad-foot {
     display: grid;
