@@ -168,7 +168,7 @@ export const EN_WORLD: Readonly<Record<string, string>> = {
   "{OLD} cede il passo. A {TEAM} arriva la nuova generazione.": "{OLD} steps aside. {TEAM} welcomes the new generation.",
   "{OLD} esce. {TEAM} punta su un nome nuovo dal draft.": "{OLD} leaves. {TEAM} bets on a new name from the draft.",
   "Cambio di faccia a {TEAM}: {OLD} fa spazio.": "A new face in {TEAM}: {OLD} makes room.",
-  "A {CITY} il draft spinge verso la crescita. {STAR} è il volto, si gioca a {SYS}.": "In {CITY}, the draft pushes toward development. {STAR} is the face, the style is {SYS}.",
+  "A {CITY} il draft spinge verso la crescita. {STAR} è il volto, si gioca a {SYS}.": "In {CITY}, the draft pushes toward development. {STAR} is the face of the {SYS} era.",
   "{CITY} gira pagina dopo il draft: da {OLD} a {SYS}, con {STAR} in vetrina.": "{CITY} turns the page after the draft: from {OLD} to {SYS}, with {STAR} in the shop window.",
   "Nuovo volto, nuovo copione: {CITY} chiama {STAR} e punta su {SYS}.": "New face, new script: {CITY} calls on {STAR} and bets on {SYS}.",
   "Classe {Q} al draft: {WHO}.": "{Q} draft class: {WHO}.",
