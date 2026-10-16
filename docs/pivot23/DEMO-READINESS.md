@@ -152,3 +152,6 @@ Stato: **CONDITIONALLY READY** per demo tecnica. Dettaglio, criteri, owner: `IND
 | Mobile emulato 320–1440 + landscape | PASS | readiness viewport in prod | — |
 | Dispositivi fisici | BLOCKED (agenti) | solo riferito da Pello, build precedente | Pello |
 | Ritiri 2.19 (29–32 anni) | FAIL vs 300–340‰ | 184‰ (IC 161–209) vs 323‰ su 2.18, 1000 carriere stessi seed | Lucille/Pello |
+
+### Aggiornamento dispositivi — 15 ott 2026
+| iPhone / Mac / Android | ACCETTATO da Pello | «Dispositivi accettati: iPhone, Mac, Android». Modelli, OS, browser, SHA: non comunicati. Dettagli in `DEVICE-MANUAL-QA.md` |
