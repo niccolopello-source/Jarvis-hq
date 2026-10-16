@@ -170,6 +170,12 @@ export function sayOr(
   return filled || fallback.trim() || "Il mestiere resta.";
 }
 
+/** Test-only observer for `$VAR` tokens fillVars could not resolve. Never changes the output. */
+let fillVarsMissSink: ((token: string, line: string) => void) | null = null;
+export function onFillVarsMiss(fn: ((token: string, line: string) => void) | null): void {
+  fillVarsMissSink = fn;
+}
+
 export function fillVars(line: string, vars: Record<string, string>): string {
   let out = line;
   for (const [k, v] of Object.entries(vars)) {
@@ -177,6 +183,7 @@ export function fillVars(line: string, vars: Record<string, string>): string {
     if (val === "undefined" || val === "null") continue;
     out = out.replaceAll(`$${k}`, val);
   }
+  if (fillVarsMissSink) for (const m of out.matchAll(/\$[A-Z][A-Z0-9_]*/g)) fillVarsMissSink(m[0], line);
   out = out.replace(/\$[A-Z][A-Z0-9_]*/g, "");
   out = out.replace(/ {2,}/g, " ").replace(/ +([.,;:!?])/g, "$1").trim();
   out = out.replace(/(^|[.!?]\s+)([a-zàèéìòù])/g, (_m, a, c) => a + c.toUpperCase());
