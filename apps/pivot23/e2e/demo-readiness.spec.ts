@@ -272,8 +272,9 @@ test("a failed write shows the warning and a reload keeps the previous save", as
     const fail = () => {
       throw new DOMException("quota", "QuotaExceededError");
     };
-    localStorage.setItem = fail;
-    sessionStorage.setItem = fail;
+    // WebKit stores `localStorage.setItem = fn` as a storage item instead of overriding the
+    // method, so the fault was never injected there. Patch the prototype: same fault, every engine.
+    Storage.prototype.setItem = fail;
   });
   await page.getByRole("button", { name: "Gioca a 36 anni" }).click();
   await expect(page.getByRole("alert")).toContainText("non viene cancellato", { timeout: 5_000 });

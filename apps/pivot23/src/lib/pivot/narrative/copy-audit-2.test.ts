@@ -37,7 +37,8 @@ test("narrative catalog: no empty English entry and no English slot that the Ita
 
 test("every $VAR written in the sources is a variable some caller fills (fillVars would drop it silently)", () => {
   const files = readdirSync(lib).filter((f) => f.endsWith(".ts") && !f.includes(".test.") && !f.includes(".stats."));
-  const src = files.map((f) => readFileSync(join(lib, f), "utf8")).join("\n");
+  // Block comments are documentation (e.g. voice.ts mentions `$VAR` generically), not text fillVars sees.
+  const src = files.map((f) => readFileSync(join(lib, f), "utf8").replace(/\/\*[\s\S]*?\*\//g, "")).join("\n");
   const used = new Set([...src.matchAll(/(?<![\w$])\$([A-Z][A-Z0-9_]*)\b/g)].map((m) => m[1]!));
   const filled = new Set([...src.matchAll(/\b([A-Z][A-Z0-9_]*)\s*:/g)].map((m) => m[1]!));
   assert.ok(used.size > 20, `only ${used.size} $VARs found`);
