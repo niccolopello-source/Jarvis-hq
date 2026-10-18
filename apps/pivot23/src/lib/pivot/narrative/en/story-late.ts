@@ -245,7 +245,8 @@ export const EN_STORY_LATE: Readonly<Record<string, string>> = {
   "L'eliminazione che non si è sciolta": "The elimination that never faded",
   "L'anno scorso: {0}. La ferita è chiusa. Il ricordo no.": "Last year: {0}. The wound has healed. The memory hasn't.",
   "Un'eliminazione resta nelle mani. Ogni palleggio di ottobre ne porta un pezzo.": "An elimination stays in your hands. Every dribble in October carries a piece of it.",
-  "Fuori {0}. Ottobre lo sa, anche se tu fai finta di no.": "Out {0}. October knows it, even if you pretend it doesn't.",
+  // Copy audit 2026-10-16: the slot already starts with "Elim." ("Fuori Elim. Primo turno 2-4"), so English drops its own "Out". The Italian slip needs a golden update (listed, not applied).
+  "Fuori {0}. Ottobre lo sa, anche se tu fai finta di no.": "{0}. October knows it, even if you pretend it doesn't.",
   "La primavera che non è bastata. {0}. Il maggio resta nelle mani.": "The spring that wasn't enough. {0}. May stays in your hands.",
   "Si torna a casa a maggio. L'estate inizia troppo presto, e lo sai.": "You go home in May. The summer starts too early, and you know it.",
   "Una porta chiusa, ancora aperta in testa. {0}. Ottobre la rilegge.": "A closed door, still open in your head. {0}. October reads it again.",

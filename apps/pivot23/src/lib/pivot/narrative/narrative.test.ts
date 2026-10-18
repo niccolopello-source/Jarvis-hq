@@ -45,6 +45,12 @@ test("every narrative string in the sources has an English entry (static coverag
   assert.deepEqual(missing.map(([k, at]) => `${at} ${k.slice(0, 90)}`), []);
 });
 
+test("demo hardening 2026-10-16: DOM selectors (closest/querySelector/matches) are not catalog prose", () => {
+  const found = extractFile(join(comp, "SwipePager.tsx")).map((f) => f.key);
+  assert.ok(!found.some((k) => k.includes("[role='button']")), found.join(" | "));
+  assert.ok(!Object.keys(NARRATIVE_EN).some((k) => /^button, a, input/.test(k)));
+});
+
 test("English entries only use placeholders that exist in their Italian key", () => {
   const bad: string[] = [];
   for (const [k, v] of Object.entries(NARRATIVE_EN)) {

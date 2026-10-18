@@ -139,3 +139,9 @@ test("owner decisions 2026-10-14: guide4Body (L-01), difficulty EN (L-02), es of
   assert.equal(difficultyFace("leggenda", "en").desc, "Injuries pile up and the playoffs are a war. Only the special ones survive.");
   assert.ok(!(DEMO_LANGS as readonly string[]).includes("es"));
 });
+
+test("demo hardening 2026-10-16: ES raceNbaCap matches IT/EN (three All-NBA tiers, no 'escalones')", () => {
+  const es = t("raceNbaCap", "es" as never);
+  assert.doesNotMatch(es, /escalones/);
+  assert.match(es, /tres niveles: primer, segundo y tercer quinteto All-NBA/);
+});

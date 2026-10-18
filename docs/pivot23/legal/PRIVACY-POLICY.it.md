@@ -9,7 +9,7 @@ Ultimo aggiornamento: [DATA]
 ## 2. In breve
 - PIVOT 23 si gioca senza account e senza registrazione.
 - Le tue carriere e preferenze sono salvate **solo nel tuo browser** (localStorage/sessionStorage). Non le riceviamo e non le inviamo a terzi.
-- Non usiamo strumenti di analisi (analytics).
+- Contiamo le visite in forma **anonima e senza cookie** con Vercel Web Analytics (solo pagine viste, aggregate). Nessun profilo, nessun identificatore salvato sul tuo dispositivo, nessun dato di gioco inviato.
 - **Su computer desktop** il sito può mostrare pubblicità di Google (AdSense e H5 Games Ads), **solo non personalizzata**, previa scelta nel banner di consenso.
 - **Su smartphone e tablet** non carichiamo pubblicità né tracker di terze parti.
 
@@ -18,6 +18,7 @@ Ultimo aggiornamento: [DATA]
 |---|---|---|---|
 | Salvataggi, archivio carriere, preferenze (lingua, suono, tema carta, suggerimenti) | Solo nel tuo browser | Far funzionare il gioco su tua richiesta | Art. 122 Codice privacy (strumenti strettamente necessari); il titolare non riceve questi dati |
 | Dati tecnici di connessione (indirizzo IP, user agent, orario) trattati dal fornitore di hosting | Server del fornitore (Vercel Inc.) | Erogare il sito, sicurezza | Legittimo interesse (art. 6.1.f GDPR) — **DA VERIFICARE**: log e tempi di conservazione di Vercel |
+| Pagine viste anonime e aggregate (URL della pagina, referrer, paese, tipo di dispositivo/browser/sistema operativo); nessun cookie, nessun identificatore persistente: secondo Vercel le visite sono distinte con un hash della richiesta che si azzera ogni giorno | Vercel Inc. (Vercel Web Analytics), stesso dominio del sito (`/_vercel/insights`) | Statistiche aggregate di utilizzo del sito | Legittimo interesse (art. 6.1.f GDPR); nessuna memorizzazione/accesso sul dispositivo, quindi non serve consenso ex art. 122 — **DA VERIFICARE** con il legale e sulla documentazione Vercel (https://vercel.com/docs/analytics/privacy-policy) |
 | Identificatori pubblicitari, cookie, IP, dati del dispositivo, segnale di consenso TCF (solo desktop, solo con pubblicità attiva) | Google e partner certificati | Mostrare annunci non personalizzati, limitare la frequenza, misurare in forma aggregata, prevenire frodi | Consenso (art. 122 Codice privacy, art. 6.1.a GDPR) per la memorizzazione/accesso sul dispositivo; per alcune finalità Google indica il legittimo interesse nel TCF — **DA VERIFICARE** con il legale |
 
 Non trattiamo dati di categorie particolari. Non effettuiamo profilazione né decisioni automatizzate.
@@ -39,7 +40,7 @@ Il gioco può interessare minori. In Italia il consenso al trattamento nei servi
 - Log hosting: [DURATA] — **DA VERIFICARE**.
 
 ## 7. Destinatari
-Fornitore di hosting (Vercel Inc., [ruolo: responsabile ex art. 28 — DA VERIFICARE]); Google e i fornitori elencati nella CMP (solo desktop, con pubblicità attiva).
+Fornitore di hosting e di Web Analytics (Vercel Inc., [ruolo: responsabile ex art. 28 — DA VERIFICARE]); Google e i fornitori elencati nella CMP (solo desktop, con pubblicità attiva).
 
 ## 8. I tuoi diritti
 Accesso, rettifica, cancellazione, limitazione, opposizione, portabilità (artt. 15–22 GDPR), revoca del consenso in ogni momento tramite il link "Preferenze cookie" nel sito, senza pregiudicare la liceità precedente. Reclamo al Garante per la protezione dei dati personali (www.garanteprivacy.it). Contatto: [EMAIL CONTATTO]. Nota: i dati di gioco sono solo nel tuo browser e il titolare non può accedervi; puoi cancellarli tu dalle impostazioni del browser.

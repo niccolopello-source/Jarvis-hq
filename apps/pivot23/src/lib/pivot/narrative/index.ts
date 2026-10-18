@@ -46,6 +46,24 @@ function itCatalog(): Catalog {
   return toIt;
 }
 
+/**
+ * Italian display fixes for lines the engine still stores in their old wording. The stored text
+ * stays byte-identical (saves, English catalog keys and golden hashes depend on it); only what an
+ * Italian reader sees is corrected. Move the fix into the engine with a version gate (2.20).
+ */
+const IT_DISPLAY_FIXES: ReadonlyArray<readonly [RegExp, string]> = [
+  // engine.ts nationStory: "Dai una mano a la tua Nazionale / a la Nazionale Italiana"
+  [/\bDai una mano a la (tua Nazionale|Nazionale Italiana)\b/g, "Dai una mano alla $1"],
+  // world.ts draft news: "$STAR è il volto, si gioca a crescita."
+  [/ è il volto, si gioca a crescita\./g, " è il volto del nuovo corso."],
+];
+
+export function itDisplay(text: string): string {
+  let out = text;
+  for (const [re, to] of IT_DISPLAY_FIXES) out = out.replace(re, to);
+  return out;
+}
+
 /** Stored narrative text -> text in `lang`. Unknown text comes back exactly as stored. */
 export function nx(text: string | null | undefined, lang: Lang): string {
   if (!text) return text ?? "";
@@ -59,7 +77,7 @@ export function nx(text: string | null | undefined, lang: Lang): string {
     const r = translateWith(itCatalog(), text, EN_PROSE);
     return r.ok ? r.text : text;
   }
-  return text;
+  return lang === "it" ? itDisplay(text) : text;
 }
 
 /** Same as nx(), also telling whether every piece was resolved. Used by the coverage tests. */
