@@ -155,3 +155,22 @@ Stato: **CONDITIONALLY READY** per demo tecnica. Dettaglio, criteri, owner: `IND
 
 ### Aggiornamento dispositivi — 15 ott 2026
 | iPhone / Mac / Android | ACCETTATO da Pello | «Dispositivi accettati: iPhone, Mac, Android». Modelli, OS, browser, SHA: non comunicati. Dettagli in `DEVICE-MANUAL-QA.md` |
+
+## Freeze proposto — 18 ott 2026 (NON APPROVATO)
+
+Come deciso da Pello il 16 ott 2026: niente freeze su `ab10364`; Pello ha unito #109 (16 ott, 20:28 UTC, `f97bf41`) e poi #108 (18 ott, 07:42 UTC). Il commit risultante è il **candidato al freeze**. L'approvazione del freeze spetta a Pello.
+
+Commit candidato: `5940ee581d90aad3417c119e54ec9971ce6b3c4d` (main). ENGINE 2.19.0-beta, SAVE_VERSION 11 (invariati).
+
+| Verifica | Stato | Evidenza (rilevata 18 ott 2026, ~08:40 UTC) |
+|---|---|---|
+| CI su main `5940ee5` | PASS | run 39108673629 «PIVOT 23 beta»: «lint, types, unit, build, e2e (production build)» success; «statistical engine checks» success |
+| Deploy Vercel produzione | PASS | GitHub Deployment 7151614967 «Production – pivot23» su `5940ee5`, stato success (07:43 UTC); status commit Vercel pivot23 / jarvis-hq / jarvis-hq-pgoc success |
+| www.pivot23.com serve il nuovo codice | PASS | HTTP 200; il chunk `catalog-en-BTdcmUVE.js` contiene la correzione di #108 (`{0}. October knows it…`, senza «Out») |
+| CSP enforcing | PASS (invariata) | `script-src 'self'`, `connect-src 'self'`; Report-Only con domini Google presente (da #104), non blocca nulla |
+| Ads | OFF | nessuna stringa `adsbygoogle` / `googlesyndication` nei chunk JS di produzione |
+| Web Analytics (#106) | presente | codice Vercel Analytics nel chunk `chart-vendor`; registrazione visite non riverificata in questa rilevazione |
+| Dispositivi fisici | ACCETTATO da Pello (15 ott, su build precedente) | nessuna nuova prova su `5940ee5`: NON TESTATO dagli agenti |
+| Ritiri 2.19 | invariato rispetto alla rilevazione del 13 ott | nessuna modifica a motore/RNG/salvataggi in #108/#109 secondo le descrizioni delle PR |
+
+Non eseguito in questa rilevazione: test locali, E2E contro produzione, prova manuale su dispositivi. Stato del freeze: **PROPOSTO, in attesa di approvazione di Pello**.
