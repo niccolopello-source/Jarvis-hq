@@ -171,6 +171,6 @@ Commit candidato: `5940ee581d90aad3417c119e54ec9971ce6b3c4d` (main). ENGINE 2.19
 | Ads | OFF | nessuna stringa `adsbygoogle` / `googlesyndication` nei chunk JS di produzione |
 | Web Analytics (#106) | presente | codice Vercel Analytics nel chunk `chart-vendor`; registrazione visite non riverificata in questa rilevazione |
 | Dispositivi fisici | ACCETTATO da Pello (15 ott, su build precedente) | nessuna nuova prova su `5940ee5`: NON TESTATO dagli agenti |
-| Ritiri 2.19 | invariato rispetto alla rilevazione del 13 ott | nessuna modifica a motore/RNG/salvataggi in #108/#109 secondo le descrizioni delle PR |
+| Motore / RNG / salvataggi | invariati | `git diff bc1e84a 5940ee5 -- apps/pivot23/src`: 9 file, solo testi/i18n (`i18n.ts`, `voice.ts`, `narrative/extract.ts`, `en/SwipePager.ts`, `en/story-late.ts`) e test; nessun file engine/world/save/config. Ritiri 2.19 quindi come nella rilevazione del 13 ott (non rimisurati) |
 
 Non eseguito in questa rilevazione: test locali, E2E contro produzione, prova manuale su dispositivi. Stato del freeze: **PROPOSTO, in attesa di approvazione di Pello**.
