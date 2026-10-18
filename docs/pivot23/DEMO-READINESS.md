@@ -152,3 +152,25 @@ Stato: **CONDITIONALLY READY** per demo tecnica. Dettaglio, criteri, owner: `IND
 | Mobile emulato 320–1440 + landscape | PASS | readiness viewport in prod | — |
 | Dispositivi fisici | BLOCKED (agenti) | solo riferito da Pello, build precedente | Pello |
 | Ritiri 2.19 (29–32 anni) | FAIL vs 300–340‰ | 184‰ (IC 161–209) vs 323‰ su 2.18, 1000 carriere stessi seed | Lucille/Pello |
+
+### Aggiornamento dispositivi — 15 ott 2026
+| iPhone / Mac / Android | ACCETTATO da Pello | «Dispositivi accettati: iPhone, Mac, Android». Modelli, OS, browser, SHA: non comunicati. Dettagli in `DEVICE-MANUAL-QA.md` |
+
+## Freeze proposto — 18 ott 2026 (NON APPROVATO)
+
+Come deciso da Pello il 16 ott 2026: niente freeze su `ab10364`; Pello ha unito #109 (16 ott, 20:28 UTC, `f97bf41`) e poi #108 (18 ott, 07:42 UTC). Il commit risultante è il **candidato al freeze**. L'approvazione del freeze spetta a Pello.
+
+Commit candidato: `5940ee581d90aad3417c119e54ec9971ce6b3c4d` (main). ENGINE 2.19.0-beta, SAVE_VERSION 11 (invariati).
+
+| Verifica | Stato | Evidenza (rilevata 18 ott 2026, ~08:40 UTC) |
+|---|---|---|
+| CI su main `5940ee5` | PASS | run 39108673629 «PIVOT 23 beta»: «lint, types, unit, build, e2e (production build)» success; «statistical engine checks» success |
+| Deploy Vercel produzione | PASS | GitHub Deployment 7151614967 «Production – pivot23» su `5940ee5`, stato success (07:43 UTC); status commit Vercel pivot23 / jarvis-hq / jarvis-hq-pgoc success |
+| www.pivot23.com serve il nuovo codice | PASS | HTTP 200; il chunk `catalog-en-BTdcmUVE.js` contiene la correzione di #108 (`{0}. October knows it…`, senza «Out») |
+| CSP enforcing | PASS (invariata) | `script-src 'self'`, `connect-src 'self'`; Report-Only con domini Google presente (da #104), non blocca nulla |
+| Ads | OFF | nessuna stringa `adsbygoogle` / `googlesyndication` nei chunk JS di produzione |
+| Web Analytics (#106) | presente | codice Vercel Analytics nel chunk `chart-vendor`; registrazione visite non riverificata in questa rilevazione |
+| Dispositivi fisici | ACCETTATO da Pello (15 ott, su build precedente) | nessuna nuova prova su `5940ee5`: NON TESTATO dagli agenti |
+| Motore / RNG / salvataggi | invariati | `git diff bc1e84a 5940ee5 -- apps/pivot23/src`: 9 file, solo testi/i18n (`i18n.ts`, `voice.ts`, `narrative/extract.ts`, `en/SwipePager.ts`, `en/story-late.ts`) e test; nessun file engine/world/save/config. Ritiri 2.19 quindi come nella rilevazione del 13 ott (non rimisurati) |
+
+Non eseguito in questa rilevazione: test locali, E2E contro produzione, prova manuale su dispositivi. Stato del freeze: **PROPOSTO, in attesa di approvazione di Pello**.
