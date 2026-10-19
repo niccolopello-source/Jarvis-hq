@@ -36,6 +36,17 @@ export const TUNING = {
     // Leggenda is at saturation: lower bars no longer add 29-32 exits.
     leggenda: { 30: 3.6, 31: 2.0, 32: 1.0 },
   } as Readonly<Record<DifficultyId, Readonly<Record<number, number>>>>,
+  /** Leggenda early exits (careers from LEGEND_RETIRE_SINCE, 2.20.0), Leggenda only. On 2.19 the injury bars
+   *  are saturated for Leggenda: every career still playing at 29-32 carries injuryDrag 0, so no injury bar
+   *  can add exits (280/1000 on seeds 900000-900999, 319/1000 on the stats-test seeds 91000+13i; owner
+   *  target 300-340). A fading role closes the career instead: it ends when the minutes per game of the last
+   *  season are at or below the bar for the age checked. The check runs after the season (age = last season)
+   *  and again after the summer ageing (age = last season + 1), like the injury bars; in practice keys 31 and
+   *  32 close careers at 31 and 32. Calibrated on both seed sets pooled (2000 careers), aiming at the middle
+   *  of the band. Only ages below 33: from 33 the shipped 11.5 minutes bar applies unchanged. */
+  minutesRetireBars220: {
+    leggenda: { 31: 13.1, 32: 11.9 },
+  } as Readonly<Partial<Record<DifficultyId, Readonly<Record<number, number>>>>>,
   /** D-08 option B, on for careers from BUST_SINCE. High ceilings only. Downside only. */
   bustB: { potFloor: 86, choiceRef: 5.0, choiceSlope: 0.04, choiceK: 0.1, devRef: 7, devK: 0.012, cap: 0.1 },
   /** D-08 option B stays off. The high-ceiling drag is in the code; turning it on
@@ -99,6 +110,10 @@ export const BUST_B81_SINCE = "2.18.0";
  *  Moved from 2.17.0 to 2.19.0 after #81 shipped 2.18.0 without injuries, so 2.18 careers stay identical. */
 export const RULES_INJURY_SINCE = "2.19.0";
 
+/** First engine version whose Leggenda careers use TUNING.minutesRetireBars220 (fading-role exits at 31-32).
+ *  Careers created on 2.19 or earlier, and every other difficulty, keep their rules exactly. */
+export const LEGEND_RETIRE_SINCE = "2.20.0";
+
 /** D-23 step that careers created before WORLD_SINCE (2.13.0) keep. */
 export const LEGACY_DPOY_STREAK_STEP = 0.12;
 
@@ -160,6 +175,12 @@ export function usesRetireSpread(career: { engineVersion?: string }): boolean {
 export function injuryRetireBarsOf(career: { engineVersion?: string; difficulty?: DifficultyId }): Readonly<Record<number, number>> {
   if (!versionAtLeast(career.engineVersion, RULES_INJURY_SINCE)) return TUNING.injuryRetireBars;
   return TUNING.injuryRetireBars219[career.difficulty ?? "pro"] ?? TUNING.injuryRetireBars219.pro;
+}
+
+/** Leggenda 2.20+: minutes bar for this summer age, or undefined when the career keeps the older rule. */
+export function minutesRetireBarOf(career: { engineVersion?: string; difficulty?: DifficultyId }, age: number): number | undefined {
+  if (!versionAtLeast(career.engineVersion, LEGEND_RETIRE_SINCE)) return undefined;
+  return TUNING.minutesRetireBars220[career.difficulty ?? "pro"]?.[age];
 }
 
 /** PR #81: true when this career was created by BUST_B81_SINCE (2.18.0) or later. */
