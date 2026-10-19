@@ -63,7 +63,7 @@ export function LazyChunk<P extends object, M>({
       (error: unknown) => {
         if (!alive) return;
         report(label, attempt, error);
-        setFailedUrl((prev) => prev ?? moduleUrlOf(error));
+        setFailedUrl((prev) => prev ?? moduleUrlOf(error) ?? moduleUrlOfLoader(load));
         setFailed(true);
       },
     );
@@ -117,6 +117,23 @@ export function moduleUrlOf(error: unknown): string | null {
   if (!match) return null;
   try {
     const url = new URL(match[1]!);
+    return typeof location !== "undefined" && url.origin !== location.origin ? null : url.href;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * WebKit rejects a failed dynamic import with a bare "Importing a module script failed." (no URL)
+ * and keeps the failure in its module map, so retrying the same import() never re-fetches.
+ * Recover the chunk URL from the loader itself: the build emits `import("./Chunk-hash.js")`
+ * (dev: `import("/src/...")`), resolved against this module, which lives in the same folder.
+ */
+export function moduleUrlOfLoader(load: () => unknown, base: string = import.meta.url): string | null {
+  const match = /import\(\s*(["'`])([^"'`]+\.(?:js|mjs|tsx?|jsx))\1\s*\)/.exec(String(load));
+  if (!match) return null;
+  try {
+    const url = new URL(match[2]!, base);
     return typeof location !== "undefined" && url.origin !== location.origin ? null : url.href;
   } catch {
     return null;
