@@ -13,6 +13,18 @@ function productionHeaders(): Record<string, string> {
   return Object.fromEntries((global?.headers ?? []).map((h) => [h.key, h.value]));
 }
 
+/**
+ * `vite preview` serves plain http on 127.0.0.1. WebKit 2359+ honours `upgrade-insecure-requests`
+ * for loopback too, upgrades every asset to https and the page never boots. Drop only that
+ * directive, only here; vercel.json (production) keeps it, see security-headers.test.ts.
+ */
+export function localPreviewHeaders(): Record<string, string> {
+  const headers = productionHeaders();
+  const csp = headers["Content-Security-Policy"];
+  if (csp) headers["Content-Security-Policy"] = csp.replace(/;\s*upgrade-insecure-requests\s*(?=;|$)/, "");
+  return headers;
+}
+
 export default defineConfig(({ mode }) => {
   // Ads are OFF unless VITE_ADS_ENABLED=true at build time (see src/ads/config.ts).
   const env = { ...loadEnv(mode, process.cwd(), "VITE_"), ...process.env };
@@ -37,7 +49,7 @@ export default defineConfig(({ mode }) => {
     strictPort: true,
   },
   preview: {
-    headers: productionHeaders(),
+    headers: localPreviewHeaders(),
   },
   build: {
     rolldownOptions: {
