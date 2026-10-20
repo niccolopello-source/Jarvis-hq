@@ -1,10 +1,10 @@
 > ⚠️ **DRAFT — DO NOT PUBLISH.** Prepared by an assistant, not a lawyer. Must be reviewed by a lawyer before publishing. Items marked **DA VERIFICARE** (to be verified) were not confirmed from the code or official sources. The Italian version prevails — **DA VERIFICARE**.
 
 # Privacy Policy — PIVOT 23 (www.pivot23.com)
-Last updated / effective from: [DATA DI PUBBLICAZIONE]
+Last updated / effective from: 21 October 2026
 
 ## 1. Controller
-Niccoló Pelizzon — via della Cava 2, [CAP] Valdobbiadene ([PROV]), Italy — [CAP] and [PROV] to be confirmed — Email: niccolo.pello@gmail.com (provisional; a dedicated address will replace it). Data Protection Officer: no DPO has been appointed, as it is not mandatory for this processing (art. 37 GDPR) — **to be confirmed by a lawyer**.
+Niccoló Pelizzon — via della Cava 2, 31049 Valdobbiadene (TV), Italy — Email: niccolo.pello@gmail.com (provisional; a dedicated address will replace it). No DPO has been appointed; for any privacy request, contact the controller at niccolo.pello@gmail.com.
 
 ## 2. In short
 - PIVOT 23 is played without an account or sign-up.

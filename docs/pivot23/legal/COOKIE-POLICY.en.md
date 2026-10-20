@@ -1,7 +1,7 @@
 > ⚠️ **DRAFT — DO NOT PUBLISH.** Must be reviewed by a lawyer before publishing. Items marked **DA VERIFICARE** (to be verified) are unconfirmed.
 
 # Cookie Policy — PIVOT 23 (www.pivot23.com)
-Last updated / effective from: [DATA DI PUBBLICAZIONE] · Controller: Niccoló Pelizzon, via della Cava 2, [CAP] Valdobbiadene ([PROV]), Italy — [CAP] and [PROV] to be confirmed, niccolo.pello@gmail.com (provisional; a dedicated address will replace it)
+Last updated / effective from: 21 October 2026 · Controller: Niccoló Pelizzon, via della Cava 2, 31049 Valdobbiadene (TV), Italy, niccolo.pello@gmail.com (provisional; a dedicated address will replace it)
 
 References: art. 122 Italian Privacy Code; Italian DPA (Garante) guidelines on cookies and other tracking tools, 10 June 2021 (https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9677876); GDPR.
 

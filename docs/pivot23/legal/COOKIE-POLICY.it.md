@@ -1,7 +1,7 @@
 > ⚠️ **BOZZA — NON PUBBLICARE.** Deve essere verificata da un legale prima della pubblicazione. Le voci **DA VERIFICARE** non sono confermate.
 
 # Cookie Policy — PIVOT 23 (www.pivot23.com)
-Ultimo aggiornamento / in vigore dal: [DATA DI PUBBLICAZIONE] · Titolare: Niccoló Pelizzon, via della Cava 2, [CAP] Valdobbiadene ([PROV]), Italia — [CAP] e [PROV] da confermare, niccolo.pello@gmail.com (indirizzo provvisorio, sarà sostituito da un indirizzo dedicato)
+Ultimo aggiornamento / in vigore dal: 21 ottobre 2026 · Titolare: Niccoló Pelizzon, via della Cava 2, 31049 Valdobbiadene (TV), Italia, niccolo.pello@gmail.com (indirizzo provvisorio, sarà sostituito da un indirizzo dedicato)
 
 Riferimenti: art. 122 D.Lgs. 196/2003; Linee guida cookie e altri strumenti di tracciamento del Garante, 10/06/2021 (https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9677876); GDPR.
 

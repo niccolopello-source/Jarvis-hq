@@ -1,10 +1,10 @@
 > ⚠️ **BOZZA — NON PUBBLICARE.** Testo preparato da un assistente, non da un avvocato. Deve essere verificato da un legale prima della pubblicazione. Le voci **DA VERIFICARE** non sono state confermate dal codice o da fonti ufficiali.
 
 # Informativa privacy — PIVOT 23 (www.pivot23.com)
-Ultimo aggiornamento / in vigore dal: [DATA DI PUBBLICAZIONE]
+Ultimo aggiornamento / in vigore dal: 21 ottobre 2026
 
 ## 1. Titolare del trattamento
-Niccoló Pelizzon — via della Cava 2, [CAP] Valdobbiadene ([PROV]), Italia — [CAP] e [PROV] da confermare — Email: niccolo.pello@gmail.com (indirizzo provvisorio, sarà sostituito da un indirizzo dedicato). Responsabile della protezione dei dati (RPD/DPO): non è stato nominato un RPD/DPO, in quanto non obbligatorio per questo trattamento (art. 37 GDPR) — **da confermare dal legale**.
+Niccoló Pelizzon — via della Cava 2, 31049 Valdobbiadene (TV), Italia — Email: niccolo.pello@gmail.com (indirizzo provvisorio, sarà sostituito da un indirizzo dedicato). Non è stato nominato un DPO; per ogni richiesta privacy contattare il titolare all'email niccolo.pello@gmail.com.
 
 ## 2. In breve
 - PIVOT 23 si gioca senza account e senza registrazione.
