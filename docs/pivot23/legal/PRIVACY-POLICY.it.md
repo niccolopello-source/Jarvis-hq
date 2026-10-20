@@ -1,15 +1,15 @@
 > ⚠️ **BOZZA — NON PUBBLICARE.** Testo preparato da un assistente, non da un avvocato. Deve essere verificato da un legale prima della pubblicazione. Le voci **DA VERIFICARE** non sono state confermate dal codice o da fonti ufficiali.
 
 # Informativa privacy — PIVOT 23 (www.pivot23.com)
-Ultimo aggiornamento: [DATA]
+Ultimo aggiornamento / in vigore dal: [DATA DI PUBBLICAZIONE]
 
 ## 1. Titolare del trattamento
-Niccolò Pelizzon — Via della Cava 2, 31049 Valdobbiadene (TV), Italia — Email: [EMAIL PRIVACY DEDICATA — DA CREARE]. Responsabile della protezione dei dati (RPD/DPO): [DPO, se nominato — DA VERIFICARE se obbligatorio].
+Niccoló Pelizzon — via della Cava 2, [CAP] Valdobbiadene ([PROV]), Italia — [CAP] e [PROV] da confermare — Email: niccolo.pello@gmail.com (indirizzo provvisorio, sarà sostituito da un indirizzo dedicato). Responsabile della protezione dei dati (RPD/DPO): non è stato nominato un RPD/DPO, in quanto non obbligatorio per questo trattamento (art. 37 GDPR) — **da confermare dal legale**.
 
 ## 2. In breve
 - PIVOT 23 si gioca senza account e senza registrazione.
 - Le tue carriere e preferenze sono salvate **solo nel tuo browser** (localStorage/sessionStorage). Non le riceviamo e non le inviamo a terzi.
-- Non usiamo strumenti di analisi (analytics).
+- Contiamo le visite in forma **anonima e senza cookie** con Vercel Web Analytics (solo pagine viste, aggregate). Nessun profilo, nessun identificatore salvato sul tuo dispositivo, nessun dato di gioco inviato.
 - **Su computer desktop** il sito può mostrare pubblicità di Google (AdSense e H5 Games Ads), **solo non personalizzata**, previa scelta nel banner di consenso.
 - **Su smartphone e tablet** non carichiamo pubblicità né tracker di terze parti.
 
@@ -17,7 +17,8 @@ Niccolò Pelizzon — Via della Cava 2, 31049 Valdobbiadene (TV), Italia — Ema
 | Dati | Dove | Finalità | Base giuridica |
 |---|---|---|---|
 | Salvataggi, archivio carriere, preferenze (lingua, suono, tema carta, suggerimenti) | Solo nel tuo browser | Far funzionare il gioco su tua richiesta | Art. 122 Codice privacy (strumenti strettamente necessari); il titolare non riceve questi dati |
-| Dati tecnici di connessione (indirizzo IP, user agent, orario) trattati dal fornitore di hosting | Server del fornitore (Vercel Inc.) | Erogare il sito, sicurezza | Legittimo interesse (art. 6.1.f GDPR) — **DA VERIFICARE**: log e tempi di conservazione di Vercel |
+| Dati tecnici di connessione (indirizzo IP, user agent, orario) trattati dal fornitore di hosting | Server del fornitore (Vercel Inc.) | Erogare il sito, sicurezza | Legittimo interesse (art. 6.1.f GDPR) — log runtime conservati 1 ora (piano Hobby) |
+| Pagine viste anonime e aggregate (URL della pagina, referrer, paese, tipo di dispositivo/browser/sistema operativo); nessun cookie, nessun identificatore persistente: secondo Vercel le visite sono distinte con un hash della richiesta che si azzera ogni giorno | Vercel Inc. (Vercel Web Analytics), stesso dominio del sito (`/_vercel/insights`) | Statistiche aggregate di utilizzo del sito | Legittimo interesse (art. 6.1.f GDPR); nessuna memorizzazione/accesso sul dispositivo, quindi non serve consenso ex art. 122 — **DA VERIFICARE** con il legale e sulla documentazione Vercel (https://vercel.com/docs/analytics/privacy-policy) |
 | Identificatori pubblicitari, cookie, IP, dati del dispositivo, segnale di consenso TCF (solo desktop, solo con pubblicità attiva) | Google e partner certificati | Mostrare annunci non personalizzati, limitare la frequenza, misurare in forma aggregata, prevenire frodi | Consenso (art. 122 Codice privacy, art. 6.1.a GDPR) per la memorizzazione/accesso sul dispositivo; per alcune finalità Google indica il legittimo interesse nel TCF — **DA VERIFICARE** con il legale |
 
 Non trattiamo dati di categorie particolari. Non effettuiamo profilazione né decisioni automatizzate.
@@ -36,13 +37,13 @@ Il gioco può interessare minori. In Italia il consenso al trattamento nei servi
 ## 6. Conservazione
 - Dati nel browser: finché non li cancelli (cancellazione dati del sito o "nuova carriera"). 
 - Consenso: memorizzato dalla CMP; il banner non viene riproposto prima di 6 mesi dopo un rifiuto, salvo cambi rilevanti (Linee guida Garante 10/06/2021). Durata dei cookie Google: vedi Cookie Policy — **DA VERIFICARE**.
-- Log hosting: i log di runtime sono conservati da Vercel per 1 ora (piano Hobby), 1 giorno (Pro), 30 giorni (con Observability Plus) — **DA VERIFICARE** in base al piano effettivo del progetto. <!-- Fonte: https://vercel.com/docs/observability/runtime-logs (sezione Limits), consultata il 15/10/2026 -->
+- Log hosting: i log di runtime sono conservati da Vercel per 1 ora (il progetto usa il piano Hobby). <!-- Fonte: https://vercel.com/docs/observability/runtime-logs (sezione Limits: Hobby = 1 hour of logs), consultata il 20/10/2026 -->
 
 ## 7. Destinatari
-Fornitore di hosting (Vercel Inc., [ruolo: responsabile ex art. 28 — DA VERIFICARE]); Google e i fornitori elencati nella CMP (solo desktop, con pubblicità attiva).
+Fornitore di hosting e di Web Analytics (Vercel Inc., [ruolo: responsabile ex art. 28 GDPR / DPA — APERTO, DA VERIFICARE]); Google e i fornitori elencati nella CMP (solo desktop, con pubblicità attiva).
 
 ## 8. I tuoi diritti
-Accesso, rettifica, cancellazione, limitazione, opposizione, portabilità (artt. 15–22 GDPR), revoca del consenso in ogni momento tramite il link "Preferenze cookie" nel sito, senza pregiudicare la liceità precedente. Reclamo al Garante per la protezione dei dati personali (www.garanteprivacy.it). Contatto: [EMAIL PRIVACY DEDICATA — DA CREARE]. Nota: i dati di gioco sono solo nel tuo browser e il titolare non può accedervi; puoi cancellarli tu dalle impostazioni del browser.
+Accesso, rettifica, cancellazione, limitazione, opposizione, portabilità (artt. 15–22 GDPR), revoca del consenso in ogni momento tramite il link "Preferenze cookie" nel sito, senza pregiudicare la liceità precedente. Reclamo al Garante per la protezione dei dati personali (www.garanteprivacy.it). Contatto: niccolo.pello@gmail.com. Nota: i dati di gioco sono solo nel tuo browser e il titolare non può accedervi; puoi cancellarli tu dalle impostazioni del browser.
 
 ## 9. Modifiche
 Pubblicheremo qui ogni modifica, con la data di aggiornamento.
