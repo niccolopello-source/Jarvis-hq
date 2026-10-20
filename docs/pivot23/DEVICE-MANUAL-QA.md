@@ -46,3 +46,15 @@ Pello ha riferito in chat: «iPhone funziona, Mac funziona, Android funziona».
 | Android (Chrome) | PASS | riferito da Pello, verifica manuale non osservata dagli agenti |
 
 Modelli, versioni di OS/browser, SHA servito al momento della prova e singoli passi del protocollo: **NON VERIFICATO** (non comunicati). Nessuno screenshot ricevuto.
+
+## Accettazione di Pello — 15 ott 2026
+Pello ha scritto in chat: «Dispositivi accettati: iPhone, Mac, Android».
+
+| Dispositivo | Esito | Etichetta |
+|---|---|---|
+| iPhone | ACCETTATO | accettato da Pello il 15 ott 2026; verifica manuale non osservata dagli agenti |
+| Mac | ACCETTATO | accettato da Pello il 15 ott 2026; verifica manuale non osservata dagli agenti |
+| Android | ACCETTATO | accettato da Pello il 15 ott 2026; verifica manuale non osservata dagli agenti |
+
+Modelli, versioni di OS e browser, SHA servito durante la prova, passi del protocollo e screenshot: **NON COMUNICATI / NON VERIFICATO**. Gate dispositivi chiuso per decisione dell'owner, non per prova osservata dagli agenti.
+Nota SHA: il codice di gioco candidato al freeze era `e7cc321`; alla registrazione `main` è `0624219` (dopo #101 meta AdSense e #103 DEF-01 lettura salvataggi). L'accettazione non indica lo SHA provato.

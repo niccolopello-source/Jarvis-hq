@@ -46,7 +46,7 @@ function skipContext(node: ts.Node, chromeFns: Set<string>): boolean {
   if (ts.isCallExpression(p)) {
     const callee = p.expression.getText();
     if (chromeFns.has(callee)) return true;
-    if (/^(require|import|matchMedia|window\.matchMedia|console\.\w+|document\.\w+|localStorage\.\w+|.*\.(getItem|setItem|removeItem|querySelector|addEventListener|startsWith|endsWith|includes|split|join|test|match|replace|replaceAll|padStart|toLocaleString))$/.test(callee)) return true;
+    if (/^(require|import|matchMedia|window\.matchMedia|console\.\w+|document\.\w+|localStorage\.\w+|.*\.(getItem|setItem|removeItem|querySelector|querySelectorAll|closest|matches|addEventListener|startsWith|endsWith|includes|split|join|test|match|replace|replaceAll|padStart|toLocaleString))$/.test(callee)) return true;
   }
   return false;
 }

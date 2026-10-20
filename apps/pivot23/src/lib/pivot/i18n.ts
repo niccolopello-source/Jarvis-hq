@@ -591,7 +591,7 @@ const ES: Partial<Record<Msg, string>> = {
     raceMvp: "Carrera al MVP",
     raceMvpCap: "Puntos, victorias y PER. Al menos 58 partidos, y tienes que ser All-Star.",
     raceNba: "Carrera al All-NBA",
-    raceNbaCap: "Puntos, PER y plus-minus. Los tres primeros escalones son los tres All-NBA.",
+    raceNbaCap: "Puntos, PER y plus-minus. Hay tres niveles: primer, segundo y tercer quinteto All-NBA.",
     raceMip: "Carrera al Most Improved Player",
     raceMipCap: "El salto de puntos respecto al año anterior. No vale si ya eres una estrella.",
     yours: "Tus premios, este año",

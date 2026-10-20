@@ -770,8 +770,27 @@ function revive(parsed: LiveSave): LiveSave {
   } catch {
     parsed.pending = parsed.pending ?? null;
   }
+  try {
+    if (storyAlreadyApplied(parsed.player, parsed.pending)) parsed.pending = null;
+  } catch {
+    /* keep the save as it is */
+  }
   parsed.log = shrinkLog(parsed.log, true, false);
   return parsed;
+}
+
+/**
+ * DEF-01 legacy saves (builds before #89): the story card was written still pending together with the
+ * effects of the pick already applied and logged. Reopened as is, the same decision would apply twice.
+ * Read-side only: the pending card is dropped in memory, so the career resumes past it; nothing in the
+ * stored save is rewritten here. Valid saves never match: since #89 a resolved card is not saved as pending.
+ */
+export function storyAlreadyApplied(player: PlayerState, pending: SavedPending | null): boolean {
+  if (!pending || pending.kind !== "story" || !Array.isArray(player.choiceLog)) return false;
+  const last = player.choiceLog[player.choiceLog.length - 1];
+  if (!last || last.season !== player.season || last.title !== pending.title) return false;
+  const options = Array.isArray(pending.options) ? pending.options : [];
+  return options.some((o) => o && typeof o === "object" && (o as { label?: unknown }).label === last.pick);
 }
 
 function fresher(a: LiveSave, b: LiveSave): LiveSave {
