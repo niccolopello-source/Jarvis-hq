@@ -19,6 +19,7 @@ function play(opts: SimOpts) {
   return job.s;
 }
 /** Full state minus careerId (storage identity, random by design, not an RNG input). */
+const versionAtLeastLocal = (v: string) => /^2\.(2[1-9]|[3-9]\d)\./.test(v) || /^[3-9]\./.test(v);
 const json = (s: PlayerState) => JSON.stringify({ ...s, careerId: "" });
 const fresh = (seed = 9100) => {
   const s = openCareerSim({ seed, depth: true }).s;
@@ -29,18 +30,25 @@ const ALLOWED_FX = new Set(["coachTrust", "injuryRisk", "morale", "form", "devel
 
 /* ───── Compatibility ───── */
 
-test("depth is opt-in: default careers carry no memory and keep the legacy rules", () => {
+test("2.21+ careers get memory by default; 2.19 / 2.20 careers do not and replay byte-identical", () => {
   const s = openCareerSim({ seed: 9100 }).s;
-  assert.equal(s.memory, undefined);
-  assert.equal(usesDepth(s), false);
-  assert.equal(json(play({ seed: 9100 })), json(play({ seed: 9100, depth: false })));
+  assert.ok(versionAtLeastLocal(s.engineVersion), s.engineVersion);
+  assert.ok(usesDepth(s), "new careers run the depth layer");
+  assert.deepEqual(json(play({ seed: 9100 })), json(play({ seed: 9100, depth: true })));
+  for (const v of ["2.19.0-beta", "2.20.0-beta"]) for (const seed of [9100, 9137, 9174]) {
+    const old = openCareerSim({ seed, engineVersion: v }).s;
+    assert.equal(old.memory, undefined, v);
+    assert.equal(json(play({ seed, engineVersion: v })), json(play({ seed, engineVersion: v, depth: false })), `${v} ${seed}`);
+  }
 });
 
 test("older engine versions never run the layer even if a memory field is present", () => {
   const s = openCareerSim({ seed: 9100, depth: true }).s;
-  s.engineVersion = "2.18.0-beta";
-  assert.equal(memoryOf(s), null);
-  s.engineVersion = "2.19.0-beta";
+  for (const v of ["2.18.0-beta", "2.19.0-beta", "2.20.0-beta"]) {
+    s.engineVersion = v;
+    assert.equal(memoryOf(s), null, v);
+  }
+  s.engineVersion = "2.21.0-beta";
   assert.notEqual(memoryOf(s), null);
   (s as { memory: unknown }).memory = { v: 9, junk: true };
   assert.equal(memoryOf(s), null, "malformed memory falls back to legacy rules");
@@ -342,5 +350,6 @@ test("difficulties differ without forcing outcomes", () => {
 
 test("memory helper: newMemory is the empty compact shape", () => {
   assert.deepEqual(newMemory(), { v: 1, items: [], applied: [], trail: [] });
-  assert.ok(playCareerSim({ seed: 1 }).memory === undefined);
+  assert.ok(playCareerSim({ seed: 1 }).memory !== undefined);
+  assert.ok(playCareerSim({ seed: 1, depth: false }).memory === undefined);
 });

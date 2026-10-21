@@ -1,5 +1,5 @@
 
-import { scriptSlotFor, scriptWindowsOf, seedHash, worldOf } from "./tuning";
+import { scriptSlotFor, scriptWindowsOf, seedHash, versionAtLeast, worldOf } from "./tuning";
 import { INJURY_KINDS, INJURY_SEVERITY, loadInjuryAt, usesInjuryEvents, type InjuryKind } from "./injuries";
 import {
   ATTR_LABELS,
@@ -56,7 +56,7 @@ import { settlePlayerAwards } from "./awards-helpers";
 import { playoffChoicesFor as doorChoices } from "./playoff-doors";
 import { pickSummerDestination, pickSummerEvent } from "./summer";
 import { CHARACTER_ROUNDS } from "./draft-character";
-import { contextScore, excludedBy, logSelection, newMemory, recentTags, recordChoice, recordLoyalty, settleMemory, usesDepth } from "./memory";
+import { contextScore, DEPTH_SINCE, excludedBy, logSelection, newMemory, recentTags, recordChoice, recordLoyalty, settleMemory, usesDepth } from "./memory";
 import {
   MAX_AGE,
   START_OVERALL,
@@ -507,6 +507,7 @@ export function freshPlayer(
     draftHand: [],
     choiceOvr: 0,
   };
+  if (versionAtLeast(potentialRulesVersion, DEPTH_SINCE)) s.memory = newMemory();
   s.rngState = s.seed;
   if (worldOf(s) === "jitter") {
     // Seeded spread of starting power: different worlds start from different pecking orders.
@@ -3459,7 +3460,7 @@ export interface SimOpts {
   retirement?: "play36" | "retire";
   /** Policy del simulatore sugli scambi non forzati. Assente: valuta ruolo, fiducia e continuità. */
   trade?: "accept" | "refuse";
-  /** PROCEDURAL DEPTH (memory.ts): opt-in until the owner approves an ENGINE_VERSION bump (see PR). */
+  /** PROCEDURAL DEPTH (memory.ts): on by default for 2.21+ careers; false = legacy rules (tests/lab). */
   depth?: boolean;
   /** Test/lab hook: override the drawn choice index of season n (the draw still happens, same RNG stream). */
   choose?: (s: PlayerState, ev: StoryEvent, n: number, drawn: number) => number;
@@ -3517,7 +3518,8 @@ export function openCareerSim(opts: SimOpts = {}): CareerSimJob {
     );
     if (opts.engineVersion !== undefined) player.engineVersion = opts.engineVersion;
     player.simulated = true;
-    if (opts.depth) player.memory = newMemory();
+    if (opts.depth === false) delete player.memory;
+    else if (opts.depth) player.memory ??= newMemory();
     if (Number.isFinite(opts.potential)) {
       player.potential = round1(clamp((opts.potential as number) + potentialShiftOf(player.difficulty, player.engineVersion), 64, 99));
     }
