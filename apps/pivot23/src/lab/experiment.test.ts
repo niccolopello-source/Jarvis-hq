@@ -21,8 +21,8 @@ function base(seed: number, extra: Record<string, unknown> = {}) {
   };
 }
 
-function fp(seed: number) {
-  const s = playCareerSim(base(seed));
+function fp(seed: number, engineVersion?: string) {
+  const s = playCareerSim(base(seed, engineVersion ? { engineVersion } : {}));
   return createHash("sha256")
     .update(JSON.stringify(s.seasonHistory.map((r) => ({ ppg: r.ppg, rpg: r.rpg, apg: r.apg, gp: r.gp, min: r.min, ovr: r.overall }))))
     .digest("hex")
@@ -35,9 +35,13 @@ test("experiment absent keeps the no-hook fingerprints", () => {
   // Engine 2.17.0 (P1-INJ): the serious injury follows the load, so the rows move.
   // Previous values (2.13–2.14): 88b05ca7c1f205f2 / 5223c1f092323ef4 / 61c87673b55c1bf9.
   // 2.16.0 (#83, age-36 season played): 2302a804b6009b46 / 5223c1f092323ef4 / 61c87673b55c1bf9.
-  assert.equal(fp(23017), "be7cb73d0a40a658");
-  assert.equal(fp(23034), "f87256a4de325b61");
-  assert.equal(fp(23102), "2b6b9e31f6a33560");
+  // 2.21.0 (OVR balance): new careers move; the 2.20 values (unchanged since 2.19) stay pinned to careers created as 2.20.
+  assert.equal(fp(23017, "2.20.0-beta"), "be7cb73d0a40a658");
+  assert.equal(fp(23034, "2.20.0-beta"), "f87256a4de325b61");
+  assert.equal(fp(23102, "2.20.0-beta"), "2b6b9e31f6a33560");
+  assert.equal(fp(23017), "9738a8b25ae0f507");
+  assert.equal(fp(23034), "04a89407b6080434");
+  assert.equal(fp(23102), "fa5d954ed74bfea9");
 });
 
 test("forced minutes move the recorded average without touching the played path", () => {
@@ -46,7 +50,8 @@ test("forced minutes move the recorded average without touching the played path"
   const mean = (s: typeof low) => s.seasonHistory.reduce((a, r) => a + r.min, 0) / s.seasonHistory.length;
   assert.ok(Math.abs(mean(low) - 10) < 0.05, String(mean(low)));
   assert.ok(Math.abs(mean(high) - 28) < 0.05, String(mean(high)));
-  assert.equal(fp(23017), "be7cb73d0a40a658");
+  assert.equal(fp(23017, "2.20.0-beta"), "be7cb73d0a40a658");
+  assert.equal(fp(23017), "9738a8b25ae0f507");
 });
 
 test("work ethic stays locked and a forced injury costs games", () => {
