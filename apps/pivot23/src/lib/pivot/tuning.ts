@@ -47,6 +47,15 @@ export const TUNING = {
   minutesRetireBars220: {
     leggenda: { 31: 13.1, 32: 11.9 },
   } as Readonly<Partial<Record<DifficultyId, Readonly<Record<number, number>>>>>,
+  /** Option A1 (Pello, 21 Oct 2026): injury bars for careers created on 2.21.0+ (OVR_BALANCE_SINCE), with OVR
+   *  balance and procedural depth on. Same as injuryRetireBars219 except the age-32 bar: Pro 1.9 -> 1.8,
+   *  All-Star 1.7 -> 1.8. Keeps last season at 29-32 in the owner bands (report options-221.md). */
+  injuryRetireBars221: {
+    esordio: { 30: 5.0, 31: 3.6, 32: 3.2, 33: 3.5 },
+    pro: { 30: 3.6, 31: 2.8, 32: 1.8 },
+    allstar: { 30: 3.6, 31: 2.0, 32: 1.8 },
+    leggenda: { 30: 3.6, 31: 2.0, 32: 1.0 },
+  } as Readonly<Record<DifficultyId, Readonly<Record<number, number>>>>,
   /** D-08 option B, on for careers from BUST_SINCE. High ceilings only. Downside only. */
   bustB: { potFloor: 86, choiceRef: 5.0, choiceSlope: 0.04, choiceK: 0.1, devRef: 7, devK: 0.012, cap: 0.1 },
   /** D-08 option B stays off. The high-ceiling drag is in the code; turning it on
@@ -195,6 +204,9 @@ export function usesRetireSpread(career: { engineVersion?: string }): boolean {
 /** P1-INJ: retirement bars before 33 for this career (2.19.0+ use the recalibrated bars). */
 export function injuryRetireBarsOf(career: { engineVersion?: string; difficulty?: DifficultyId }): Readonly<Record<number, number>> {
   if (!versionAtLeast(career.engineVersion, RULES_INJURY_SINCE)) return TUNING.injuryRetireBars;
+  if (versionAtLeast(career.engineVersion, OVR_BALANCE_SINCE)) {
+    return TUNING.injuryRetireBars221[career.difficulty ?? "pro"] ?? TUNING.injuryRetireBars221.pro;
+  }
   return TUNING.injuryRetireBars219[career.difficulty ?? "pro"] ?? TUNING.injuryRetireBars219.pro;
 }
 

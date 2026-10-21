@@ -39,9 +39,11 @@ test("experiment absent keeps the no-hook fingerprints", () => {
   assert.equal(fp(23017, "2.20.0-beta"), "be7cb73d0a40a658");
   assert.equal(fp(23034, "2.20.0-beta"), "f87256a4de325b61");
   assert.equal(fp(23102, "2.20.0-beta"), "2b6b9e31f6a33560");
-  assert.equal(fp(23017), "9738a8b25ae0f507");
-  assert.equal(fp(23034), "04a89407b6080434");
-  assert.equal(fp(23102), "fa5d954ed74bfea9");
+  // 2.21 values with procedural depth (#115) and the A1 injury bars, regenerated once.
+  // OVR balance only (96388b8): 9738a8b25ae0f507 / 04a89407b6080434 / fa5d954ed74bfea9.
+  assert.equal(fp(23017), "281950b4373c20fd");
+  assert.equal(fp(23034), "d4f59906719745f0");
+  assert.equal(fp(23102), "7f8069aa4b4150f2");
 });
 
 test("forced minutes move the recorded average without touching the played path", () => {
@@ -51,7 +53,7 @@ test("forced minutes move the recorded average without touching the played path"
   assert.ok(Math.abs(mean(low) - 10) < 0.05, String(mean(low)));
   assert.ok(Math.abs(mean(high) - 28) < 0.05, String(mean(high)));
   assert.equal(fp(23017, "2.20.0-beta"), "be7cb73d0a40a658");
-  assert.equal(fp(23017), "9738a8b25ae0f507");
+  assert.equal(fp(23017), "281950b4373c20fd");
 });
 
 test("work ethic stays locked and a forced injury costs games", () => {
