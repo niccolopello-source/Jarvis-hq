@@ -31,7 +31,9 @@ export function careerFingerprint(s: PlayerState): string {
 }
 
 export function playAt(seed: number, difficulty: (typeof GATE_DIFFS)[number], version: string): PlayerState {
-  const job = openCareerSim({ seed, difficulty });
+  // 2.20: the Leggenda potential shift is drawn at creation, so create the career as the forced version
+  // (as a real save of that version was). Without this, forced 2.19-or-older Leggenda careers get the 2.20 shift.
+  const job = openCareerSim({ seed, difficulty, engineVersion: version });
   job.s.engineVersion = version;
   // The rookie class is drawn at career start with the running engine (isolated RNG); redraw it
   // for the forced version, as scripts/awards-gate-fingerprints.ts does.
