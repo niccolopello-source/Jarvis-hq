@@ -1,7 +1,7 @@
 
 /** Curva d'età, picco osservato 26–28, overall intero in display. */
 import { SIM } from "./config";
-import { TUNING, injuryRetireBarsOf, minutesRetireBarOf, usesBustB, usesBustB81, usesDecisions, usesRetireSpread } from "./tuning";
+import { TUNING, injuryRetireBarsOf, minutesRetireBarOf, twilightBaseWearOf, usesBustB, usesBustB81, usesDecisions, usesRetireSpread } from "./tuning";
 import { ROLES } from "./data";
 import { rand } from "./rng";
 import type { AttrKey, PlayerState, Role } from "./types";
@@ -264,7 +264,7 @@ export function twilightOf(s: PlayerState): number {
   const pot = finite(s.potential, 76);
   const peak = finite(s.peakOverall) && s.peakOverall > START_OVERALL ? s.peakOverall : pot;
   const wear =
-    15.4 +
+    twilightBaseWearOf(s) +
     Math.max(0, finite(s.age, PEAK_AGE) - 30) * 0.9 +
     ((100 - finite(s.hidden?.durability, 50)) / 100) * 6.6 +
     finite(s.injuryDrag, 0) * 0.4 -
