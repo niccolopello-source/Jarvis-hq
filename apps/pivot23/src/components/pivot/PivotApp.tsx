@@ -107,6 +107,7 @@ function clubByName(name: string) {
   return NBA_TEAMS.find((t) => t.name === name) ?? EURO_TEAMS.find((t) => t.name === name);
 }
 import { advancedOf } from "@/lib/pivot/peak";
+import { displayedPeak } from "@/lib/pivot/peak-display";
 import { defensiveMarks } from "@/lib/pivot/awards-helpers";
 import { CrashFallback } from "./CrashFallback";
 import { SoundToggle } from "@/intro-sound/SoundToggle";
@@ -2406,7 +2407,7 @@ function ResultView({
           {player.name} · N.{player.number}
         </div>
         <div className="result-span">
-          {roleLabel(player.role, lang)} · {p.startAge}–{p.endAge} {t("years", lang)} · {seasonCountLabel(p.seasons, lang)} · {t("peak", lang)} {displayOverall(p.peak)}
+          {roleLabel(player.role, lang)} · {p.startAge}–{p.endAge} {t("years", lang)} · {seasonCountLabel(p.seasons, lang)} · {t("peak", lang)} {displayedPeak(player.seasonHistory, p.peak)}
         </div>
         <div className={`hof-seal ${hof}`}>{t(hof === "hall" ? "hofHall" : hof === "borderline" ? "hofBorder" : "hofOut", lang)}</div>
         <p className="result-close">{nx(v.closing, lang)}</p>
@@ -2470,7 +2471,7 @@ function ArchiveView({
         </button>
         <h2 className="page-title">{viewing.name}</h2>
         <p className="text-muted text-[13px] mb-4">
-          {roleLabel(viewing.role, lang)} · {nx(viewing.verdict, lang)} · {t("peak", lang)} {displayOverall(viewing.peak)}
+          {roleLabel(viewing.role, lang)} · {nx(viewing.verdict, lang)} · {t("peak", lang)} {displayedPeak(viewing.history, viewing.peak)}
           {viewing.apexAge ? tf("atAge", { n: viewing.apexAge }, lang) : ""} · {viewing.titles} {t(viewing.titles === 1 ? "titleOne" : "titleMany", lang)}
           {viewing.difficulty ? ` · ${difficultyFace(viewing.difficulty, lang).label}` : ""}
         </p>

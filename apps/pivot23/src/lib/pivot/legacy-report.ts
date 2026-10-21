@@ -8,6 +8,7 @@
  * - A missing fact is omitted (null / empty list), never guessed.
  * - Nothing here imports the engine or touches RNG, formulas or the saved sporting state.
  */
+import { displayedPeak } from "./peak-display";
 import type { ArchiveCareer, PlayerState, Role, SeasonRow } from "./types";
 import { careerBust } from "./bust";
 import { ROLES } from "./data";
@@ -316,7 +317,8 @@ export function buildLegacyReport(entry: ArchiveCareer): LegacyReport {
     titles: entry.titles,
     finals,
     deepest,
-    peak: entry.peak,
+    // Shown peak = best OVR of the seasons table (see peak-display.ts).
+    peak: displayedPeak(rows, entry.peak),
     awards,
     records,
     timeline,
