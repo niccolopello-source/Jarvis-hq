@@ -1,7 +1,7 @@
 
 /** Curva d'età, picco osservato 26–28, overall intero in display. */
 import { SIM } from "./config";
-import { TUNING, injuryRetireBarsOf, usesBustB, usesBustB81, usesDecisions, usesRetireSpread } from "./tuning";
+import { TUNING, injuryRetireBarsOf, minutesRetireBarOf, usesBustB, usesBustB81, usesDecisions, usesRetireSpread } from "./tuning";
 import { ROLES } from "./data";
 import { rand } from "./rng";
 import type { AttrKey, PlayerState, Role } from "./types";
@@ -41,7 +41,12 @@ export function careerEndingSignal(s: PlayerState): "minutes" | "injury" | null 
   if (s.age < MAX_AGE - 3) {
     // A2 (2.14.0+ careers only): a heavy injury load can close the career at 29–31.
     const bar = usesRetireSpread(s) ? injuryRetireBarsOf(s)[s.age] : undefined;
-    return bar !== undefined && s.injuryDrag >= bar ? "injury" : null;
+    if (bar !== undefined && s.injuryDrag >= bar) return "injury";
+    // Leggenda 2.20+ only: a fading role closes the career at 31-32 (undefined for every other career and version).
+    const minBar = minutesRetireBarOf(s, s.age);
+    if (minBar === undefined) return null;
+    const lastPlayed = s.seasonHistory.at(-1);
+    return lastPlayed && lastPlayed.min <= minBar ? "minutes" : null;
   }
   // From 33 the shipped bar is 2.5. Only 2.19.0+ bars (per difficulty) may set their own value here.
   const lateBar = usesRetireSpread(s) ? injuryRetireBarsOf(s)[s.age] : undefined;
