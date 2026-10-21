@@ -23,9 +23,35 @@ Fonte: codice su main `db64c10` (`src/lib/pivot/save.ts`, `engine.ts`, `i18n.ts`
 ## 2. Cookie di terze parti per la pubblicità (solo desktop, solo con consenso)
 Solo su computer desktop, e solo se la pubblicità è attiva, il sito carica Google AdSense / H5 Games Ads e la CMP di Google (IAB TCF v2.3).
 - Gli annunci sono **solo non personalizzati**, ma Google usa comunque cookie o identificatori per **limitare la frequenza**, report aggregati e **prevenire frodi/traffico non valido** (https://support.google.com/adsense/answer/9007336). Per questo chiediamo il consenso prima di caricarli.
-- Elenco cookie e durate: [ELENCO DALLA CMP / da https://business.safety.google/adscookies/ — **DA VERIFICARE**, non riportiamo nomi senza conferma].
 - Fornitori: elenco completo nella CMP ("Gestisci opzioni" → fornitori).
-- La CMP salva la tua scelta (stringa TCF) sul dispositivo — **DA VERIFICARE** nome e durata del cookie della CMP Google.
+
+**Cookie di Google AdSense / H5 Games Ads** (fonte: https://business.safety.google/adscookies/)
+
+| Cookie | Dominio | Scopo | Durata |
+|---|---|---|---|
+| `__gads` | dominio del sito (pivot23.com) | Pubblicità, sicurezza | 13 mesi |
+| `__gpi` | dominio del sito (pivot23.com) | Pubblicità, sicurezza | 13 mesi |
+| `__gpi_optout` | dominio del sito (pivot23.com) | Pubblicità | 13 mesi |
+| `__eoi` | dominio del sito (pivot23.com) | Sicurezza | 6 mesi |
+| `TESTCOOKIESENABLED` | dominio del sito (pivot23.com) | Funzionalità | 60 secondi |
+| `GED_PLAYLIST_ACTIVITY` | dominio del sito (pivot23.com) | Pubblicità | Sessione |
+| `id` | doubleclick.net | Funzionalità, pubblicità, sicurezza | 13 mesi |
+| `DSID` | doubleclick.net | **DA VERIFICARE** | 2 settimane |
+| `test_cookie` | doubleclick.net | **DA VERIFICARE** | 15 minuti |
+| `IDE` | doubleclick.net | Pubblicità (possibile: Google non lo attribuisce esplicitamente ad AdSense) | 13 mesi |
+
+**Cookie della CMP di Google**
+
+| Cookie | Scopo | Durata |
+|---|---|---|
+| `FCCDCF` | Memorizza la tua scelta di consenso e la stringa TCF | 13 mesi |
+| `FCNEC` | Analisi | 365 giorni |
+
+Note:
+- Google non pubblica un elenco separato per H5 Games Ads; poiché funziona sull'infrastruttura AdSense, assumiamo che usi gli stessi cookie (deduzione — **DA VERIFICARE**).
+- Le chiavi localStorage/sessionStorage usate da Google saranno inventariate quando gli annunci saranno attivi.
+- L'elenco sarà verificato sul campo (DevTools, con annunci attivi) e aggiornato di conseguenza.
+- Informazioni generali di Google sui cookie: https://policies.google.com/technologies/cookies
 
 **Su smartphone e tablet** non carichiamo pubblicità né script di terze parti e non mostriamo banner (ci sono solo strumenti tecnici) — **DA VERIFICARE** con il legale.
 
