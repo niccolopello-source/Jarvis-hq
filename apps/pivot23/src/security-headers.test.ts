@@ -28,3 +28,16 @@ test("local preview drops only upgrade-insecure-requests; every other header equ
   for (const [k, v] of Object.entries(prod)) if (k !== "Content-Security-Policy") assert.equal(local[k], v, k);
   assert.deepEqual(Object.keys(local).sort(), Object.keys(prod).sort());
 });
+
+test("pivot23.vercel.app redirects permanently to www.pivot23.com, and only that host", () => {
+  const cfg = JSON.parse(readFileSync(new URL("../vercel.json", import.meta.url), "utf8")) as {
+    redirects?: { source: string; has?: { type: string; value: string }[]; destination: string; permanent?: boolean }[];
+  };
+  const redirects = cfg.redirects ?? [];
+  assert.equal(redirects.length, 1);
+  const r = redirects[0]!;
+  assert.equal(r.source, "/:path*");
+  assert.deepEqual(r.has, [{ type: "host", value: "pivot23.vercel.app" }]);
+  assert.equal(r.destination, "https://www.pivot23.com/:path*");
+  assert.equal(r.permanent, true);
+});
