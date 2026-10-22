@@ -85,17 +85,42 @@ test("twilight is 4.0 higher for 2.21 careers unless a clamp binds", () => {
   assert.ok(neu - old <= 4.0001, `${neu - old}`);
 });
 
-test("A1 (2.21): injury bars differ from 2.19 only at age 32 for Pro and All-Star; 2.19/2.20 keep injuryRetireBars219", async () => {
+test("Option A (2.21): compensated injury bars; 2.19/2.20 keep injuryRetireBars219", async () => {
   const { TUNING, injuryRetireBarsOf } = await import("./tuning.ts");
   for (const d of ["esordio", "pro", "allstar", "leggenda"] as const) {
     for (const v of ["2.19.0-beta", "2.20.0-beta", "2.20.9"]) assert.equal(injuryRetireBarsOf({ engineVersion: v, difficulty: d }), TUNING.injuryRetireBars219[d], `${v} ${d}`);
     for (const v of ["2.21.0-beta", "2.21.0", "3.0.0"]) assert.equal(injuryRetireBarsOf({ engineVersion: v, difficulty: d }), TUNING.injuryRetireBars221[d], `${v} ${d}`);
   }
   assert.equal(injuryRetireBarsOf({ engineVersion: "2.21.0-beta" }), TUNING.injuryRetireBars221.pro, "missing difficulty reads as pro");
-  const expected = structuredClone(TUNING.injuryRetireBars219) as Record<string, Record<number, number>>;
-  expected.pro![32] = 1.8;
-  expected.allstar![32] = 1.8;
-  assert.deepEqual(TUNING.injuryRetireBars221, expected);
+  // Option A (22 Oct 2026) replaced the A1 values before 2.21 shipped: bars compensate the minimum scar.
+  assert.deepEqual(TUNING.injuryRetireBars221, {
+    esordio: { ...TUNING.injuryRetireBars219.esordio },
+    pro: { 30: 4.5, 31: 3.5, 32: 2.25 },
+    allstar: { 30: 5.22, 31: 2.9, 32: 2.61 },
+    leggenda: { 30: 10.08, 31: 5.6, 32: 2.8 },
+  });
   assert.deepEqual(TUNING.injuryRetireBars219.pro, { 30: 3.6, 31: 2.8, 32: 1.9 });
   assert.deepEqual(TUNING.injuryRetireBars219.allstar, { 30: 3.6, 31: 2.0, 32: 1.7 });
+});
+
+test("Option A (2.21): the prudent injury answer leaves the minimum scar; 2.20 careers keep zero", async () => {
+  const { TUNING } = await import("./tuning.ts");
+  const { openCareerSim, advanceCareerSim } = await import("./engine.ts");
+  assert.deepEqual(TUNING.injuryScar221, { esordio: 0, pro: 1.2, allstar: 1.2, leggenda: 1.2 });
+  const prudent = (v: string) => {
+    const job = openCareerSim({ seed: 91000, difficulty: "pro", engineVersion: v });
+    let minDrag = Infinity, cards = 0;
+    job.opts.choose = (s, ev, _n, drawn) => {
+      const i = ev.choices.findIndex((c) => c.label === "Percorso prudente");
+      if (ev.id.startsWith("injury-") && i >= 0) { cards++; const before = s.injuryDrag; const fx = ev.choices[i]!.fx(structuredClone(s)); minDrag = Math.min(minDrag, (fx.injuryDrag ?? 0)); void before; return i; }
+      return drawn;
+    };
+    let done = false;
+    for (let k = 0; !done && k < 5000; k++) done = advanceCareerSim(job);
+    return { cards, minDrag };
+  };
+  const neu = prudent("2.21.0-beta");
+  const old = prudent("2.20.0-beta");
+  if (neu.cards > 0) assert.ok(neu.minDrag > 0, `2.21 prudent drag ${neu.minDrag}`);
+  if (old.cards > 0) assert.equal(old.minDrag, 0);
 });

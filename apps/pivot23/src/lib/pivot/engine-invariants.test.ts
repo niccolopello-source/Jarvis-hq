@@ -242,7 +242,7 @@ const GOLDEN_2_19 = ["cec0d46789bf3a75", "a636bf327e11d835", "32807885e3d2fe70"]
 const GOLDEN_2_20 = ["cec0d46789bf3a75", "a636bf327e11d835", "32807885e3d2fe70"];
 /* 2.21 regenerated once with procedural depth (#115) and the A1 injury bars (Pello, 21 Oct 2026).
    OVR balance only (96388b8): 98dfbe1cff63005d, 7d3a61619f2ab3c7, 6145b610683f9847. */
-const GOLDEN = ["11250cba26abd854", "c2294f36017f9258", "9974e4d64f9a01bf"];
+const GOLDEN = ["a40e6980601afc57", "c2294f36017f9258", "8f8997a50fce81a3"];
 const GOLDEN_2_15 = ["4da0c610aba577b4", "eb62db0aef59b9a9", "ca8469ee05d836c7"];
 const GOLDEN_2_14 = ["d28207b449d5e3c1", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
 const GOLDEN_2_13 = ["9f5583418a7fa740", "b0c282429613a5ef", "c8c2acbea10d0c1c"];

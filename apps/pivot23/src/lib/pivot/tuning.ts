@@ -50,11 +50,16 @@ export const TUNING = {
   /** Option A1 (Pello, 21 Oct 2026): injury bars for careers created on 2.21.0+ (OVR_BALANCE_SINCE), with OVR
    *  balance and procedural depth on. Same as injuryRetireBars219 except the age-32 bar: Pro 1.9 -> 1.8,
    *  All-Star 1.7 -> 1.8. Keeps last season at 29-32 in the owner bands (report options-221.md). */
+  /** Option A "minimum scar" (Pello, 22 Oct 2026), careers created on 2.21.0+ only: every injury card leaves
+   *  at least this injuryDrag (before the severity scale), whatever the answer, so always choosing the prudent
+   *  path no longer erases early exits. Esordio 0 (owner target <= 20/1000). The 2.21 bars below compensate. */
+  injuryScar221: { esordio: 0, pro: 1.2, allstar: 1.2, leggenda: 1.2 } as Readonly<Record<DifficultyId, number>>,
   injuryRetireBars221: {
     esordio: { 30: 5.0, 31: 3.6, 32: 3.2, 33: 3.5 },
-    pro: { 30: 3.6, 31: 2.8, 32: 1.8 },
-    allstar: { 30: 3.6, 31: 2.0, 32: 1.8 },
-    leggenda: { 30: 3.6, 31: 2.0, 32: 1.0 },
+    // Option A (22 Oct 2026): A1 bars raised to compensate the minimum scar (Pro x1.25, All-Star x1.45, Leggenda x2.8).
+    pro: { 30: 4.5, 31: 3.5, 32: 2.25 },
+    allstar: { 30: 5.22, 31: 2.9, 32: 2.61 },
+    leggenda: { 30: 10.08, 31: 5.6, 32: 2.8 },
   } as Readonly<Record<DifficultyId, Readonly<Record<number, number>>>>,
   /** D-08 option B, on for careers from BUST_SINCE. High ceilings only. Downside only. */
   bustB: { potFloor: 86, choiceRef: 5.0, choiceSlope: 0.04, choiceK: 0.1, devRef: 7, devK: 0.012, cap: 0.1 },

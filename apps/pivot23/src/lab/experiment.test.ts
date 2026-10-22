@@ -39,11 +39,11 @@ test("experiment absent keeps the no-hook fingerprints", () => {
   assert.equal(fp(23017, "2.20.0-beta"), "be7cb73d0a40a658");
   assert.equal(fp(23034, "2.20.0-beta"), "f87256a4de325b61");
   assert.equal(fp(23102, "2.20.0-beta"), "2b6b9e31f6a33560");
-  // 2.21 values with procedural depth (#115) and the A1 injury bars, regenerated once.
+  // 2.21 values with procedural depth (#115), A1 bars and Option A scar (22 Oct), regenerated once. A1 only: 281950b4373c20fd / d4f59906719745f0 / 7f8069aa4b4150f2.
   // OVR balance only (96388b8): 9738a8b25ae0f507 / 04a89407b6080434 / fa5d954ed74bfea9.
   assert.equal(fp(23017), "281950b4373c20fd");
   assert.equal(fp(23034), "d4f59906719745f0");
-  assert.equal(fp(23102), "7f8069aa4b4150f2");
+  assert.equal(fp(23102), "dfeef411f69e9235");
 });
 
 test("forced minutes move the recorded average without touching the played path", () => {
