@@ -2,6 +2,8 @@
 @import "tailwindcss";
 /* Ads code ships its own CSS (src/ads/ads.css) only with the flag ON; keep it out of the utility scan. */
 @source not "./ads";
+/* e2e fixtures are regenerated during test runs; scanning them made the dev server reload every open page. */
+@source not "../e2e";
 @import "./styles/deluxe.css";
 
 @theme {
