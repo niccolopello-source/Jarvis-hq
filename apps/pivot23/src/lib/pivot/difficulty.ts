@@ -1,6 +1,6 @@
 
 import type { TeamTier } from "./types";
-import { usesDecisions } from "./tuning";
+import { OVR_BALANCE_LEGGENDA_POTENTIAL_SHIFT, usesDecisions, usesOvrBalance220 } from "./tuning";
 import { ROY_DELTA_V2_SCALE } from "./awards-v2";
 
 export type DifficultyId = "esordio" | "pro" | "allstar" | "leggenda";
@@ -155,6 +155,14 @@ export const DIFF_MAP: Record<DifficultyId, DifficultySpec> = Object.fromEntries
 export function diffOf(s: { difficulty?: DifficultyId } | null | undefined): DifficultySpec {
   const id = s?.difficulty && DIFF_MAP[s.difficulty] ? s.difficulty : "pro";
   return DIFF_MAP[id]!;
+}
+
+/** Potential shift at career creation. Leggenda careers from OVR_BALANCE_SINCE (2.21.0) use -4;
+ *  older careers keep the shipped spec value (-6). Every other difficulty is unchanged. */
+export function potentialShiftOf(difficulty: DifficultyId | undefined, engineVersion: string | undefined): number {
+  const spec = diffOf({ difficulty });
+  if (spec.id === "leggenda" && usesOvrBalance220({ engineVersion })) return OVR_BALANCE_LEGGENDA_POTENTIAL_SHIFT;
+  return spec.potential;
 }
 
 /** All-Star random-slot weight that careers before DECISIONS_SINCE (2.14 and older) shipped with. */

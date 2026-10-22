@@ -202,7 +202,8 @@ test("golden full-career baseline for fixed seeds (engine output, not run-vs-run
   // Same seeds as a career created on 2.12.0-beta (a save in flight): the engine reads the rules
   // from the career's own engineVersion, so these must stay the #63 values byte for byte.
   const legacy = (version: string) => (o: SimOpts) => {
-    const job = openCareerSim(o);
+    // 2.20: created as the forced version, because the Leggenda potential shift is drawn at creation.
+    const job = openCareerSim({ ...o, engineVersion: version });
     job.s.engineVersion = version;
     // The rookie class is drawn at career start by the running engine: redraw it for the forced version.
     job.s.royClass = [];
@@ -215,6 +216,8 @@ test("golden full-career baseline for fixed seeds (engine output, not run-vs-run
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.14.0-beta")), GOLDEN_2_14);
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.15.0-beta")), GOLDEN_2_15);
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.16.0-beta")), GOLDEN_2_16);
+  assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.19.0-beta")), GOLDEN_2_19);
+  assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.20.0-beta")), GOLDEN_2_20);
 });
 /* 2.13.0-beta (#66): D-09 world "regress" and the D-23 step 0.16 apply only to careers created
    on 2.13.0 or later, and they move team strength and DPOY voting, so new careers get new values.
@@ -232,7 +235,12 @@ const GOLDEN_2_16 = ["860acab285591479", "0964f5e71de9c48c", "58128165ba383c2e"]
    injury load; seed 2 is unchanged. Before the recalibration: 80b3ae7194aec564, a636bf327e11d835, c07def159324228f. */
 /* 2.19.0-beta per-difficulty bars (Pello's targets): seed 1 (pro) moves with the Pro bars; seeds 2 (allstar)
    and 3 (leggenda) are unchanged. Single-set value for seed 1: 58e91328e9526064. */
-const GOLDEN = ["cec0d46789bf3a75", "a636bf327e11d835", "32807885e3d2fe70"];
+/* 2.20.0-beta (#112 Leggenda retirements): these three seeds did not move (main @ 815b1ad kept the 2.19 values).
+   2.21.0-beta OVR balance (OVR_BALANCE_SINCE): Leggenda potential shift -4 and twilight base wear 11.4 for
+   careers created on 2.21+. The 2.19 and 2.20 values are kept unchanged below. */
+const GOLDEN_2_19 = ["cec0d46789bf3a75", "a636bf327e11d835", "32807885e3d2fe70"];
+const GOLDEN_2_20 = ["cec0d46789bf3a75", "a636bf327e11d835", "32807885e3d2fe70"];
+const GOLDEN = ["98dfbe1cff63005d", "7d3a61619f2ab3c7", "6145b610683f9847"];
 const GOLDEN_2_15 = ["4da0c610aba577b4", "eb62db0aef59b9a9", "ca8469ee05d836c7"];
 const GOLDEN_2_14 = ["d28207b449d5e3c1", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
 const GOLDEN_2_13 = ["9f5583418a7fa740", "b0c282429613a5ef", "c8c2acbea10d0c1c"];

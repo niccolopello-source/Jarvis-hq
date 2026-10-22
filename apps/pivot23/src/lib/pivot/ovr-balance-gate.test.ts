@@ -1,0 +1,86 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import ref from "./fixtures/ovr-balance-fp-220.json" with { type: "json" };
+import { careerFingerprint, GATE_DIFFS, GATE_SEEDS } from "../../../scripts/version-gate-fingerprints.ts";
+import { OVR_GATE_VERSIONS, playCreatedAt } from "../../../scripts/ovr-balance-fingerprints.ts";
+import { ENGINE_VERSION, freshPlayer, openCareerSim } from "./engine.ts";
+import { DIFF_MAP, potentialShiftOf } from "./difficulty.ts";
+import { twilightOf } from "./peak.ts";
+import {
+  LEGACY_LEGGENDA_POTENTIAL_SHIFT,
+  LEGACY_TWILIGHT_BASE_WEAR,
+  OVR_BALANCE_LEGGENDA_POTENTIAL_SHIFT,
+  OVR_BALANCE_SINCE,
+  OVR_BALANCE_TWILIGHT_BASE_WEAR,
+  twilightBaseWearOf,
+  usesOvrBalance220,
+} from "./tuning.ts";
+
+/* OVR balance (engine 2.21.0): careers CREATED on 2.16-2.20 must replay byte-identical to main @ 815b1ad
+   (engine 2.20.0-beta, #112 merged). Fixture frozen there with scripts/ovr-balance-fingerprints.ts (40 seeds x 4 difficulties x 5 versions). */
+const FP = ref as Record<string, string>;
+
+test("OVR balance fixture covers 800 careers frozen on main @ 815b1ad", () => {
+  assert.equal(Object.keys(FP).length, OVR_GATE_VERSIONS.length * GATE_DIFFS.length * GATE_SEEDS.length);
+});
+
+for (const v of OVR_GATE_VERSIONS) {
+  test(`${v} careers (created as ${v}) replay identical to main @ 815b1ad (160 careers)`, () => {
+    const bad: string[] = [];
+    for (const d of GATE_DIFFS) for (const seed of GATE_SEEDS) {
+      const key = `${v}|${d}|${seed}`;
+      if (careerFingerprint(playCreatedAt(seed, d, v)) !== FP[key]) bad.push(key);
+    }
+    assert.deepEqual(bad, []);
+  });
+}
+
+test("gate constants and version rule", () => {
+  assert.equal(OVR_BALANCE_SINCE, "2.21.0");
+  assert.equal(DIFF_MAP.leggenda!.potential, LEGACY_LEGGENDA_POTENTIAL_SHIFT, "the shipped spec keeps -6 for old careers");
+  assert.equal(LEGACY_LEGGENDA_POTENTIAL_SHIFT, -6);
+  assert.equal(OVR_BALANCE_LEGGENDA_POTENTIAL_SHIFT, -4);
+  assert.equal(LEGACY_TWILIGHT_BASE_WEAR, 15.4);
+  assert.equal(OVR_BALANCE_TWILIGHT_BASE_WEAR, 11.4);
+  for (const v of ["2.20.0-beta", "2.20.0", "2.19.0-beta", "2.19.9", "2.18.0-beta", "2.12.0", "", undefined, "garbage"]) {
+    assert.equal(usesOvrBalance220({ engineVersion: v as string }), false, String(v));
+    assert.equal(twilightBaseWearOf({ engineVersion: v as string }), 15.4, String(v));
+    assert.equal(potentialShiftOf("leggenda", v as string), -6, String(v));
+  }
+  for (const v of ["2.21.0-beta", "2.21.0", "2.22.0", "3.0.0"]) {
+    assert.equal(usesOvrBalance220({ engineVersion: v }), true, v);
+    assert.equal(twilightBaseWearOf({ engineVersion: v }), 11.4, v);
+    assert.equal(potentialShiftOf("leggenda", v), -4, v);
+  }
+  for (const d of ["esordio", "pro", "allstar"] as const) {
+    for (const v of ["2.20.0-beta", "2.21.0-beta"]) assert.equal(potentialShiftOf(d, v), DIFF_MAP[d]!.potential, `${d} ${v}`);
+  }
+});
+
+test("new careers are 2.21 and get the Leggenda +2 potential on the same roll", () => {
+  assert.equal(ENGINE_VERSION, "2.21.0-beta");
+  assert.equal(openCareerSim({ seed: 9100 }).s.engineVersion, ENGINE_VERSION);
+  let moved = 0;
+  for (let seed = 1; seed <= 200; seed++) {
+    const a = freshPlayer("A", "PG", "ITA", 1, "leggenda", seed, "2.20.0-beta");
+    const b = freshPlayer("A", "PG", "ITA", 1, "leggenda", seed);
+    assert.equal(a.engineVersion, b.engineVersion, "freshPlayer stamps the running engine either way");
+    const d = Math.round((b.potential - a.potential) * 10) / 10;
+    assert.ok(d >= 0 && d <= 2, `seed ${seed}: ${d}`);
+    if (d === 2) moved++;
+    // Pro is untouched by the gate.
+    assert.equal(freshPlayer("A", "PG", "ITA", 1, "pro", seed, "2.20.0-beta").potential, freshPlayer("A", "PG", "ITA", 1, "pro", seed).potential);
+  }
+  assert.ok(moved > 100, `${moved}/200 move by exactly +2 (the rest sit on the 64 floor)`);
+});
+
+test("twilight is 4.0 higher for 2.21 careers unless a clamp binds", () => {
+  const s = openCareerSim({ seed: 4242, difficulty: "pro" }).s;
+  s.age = 31;
+  s.peakOverall = 80;
+  s.injuryDrag = 0;
+  const old = twilightOf({ ...s, engineVersion: "2.20.0-beta" });
+  const neu = twilightOf({ ...s, engineVersion: "2.21.0-beta" });
+  assert.ok(neu >= old, `${neu} >= ${old}`);
+  assert.ok(neu - old <= 4.0001, `${neu - old}`);
+});

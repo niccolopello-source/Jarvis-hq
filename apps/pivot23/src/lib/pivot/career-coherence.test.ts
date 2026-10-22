@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { bustDiagnosis, choiceShowsVoidedExtraYear, extraYearVoided } from "./career-coherence.ts";
-import { playCareerSim, toArchive } from "./engine.ts";
+import { ENGINE_VERSION, playCareerSim, toArchive } from "./engine.ts";
 import { palmares } from "./legacy.ts";
 import { buildLegacyReport } from "./legacy-report.ts";
 import { careerEndAge, careerEndingSignal, isCareerOver } from "./peak.ts";
@@ -11,7 +11,7 @@ const ROLES = ["PG", "SG", "SF", "PF", "C"] as const;
 const PATHS = ["NCAA", "Europa", "G-League"] as const;
 
 /** Same career the G4 collector builds for index i on Pro. */
-function g4Pro(i: number) {
+function g4Pro(i: number, engineVersion = "2.20.0-beta") {
   return playCareerSim({
     name: "G4",
     role: ROLES[i % 5]!,
@@ -21,6 +21,8 @@ function g4Pro(i: number) {
     path: PATHS[i % 3]!,
     seed: (i + 1) * 1000 + 17,
     draft: "random",
+    // 2.20.0 (OVR balance) moves new careers; these scenarios were picked on 2.19 (unchanged on 2.20) and stay pinned to 2.20.
+    engineVersion,
   });
 }
 
@@ -101,6 +103,7 @@ function g4(i: number, retirement: "play36" | "retire") {
     seed: (i + 1) * 1000 + 17,
     draft: "random",
     retirement,
+    engineVersion: "2.20.0-beta", // scenarios picked on 2.19, pinned to 2.20; 2.21 counterparts below
   });
 }
 
@@ -175,4 +178,20 @@ test("bust diagnosis separates opportunity from progression without touching the
   assert.equal(star.official, false);
   assert.equal(star.kind, "none");
   assert.equal(star.labMiss, true);
+});
+
+test("2.21 careers: an accepted age-36 season under injury load is still played (seeds found, not pinned)", () => {
+  // Same property as the 2.19 test above, on careers created by the running engine (2.21 OVR balance).
+  const hits: number[] = [];
+  for (let i = 0; i < 240 && hits.length < 3; i++) {
+    const s = g4Pro(i, ENGINE_VERSION);
+    if (s.injuryDrag >= 2.5 && s.extraSeason === true) hits.push(i);
+  }
+  assert.ok(hits.length >= 1, "at least one 2.21 career plays 36 under the injury load");
+  for (const i of hits) {
+    const s = g4Pro(i, ENGINE_VERSION);
+    assert.equal(s.seasonHistory.some((r) => r.age === 36), true, `seed ${s.seed} plays 36`);
+    assert.equal(extraYearVoided(s), false);
+    assert.equal(careerEndAge(s), 36);
+  }
 });
