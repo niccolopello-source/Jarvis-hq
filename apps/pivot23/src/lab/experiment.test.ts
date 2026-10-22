@@ -39,8 +39,10 @@ test("experiment absent keeps the no-hook fingerprints", () => {
   assert.equal(fp(23017, "2.20.0-beta"), "be7cb73d0a40a658");
   assert.equal(fp(23034, "2.20.0-beta"), "f87256a4de325b61");
   assert.equal(fp(23102, "2.20.0-beta"), "2b6b9e31f6a33560");
-  // 2.21 values with procedural depth (#115), A1 bars and Option A scar (22 Oct), regenerated once. A1 only: 281950b4373c20fd / d4f59906719745f0 / 7f8069aa4b4150f2.
-  // OVR balance only (96388b8): 9738a8b25ae0f507 / 04a89407b6080434 / fa5d954ed74bfea9.
+  // 2.22.0 (procedural depth + A1 bars + Option A scar): new careers move (23102 depth+A1 only: 7f8069aa4b4150f2); the 2.21 values (main d800528) stay pinned to careers created as 2.21.
+  assert.equal(fp(23017, "2.21.0-beta"), "9738a8b25ae0f507");
+  assert.equal(fp(23034, "2.21.0-beta"), "04a89407b6080434");
+  assert.equal(fp(23102, "2.21.0-beta"), "fa5d954ed74bfea9");
   assert.equal(fp(23017), "281950b4373c20fd");
   assert.equal(fp(23034), "d4f59906719745f0");
   assert.equal(fp(23102), "dfeef411f69e9235");
@@ -53,6 +55,7 @@ test("forced minutes move the recorded average without touching the played path"
   assert.ok(Math.abs(mean(low) - 10) < 0.05, String(mean(low)));
   assert.ok(Math.abs(mean(high) - 28) < 0.05, String(mean(high)));
   assert.equal(fp(23017, "2.20.0-beta"), "be7cb73d0a40a658");
+  assert.equal(fp(23017, "2.21.0-beta"), "9738a8b25ae0f507");
   assert.equal(fp(23017), "281950b4373c20fd");
 });
 

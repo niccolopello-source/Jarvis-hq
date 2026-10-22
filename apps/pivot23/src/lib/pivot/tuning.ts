@@ -47,12 +47,12 @@ export const TUNING = {
   minutesRetireBars220: {
     leggenda: { 31: 13.1, 32: 11.9 },
   } as Readonly<Partial<Record<DifficultyId, Readonly<Record<number, number>>>>>,
-  /** Option A1 (Pello, 21 Oct 2026): injury bars for careers created on 2.21.0+ (OVR_BALANCE_SINCE), with OVR
+  /** Option A1 (Pello, 21 Oct 2026): injury bars for careers created on 2.22.0+ (A1_BARS_SINCE; was 2.21 before 2.21.0-beta shipped without them), with OVR
    *  balance and procedural depth on. Same as injuryRetireBars219 except the age-32 bar: Pro 1.9 -> 1.8,
    *  All-Star 1.7 -> 1.8. Keeps last season at 29-32 in the owner bands (report options-221.md). */
-  /** Option A "minimum scar" (Pello, 22 Oct 2026), careers created on 2.21.0+ only: every injury card leaves
+  /** Option A "minimum scar" (Pello, 22 Oct 2026), careers created on 2.22.0+ only (A1_BARS_SINCE): every injury card leaves
    *  at least this injuryDrag (before the severity scale), whatever the answer, so always choosing the prudent
-   *  path no longer erases early exits. Esordio 0 (owner target <= 20/1000). The 2.21 bars below compensate. */
+   *  path no longer erases early exits. Esordio 0 (owner target <= 20/1000). The 2.22 bars below compensate. */
   injuryScar221: { esordio: 0, pro: 1.2, allstar: 1.2, leggenda: 1.2 } as Readonly<Record<DifficultyId, number>>,
   injuryRetireBars221: {
     esordio: { 30: 5.0, 31: 3.6, 32: 3.2, 33: 3.5 },
@@ -206,10 +206,14 @@ export function usesRetireSpread(career: { engineVersion?: string }): boolean {
   return versionAtLeast(career.engineVersion, RETIRE_SINCE);
 }
 
+/** 2.22.0 (Pello, 22 Oct 2026): the A1 injury bars (and, from #121, the safe-choices scar) apply to careers created
+ *  on 2.22.0+. 2.21.0-beta (live on main d800528) keeps injuryRetireBars219 byte-identical. */
+export const A1_BARS_SINCE = "2.22.0";
+
 /** P1-INJ: retirement bars before 33 for this career (2.19.0+ use the recalibrated bars). */
 export function injuryRetireBarsOf(career: { engineVersion?: string; difficulty?: DifficultyId }): Readonly<Record<number, number>> {
   if (!versionAtLeast(career.engineVersion, RULES_INJURY_SINCE)) return TUNING.injuryRetireBars;
-  if (versionAtLeast(career.engineVersion, OVR_BALANCE_SINCE)) {
+  if (versionAtLeast(career.engineVersion, A1_BARS_SINCE)) {
     return TUNING.injuryRetireBars221[career.difficulty ?? "pro"] ?? TUNING.injuryRetireBars221.pro;
   }
   return TUNING.injuryRetireBars219[career.difficulty ?? "pro"] ?? TUNING.injuryRetireBars219.pro;

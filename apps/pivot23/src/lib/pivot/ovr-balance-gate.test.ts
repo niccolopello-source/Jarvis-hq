@@ -58,7 +58,7 @@ test("gate constants and version rule", () => {
 });
 
 test("new careers are 2.21 and get the Leggenda +2 potential on the same roll", () => {
-  assert.equal(ENGINE_VERSION, "2.21.0-beta");
+  assert.equal(ENGINE_VERSION, "2.22.0-beta");
   assert.equal(openCareerSim({ seed: 9100 }).s.engineVersion, ENGINE_VERSION);
   let moved = 0;
   for (let seed = 1; seed <= 200; seed++) {
@@ -85,14 +85,14 @@ test("twilight is 4.0 higher for 2.21 careers unless a clamp binds", () => {
   assert.ok(neu - old <= 4.0001, `${neu - old}`);
 });
 
-test("Option A (2.21): compensated injury bars; 2.19/2.20 keep injuryRetireBars219", async () => {
+test("Option A (2.22): compensated injury bars; 2.19-2.21 keep injuryRetireBars219", async () => {
   const { TUNING, injuryRetireBarsOf } = await import("./tuning.ts");
   for (const d of ["esordio", "pro", "allstar", "leggenda"] as const) {
-    for (const v of ["2.19.0-beta", "2.20.0-beta", "2.20.9"]) assert.equal(injuryRetireBarsOf({ engineVersion: v, difficulty: d }), TUNING.injuryRetireBars219[d], `${v} ${d}`);
-    for (const v of ["2.21.0-beta", "2.21.0", "3.0.0"]) assert.equal(injuryRetireBarsOf({ engineVersion: v, difficulty: d }), TUNING.injuryRetireBars221[d], `${v} ${d}`);
+    for (const v of ["2.19.0-beta", "2.20.0-beta", "2.20.9", "2.21.0-beta", "2.21.9"]) assert.equal(injuryRetireBarsOf({ engineVersion: v, difficulty: d }), TUNING.injuryRetireBars219[d], `${v} ${d}`);
+    for (const v of ["2.22.0-beta", "2.22.0", "3.0.0"]) assert.equal(injuryRetireBarsOf({ engineVersion: v, difficulty: d }), TUNING.injuryRetireBars221[d], `${v} ${d}`);
   }
-  assert.equal(injuryRetireBarsOf({ engineVersion: "2.21.0-beta" }), TUNING.injuryRetireBars221.pro, "missing difficulty reads as pro");
-  // Option A (22 Oct 2026) replaced the A1 values before 2.21 shipped: bars compensate the minimum scar.
+  assert.equal(injuryRetireBarsOf({ engineVersion: "2.22.0-beta" }), TUNING.injuryRetireBars221.pro, "missing difficulty reads as pro");
+  // Option A (22 Oct 2026) replaced the A1 values before the stack shipped (now gated at 2.22.0): bars compensate the minimum scar.
   assert.deepEqual(TUNING.injuryRetireBars221, {
     esordio: { ...TUNING.injuryRetireBars219.esordio },
     pro: { 30: 4.5, 31: 3.5, 32: 2.25 },
@@ -103,24 +103,54 @@ test("Option A (2.21): compensated injury bars; 2.19/2.20 keep injuryRetireBars2
   assert.deepEqual(TUNING.injuryRetireBars219.allstar, { 30: 3.6, 31: 2.0, 32: 1.7 });
 });
 
-test("Option A (2.21): the prudent injury answer leaves the minimum scar; 2.20 careers keep zero", async () => {
+test("Option A (2.22): the prudent injury answer leaves the minimum scar; 2.20/2.21 careers keep zero", async () => {
   const { TUNING } = await import("./tuning.ts");
   const { openCareerSim, advanceCareerSim } = await import("./engine.ts");
+  const { seedRookieClass } = await import("./league.ts");
   assert.deepEqual(TUNING.injuryScar221, { esordio: 0, pro: 1.2, allstar: 1.2, leggenda: 1.2 });
-  const prudent = (v: string) => {
-    const job = openCareerSim({ seed: 91000, difficulty: "pro", engineVersion: v });
+  // Always answers "Percorso prudente" on injury cards; records the injuryDrag that answer would leave.
+  const prudent = (seed: number, v: string) => {
+    const job = openCareerSim({ seed, difficulty: "pro", engineVersion: v });
+    if (job.s.engineVersion !== v) { job.s.engineVersion = v; job.s.royClass = []; seedRookieClass(job.s); }
     let minDrag = Infinity, cards = 0;
     job.opts.choose = (s, ev, _n, drawn) => {
       const i = ev.choices.findIndex((c) => c.label === "Percorso prudente");
-      if (ev.id.startsWith("injury-") && i >= 0) { cards++; const before = s.injuryDrag; const fx = ev.choices[i]!.fx(structuredClone(s)); minDrag = Math.min(minDrag, (fx.injuryDrag ?? 0)); void before; return i; }
+      if (ev.id.startsWith("injury-") && i >= 0) {
+        cards++;
+        minDrag = Math.min(minDrag, ev.choices[i]!.fx(structuredClone(s)).injuryDrag ?? 0);
+        return i;
+      }
       return drawn;
     };
     let done = false;
     for (let k = 0; !done && k < 5000; k++) done = advanceCareerSim(job);
     return { cards, minDrag };
   };
-  const neu = prudent("2.21.0-beta");
-  const old = prudent("2.20.0-beta");
-  if (neu.cards > 0) assert.ok(neu.minDrag > 0, `2.21 prudent drag ${neu.minDrag}`);
-  if (old.cards > 0) assert.equal(old.minDrag, 0);
+  // Strict: each version must actually meet an injury card on some fixed seed (first of 91000 + 13i, i < 200).
+  const firstWithCard = (v: string) => {
+    for (let i = 0; i < 200; i++) { const r = prudent(91000 + i * 13, v); if (r.cards > 0) return { seed: 91000 + i * 13, ...r }; }
+    return { seed: -1, cards: 0, minDrag: Infinity };
+  };
+  const neu = firstWithCard("2.22.0-beta");
+  assert.ok(neu.cards > 0, "no 2.22 career met an injury card");
+  assert.ok(neu.minDrag > 0, `2.22 prudent drag ${neu.minDrag} (seed ${neu.seed})`);
+  for (const v of ["2.21.0-beta", "2.20.0-beta"]) {
+    const old = firstWithCard(v);
+    assert.ok(old.cards > 0, `no ${v} career met an injury card`);
+    assert.equal(old.minDrag, 0, `${v} prudent drag (seed ${old.seed})`);
+  }
+});
+
+/* 2.22.0 stack gate (Pello, 22 Oct 2026): 2.21.0-beta is live on main d800528. Careers CREATED as 2.21 must replay
+   byte-identical to main. Frozen on main @ d800528 with playCreatedAt(seed, d, "2.21.0-beta") (scripts/ovr-balance-fingerprints.ts). */
+test("2.21 careers replay byte-identical to main @ d800528 (stack-fp-221.json, 160 careers)", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { careerFingerprint } = await import("../../../scripts/version-gate-fingerprints.ts");
+  const { playCreatedAt } = await import("../../../scripts/ovr-balance-fingerprints.ts");
+  const ref = JSON.parse(readFileSync(new URL("./fixtures/stack-fp-221.json", import.meta.url), "utf8")) as Record<string, string>;
+  assert.equal(Object.keys(ref).length, 160);
+  for (const [key, fp] of Object.entries(ref)) {
+    const [v, d, seed] = key.split("|");
+    assert.equal(careerFingerprint(playCreatedAt(Number(seed), d as "pro", v!)), fp, key);
+  }
 });

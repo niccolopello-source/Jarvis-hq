@@ -48,7 +48,7 @@ test("older engine versions never run the layer even if a memory field is presen
     s.engineVersion = v;
     assert.equal(memoryOf(s), null, v);
   }
-  s.engineVersion = "2.21.0-beta";
+  s.engineVersion = "2.22.0-beta";
   assert.notEqual(memoryOf(s), null);
   (s as { memory: unknown }).memory = { v: 9, junk: true };
   assert.equal(memoryOf(s), null, "malformed memory falls back to legacy rules");

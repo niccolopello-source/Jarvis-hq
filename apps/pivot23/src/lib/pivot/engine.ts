@@ -1,5 +1,5 @@
 
-import { TUNING, scriptSlotFor, scriptWindowsOf, seedHash, usesOvrBalance220, versionAtLeast, worldOf } from "./tuning";
+import { A1_BARS_SINCE, TUNING, scriptSlotFor, scriptWindowsOf, seedHash, versionAtLeast, worldOf } from "./tuning";
 import { INJURY_KINDS, INJURY_SEVERITY, loadInjuryAt, usesInjuryEvents, type InjuryKind } from "./injuries";
 import {
   ATTR_LABELS,
@@ -1440,7 +1440,7 @@ function injuryStory(s: PlayerState, kind?: InjuryKind): StoryEvent {
 
 /** Option A (2.21.0+ careers): an injury leaves at least the difficulty's scar, then the severity scale. No RNG. */
 function injuryDragWithScar(s: PlayerState, drag: number | undefined, sev: number): number | undefined {
-  const scar = usesOvrBalance220(s) ? (TUNING.injuryScar221[s.difficulty ?? "pro"] ?? 0) : 0;
+  const scar = versionAtLeast(s.engineVersion, A1_BARS_SINCE) ? (TUNING.injuryScar221[s.difficulty ?? "pro"] ?? 0) : 0;
   const base = scar > 0 ? Math.max(drag ?? 0, scar) : drag;
   return base === undefined ? undefined : round1(base * sev);
 }
