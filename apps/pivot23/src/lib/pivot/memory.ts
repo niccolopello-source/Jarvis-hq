@@ -2,18 +2,19 @@
  * PROCEDURAL DEPTH 1–3 — causal career memory, contextual event scoring, choice trade-offs.
  *
  * Compatibility: the whole layer is OFF unless the career carries `memory` (created by freshPlayer only
- * for careers created by DEPTH_SINCE = 2.21.0 or later) AND its engineVersion is DEPTH_SINCE or later. Saves written before this change have
+ * for careers created by DEPTH_SINCE = 2.22.0 or later) AND its engineVersion is DEPTH_SINCE or later. Saves written before this change have
  * no `memory` field and replay exactly as before. The field is optional and additive: no
- * LIVE_SAVE_VERSION or fingerprint change; the version gate is the 2.21.0 bump of the OVR balance. A malformed field is ignored (legacy rules).
+ * LIVE_SAVE_VERSION or fingerprint change; the version gate is the 2.22.0 bump. A malformed field is ignored (legacy rules).
  *
  * Nothing here draws from the RNG: consequences fire on engine state, scores are deterministic,
  * the only random draw stays the existing weighted pick in pickStoryEvent (same number of draws).
  */
 import type { Fx, PlayerState, StoryEvent } from "./types";
-import { OVR_BALANCE_SINCE, versionAtLeast } from "./tuning";
+import { versionAtLeast } from "./tuning";
 
-/** Same gate as the OVR balance (2.21.0): 2.19 / 2.20 careers keep the legacy rules byte-identical. */
-export const DEPTH_SINCE = OVR_BALANCE_SINCE;
+/** 2.22.0 (Pello, 22 Oct 2026): 2.21.0-beta (OVR balance) is live on main d800528, so procedural depth moves to
+ *  its own gate. 2.21 and older careers keep the legacy rules byte-identical (fixtures/stack-fp-221.json). */
+export const DEPTH_SINCE = "2.22.0";
 export const MEMORY_ITEM_CAP = 16;
 export const MEMORY_APPLIED_CAP = 40;
 export const MEMORY_TRAIL_CAP = 24;

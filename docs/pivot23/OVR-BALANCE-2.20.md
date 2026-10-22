@@ -43,3 +43,6 @@ Last season at 29–32, per 1000 (Wilson 95%), #115 → #115 + A1. S = stats see
 OVR on audit seeds is unchanged by A1. Medians at 28/31/34: Esordio 72/67/58, Pro 70/64/55, All-Star 67/61/52, Leggenda 66/59/51. Peak medians 74/71/68/67. Leggenda never above 64: 346 per 1000. With "safe" choices, careers that end by 32 stay at about 0 (P1 is still open). Option B (softer depth injury consequences) did not move the stats-seed band. Full comparison in `/workspace/reports/ovr-balance-2.20/options-221.md` on the box.
 
 The 2.21 goldens were regenerated once (depth + A1): `GOLDEN` = 11250cba26abd854 / c2294f36017f9258 / 9974e4d64f9a01bf. Lab fingerprints are 281950b4373c20fd / d4f59906719745f0 / 7f8069aa4b4150f2. The 2.12–2.20 goldens and fixtures are unchanged.
+
+## 2.22.0 gate (Pello, 22 Oct 2026 19:08 Rome)
+2.21.0-beta (OVR balance only) is live on main d800528, so procedural depth (#115, `DEPTH_SINCE`), the A1 bars (`A1_BARS_SINCE` in `tuning.ts`, table still named `injuryRetireBars221`) and the safe-choices scar (#121) move to **2.22.0**. `OVR_BALANCE_SINCE` stays 2.21.0. `ENGINE_VERSION` is 2.22.0-beta; `SAVE_VERSION` stays 11. Careers created as 2.21 replay byte-identical to main (`fixtures/stack-fp-221.json`, 160 careers frozen on d800528; `GOLDEN_2_21`; lab 2.21 pins). The goldens and lab values quoted above as "2.21" are now the 2.22 values.

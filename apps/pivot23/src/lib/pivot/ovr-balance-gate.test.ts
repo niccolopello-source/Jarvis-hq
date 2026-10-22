@@ -58,7 +58,7 @@ test("gate constants and version rule", () => {
 });
 
 test("new careers are 2.21 and get the Leggenda +2 potential on the same roll", () => {
-  assert.equal(ENGINE_VERSION, "2.21.0-beta");
+  assert.equal(ENGINE_VERSION, "2.22.0-beta");
   assert.equal(openCareerSim({ seed: 9100 }).s.engineVersion, ENGINE_VERSION);
   let moved = 0;
   for (let seed = 1; seed <= 200; seed++) {
@@ -85,17 +85,31 @@ test("twilight is 4.0 higher for 2.21 careers unless a clamp binds", () => {
   assert.ok(neu - old <= 4.0001, `${neu - old}`);
 });
 
-test("A1 (2.21): injury bars differ from 2.19 only at age 32 for Pro and All-Star; 2.19/2.20 keep injuryRetireBars219", async () => {
+test("A1 (2.22): injury bars differ from 2.19 only at age 32 for Pro and All-Star; 2.19-2.21 keep injuryRetireBars219", async () => {
   const { TUNING, injuryRetireBarsOf } = await import("./tuning.ts");
   for (const d of ["esordio", "pro", "allstar", "leggenda"] as const) {
-    for (const v of ["2.19.0-beta", "2.20.0-beta", "2.20.9"]) assert.equal(injuryRetireBarsOf({ engineVersion: v, difficulty: d }), TUNING.injuryRetireBars219[d], `${v} ${d}`);
-    for (const v of ["2.21.0-beta", "2.21.0", "3.0.0"]) assert.equal(injuryRetireBarsOf({ engineVersion: v, difficulty: d }), TUNING.injuryRetireBars221[d], `${v} ${d}`);
+    for (const v of ["2.19.0-beta", "2.20.0-beta", "2.20.9", "2.21.0-beta", "2.21.9"]) assert.equal(injuryRetireBarsOf({ engineVersion: v, difficulty: d }), TUNING.injuryRetireBars219[d], `${v} ${d}`);
+    for (const v of ["2.22.0-beta", "2.22.0", "3.0.0"]) assert.equal(injuryRetireBarsOf({ engineVersion: v, difficulty: d }), TUNING.injuryRetireBars221[d], `${v} ${d}`);
   }
-  assert.equal(injuryRetireBarsOf({ engineVersion: "2.21.0-beta" }), TUNING.injuryRetireBars221.pro, "missing difficulty reads as pro");
+  assert.equal(injuryRetireBarsOf({ engineVersion: "2.22.0-beta" }), TUNING.injuryRetireBars221.pro, "missing difficulty reads as pro");
   const expected = structuredClone(TUNING.injuryRetireBars219) as Record<string, Record<number, number>>;
   expected.pro![32] = 1.8;
   expected.allstar![32] = 1.8;
   assert.deepEqual(TUNING.injuryRetireBars221, expected);
   assert.deepEqual(TUNING.injuryRetireBars219.pro, { 30: 3.6, 31: 2.8, 32: 1.9 });
   assert.deepEqual(TUNING.injuryRetireBars219.allstar, { 30: 3.6, 31: 2.0, 32: 1.7 });
+});
+
+/* 2.22.0 stack gate (Pello, 22 Oct 2026): 2.21.0-beta is live on main d800528. Careers CREATED as 2.21 must replay
+   byte-identical to main. Frozen on main @ d800528 with playCreatedAt(seed, d, "2.21.0-beta") (scripts/ovr-balance-fingerprints.ts). */
+test("2.21 careers replay byte-identical to main @ d800528 (stack-fp-221.json, 160 careers)", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { careerFingerprint } = await import("../../../scripts/version-gate-fingerprints.ts");
+  const { playCreatedAt } = await import("../../../scripts/ovr-balance-fingerprints.ts");
+  const ref = JSON.parse(readFileSync(new URL("./fixtures/stack-fp-221.json", import.meta.url), "utf8")) as Record<string, string>;
+  assert.equal(Object.keys(ref).length, 160);
+  for (const [key, fp] of Object.entries(ref)) {
+    const [v, d, seed] = key.split("|");
+    assert.equal(careerFingerprint(playCreatedAt(Number(seed), d as "pro", v!)), fp, key);
+  }
 });
