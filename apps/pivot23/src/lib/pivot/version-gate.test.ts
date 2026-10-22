@@ -65,7 +65,7 @@ test("Leggenda minutes bars (2.20) apply to 2.20+ Leggenda careers only", () => 
 });
 
 test("new careers (2.21) get the #83 rules; 2.15 and 2.14 keep theirs", () => {
-  assert.equal(ENGINE_VERSION, "2.21.0-beta", "OVR balance on top of 2.20 (Leggenda retirements at 31-32)");
+  assert.equal(ENGINE_VERSION, "2.22.0-beta", "OVR balance on top of 2.20 (Leggenda retirements at 31-32)");
   assert.equal(DECISIONS_SINCE, "2.16.0");
   assert.equal(AWARDS_SINCE, "2.15.0", "#86 gate unchanged");
   assert.equal(RETIRE_SINCE, "2.14.0", "#78 gate unchanged");

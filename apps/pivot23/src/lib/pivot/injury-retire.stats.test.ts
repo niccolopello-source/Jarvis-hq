@@ -66,7 +66,7 @@ for (const d of DIFFS) {
    at 29-32 has injuryDrag 0), so 2.20 Leggenda careers also close on a fading role at 31-32. Same seeds. */
 test(`2.20: Leggenda early exits (last season at 29-32) within ${BAND.leggenda[0]}-${BAND.leggenda[1]} per 1000, no fewer than 2.19`, () => {
   resetTuning();
-  assert.equal(ENGINE_VERSION, "2.21.0-beta");
+  assert.equal(ENGINE_VERSION, "2.22.0-beta");
   let early = 0;
   let early219 = 0;
   for (let i = 0; i < N; i++) {
@@ -92,16 +92,31 @@ for (const d of ["esordio", "pro", "allstar"] as const) {
 }
 
 /* 2.21.0 OVR balance (Leggenda potential -4, twilight base wear 11.4) on top of the 2.20 rules. Measured, not
-   re-tuned: the same owner bands are checked on careers created by the running engine. */
+   re-tuned: the same owner bands are checked on careers created as 2.21 (live on main d800528). */
 for (const d of DIFFS) {
   test(`2.21 OVR balance: early exits (last season at 29-32) on ${d} within ${BAND[d][0]}-${BAND[d][1]} per 1000`, () => {
     resetTuning();
+    let early = 0;
+    for (let i = 0; i < N; i++) {
+      const age = lastAge(91000 + i * 13, d, "2.21.0-beta");
+      if (age >= 29 && age <= 32) early++;
+    }
+    const [lo, hi] = BAND[d];
+    assert.ok(early >= lo && early <= hi, `2.21 ${d} early exits 29-32: ${early}/${N}`);
+  });
+}
+
+/* 2.22.0 (procedural depth on top of 2.21): the same owner bands on careers created by the running engine. */
+for (const d of DIFFS) {
+  test(`2.22: early exits (last season at 29-32) on ${d} within ${BAND[d][0]}-${BAND[d][1]} per 1000`, () => {
+    resetTuning();
+    assert.equal(ENGINE_VERSION, "2.22.0-beta");
     let early = 0;
     for (let i = 0; i < N; i++) {
       const age = lastAge(91000 + i * 13, d, ENGINE_VERSION);
       if (age >= 29 && age <= 32) early++;
     }
     const [lo, hi] = BAND[d];
-    assert.ok(early >= lo && early <= hi, `2.21 ${d} early exits 29-32: ${early}/${N}`);
+    assert.ok(early >= lo && early <= hi, `2.22 ${d} early exits 29-32: ${early}/${N}`);
   });
 }

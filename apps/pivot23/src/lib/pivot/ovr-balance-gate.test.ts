@@ -58,7 +58,7 @@ test("gate constants and version rule", () => {
 });
 
 test("new careers are 2.21 and get the Leggenda +2 potential on the same roll", () => {
-  assert.equal(ENGINE_VERSION, "2.21.0-beta");
+  assert.equal(ENGINE_VERSION, "2.22.0-beta");
   assert.equal(openCareerSim({ seed: 9100 }).s.engineVersion, ENGINE_VERSION);
   let moved = 0;
   for (let seed = 1; seed <= 200; seed++) {
@@ -83,4 +83,18 @@ test("twilight is 4.0 higher for 2.21 careers unless a clamp binds", () => {
   const neu = twilightOf({ ...s, engineVersion: "2.21.0-beta" });
   assert.ok(neu >= old, `${neu} >= ${old}`);
   assert.ok(neu - old <= 4.0001, `${neu - old}`);
+});
+
+/* 2.22.0 stack gate (Pello, 22 Oct 2026): 2.21.0-beta is live on main d800528. Careers CREATED as 2.21 must replay
+   byte-identical to main. Frozen on main @ d800528 with playCreatedAt(seed, d, "2.21.0-beta") (scripts/ovr-balance-fingerprints.ts). */
+test("2.21 careers replay byte-identical to main @ d800528 (stack-fp-221.json, 160 careers)", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { careerFingerprint } = await import("../../../scripts/version-gate-fingerprints.ts");
+  const { playCreatedAt } = await import("../../../scripts/ovr-balance-fingerprints.ts");
+  const ref = JSON.parse(readFileSync(new URL("./fixtures/stack-fp-221.json", import.meta.url), "utf8")) as Record<string, string>;
+  assert.equal(Object.keys(ref).length, 160);
+  for (const [key, fp] of Object.entries(ref)) {
+    const [v, d, seed] = key.split("|");
+    assert.equal(careerFingerprint(playCreatedAt(Number(seed), d as "pro", v!)), fp, key);
+  }
 });
