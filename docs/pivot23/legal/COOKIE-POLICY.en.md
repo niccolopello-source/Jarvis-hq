@@ -1,7 +1,7 @@
 > ⚠️ **DRAFT — DO NOT PUBLISH.** Must be reviewed by a lawyer before publishing. Items marked **DA VERIFICARE** (to be verified) are unconfirmed.
 
 # Cookie Policy — PIVOT 23 (www.pivot23.com)
-Last updated: [DATE] · Controller: [TITOLARE], [INDIRIZZO], [EMAIL CONTATTO]
+Last updated / effective from: 21 October 2026 · Controller: Niccoló Pelizzon, via della Cava 2, 31049 Valdobbiadene (TV), Italy, niccolo.pello@gmail.com (provisional; a dedicated address will replace it)
 
 References: art. 122 Italian Privacy Code; Italian DPA (Garante) guidelines on cookies and other tracking tools, 10 June 2021 (https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9677876); GDPR.
 
@@ -32,8 +32,8 @@ Only on desktop, and only when ads are on, the site loads Google AdSense / H5 Ga
 ## 3. Your choices
 - First visit banner (desktop): "Accept" and "Reject" equally prominent, closing with X = reject, "Manage options" for granular choices. Scrolling is not consent. No cookie wall: the game works if you refuse.
 - After a refusal the banner is not shown again for at least 6 months unless something material changes.
-- Change your choice anytime via "Cookie preferences" [LOCATION — TBD].
+- Change your choice anytime via "Cookie preferences" always available in the home page footer/menu; the consent banner appears on your first visit and again after material updates to this policy.
 - Clearing site data in your browser also deletes saved careers.
 
 ## 4. Contact
-[EMAIL CONTATTO]. See also the Privacy Policy.
+niccolo.pello@gmail.com. See also the Privacy Policy.
