@@ -28,3 +28,23 @@ test("local preview drops only upgrade-insecure-requests; every other header equ
   for (const [k, v] of Object.entries(prod)) if (k !== "Content-Security-Policy") assert.equal(local[k], v, k);
   assert.deepEqual(Object.keys(local).sort(), Object.keys(prod).sort());
 });
+
+test("jarvis-hq-pgoc.vercel.app redirects permanently to www.pivot23.com; the canonical hosts never match a redirect", () => {
+  const cfg = JSON.parse(readFileSync(new URL("../vercel.json", import.meta.url), "utf8")) as {
+    redirects?: { source: string; has?: { type: string; value: string }[]; destination: string; permanent?: boolean }[];
+  };
+  const redirects = cfg.redirects ?? [];
+  const pgoc = redirects.filter((r) => r.has?.some((h) => h.type === "host" && h.value === "jarvis-hq-pgoc.vercel.app"));
+  assert.equal(pgoc.length, 1);
+  const r = pgoc[0]!;
+  assert.equal(r.source, "/:path*");
+  assert.deepEqual(r.has, [{ type: "host", value: "jarvis-hq-pgoc.vercel.app" }]);
+  assert.equal(r.destination, "https://www.pivot23.com/:path*");
+  assert.equal(r.permanent, true);
+  // Every redirect is host-conditioned on an exact *.vercel.app host: www.pivot23.com / pivot23.com can't loop or match.
+  for (const x of redirects) {
+    assert.ok(x.has?.length === 1 && x.has[0]!.type === "host", "redirect without an exact host condition");
+    assert.match(x.has[0]!.value, /^[a-z0-9-]+\.vercel\.app$/);
+    assert.ok(!/pivot23\.com$/.test(x.has[0]!.value));
+  }
+});
