@@ -17,6 +17,7 @@ import { EN_MANUAL } from "./en/manual.ts";
 import { EN_NAMES } from "./en/names.ts";
 import { EN_PLAYOFF_DOORS } from "./en/playoff-doors.ts";
 import { EN_PRESENTATION } from "./en/presentation.ts";
+import { EN_MEMORY } from "./en/memory.ts";
 import { EN_SAVE } from "./en/save.ts";
 import { EN_STORY_EXTRA } from "./en/story-extra.ts";
 import { EN_STORY_FEEL } from "./en/story-feel.ts";
@@ -45,6 +46,7 @@ export const NARRATIVE_EN: Readonly<Record<string, string>> = {
   ...EN_NAMES,
   ...EN_PLAYOFF_DOORS,
   ...EN_PRESENTATION,
+  ...EN_MEMORY,
   ...EN_SAVE,
   ...EN_STORY_EXTRA,
   ...EN_STORY_FEEL,

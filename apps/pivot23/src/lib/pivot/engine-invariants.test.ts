@@ -218,6 +218,7 @@ test("golden full-career baseline for fixed seeds (engine output, not run-vs-run
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.16.0-beta")), GOLDEN_2_16);
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.19.0-beta")), GOLDEN_2_19);
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.20.0-beta")), GOLDEN_2_20);
+  assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.21.0-beta")), GOLDEN_2_21);
 });
 /* 2.13.0-beta (#66): D-09 world "regress" and the D-23 step 0.16 apply only to careers created
    on 2.13.0 or later, and they move team strength and DPOY voting, so new careers get new values.
@@ -240,7 +241,11 @@ const GOLDEN_2_16 = ["860acab285591479", "0964f5e71de9c48c", "58128165ba383c2e"]
    careers created on 2.21+. The 2.19 and 2.20 values are kept unchanged below. */
 const GOLDEN_2_19 = ["cec0d46789bf3a75", "a636bf327e11d835", "32807885e3d2fe70"];
 const GOLDEN_2_20 = ["cec0d46789bf3a75", "a636bf327e11d835", "32807885e3d2fe70"];
-const GOLDEN = ["98dfbe1cff63005d", "7d3a61619f2ab3c7", "6145b610683f9847"];
+/* 2.21.0-beta as live on main d800528 (OVR balance): kept unchanged as GOLDEN_2_21 when 2.22.0 opened. */
+const GOLDEN_2_21 = ["98dfbe1cff63005d", "7d3a61619f2ab3c7", "6145b610683f9847"];
+/* 2.22.0-beta (procedural depth DEPTH_SINCE + A1 injury bars A1_BARS_SINCE): all three seeds move.
+   With the Option A scar (#121); depth + A1 only: 11250cba26abd854, c2294f36017f9258, 9974e4d64f9a01bf. */
+const GOLDEN = ["a40e6980601afc57", "c2294f36017f9258", "8f8997a50fce81a3"];
 const GOLDEN_2_15 = ["4da0c610aba577b4", "eb62db0aef59b9a9", "ca8469ee05d836c7"];
 const GOLDEN_2_14 = ["d28207b449d5e3c1", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
 const GOLDEN_2_13 = ["9f5583418a7fa740", "b0c282429613a5ef", "c8c2acbea10d0c1c"];

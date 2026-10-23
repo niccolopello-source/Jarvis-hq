@@ -470,6 +470,8 @@ export interface PlayerState {
   rngState: number;
   engineVersion: string;
   world?: LeagueWorld;
+  /** PROCEDURAL DEPTH: causal career memory (memory.ts). Absent on careers/saves before it: legacy rules. */
+  memory?: import("./memory").CareerMemory;
 }
 
 export interface ArchiveCareer {

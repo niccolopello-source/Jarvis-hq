@@ -1,5 +1,5 @@
 
-import { scriptSlotFor, scriptWindowsOf, seedHash, worldOf } from "./tuning";
+import { A1_BARS_SINCE, TUNING, scriptSlotFor, scriptWindowsOf, seedHash, versionAtLeast, worldOf } from "./tuning";
 import { INJURY_KINDS, INJURY_SEVERITY, loadInjuryAt, usesInjuryEvents, type InjuryKind } from "./injuries";
 import {
   ATTR_LABELS,
@@ -56,6 +56,7 @@ import { settlePlayerAwards } from "./awards-helpers";
 import { playoffChoicesFor as doorChoices } from "./playoff-doors";
 import { pickSummerDestination, pickSummerEvent } from "./summer";
 import { CHARACTER_ROUNDS } from "./draft-character";
+import { contextScore, DEPTH_SINCE, excludedBy, logSelection, newMemory, recentTags, recordChoice, recordLoyalty, settleMemory, usesDepth } from "./memory";
 import {
   MAX_AGE,
   START_OVERALL,
@@ -304,6 +305,17 @@ export function applyFx(s: PlayerState, fx: Fx) {
   imprint(s, contextualPulse(s, fx));
 }
 
+/** A story choice: the immediate Fx plus its recorded deferred side (memory.ts). Same Fx, same RNG. */
+export function applyChoiceFx(s: PlayerState, fx: Fx, cause: string) {
+  applyFx(s, fx);
+  recordChoice(s, fx, cause);
+}
+
+/** Season-start settlement of the causal memory. No RNG. Returns visible notes. */
+export function settleCareerMemory(s: PlayerState, n: number): string[] {
+  return settleMemory(s, n, applyFx);
+}
+
 export function applyAging(s: PlayerState) {
   lockExperimentEthic(s);
   s.age += 1;
@@ -495,6 +507,7 @@ export function freshPlayer(
     draftHand: [],
     choiceOvr: 0,
   };
+  if (versionAtLeast(potentialRulesVersion, DEPTH_SINCE)) s.memory = newMemory();
   s.rngState = s.seed;
   if (worldOf(s) === "jitter") {
     // Seeded spread of starting power: different worlds start from different pecking orders.
@@ -1237,6 +1250,18 @@ export function pickStoryEvent(s: PlayerState, n: number) {
       remember(quiet.id);
       return quiet;
     }
+    if (usesDepth(s)) {
+      const allowed = pool.filter((e) => !excludedBy(e, s));
+      const excluded = pool.length - allowed.length;
+      if (allowed.length) pool = allowed;
+      const recent = recentTags(s, STORY_POOL);
+      const scored = pool.map((e) => contextScore(e, s, recent));
+      const ev = weightedFrom(pool, scored.map((x) => x.score));
+      const at = pool.indexOf(ev);
+      logSelection(s, ev, scored[at]!.score, scored[at]!.reasons, allowed.length ? excluded : 0);
+      remember(ev.id);
+      return ev;
+    }
     const weights = pool.map((e) => eventWeight(e, s));
     const ev = weightedFrom(pool, weights);
     remember(ev.id);
@@ -1413,6 +1438,13 @@ function injuryStory(s: PlayerState, kind?: InjuryKind): StoryEvent {
   };
 }
 
+/** Option A (2.21.0+ careers): an injury leaves at least the difficulty's scar, then the severity scale. No RNG. */
+function injuryDragWithScar(s: PlayerState, drag: number | undefined, sev: number): number | undefined {
+  const scar = versionAtLeast(s.engineVersion, A1_BARS_SINCE) ? (TUNING.injuryScar221[s.difficulty ?? "pro"] ?? 0) : 0;
+  const base = scar > 0 ? Math.max(drag ?? 0, scar) : drag;
+  return base === undefined ? undefined : round1(base * sev);
+}
+
 /** P1-INJ (2.17.0): the same three answers, scaled by how serious this injury is. */
 function injuryKindStory(s: PlayerState, kind: InjuryKind): StoryEvent {
   const base = injuryStory(s);
@@ -1421,7 +1453,7 @@ function injuryKindStory(s: PlayerState, kind: InjuryKind): StoryEvent {
   const scale = (fx: Fx): Fx => ({
     ...fx,
     gamesPenalty: fx.gamesPenalty === undefined ? undefined : Math.round(fx.gamesPenalty * sev),
-    injuryDrag: fx.injuryDrag === undefined ? undefined : round1(fx.injuryDrag * sev),
+    injuryDrag: injuryDragWithScar(s, fx.injuryDrag, sev),
   });
   return {
     ...base,
@@ -2464,6 +2496,7 @@ export function refuseTrade(s: PlayerState) {
   s.hidden.chemistry = clamp(s.hidden.chemistry + 3, 0, 100);
   s.attrs.iq = clampAttr(s.attrs.iq + 0.25);
   imprint(s, 0.06);
+  recordLoyalty(s);
 }
 
 export function shouldOfferTrade(s: PlayerState, n: number) {
@@ -3434,6 +3467,10 @@ export interface SimOpts {
   retirement?: "play36" | "retire";
   /** Policy del simulatore sugli scambi non forzati. Assente: valuta ruolo, fiducia e continuità. */
   trade?: "accept" | "refuse";
+  /** PROCEDURAL DEPTH (memory.ts): on by default for 2.21+ careers; false = legacy rules (tests/lab). */
+  depth?: boolean;
+  /** Test/lab hook: override the drawn choice index of season n (the draw still happens, same RNG stream). */
+  choose?: (s: PlayerState, ev: StoryEvent, n: number, drawn: number) => number;
   /**
    * Laboratorio soltanto. Spento se assente: il percorso giocato non lo imposta.
    * Non entra nel save. I minuti forzati possono stare sotto il pavimento 11.5.
@@ -3488,6 +3525,8 @@ export function openCareerSim(opts: SimOpts = {}): CareerSimJob {
     );
     if (opts.engineVersion !== undefined) player.engineVersion = opts.engineVersion;
     player.simulated = true;
+    if (opts.depth === false) delete player.memory;
+    else if (opts.depth) player.memory ??= newMemory();
     if (Number.isFinite(opts.potential)) {
       player.potential = round1(clamp((opts.potential as number) + potentialShiftOf(player.difficulty, player.engineVersion), 64, 99));
     }
@@ -3581,6 +3620,11 @@ function simTakesTrade(s: PlayerState, team: Team): boolean {
   if (lean === -1) return rand() < 0.34;
   return rand() < 0.42;
 }
+function simChoice(job: CareerSimJob, ev: StoryEvent, n: number) {
+  const drawn = randInt(0, ev.choices.length - 1);
+  const idx = job.opts.choose ? job.opts.choose(job.s, ev, n, drawn) : drawn;
+  return ev.choices[Math.min(Math.max(0, idx), ev.choices.length - 1)]!;
+}
 export function advanceCareerSim(job: CareerSimJob): boolean {
   if (job.n > 20 || isCareerOver(job.s)) {
     job.s.rngState = job.rng.getState();
@@ -3590,11 +3634,12 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
     const n = job.n;
     const s = job.s;
     s.season = n;
+    settleCareerMemory(s, n);
     const scripted = scriptedSeasonEvent(s, n);
     if (scripted && !s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
     if (scripted) {
-      const ch = pick(scripted.choices);
-      applyFx(s, ch.fx(s));
+      const ch = simChoice(job, scripted, n);
+      applyChoiceFx(s, ch.fx(s), scripted.id);
       s.choiceLog.push({ season: n, title: scripted.title, pick: ch.label });
     } else if (n !== 12 && shouldOfferTrade(s, n)) {
       const t = buildTradeOffer(s);
@@ -3608,13 +3653,13 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
         s.choiceLog.push({ season: n, title: "Scambio", pick: "Resto" });
       }
       const ev = pickStoryEvent(s, n);
-      const ch = pick(ev.choices);
-      applyFx(s, ch.fx(s));
+      const ch = simChoice(job, ev, n);
+      applyChoiceFx(s, ch.fx(s), ev.id);
       s.choiceLog.push({ season: n, title: ev.title, pick: ch.label });
     } else {
       const ev = pickStoryEvent(s, n);
-      const ch = pick(ev.choices);
-      applyFx(s, ch.fx(s));
+      const ch = simChoice(job, ev, n);
+      applyChoiceFx(s, ch.fx(s), ev.id);
       s.choiceLog.push({ season: n, title: ev.title, pick: ch.label });
     }
     lockExperimentEthic(s);

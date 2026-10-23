@@ -49,6 +49,8 @@ import {
 
   pickPlayoffOpponent,
   pickStoryEvent,
+  applyChoiceFx,
+  settleCareerMemory,
   eventAfterMarket,
   openCareerSim,
   advanceCareerSim,
@@ -179,7 +181,7 @@ function optsFromEvent(
     run: (p) => {
       const fx = c.fx(p);
       const chips = chipsFromFx(fx, ATTR_LABELS);
-      applyFx(p, fx);
+      applyChoiceFx(p, fx, ev.id ?? "story");
       return { flavor: fillTemplate(fx.flavor, p), chips };
     },
   }));
@@ -707,6 +709,8 @@ export function PivotApp() {
   }
 
   function queuePreseasonInner(s: PlayerState, n: number) {
+    const echoes = settleCareerMemory(s, n);
+    if (echoes.length) pushLog({ kind: "narrative", body: echoes.join(" ") });
     const scripted = scriptedSeasonEvent(s, n);
     if (scripted) {
       if (!s.usedEventIds.includes(scripted.id)) s.usedEventIds.push(scripted.id);
