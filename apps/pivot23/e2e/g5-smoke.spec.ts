@@ -68,9 +68,12 @@ test("G5 smoke: long-name career, draft to archive, refresh resume, double activ
   const seen: string[] = [];
   let resumed = false;
   for (let step = 0; step < 300; step += 1) {
-    if (await page.locator(".result-view").isVisible().catch(() => false)) break;
     const pending = page.locator("[data-pending]").first();
-    await expect(pending).toBeVisible({ timeout: 15_000 });
+    const result = page.locator(".result-view");
+    // After the last decision the career screen hands over to the result view; under load a
+    // result-view check could run mid-handover and then wait for a card that never comes. Wait for either.
+    await expect(pending.or(result).first()).toBeVisible({ timeout: 15_000 });
+    if (await result.isVisible().catch(() => false)) break;
     const kind = (await pending.getAttribute("class")) ?? "";
     if (!kinds.has(kind)) {
       kinds.add(kind);
