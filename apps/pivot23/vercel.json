@@ -6,6 +6,12 @@
       "has": [{ "type": "host", "value": "pivot23.vercel.app" }],
       "destination": "https://www.pivot23.com/:path*",
       "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "jarvis-hq-pgoc.vercel.app" }],
+      "destination": "https://www.pivot23.com/:path*",
+      "permanent": true
     }
   ],
   "headers": [
