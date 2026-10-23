@@ -16,7 +16,7 @@ for (let i = 0; i < Number(countArg); i++) {
   let s;
   if (as === "native") s = engine.playCareerSim(opts);
   else {
-    const job = engine.openCareerSim(opts);
+    const job = engine.openCareerSim({ ...opts, engineVersion: as });
     job.s.engineVersion = as;
     while (!engine.advanceCareerSim(job)) { /* run */ }
     lock?.(job.s);

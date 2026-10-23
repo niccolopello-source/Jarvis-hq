@@ -31,6 +31,15 @@ Choice effect: `applyFx` writes the effect object from the event. `contextualPul
 
 Observed in `SIM.overall`: displayed overall stays inside 48–99, start 60, peak age 27, max age 36, peak band 26–28. Year-over-year caps: young 6, peak 4, old 3. `SIM.choice.mix` is 0.74. These are the named caps. They are not a statement that every career feels different.
 
+### OVR balance 2.21.0 (`OVR_BALANCE_SINCE`, careers created by 2.21.0 or later)
+
+Owner: Grok Bot (Pello, 21 Oct 2026). Details and numbers: `OVR-BALANCE-2.20.md`.
+
+| Knob | ≤ 2.20 careers | 2.21+ careers | Where |
+|---|---|---|---|
+| Leggenda potential shift at creation | −6 | −4 | `difficulty.ts` `potentialShiftOf`, `engine.ts` `freshPlayer` |
+| Twilight base wear | 15.4 | 11.4 | `tuning.ts` `twilightBaseWearOf`, `peak.ts` `twilightOf` |
+
 ## Awards
 
 `SIM.awards` weights, observed and not re-fit: production 0.25, team success 0.2, efficiency 0.15, impact 0.15, availability 0.1, consistency 0.1, narrative 0.05, noise 4. `royTarget` 0.07 and `dpoyTarget` 0.028 are in config. Invariant 8 says a target that nothing reads is not a live rate. This pass did not prove those two numbers are read. Not verified.

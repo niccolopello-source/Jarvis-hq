@@ -44,7 +44,7 @@ import { cloneTeam, NAT_ORIGIN, UNSIGNED_TEAM } from "./teams";
 import { createWorld, identityFit, occupyTeamSlot, offerFit, tickWorld } from "./world";
 import { fingerprintOf, type CareerCard } from "./card";
 import { ENGINE_VERSION, SAVE_VERSION, SIM } from "./config";
-import { DIFF_MAP, diffOf, type DifficultyId } from "./difficulty";
+import { diffOf, potentialShiftOf, type DifficultyId } from "./difficulty";
 import { seasonAtmosphere, quietYearChance, quietYearEventBits } from "./feel";
 import { lateCareerEvent } from "./story-late";
 import { createRng, gaussTrim, pick, rand, randInt, rngDepth, runWithRng, type Rng } from "./rng";
@@ -396,8 +396,10 @@ export function freshPlayer(
   number: number,
   difficulty: DifficultyId = "pro",
   seed?: number,
+  /** Engine version whose potential rule applies (default: the running engine). Only gates the 2.21
+   *  Leggenda potential shift; the new state's engineVersion is still ENGINE_VERSION. */
+  potentialRulesVersion: string = ENGINE_VERSION,
 ): PlayerState {
-  const spec = DIFF_MAP[difficulty] ?? DIFF_MAP.pro;
   const s: PlayerState = {
     name: name || "Il Rookie",
     role,
@@ -510,7 +512,7 @@ export function freshPlayer(
     s.hidden.consistency = 44 + randInt(0, 10);
     s.hidden.motor = 48 + randInt(0, 10);
     s.hidden.mediaSavvy = 40 + randInt(0, 12);
-    s.potential = round1(clamp(rollPotential() + spec.potential, 64, 99));
+    s.potential = round1(clamp(rollPotential() + potentialShiftOf(difficulty, potentialRulesVersion), 64, 99));
     s.world = createWorld(s.teamPower);
     dealDraftRound(s);
   });
@@ -3424,6 +3426,8 @@ export interface SimOpts {
   path?: "NCAA" | "Europa" | "G-League";
   potential?: number;
   seed?: number;
+  /** Tests and fingerprints only: create the career as this engine version (default ENGINE_VERSION). */
+  engineVersion?: string;
   /** Solo il laboratorio. La carriera giocata sceglie a mano. */
   draft?: "best" | "worst" | "random" | "mixed";
   /** Policy del simulatore, non una regola nuova. Default: gioca i 36, come il sì in UI. */
@@ -3480,10 +3484,12 @@ export function openCareerSim(opts: SimOpts = {}): CareerSimJob {
       opts.number ?? randInt(0, 99),
       opts.difficulty ?? "pro",
       seed,
+      opts.engineVersion ?? ENGINE_VERSION,
     );
+    if (opts.engineVersion !== undefined) player.engineVersion = opts.engineVersion;
     player.simulated = true;
     if (Number.isFinite(opts.potential)) {
-      player.potential = round1(clamp((opts.potential as number) + diffOf(player).potential, 64, 99));
+      player.potential = round1(clamp((opts.potential as number) + potentialShiftOf(player.difficulty, player.engineVersion), 64, 99));
     }
     player.rivalName = pick(RIVAL_NAMES);
     player.coachName = pick(COACH_NAMES);

@@ -95,6 +95,27 @@ export const AWARDS_SINCE = RULES_215_SINCE;
  *  2.15.0 (#86, awards v2) careers, both already in production, keep their rules exactly. */
 export const DECISIONS_SINCE = "2.16.0";
 
+/** OVR balance (engine owner: grokbot, per Pello 2026-10-21; audit reports/ovr-audit-1019): careers
+ *  created by 2.21.0 or later get the Leggenda potential shift -4 (was -6) and the twilight base wear 11.4
+ *  (was 15.4, "decline option B"). Careers created on 2.20 or earlier keep -6 and 15.4 exactly.
+ *  2.21.0 and not 2.20.0 because #112 (LEGEND_RETIRE_SINCE 2.20.0) shipped to production on 21 Oct 2026, so
+ *  live 2.20.0-beta careers exist and must not change. PR #114 (depth) can share this gate. */
+export const OVR_BALANCE_SINCE = "2.21.0";
+export const LEGACY_LEGGENDA_POTENTIAL_SHIFT = -6;
+export const OVR_BALANCE_LEGGENDA_POTENTIAL_SHIFT = -4;
+export const LEGACY_TWILIGHT_BASE_WEAR = 15.4;
+export const OVR_BALANCE_TWILIGHT_BASE_WEAR = 11.4;
+
+/** True when this career was created by OVR_BALANCE_SINCE (2.21.0) or later. */
+export function usesOvrBalance220(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, OVR_BALANCE_SINCE);
+}
+
+/** Base wear of twilightOf for this career. */
+export function twilightBaseWearOf(career: { engineVersion?: string }): number {
+  return usesOvrBalance220(career) ? OVR_BALANCE_TWILIGHT_BASE_WEAR : LEGACY_TWILIGHT_BASE_WEAR;
+}
+
 /** First engine version whose careers use D-08 option B (still OFF via TUNING.bust). */
 export const BUST_SINCE = DECISIONS_SINCE;
 

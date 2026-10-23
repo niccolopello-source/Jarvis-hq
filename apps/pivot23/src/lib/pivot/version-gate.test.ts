@@ -64,13 +64,13 @@ test("Leggenda minutes bars (2.20) apply to 2.20+ Leggenda careers only", () => 
   for (const age of [29, 30, 33, 34, 35, 36]) assert.equal(minutesRetireBarOf({ engineVersion: "2.20.0-beta", difficulty: "leggenda" }, age), undefined, `${age}`);
 });
 
-test("new careers (2.20) get the #83 rules; 2.15 and 2.14 keep theirs", () => {
-  assert.equal(ENGINE_VERSION, "2.20.0-beta", "Leggenda retirements at 31-32 on top of 2.19 (P1-INJ)");
+test("new careers (2.21) get the #83 rules; 2.15 and 2.14 keep theirs", () => {
+  assert.equal(ENGINE_VERSION, "2.21.0-beta", "OVR balance on top of 2.20 (Leggenda retirements at 31-32)");
   assert.equal(DECISIONS_SINCE, "2.16.0");
   assert.equal(AWARDS_SINCE, "2.15.0", "#86 gate unchanged");
   assert.equal(RETIRE_SINCE, "2.14.0", "#78 gate unchanged");
   assert.equal(openCareerSim({ seed: 9100 }).s.engineVersion, ENGINE_VERSION);
-  for (const v of ["2.20.0-beta", "2.19.0-beta", "2.18.0-beta", "2.16.0-beta", "2.16.0", "3.0.0"]) {
+  for (const v of ["2.21.0-beta", "2.20.0-beta", "2.19.0-beta", "2.18.0-beta", "2.16.0-beta", "2.16.0", "3.0.0"]) {
     assert.equal(usesDecisions({ engineVersion: v }), true, v);
     assert.equal(usesBustB({ engineVersion: v }), true, v);
     assert.equal(usesRetireSpread({ engineVersion: v }), true, v);

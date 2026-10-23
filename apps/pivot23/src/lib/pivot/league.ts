@@ -210,7 +210,7 @@ export function seedRookieClass(s: PlayerState): RoyCandidate[] {
     const sub = roySubSeed(s.seed || 1, i);
     const team = others[(i * 5 + 2) % others.length]!;
     const box = runWithRng(createRng(sub), () => {
-      const cpu = freshPlayer(ROOKIE_NAMES[i % ROOKIE_NAMES.length]!, ROY_ROLES[i] || "SF", "USA", 11 + i, s.difficulty, sub);
+      const cpu = freshPlayer(ROOKIE_NAMES[i % ROOKIE_NAMES.length]!, ROY_ROLES[i] || "SF", "USA", 11 + i, s.difficulty, sub, s.engineVersion ?? "");
       cpu.draftPick = 8 + i * 7;
       cpu.age = 21;
       cpu.league = "NBA";
@@ -242,7 +242,7 @@ function seedRookieClassV2(s: PlayerState): RoyCandidate[] {
     const sub = roySubSeed(s.seed || 1, i);
     const team = others[slot.teamIndex]!;
     const box = runWithRng(createRng(sub), () => {
-      const cpu = freshPlayer(slot.name, slot.role, "USA", 11 + i, s.difficulty, sub);
+      const cpu = freshPlayer(slot.name, slot.role, "USA", 11 + i, s.difficulty, sub, s.engineVersion ?? "");
       cpu.draftPick = slot.pick;
       cpu.age = 21;
       cpu.league = "NBA";

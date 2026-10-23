@@ -29,7 +29,8 @@ export function awardFingerprint(s: PlayerState): string {
 }
 
 export function playAwardsAt(seed: number, difficulty: string, version: string): PlayerState {
-  const job = openCareerSim({ seed, difficulty: difficulty as never });
+  // 2.20: create as the forced version (Leggenda potential shift is drawn at creation).
+  const job = openCareerSim({ seed, difficulty: difficulty as never, engineVersion: version });
   job.s.engineVersion = version;
   // The rookie class is drawn at career start with the running engine; redraw it for the forced version.
   job.s.royClass = [];
