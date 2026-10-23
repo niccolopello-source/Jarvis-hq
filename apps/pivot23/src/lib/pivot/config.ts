@@ -1,7 +1,7 @@
 
 /** Configurazione centrale del motore. Niente magic number sparsi senza nome. */
 
-export const ENGINE_VERSION = "2.20.0-beta";
+export const ENGINE_VERSION = "2.22.0-beta";
 export const SAVE_VERSION = 11;
 
 /** Quanto resta in evidenza una risposta (scelta, titolo) prima del passo successivo. */

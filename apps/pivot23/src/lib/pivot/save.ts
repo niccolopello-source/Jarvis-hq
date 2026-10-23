@@ -3,6 +3,7 @@
 
 import { pruneWorld, WORLD_EVENT_CAP } from "./world";
 import { sha256 } from "./card";
+import { compactMemory } from "./memory";
 import { cloneTeam, findTeam } from "./teams";
 import type {
   CareerTab,
@@ -420,6 +421,7 @@ export function compactPlayer(s: PlayerState, level: number): PlayerState {
   s.devLog = keepTradeDest(tail<DevRow>(s.devLog, 20));
   s.milestones = tail(s.milestones, 32);
   s.usedEventIds = tail(s.usedEventIds, 48);
+  if (s.memory && typeof s.memory === "object" && Array.isArray(s.memory.items)) compactMemory(s.memory);
   if (level >= 1 && s.currentLeague) s.currentLeague = stripStandings(s.currentLeague);
   if (level >= 2) s.currentLeague = null;
   return s;

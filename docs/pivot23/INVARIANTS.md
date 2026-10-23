@@ -15,6 +15,7 @@ The section «Broken on the production bundle of `421a4a0`» describes that comm
 7. A games penalty is applied once. Injury risk does not multiply it again.
 8. Award targets written in config and read by nobody are not a balance system. Wire them or delete them. Do not cite them as the live rate.
 9. The career card hash in the browser is a fingerprint of local data. It is not a signature. It does not prove rarity.
+10. A career plays by the rules of the engine version that created it (`engineVersion` on the save). A balance change ships behind a new `*_SINCE` gate in `tuning.ts`; careers created on older versions replay byte-identical (version-gate fixtures). Rules drawn at creation (for example the 2.21 Leggenda potential shift) are gated on the creating version, so test harnesses that force a version must create the career as that version (`openCareerSim({ engineVersion })`).
 
 ## Broken on the production bundle of `421a4a0`
 

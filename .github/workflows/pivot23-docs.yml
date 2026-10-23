@@ -1,0 +1,88 @@
+name: PIVOT 23 beta (docs-only PRs)
+
+# Branch protection on main requires two checks that only the real
+# workflow (pivot23.yml) produces, and that workflow is path-filtered to
+# the app. A PR that touches only docs never gets them and can never merge.
+#
+# This workflow provides the same two check names for PRs that do NOT touch
+# the real workflow's paths. Safety against bypass:
+#  - `paths-ignore` mirrors the `paths` of pivot23.yml, so a PR touching only
+#    those paths never runs this workflow.
+#  - A *mixed* PR (code + docs) does run it, because paths-ignore skips only
+#    when every changed file is ignored. For that case each job lists the PR
+#    files itself: if any of them is in the real workflow's paths, the job
+#    does not pass on its own; it waits for the check with the same name
+#    from pivot23.yml on the same commit and copies its result (fails if
+#    that check fails, is missing or times out).
+on:
+  pull_request:
+    paths-ignore:
+      - "apps/pivot23/**"
+      - ".github/workflows/pivot23.yml"
+      - "package.json"
+
+permissions:
+  contents: read
+  checks: read
+  pull-requests: read
+
+jobs:
+  verify:
+    name: lint, types, unit, build, e2e (production build)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Docs-only guard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_NAME: lint, types, unit, build, e2e (production build)
+        run: |
+          set -euo pipefail
+          files=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --jq '.[].filename')
+          printf '%s\n' "$files"
+          if ! printf '%s\n' "$files" | grep -Eq '^(apps/pivot23/|\.github/workflows/pivot23\.yml$|package\.json$)'; then
+            echo "Docs-only PR: no app files changed, nothing to verify."; exit 0
+          fi
+          echo "PR touches app paths: mirroring the real '$CHECK_NAME' check from pivot23.yml."
+          sha="${{ github.event.pull_request.head.sha }}"
+          for i in $(seq 1 80); do
+            res=$(gh api "repos/${{ github.repository }}/commits/$sha/check-runs?per_page=100" \
+              --jq "[.check_runs[] | select(.name==env.CHECK_NAME) | select((.details_url // \"\") | contains(\"/runs/${{ github.run_id }}/\") | not)] | sort_by(.started_at) | last | (.status + \" \" + (.conclusion // \"\"))")
+            echo "attempt $i: ${res:-none}"
+            case "$res" in
+              "completed success") exit 0 ;;
+              completed*) echo "Real check did not succeed."; exit 1 ;;
+            esac
+            sleep 30
+          done
+          echo "Timed out waiting for the real check."; exit 1
+
+  engine-stats:
+    name: statistical engine checks (~4 min)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Docs-only guard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_NAME: statistical engine checks (~4 min)
+        run: |
+          set -euo pipefail
+          files=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --jq '.[].filename')
+          printf '%s\n' "$files"
+          if ! printf '%s\n' "$files" | grep -Eq '^(apps/pivot23/|\.github/workflows/pivot23\.yml$|package\.json$)'; then
+            echo "Docs-only PR: no app files changed, nothing to verify."; exit 0
+          fi
+          echo "PR touches app paths: mirroring the real '$CHECK_NAME' check from pivot23.yml."
+          sha="${{ github.event.pull_request.head.sha }}"
+          for i in $(seq 1 80); do
+            res=$(gh api "repos/${{ github.repository }}/commits/$sha/check-runs?per_page=100" \
+              --jq "[.check_runs[] | select(.name==env.CHECK_NAME) | select((.details_url // \"\") | contains(\"/runs/${{ github.run_id }}/\") | not)] | sort_by(.started_at) | last | (.status + \" \" + (.conclusion // \"\"))")
+            echo "attempt $i: ${res:-none}"
+            case "$res" in
+              "completed success") exit 0 ;;
+              completed*) echo "Real check did not succeed."; exit 1 ;;
+            esac
+            sleep 30
+          done
+          echo "Timed out waiting for the real check."; exit 1

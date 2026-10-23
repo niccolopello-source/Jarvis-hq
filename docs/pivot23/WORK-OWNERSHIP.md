@@ -1,6 +1,6 @@
 # PIVOT 23 — Registro di chi lavora su cosa
 
-**Ultimo aggiornamento:** 12 ottobre 2026  
+**Ultimo aggiornamento:** 21 ottobre 2026  
 **Riferimento:** Project Bible §11.1 — *Un solo owner modifica un determinato file o area per volta.*  
 Fonte: `/workspace/reports/chatgpt-doc-2026-10-11.txt` (Project Bible & Master Execution Plan v1.0).
 
@@ -45,11 +45,14 @@ Serve soprattutto perché sul repository operano più agenti IA (Grok Bot, Grok 
 | Demo gate: stabilità app, percorso carriera, persistenza, UI responsive, QA browser, release gate | **Lucille** | `lucille/demo-gate-stabilization` | [#75](https://github.com/niccolopello-source/Jarvis-hq/pull/75) | Unita. Il motore resta di Lucille | 12 ott 2026 |
 | Audit indipendente demo gate (Bot 2): solo `INDEPENDENT-DEMO-GATE-REPORT.md`, nuove rilevazioni datate in `DEMO-READINESS.md` e `ISSUE-REGISTER.md`, questa riga. Non tocca codice, motore né persistenza | **Grok Bot** (Bot 2) | `grokbot/bot2-independent-gate` | [#92](https://github.com/niccolopello-source/Jarvis-hq/pull/92) | Unita il 14 ott 2026 (approvata da Pello) | 13 ott 2026 |
 | Persistenza e recovery dei salvataggi (SR-01..03): `save-recovery.test.ts`, `e2e/save-recovery.spec.ts`, funzioni di persistenza in `engine.ts` (nessun gameplay), utility backup/archivio | **Lucille** | `lucille/save-recovery-audit` | [#90](https://github.com/niccolopello-source/Jarvis-hq/pull/90) | In corso (bozza). Non tocca motore, RNG, schema save | 13 ott 2026 |
+| **Motore e bilanciamento OVR** (`engine.ts`, `config.ts`, `tuning.ts`, `world.ts`, `peak.ts`, `difficulty.ts`, relativi test e fixture). Passato da Lucille a Grok Bot per decisione di Pello del 21 ott 2026: Lucille ora è Social Media Manager di PIVOT 23. Le regole restano: gate di versione, carriere vecchie identiche, merge solo con ok di Pello | **Grok Bot** | `grokbot/ovr-balance-2.20` | bozza | In corso. Gate 2.21.0 (`OVR_BALANCE_SINCE`; la 2.20.0 è già in produzione con la #112): Leggenda potenziale −4, usura base 11,4. La #112 (ritiri Leggenda) è già unita; la #114 (depth) si aggancia allo stesso gate | 21 ott 2026 |
 | Revisione testi IT/EN e glossario (`i18n.ts` IT/EN, valori EN in `narrative/en/*.ts`, test di copy). Nessun testo IT narrativo salvato; voci EN di `legacy.ts` (area Jarvis) segnalate per review | **Lucille** | `lucille/copy-review-it-en` | bozza | In corso | 13 ott 2026 |
 
 ---
 
 ## Note sui fatti noti
+
+- **21 ottobre 2026:** l'area motore (prima di Lucille) è di Grok Bot per decisione di Pello. Le righe precedenti con owner Lucille sul motore valgono come storico.
 
 - **Produzione (www.pivot23.com):** HEAD include la #61 (`fix/roy-isolated`), unita l'11 ottobre 2026.
 - **Grok Bot** (autore commit `Grok Bot`) è owner verificabile di #62, #63, #64.
