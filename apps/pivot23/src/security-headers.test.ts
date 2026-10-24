@@ -43,12 +43,18 @@ test("vercel.app hosts redirect permanently to www.pivot23.com, and only those e
   }
   for (const host of expectedHosts) {
     const matches = redirects.filter((r) => r.has?.some((h) => h.type === "host" && h.value === host));
-    assert.equal(matches.length, 1, `exactly one redirect for ${host}`);
-    const r = matches[0]!;
-    assert.equal(r.source, "/:path*");
-    assert.deepEqual(r.has, [{ type: "host", value: host }]);
-    assert.equal(r.destination, "https://www.pivot23.com/:path*");
-    assert.equal(r.permanent, true);
-    assert.equal(r.statusCode, undefined);
+    // Explicit root rule: on Vercel "/:path*" did not redirect the bare "/" in production (2026-10-24, 200 even with cache-busting query).
+    assert.equal(matches.length, 2, `exactly two redirects (root + paths) for ${host}`);
+    const root = matches.find((r) => r.source === "/");
+    const paths = matches.find((r) => r.source === "/:path*");
+    assert.ok(root && paths, `root and path redirects for ${host}`);
+    assert.ok(redirects.indexOf(root!) < redirects.indexOf(paths!), `root rule first for ${host}`);
+    for (const r of [root!, paths!]) {
+      assert.deepEqual(r.has, [{ type: "host", value: host }]);
+      assert.equal(r.permanent, true);
+      assert.equal(r.statusCode, undefined);
+    }
+    assert.equal(root!.destination, "https://www.pivot23.com/");
+    assert.equal(paths!.destination, "https://www.pivot23.com/:path*");
   }
 });
