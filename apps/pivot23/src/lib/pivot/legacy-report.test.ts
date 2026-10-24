@@ -185,3 +185,26 @@ test("catalog: standard is free, prototypes are hidden and cannot be bought or k
   assert.equal(loadCardTheme(store), "standard");
   assert.equal(loadCardTheme({ getItem: () => { throw new Error("blocked"); } }), "standard");
 });
+
+test("S2-F archive row with a damaged team colour (non-string / not hex): stints fall back to the neutral colour, no throw", () => {
+  const entry = toArchive(playCareerSim({ seed: 911, difficulty: "pro", name: "Colori" }));
+  const bad: unknown[] = [[], 7, {}, null, "", "rosso", "#zz"];
+  for (const b of bad) {
+    const e = JSON.parse(JSON.stringify(entry)) as ArchiveCareer;
+    for (const r of e.history) { (r as unknown as Record<string, unknown>).teamColor = b; (r as unknown as Record<string, unknown>).teamSecondary = b; }
+    const report = buildLegacyReport(e);
+    for (const s of report.stints) {
+      assert.match(s.color, /^#[0-9a-f]{3,8}$/i, `teamColor ${JSON.stringify(b)}`);
+      assert.match(s.secondary, /^#[0-9a-f]{3,8}$/i, `teamSecondary ${JSON.stringify(b)}`);
+    }
+    assert.doesNotThrow(() => cardFaceOf(report));
+  }
+  const good = buildLegacyReport(entry);
+  assert.deepEqual(good.stints.map((s) => s.color), entry.history.length ? stintsColors(entry) : []);
+});
+function stintsColors(e: ArchiveCareer) {
+  const out: string[] = [];
+  let last: string | undefined;
+  for (const r of e.history) if (r.teamAbbr !== last) { out.push(r.teamColor || "#3a3a3c"); last = r.teamAbbr; }
+  return out;
+}
