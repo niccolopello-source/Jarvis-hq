@@ -264,3 +264,20 @@ test("mobile PNG export downloads a complete 1080×1350 image", async ({ page })
   expect([bytes.readUInt32BE(16), bytes.readUInt32BE(20)]).toEqual([1080, 1350]);
   expect(bytes.subarray(-8, -4).toString()).toBe("IEND");
 });
+
+test("S2-F damaged team colour in an archived career: the Career Card still opens", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const card = await simulateCareer(page, "it", "Colore Rotto");
+  const careerId = await card.getAttribute("data-career-id");
+  await page.evaluate((id) => {
+    const all = JSON.parse(localStorage.getItem("pivot-v2-archive") ?? "[]");
+    for (const e of all) if (e.careerId === id) for (const r of e.history) { r.teamColor = []; r.teamSecondary = 7; }
+    localStorage.setItem("pivot-v2-archive", JSON.stringify(all));
+    localStorage.removeItem("pivot-v2-save");
+  }, careerId);
+  await page.reload();
+  await page.getByRole("button", { name: /Archivio/ }).click();
+  await page.locator(`.archive-card[data-career-id="${careerId}"]`).click();
+  await expect(page.getByRole("region", { name: "Career Card" })).toContainText("Colore Rotto");
+  await expect(page.getByText("Non è stato possibile caricare la Career Card")).toHaveCount(0);
+});
