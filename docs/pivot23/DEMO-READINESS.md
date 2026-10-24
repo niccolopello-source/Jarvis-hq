@@ -2,30 +2,55 @@
 
 Analyzed commit: `800a2402af81f747b15f92a371f14f441875c31e` (prod `dpl_6S1VZgG845g7YhBqoDWfTRgsNNsj`, READY, same SHA). Decision: **NEAR READY — not declared ready** until R2 (#123) is merged and a real-device pass exists.
 
-Gates G1–G20 below follow the Master Prompt's success definition (§20) plus commercial gates; numbering is this document's.
+Gates use the Master Prompt's official G1–G20 (§16). The earlier table in this PR used its own numbering, and this version replaces it. Evidence is from 2026-10-24 (Europe/Rome) on 800a240 unless a row says otherwise.
 
-| Gate | Criterion | Status | Evidence |
+| Gate | Name | Status | Evidence |
 |---|---|---|---|
-| G1 | Game starts | PASS | e2e Chromium+WebKit preview 131/131 (2026-10-24) |
-| G2 | Career creation | PASS | e2e (g6-onboarding, demo) |
-| G3 | Main path completable | PASS | e2e paths/demo-gate |
-| G4 | Choices have coherent consequences | PASS (tests) | unit career-coherence, bust-choice; stats 24/24 |
-| G5 | Engine reproducible | PASS | determinism, rng-determinism, sim-parity, version-gate tests |
-| G6 | Save works | PASS | g1-persistence, save-safety, lifecycle-flush e2e |
-| G7 | Career Card robust to known errors | FAIL | teamColor crash open until #123 merges |
-| G8 | Archive & load | PASS | archive-integrity unit, save-safety e2e |
-| G9 | Usable on supported viewports | PASS (emulation) | e2e; #125 adds 320/390/200% zoom (unmerged) |
-| G10 | Real devices | BLOCKED | no device available |
-| G11 | No known P0 bugs in game | PASS | none reproduced |
-| G12 | Demo limits declared | NOT RUN | to write in demo notes |
-| G13 | Deploy = verified code | PASS | prod SHA = main 800a240 |
-| G14 | Docs reflect reality | PASS (this PR) | CURRENT-STATE-REPORT.md |
-| G15 | No unauthorized commercial features | PASS | ads off, CSP closed, no pixel |
-| G16 | Canonical domain only | FAIL | vercel.app + pgoc serve 200 (#119) |
-| G17 | Performance measured | NOT RUN | no Lighthouse/perf this session |
-| G18 | Persistent analytics | NOT APPLICABLE (not implemented) | Vercel page views only |
-| G19 | Admin panel | NOT APPLICABLE (not implemented) | none in repo |
-| G20 | Ads / accounts / NFT | BLOCKED | P0 owner decision (Hobby plan) |
+| G1 | Baseline | PASS | main = 800a240; prod `dpl_6S1VZgG845g7YhBqoDWfTRgsNNsj` READY on the same SHA (CURRENT-STATE-REPORT.md) |
+| G2 | Build | PASS | `pnpm build` exit 0 |
+| G3 | Static quality | PASS | lint and typecheck exit 0 |
+| G4 | Engine tests | PASS | unit 387/387, stats 24/24 |
+| G5 | Determinism | PASS | determinism, rng and version-gate tests; 1200-career full-state fingerprint identical before and after explicit event tags (`grokbot/explicit-event-tags`) |
+| G6 | Saves | PASS | save-safety, g1-persistence and lifecycle-flush e2e (preview, Chromium and WebKit) |
+| G7 | Full career e2e | PASS | e2e preview Chromium 131 passed / 4 skipped, WebKit 131 / 4 (readiness, paths, demo-gate) |
+| G8 | Career Card valid/malformed | FAIL | teamColor crash (R2) stays open on 800a240 until #123 is merged and deployed; not re-verified after that merge |
+| G9 | OVR / awards | FAIL | displayed Peak OVR can differ from the best season OVR (R6) until #127 is merged; the awards unit/stats tests pass |
+| G10 | Mobile UX | PASS (emulation) | viewport e2e 320–1440 plus landscape. Real devices: only Pello's acceptance on an older build (15 Oct); agents have not tested this SHA |
+| G11 | Accessibility | PASS (automated only) | Lighthouse 12.8.2 accessibility 100 on mobile and desktop (www, 13:19 CEST); no manual screen-reader pass |
+| G12 | Performance | PASS (lab) | Lighthouse performance 90 mobile / 100 desktop; perf probe at 4× CPU: boot→Inizia 405 ms, one season 1805 ms with 0 long tasks (METRICS-800a240.md on `grokbot/metrics-800a240`). No real-device or field data |
+| G13 | Languages | PASS (tests) | i18n, narrative and copy-review tests. The 'mestiere/nudo' copy fix is pushed on `grokbot/mestiere-copy` (not merged) |
+| G14 | Domain | FAIL | pivot23.vercel.app and jarvis-hq-pgoc.vercel.app answer 200 until #119 is deployed; not re-verified after the merges in progress |
+| G15 | Security | PASS | prod headers on 24 Oct: enforcing CSP `script-src 'self'`, HSTS, X-Frame-Options DENY, nosniff, Referrer-Policy |
+| G16 | Analytics | NOT APPLICABLE | Vercel page views only; no persistent analytics implemented (R7) |
+| G17 | Admin | NOT APPLICABLE | no admin panel in the repo |
+| G18 | Deployment | PASS | prod SHA = main 800a240 at the time of measurement. Other PRs were being merged on 24 Oct, so re-check after the deploy |
+| G19 | Privacy / monetization | PASS (ads off) | no ads, pixel or third-party script in prod; #102 privacy text claims Pro/DPA wrongly (R4), unmerged |
+| G20 | Documentation | PASS | CURRENT-STATE-REPORT, OPEN-RISKS, PR-TRIAGE and this file (#128) |
+
+## Demo limits (to declare to anyone who plays the demo)
+- **Beta engine.** It is 2.22.0-beta, and balance can still change. Saves are kept locally across versions, but new careers follow the new rules.
+- **Local saves only.** Saves live in this browser's storage. There are no accounts and no cloud sync, so clearing site data or changing device or browser loses careers.
+- **Known issues on 800a240:**
+  - Career Card can fail on a damaged team colour (R2, fix in #123).
+  - Peak OVR shown can differ from the best season (R6, fix in #127).
+  - Duplicate vercel.app hosts (R5, fix in #119).
+  - Each stays open until the fix is merged and deployed.
+- **Copy.** About 13 Italian lines use the unclear 'mestiere / nudo' wording until `grokbot/mestiere-copy` lands. English has the same rough edges in a few renders.
+- **Fictional game.**
+  - Players, events and outcomes are simulated.
+  - Real NBA team names appear: this is a trademark risk, not cleared.
+  - It is not affiliated with the NBA or any club.
+- **Tested environment.**
+  - Automated: Chromium and WebKit on Linux, emulated phones 320–1440 px, Lighthouse lab runs, CPU-throttled perf.
+  - Real iPhone, Android and Mac: only accepted by Pello on an older build, not re-tested on this SHA.
+- **Offline / slow network.**
+  - After the first load, play is client-side.
+  - The English catalog loads lazily, so the first language switch needs the network.
+- **Balance facts a tester may notice** (seeds 910000–910999 and 920000–920999, METRICS-800a240.md):
+  - Peak is at age 27 on all difficulties.
+  - About 30% of Pro, All-Star and Leggenda careers end at 29–32 with random choices.
+  - Always choosing "Percorso prudente" cuts those early endings to 5–13%, but more careers sink to the 48 OVR floor.
+- **Not in the demo:** ads, accounts, payments, analytics beyond page views, admin.
 
 ---
 
