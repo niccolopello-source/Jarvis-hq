@@ -613,7 +613,7 @@ export const EN_FEEL: Readonly<Record<string, string>> = {
   "I giorni che non fanno titolo": "The days that don't make headlines",
   "Non tutte le settimane hanno un avversario col nome. Questa chiede solo di essere attraversata.": "Not every week has a named opponent. This one only asks to be gotten through.",
   "Lo staff non alza la voce. Tu devi decidere come usare il vuoto.": "The staff doesn't raise its voice. You have to decide how to use the void.",
-  "Niente copertine. Resta il lavoro, nudo, e tre modi di tenerlo.": "No magazine covers. The work remains, bare, and three ways to hold on to it.",
+  "Niente copertine. Resta il lavoro, nudo, e tre modi di tenerlo.": "No magazine covers. Just the daily work, and three ways to keep at it.",
   "Una pausa nel rumore. Può essere un dono o un avvertimento.": "A pause in the noise. It can be a gift or a warning.",
   "Il rumore è altrove. Qui restano tre scelte, e nessuna fa notizia.": "The noise is elsewhere. Here there are three choices, and none of them makes news.",
   "Un vuoto nel calendario. Si riempie, o si subisce.": "A gap in the calendar. You fill it, or you suffer it.",

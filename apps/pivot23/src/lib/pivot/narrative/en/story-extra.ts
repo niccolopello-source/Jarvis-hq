@@ -211,7 +211,7 @@ export const EN_STORY_EXTRA: Readonly<Record<string, string>> = {
   "Un ragazzo del secondo turno ti chiede il tuo posto": "A second-round kid wants your spot",
   "Non a parole. Nei minuti del quarto quarto.": "Not in words. In fourth-quarter minutes.",
   "Gli fai spazio, resti la voce": "You make room for him, stay the voice",
-  "Il mestiere cambia forma, non peso.": "The job changes shape, not weight.",
+  "Il mestiere cambia forma, non peso.": "The role changes shape, not weight.",
   "I tempi morti diventano tuoi. I possessi, suoi.": "You run the huddles. He gets the touches.",
   "Te lo giochi ogni giorno": "You fight for it every day",
   "La rosa non è un lascito.": "The roster isn't an inheritance.",

@@ -148,7 +148,7 @@ export const EN_STORY_LATE: Readonly<Record<string, string>> = {
   "Non fai il museo. Fai il mestiere. Si capisce lo stesso.": "You don't run a museum. You do the job. It's understood all the same.",
   "Due frasi, niente video. Il rispetto, a quest'età, è basso e fermo.": "Two sentences, no video. Respect, at this age, is low and steady.",
   "Racconti poco. Lo spogliatoio capisce il poco, e basta.": "You tell little. The locker room understands the little, and that's it.",
-  "Niente fermo immagine. Il mestiere, nudo, vale più dell'anello in bacheca.": "No freeze-frame. The work itself is worth more than the ring in the case.",
+  "Niente fermo immagine. Il mestiere, nudo, vale più dell'anello in bacheca.": "No freeze-frame. The everyday work is worth more than the ring in the case.",
   "Due minuti, voce bassa. Il rispetto, tenuto così, non ha bisogno di una targa.": "Two minutes, low voice. Respect, held this way, doesn't need a plaque.",
   "Racconti poco, e il poco tiene la stanza. Poi ottobre, che è più onesto.": "You tell little, and that little holds the room. Then October, which is more honest.",
   "Usi la fame di allora": "You use the hunger you had back then",
