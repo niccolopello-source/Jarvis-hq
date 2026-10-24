@@ -1,3 +1,34 @@
+# DEMO READINESS — 2026-10-24 (Phase Zero)
+
+Analyzed commit: `800a2402af81f747b15f92a371f14f441875c31e` (prod `dpl_6S1VZgG845g7YhBqoDWfTRgsNNsj`, READY, same SHA). Decision: **NEAR READY — not declared ready** until R2 (#123) is merged and a real-device pass exists.
+
+Gates G1–G20 below follow the Master Prompt's success definition (§20) plus commercial gates; numbering is this document's.
+
+| Gate | Criterion | Status | Evidence |
+|---|---|---|---|
+| G1 | Game starts | PASS | e2e Chromium+WebKit preview 131/131 (2026-10-24) |
+| G2 | Career creation | PASS | e2e (g6-onboarding, demo) |
+| G3 | Main path completable | PASS | e2e paths/demo-gate |
+| G4 | Choices have coherent consequences | PASS (tests) | unit career-coherence, bust-choice; stats 24/24 |
+| G5 | Engine reproducible | PASS | determinism, rng-determinism, sim-parity, version-gate tests |
+| G6 | Save works | PASS | g1-persistence, save-safety, lifecycle-flush e2e |
+| G7 | Career Card robust to known errors | FAIL | teamColor crash open until #123 merges |
+| G8 | Archive & load | PASS | archive-integrity unit, save-safety e2e |
+| G9 | Usable on supported viewports | PASS (emulation) | e2e; #125 adds 320/390/200% zoom (unmerged) |
+| G10 | Real devices | BLOCKED | no device available |
+| G11 | No known P0 bugs in game | PASS | none reproduced |
+| G12 | Demo limits declared | NOT RUN | to write in demo notes |
+| G13 | Deploy = verified code | PASS | prod SHA = main 800a240 |
+| G14 | Docs reflect reality | PASS (this PR) | CURRENT-STATE-REPORT.md |
+| G15 | No unauthorized commercial features | PASS | ads off, CSP closed, no pixel |
+| G16 | Canonical domain only | FAIL | vercel.app + pgoc serve 200 (#119) |
+| G17 | Performance measured | NOT RUN | no Lighthouse/perf this session |
+| G18 | Persistent analytics | NOT APPLICABLE (not implemented) | Vercel page views only |
+| G19 | Admin panel | NOT APPLICABLE (not implemented) | none in repo |
+| G20 | Ads / accounts / NFT | BLOCKED | P0 owner decision (Hobby plan) |
+
+---
+
 # DEMO READINESS — 2026-10-04
 
 Stato: NOT READY. Data obiettivo 18 ottobre 2026. Non è un gate raggiunto.
