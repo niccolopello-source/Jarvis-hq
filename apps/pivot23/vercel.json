@@ -1,5 +1,31 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "pivot23.vercel.app" }],
+      "destination": "https://www.pivot23.com/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "pivot23.vercel.app" }],
+      "destination": "https://www.pivot23.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "jarvis-hq-pgoc.vercel.app" }],
+      "destination": "https://www.pivot23.com/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "jarvis-hq-pgoc.vercel.app" }],
+      "destination": "https://www.pivot23.com/:path*",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
