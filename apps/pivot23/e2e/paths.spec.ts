@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, test, type Page } from "@playwright/test";
@@ -8,8 +9,15 @@ import { expect, test, type Page } from "@playwright/test";
 const here = dirname(fileURLToPath(import.meta.url));
 let saves: Record<string, string> = {};
 test.beforeAll(() => {
-  execFileSync("node", ["--import=tsx", join(here, "fixtures", "make-path-saves.ts")], { cwd: join(here, ".."), stdio: "inherit" });
-  saves = JSON.parse(readFileSync(join(here, "fixtures", "path-saves.json"), "utf8"));
+  // Generate into a per-run temp dir: the tracked fixtures/path-saves.json stays untouched.
+  const dir = mkdtempSync(join(tmpdir(), "pivot23-path-saves-"));
+  const out = join(dir, "path-saves.json");
+  try {
+    execFileSync("node", ["--import=tsx", join(here, "fixtures", "make-path-saves.ts")], { cwd: join(here, ".."), stdio: "inherit", env: { ...process.env, PATH_SAVES_OUT: out } });
+    saves = JSON.parse(readFileSync(out, "utf8"));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 const card = (page: Page) => page.locator("[data-pending]").last();

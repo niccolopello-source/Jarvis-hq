@@ -56,7 +56,7 @@ import { settlePlayerAwards } from "./awards-helpers";
 import { playoffChoicesFor as doorChoices } from "./playoff-doors";
 import { pickSummerDestination, pickSummerEvent } from "./summer";
 import { CHARACTER_ROUNDS } from "./draft-character";
-import { contextScore, DEPTH_SINCE, excludedBy, logSelection, newMemory, recentTags, recordChoice, recordLoyalty, settleMemory, usesDepth } from "./memory";
+import { contextScore, DEPTH_SINCE, excludedBy, logSelection, newMemory, recentTags, recordChoice, recordLoyalty, ROOKIE_TAGS_SINCE, settleMemory, usesDepth } from "./memory";
 import {
   MAX_AGE,
   START_OVERALL,
@@ -1270,19 +1270,26 @@ export function pickStoryEvent(s: PlayerState, n: number) {
         return late;
       }
     }
-    if (n > 1 && rand() < quietYearChance(s) * 0.55) {
+    // From ROOKIE_TAGS_SINCE the first three seasons keep a slot for the rookie pool (season 1 is
+    // the scripted roy-race card): no quiet/procedural beat steals it while rookie cards are left.
+    const rookieSlot =
+      versionAtLeast(s.engineVersion, ROOKIE_TAGS_SINCE) &&
+      n >= 2 &&
+      n <= 3 &&
+      STORY_POOL.some((e) => e.phase === "rookie" && !s.usedEventIds.includes(e.id));
+    if (!rookieSlot && n > 1 && rand() < quietYearChance(s) * 0.55) {
       const quiet = buildNoted(s, () => quietYearEvent(s));
       remember(quiet.id);
       return quiet;
     }
-    if (n > 1) {
+    if (!rookieSlot && n > 1) {
       const beat = maybeProcedural(s);
       if (beat && !s.usedEventIds.includes(beat.id)) {
         remember(beat.id);
         return beat;
       }
     }
-    const phase = phaseFor(n, s.age);
+    const phase = rookieSlot ? "rookie" : phaseFor(n, s.age);
     const lastTitle = s.choiceLog[s.choiceLog.length - 1]?.title || "";
     const lastId = s.usedEventIds[s.usedEventIds.length - 1] || "";
     const fresh = (e: { id: string; title: string }) => {
