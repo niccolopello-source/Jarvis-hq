@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import "./intro.css";
+import { onBootAttention } from "./boot-signal";
 
 /**
  * First-impression hand-off between the static boot mark in index.html and the mounted app.
@@ -158,7 +159,13 @@ function playCurtain(): () => void {
     startHandle = idle ? window.requestIdleCallback(start, { timeout: START_TIMEOUT_MS }) : window.setTimeout(start, 0);
   }, hold);
   const fallback = window.setTimeout(finish, CURTAIN_MAX_MS + hold);
+  // A save-recovery notice or a boot error is on screen: no hold, no animation, the splash goes now.
+  const stopAttention = onBootAttention(() => {
+    window.clearTimeout(holdTimer);
+    finish();
+  });
   return () => {
+    stopAttention();
     window.clearTimeout(holdTimer);
     if (idle) window.cancelIdleCallback(startHandle);
     else window.clearTimeout(startHandle);

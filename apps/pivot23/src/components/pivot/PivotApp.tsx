@@ -115,6 +115,7 @@ import { advancedOf } from "@/lib/pivot/peak";
 import { displayedPeak } from "@/lib/pivot/peak-display";
 import { defensiveMarks } from "@/lib/pivot/awards-helpers";
 import { CrashFallback } from "./CrashFallback";
+import { signalBootAttention } from "@/boot-signal";
 import { SoundToggle } from "@/intro-sound/SoundToggle";
 import { clearLive, hasLiveSave, lastLoadReport, loadLive, loadSwipe, logSeqFrom, persistentStorageAvailable, releaseLiveFlush, saveLive, saveSwipe, watchLiveConflicts, type LiveLoadReport } from "@/lib/pivot/save";
 import { CAREER_TABS, SwipeTrack } from "@/components/pivot/SwipePager";
@@ -382,6 +383,12 @@ export function PivotApp() {
     document.documentElement.classList.remove("pivot-live", "pivot-ready");
     initLang();
   }, []);
+
+  // A recovery notice on the first screen must not sit behind the splash (see src/boot-signal.ts).
+  const recoveryAtBoot = loadNotice !== null && loadNotice.state !== "migrated" && screen === "intro";
+  useLayoutEffect(() => {
+    if (recoveryAtBoot) signalBootAttention("recovery");
+  }, [recoveryAtBoot]);
 
   useEffect(() => {
     const lean =
