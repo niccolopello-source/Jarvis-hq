@@ -8,7 +8,7 @@ import { royProductionScore } from "./awards-helpers";
 import { freshPlayer, playIsolatedDraft } from "./engine";
 import { createRng, runWithRng } from "./rng";
 import { isolatedRookieBox, roySubSeed, ROY_ROLES } from "./rookie-box";
-import { usesAwardsV2, usesDecisions } from "./tuning";
+import { PRE_STATS_OVR_ENGINE, usesAwardsV2, usesDecisions, usesStatsOvr } from "./tuning";
 import { AWARD_MIN_GAMES, PLAYER_KEY, lotteryLiftV2, mvpFatigueV2, mvpHistoryV2, rookieClassPlanV2, royScoreV2 } from "./awards-v2";
 import { EURO_GAMES, NBA_GAMES, PLAYOFF_SEEDS, awardNoteIt } from "./data";
 import type {
@@ -211,6 +211,7 @@ export function seedRookieClass(s: PlayerState): RoyCandidate[] {
     const team = others[(i * 5 + 2) % others.length]!;
     const box = runWithRng(createRng(sub), () => {
       const cpu = freshPlayer(ROOKIE_NAMES[i % ROOKIE_NAMES.length]!, ROY_ROLES[i] || "SF", "USA", 11 + i, s.difficulty, sub, s.engineVersion ?? "");
+      cpu.engineVersion = usesStatsOvr(s) ? s.engineVersion! : usesStatsOvr(cpu) ? PRE_STATS_OVR_ENGINE : cpu.engineVersion; // CPU rookies follow the career rules
       cpu.draftPick = 8 + i * 7;
       cpu.age = 21;
       cpu.league = "NBA";
@@ -243,6 +244,7 @@ function seedRookieClassV2(s: PlayerState): RoyCandidate[] {
     const team = others[slot.teamIndex]!;
     const box = runWithRng(createRng(sub), () => {
       const cpu = freshPlayer(slot.name, slot.role, "USA", 11 + i, s.difficulty, sub, s.engineVersion ?? "");
+      cpu.engineVersion = usesStatsOvr(s) ? s.engineVersion! : usesStatsOvr(cpu) ? PRE_STATS_OVR_ENGINE : cpu.engineVersion; // CPU rookies follow the career rules
       cpu.draftPick = slot.pick;
       cpu.age = 21;
       cpu.league = "NBA";

@@ -77,6 +77,23 @@ export const TUNING = {
   /** Games needed to win the player DPOY, per competition. Only the NBA awards a player DPOY;
    *  58 is the existing rule (full availability weight at 65, see nbaDpoyScore). */
   dpoyMinGames: { NBA: 58 } as Readonly<Record<string, number>>,
+  /** STATS -> OVR (Pello, 25 Oct 2026), careers created on 2.23.0+ only (STATS_OVR_SINCE). The OVR is read from the
+   *  attributes: ovr = start + k * (weighted role skill - weighted skill at creation). Natural growth and ageing are a
+   *  yearly attribute budget (the age curve), every choice/event pulse lands on the attributes, start OVR 50.
+   *  lambda = share of the OVR taken from the attributes (1 = option B, pure; 0.5 = option A, hybrid).
+   *  Report: docs/pivot23/STATS-OVR-REBALANCE.md. */
+  statsOvr: {
+    start: 50,
+    lambda: 1,
+    k: 0.55,
+    pulseToAttrs: 0.6,
+    twilightFloorK: 0.74,
+    twilightFloorMin: 52,
+    twilightFloorMax: 72,
+    draftStockRef: 62,
+    catchUpMax: 1.5,
+    peakShift: -2.5,
+  },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",
 };
@@ -148,6 +165,19 @@ export const RULES_INJURY_SINCE = "2.19.0";
 /** First engine version whose Leggenda careers use TUNING.minutesRetireBars220 (fading-role exits at 31-32).
  *  Careers created on 2.19 or earlier, and every other difficulty, keep their rules exactly. */
 export const LEGEND_RETIRE_SINCE = "2.20.0";
+
+/** Stats -> OVR (TUNING.statsOvr): first engine version whose careers derive the OVR from the attributes and start at 50.
+ *  Careers created on 2.22 or earlier keep the age-curve OVR exactly. Shared 2.23.0 gate: grokbot/rookie-tags may add
+ *  its own rule under the same release; each rule keeps its own constant. */
+export const STATS_OVR_SINCE = "2.23.0";
+
+/** True when this career was created by STATS_OVR_SINCE (2.23.0) or later. */
+/** ENGINE_VERSION that the CPU rookie class (league.ts) was stamped with before 2.23.0: pinned so older careers keep their rival rookies bit-identical. */
+export const PRE_STATS_OVR_ENGINE = "2.22.0-beta";
+
+export function usesStatsOvr(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, STATS_OVR_SINCE);
+}
 
 /** D-23 step that careers created before WORLD_SINCE (2.13.0) keep. */
 export const LEGACY_DPOY_STREAK_STEP = 0.12;

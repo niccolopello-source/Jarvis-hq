@@ -1,8 +1,9 @@
 
 /** Curva d'età, picco osservato 26–28, overall intero in display. */
 import { SIM } from "./config";
-import { TUNING, injuryRetireBarsOf, minutesRetireBarOf, twilightBaseWearOf, usesBustB, usesBustB81, usesDecisions, usesRetireSpread } from "./tuning";
+import { TUNING, usesStatsOvr, injuryRetireBarsOf, minutesRetireBarOf, twilightBaseWearOf, usesBustB, usesBustB81, usesDecisions, usesRetireSpread } from "./tuning";
 import { ROLES } from "./data";
+import { NAT_ORIGIN } from "./teams";
 import { rand } from "./rng";
 import type { AttrKey, PlayerState, Role } from "./types";
 
@@ -10,6 +11,13 @@ export const PEAK_AGE = 27;
 export const START_OVERALL = 60;
 export const MAX_AGE = 36;
 export const PEAK_BAND = [26, 27, 28] as const;
+/** Attribute value every rookie is created with (engine.ts freshPlayer), before nationality. */
+export const BASE_ATTR = 25;
+
+/** Starting OVR of this career: 50 from STATS_OVR_SINCE (2.23.0), 60 (START_OVERALL) before. */
+export function startOverallOf(s: { engineVersion?: string }): number {
+  return usesStatsOvr(s) ? TUNING.statsOvr.start : START_OVERALL;
+}
 
 export function clamp(v: number, min: number, max: number) {
   if (!Number.isFinite(v)) return min;
@@ -246,7 +254,8 @@ export function draftLift(s: PlayerState): number {
 export function realizedPeak(s: PlayerState): number {
   const pot = finite(s.potential, 76);
   const real = realizationOf(s);
-  const peak = START_OVERALL + (pot - START_OVERALL) * real + draftLift(s) + roleFit(s);
+  const start = startOverallOf(s);
+  const peak = start + (pot - start) * real + draftLift(s) + roleFit(s);
   return round1(clamp(peak, SIM.overall.min, 99));
 }
 
@@ -262,7 +271,8 @@ function roleFit(s: PlayerState): number {
 
 export function twilightOf(s: PlayerState): number {
   const pot = finite(s.potential, 76);
-  const peak = finite(s.peakOverall) && s.peakOverall > START_OVERALL ? s.peakOverall : pot;
+  const start = startOverallOf(s);
+  const peak = finite(s.peakOverall) && s.peakOverall > start ? s.peakOverall : pot;
   const wear =
     twilightBaseWearOf(s) +
     Math.max(0, finite(s.age, PEAK_AGE) - 30) * 0.9 +
@@ -276,7 +286,10 @@ export function twilightOf(s: PlayerState): number {
     finite(s.allStarCount, 0) * 0.12 +
     finite(s.fmvpCount, 0) * 0.35 +
     Math.max(0, finite(s.development, 0)) * 0.08;
-  const floor = clamp(peak * 0.54, 48, 68);
+  const so = TUNING.statsOvr;
+  const floor = usesStatsOvr(s)
+    ? clamp(peak * so.twilightFloorK, so.twilightFloorMin, so.twilightFloorMax)
+    : clamp(peak * 0.54, 48, 68);
   const ceil = clamp(peak - 8.2, 52, 86);
   return round1(clamp(peak - wear + keep, floor, ceil));
 }
@@ -292,13 +305,14 @@ export function overallSpine(
   twilight: number,
   apex = PEAK_AGE,
   _plateau = 0.25,
+  start = START_OVERALL,
 ) {
   const peakAt = clamp(Math.round(apex), 26, 28);
   if (age <= peakAt) {
     const span = Math.max(1.15, peakAt - startAge);
     const t = clamp((age - startAge) / span, 0, 1);
     const e = 0.5 * t + 0.5 * t * t * (3 - 2 * t);
-    return START_OVERALL + (potential - START_OVERALL) * e;
+    return start + (potential - start) * e;
   }
   const yearsPast = age - peakAt;
   const spanDown = Math.max(1.6, MAX_AGE - peakAt);
@@ -310,12 +324,54 @@ export function overallSpine(
 }
 
 export function computeOverall(s: PlayerState) {
+  if (usesStatsOvr(s)) return computeOverallStats(s);
+  return computeOverallCurve(s);
+}
+
+/** Weighted role skill of the attributes this career was created with (25 each plus nationality). No state field:
+ *  role and nationality are fixed, so the reference is the same on every load. */
+export function baseSkillOf(s: PlayerState): number {
+  const w = ROLES[s.role]?.weights ?? ROLES.SG.weights;
+  const origin = NAT_ORIGIN[s.nationality]?.attrs ?? {};
+  const keys = Object.keys(w) as AttrKey[];
+  const sum = keys.reduce((a, k) => a + finite(w[k], 0), 0) || 1;
+  let total = 0;
+  keys.forEach((k) => {
+    total += clampAttr(BASE_ATTR + finite(origin[k], 0)) * finite(w[k], 0);
+  });
+  return clamp(total / sum, SIM.attr.min, SIM.attr.max);
+}
+
+/** OVR read from the attributes only (2.23.0+): start + k * (weighted skill - weighted skill at creation). */
+export function statsOverall(s: PlayerState): number {
+  return startOverallOf(s) + TUNING.statsOvr.k * (weightedSkill(s) - baseSkillOf(s));
+}
+
+/** Natural age curve of this career in OVR points (no choices): the yearly attribute budget follows its slope. */
+export function naturalCurveAt(s: PlayerState, age: number): number {
+  const startAge = finite(s.startAge, 20) || 20;
+  return overallSpine(age, startAge, realizedPeak(s), twilightOf(s), apexAgeOf(s), plateauOf(s), startOverallOf(s));
+}
+
+/** 2.23.0+: the OVR is the attributes (lambda = 1) or a blend with the age curve (lambda < 1, option A).
+ *  Form and injury drag stay as condition terms, as before. */
+function computeOverallStats(s: PlayerState) {
+  const lambda = clamp(finite(TUNING.statsOvr.lambda, 1), 0, 1);
+  const cond = finite(s.form, 0) * 0.1 - finite(s.injuryDrag, 0) * 0.12;
+  const fromStats = statsOverall(s) + cond;
+  const ovr = lambda >= 1 ? fromStats : lambda * fromStats + (1 - lambda) * computeOverallCurve(s);
+  const pot = finite(s.potential, 76);
+  return clamp(Math.min(ovr, pot + 1.4, SIM.overall.max), SIM.overall.min, SIM.overall.max);
+}
+
+function computeOverallCurve(s: PlayerState) {
+  const start = startOverallOf(s);
   const startAge = finite(s.startAge, 20) || 20;
   const realized = realizedPeak(s);
   const tw = twilightOf(s);
   const apex = apexAgeOf(s);
   const age = finite(s.age, startAge);
-  const spine = overallSpine(age, startAge, realized, tw, apex, plateauOf(s));
+  const spine = overallSpine(age, startAge, realized, tw, apex, plateauOf(s), start);
   const past = age - apex;
   const devW = past < 0 ? (age <= 24 ? 0.18 : 0.12) : past === 0 ? 0.07 : 0.02;
   const imprint = clamp(finite(s.choiceOvr, 0), SIM.choice.min, SIM.choice.max);
@@ -328,20 +384,20 @@ export function computeOverall(s: PlayerState) {
     spine + finite(s.development, 0) * devW + finite(s.form, 0) * 0.1 - finite(s.injuryDrag, 0) * 0.12 + imprintHit;
   // Ascent: before personal apex the integer overall stays below the apex year.
   if (age < apex) {
-    const atApex = overallSpine(apex, startAge, realized, tw, apex, plateauOf(s));
+    const atApex = overallSpine(apex, startAge, realized, tw, apex, plateauOf(s), start);
     ovr = Math.min(ovr, atApex - 1.35);
   }
   if (age < 26) {
-    const atBand = overallSpine(26, startAge, realized, tw, apex, plateauOf(s));
+    const atBand = overallSpine(26, startAge, realized, tw, apex, plateauOf(s), start);
     ovr = Math.min(ovr, atBand - 1.35);
   }
   // Decline after personal apex so 26/27/28 holds the observed peak.
   if (past > 0) {
-    const atApex = overallSpine(apex, startAge, realized, tw, apex, plateauOf(s));
+    const atApex = overallSpine(apex, startAge, realized, tw, apex, plateauOf(s), start);
     ovr = Math.min(ovr, atApex - 1.15 * past);
   }
   if (age > 28) {
-    const held = finite(s.peakOverall) && s.peakOverall > START_OVERALL ? s.peakOverall : realized;
+    const held = finite(s.peakOverall) && s.peakOverall > start ? s.peakOverall : realized;
     // No 99 freeze: after 28 overall must fall, even from a 99 ceiling.
     ovr = Math.min(ovr, 98.45, held - (age - 28) * 1.35);
   }
@@ -383,13 +439,13 @@ export function refreshOverall(s: PlayerState) {
   if (age > 28) {
     o = Math.min(o, 98.45);
     if (last && Number.isFinite(last.overall) && last.overall >= 99) o = Math.min(o, 98);
-    if (Number.isFinite(s.peakOverall) && s.peakOverall > START_OVERALL) {
+    if (Number.isFinite(s.peakOverall) && s.peakOverall > startOverallOf(s)) {
       o = Math.min(o, s.peakOverall - (age - 28) * 1.05);
     }
   }
   const potCeil = finite(s.potential, 76) + 1.4;
   o = Math.min(o, potCeil);
-  let shown = displayOverall(Number.isFinite(o) ? o : START_OVERALL);
+  let shown = displayOverall(Number.isFinite(o) ? o : startOverallOf(s));
   if (shown > potCeil) shown = Math.floor(potCeil);
   s.overall = clamp(shown, SIM.overall.min, SIM.overall.max);
   if (!Number.isFinite(s.peakOverall) || s.overall > s.peakOverall) s.peakOverall = s.overall;

@@ -69,7 +69,7 @@ import {
   shouldForceTrade,
   shouldOfferTrade,
   simulateRegularSeason,
-  START_OVERALL,
+  startOverallOf,
   startProPath,
   storyEventById,
   tickContract,
@@ -662,8 +662,8 @@ export function PivotApp() {
   function beginCareer() {
     if (!player || !takeGesture("begin")) return;
     const s = structuredClone(player);
-    s.overall = START_OVERALL;
-    s.peakOverall = START_OVERALL;
+    s.overall = startOverallOf(s);
+    s.peakOverall = startOverallOf(s);
     setLog([]);
     setTab("log");
     setScreen("career");
