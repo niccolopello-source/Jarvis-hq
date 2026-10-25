@@ -1324,6 +1324,7 @@ export function pickStoryEvent(s: PlayerState, n: number) {
 }
 
 export function storyEventById(s: PlayerState, id?: string, script?: SavedStoryScript, rebuild?: EventRebuild): StoryEvent {
+  if (typeof id !== "string") id = undefined; // corrupted saves may carry a non-string id
   const late = script === "late" || (!!id && id.startsWith("late-"));
   const quiet = script === "quiet" || (!!id && id.startsWith("quiet-"));
   if (rebuild && Number.isFinite(rebuild.rng) && id && (late || quiet) && !STORY_POOL.some((e) => e.id === id)) {

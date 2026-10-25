@@ -195,13 +195,14 @@ function pendingFromEvent(
   script: SavedStoryScript,
   s: PlayerState,
 ): Pending {
+  const rebuild = eventRebuildOf(s, ev.id);
   return {
     kind: "story",
     title: fillTemplate(ev.title, s),
     subtitle: fillTemplate(ev.subtitle, s),
     script,
     eventId: ev.id,
-    ...(eventRebuildOf(s, ev.id) ? { rebuild: eventRebuildOf(s, ev.id) } : {}),
+    ...(rebuild ? { rebuild } : {}),
     options: optsFromEvent(ev, s),
   };
 }
