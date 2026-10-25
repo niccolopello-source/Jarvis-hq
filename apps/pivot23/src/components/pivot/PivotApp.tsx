@@ -5,6 +5,7 @@ import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
 import { CAREER_NAME_MAX, careerName, chipsFromFx, chipsFromSnapshot, consequenceSchedule, endSentence, formatCareerTotal, getSeasonDisplayLabel, tidyText, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
+import { InstagramLink } from "@/components/pivot/InstagramLink";
 import { SideRail, adBreakAtSeasonEnd } from "@/ads";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
 import { pathFeel, playoffNerves, draftWho, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
@@ -72,6 +73,8 @@ import {
   START_OVERALL,
   startProPath,
   storyEventById,
+  eventRebuildOf,
+  type EventRebuild,
   tickContract,
   toArchive,
   verdictOf,
@@ -141,7 +144,7 @@ type Tab = CareerTab;
 type Pending =
   | { kind: "path" }
   | { kind: "call"; pick: number; flavor: string }
-  | { kind: "story"; title: string; subtitle: string; options: Opt[]; script?: SavedStoryScript; eventId?: string }
+  | { kind: "story"; title: string; subtitle: string; options: Opt[]; script?: SavedStoryScript; eventId?: string; rebuild?: EventRebuild }
   | { kind: "recap"; row: SeasonRow; qualified: boolean; awardNote: string; door: string }
   | { kind: "playoff"; round: number; opponent: Team; nerves: string }
   | { kind: "fa"; offers: MarketOffer[]; desk: string }
@@ -193,12 +196,14 @@ function pendingFromEvent(
   script: SavedStoryScript,
   s: PlayerState,
 ): Pending {
+  const rebuild = eventRebuildOf(s, ev.id);
   return {
     kind: "story",
     title: fillTemplate(ev.title, s),
     subtitle: fillTemplate(ev.subtitle, s),
     script,
     eventId: ev.id,
+    ...(rebuild ? { rebuild } : {}),
     options: optsFromEvent(ev, s),
   };
 }
@@ -207,7 +212,7 @@ function hydratePending(raw: SavedPending | Pending | null, s: PlayerState): Pen
   if (!raw) return null;
   if (raw.kind === "hold") return null;
   if (raw.kind === "story") {
-    const ev = storyEventById(s, raw.eventId, raw.script);
+    const ev = storyEventById(s, raw.eventId, raw.script, raw.rebuild);
     const runs = optsFromEvent(ev, s);
     const options = (raw.options.length ? raw.options : ev.choices).map((o, i) => {
       const label = fillTemplate(o.label, s);
@@ -221,7 +226,15 @@ function hydratePending(raw: SavedPending | Pending | null, s: PlayerState): Pen
         }),
       };
     });
-    return { kind: "story", title: raw.title, subtitle: raw.subtitle, script: raw.script, eventId: raw.eventId, options };
+    return {
+      kind: "story",
+      title: raw.title,
+      subtitle: raw.subtitle,
+      script: raw.script,
+      eventId: raw.eventId,
+      ...(raw.rebuild ? { rebuild: raw.rebuild } : {}),
+      options,
+    };
   }
   return raw as Pending;
 }
@@ -1222,7 +1235,10 @@ export function PivotApp() {
               {t("archive", lang)} · {archive.length}
             </button>
           )}
-          <p className="totem-credit totem-home">Powered by Totem</p>
+          <div className="totem-row totem-row-home">
+            <InstagramLink lang={lang} />
+            <p className="totem-credit totem-home">Powered by Totem</p>
+          </div>
         </section>
       )}
 
@@ -1376,7 +1392,10 @@ export function PivotApp() {
       </div>
       <SideRail side="right" lang={lang} placeholder={t("adReserved", lang)} />
       <div className="ad-foot">
-        <p className="totem-credit">Powered by Totem</p>
+        <div className="totem-row">
+          <InstagramLink lang={lang} />
+          <p className="totem-credit">Powered by Totem</p>
+        </div>
       </div>
     </div>
   );
