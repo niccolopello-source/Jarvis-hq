@@ -1,0 +1,56 @@
+{
+  "throttle": 4,
+  "bootToStartMs": 405,
+  "bootLongTasks": {
+    "count": 1,
+    "maxMs": 131,
+    "totalMs": 131
+  },
+  "heapAfterBootMB": 3.9,
+  "simCareerMs": 603,
+  "simCareerLongTasks": {
+    "count": 3,
+    "maxMs": 71,
+    "totalMs": 187
+  },
+  "heapAfterSimMB": 7.8,
+  "seasonClicks": 2,
+  "seasonWallMs": 1805,
+  "seasonLongTasks": {
+    "count": 0,
+    "maxMs": 0,
+    "totalMs": 0
+  },
+  "tabSwitchMs": [
+    [
+      "Anno",
+      170
+    ],
+    [
+      "Lega",
+      205
+    ],
+    [
+      "Vita",
+      145
+    ],
+    [
+      "Storia",
+      115
+    ],
+    [
+      "Lega",
+      148
+    ],
+    [
+      "Anno",
+      134
+    ]
+  ],
+  "tabLongTasks": {
+    "count": 4,
+    "maxMs": 87,
+    "totalMs": 280
+  },
+  "heapEndMB": 17.3
+}

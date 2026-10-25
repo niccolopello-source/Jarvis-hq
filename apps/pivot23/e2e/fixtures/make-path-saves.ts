@@ -70,5 +70,7 @@ for (let seed = 4200; seed < 4400 && Object.keys(out).length < 4; seed += 1) {
 const need = ["injury", "fa", "awardsPlayoffs", "playoffFinals"];
 const missing = need.filter((k) => !out[k]);
 if (missing.length) throw new Error(`no seed in 4200-4399 produced: ${missing.join(", ")}`);
-writeFileSync(join(dirname(fileURLToPath(import.meta.url)), "path-saves.json"), JSON.stringify(Object.fromEntries(need.map((k) => [k, JSON.stringify(out[k]!.save)]))));
+// PATH_SAVES_OUT lets tests write to a temp file so a run never dirties the tracked fixture.
+const target = process.env.PATH_SAVES_OUT || join(dirname(fileURLToPath(import.meta.url)), "path-saves.json");
+writeFileSync(target, JSON.stringify(Object.fromEntries(need.map((k) => [k, JSON.stringify(out[k]!.save)]))));
 console.log("wrote path saves", Object.fromEntries(need.map((k) => [k, `seed ${out[k]!.seed} season ${out[k]!.season}`])));
