@@ -8,6 +8,7 @@
  * - A missing fact is omitted (null / empty list), never guessed.
  * - Nothing here imports the engine or touches RNG, formulas or the saved sporting state.
  */
+import { displayedPeak } from "./peak-display";
 import type { ArchiveCareer, PlayerState, Role, SeasonRow } from "./types";
 import { careerBust } from "./bust";
 import { ROLES } from "./data";
@@ -181,6 +182,9 @@ function roleCodeOf(entry: ArchiveCareer, facts: LegacyFacts | null): Role | nul
   return hit ?? null;
 }
 
+/** A stored team colour is only used if it is a hex string: a damaged archive row must not break the Career Card. */
+const hexOr = (v: unknown, fallback: string) => (typeof v === "string" && /^#[0-9a-f]{3,8}$/i.test(v) ? v : fallback);
+
 export function stintsOf(rows: SeasonRow[]): Stint[] {
   const out: Stint[] = [];
   for (const r of rows) {
@@ -189,7 +193,8 @@ export function stintsOf(rows: SeasonRow[]): Stint[] {
       last.to = r.yearLabel;
       last.seasons += 1;
     } else {
-      out.push({ team: r.team || r.teamAbbr, abbr: r.teamAbbr, color: r.teamColor || "#3a3a3c", secondary: r.teamSecondary || r.teamColor || "#3a3a3c", from: r.yearLabel, to: r.yearLabel, seasons: 1 });
+      const color = hexOr(r.teamColor, "#3a3a3c");
+      out.push({ team: r.team || r.teamAbbr, abbr: r.teamAbbr, color, secondary: hexOr(r.teamSecondary, color), from: r.yearLabel, to: r.yearLabel, seasons: 1 });
     }
   }
   return out;
@@ -316,7 +321,8 @@ export function buildLegacyReport(entry: ArchiveCareer): LegacyReport {
     titles: entry.titles,
     finals,
     deepest,
-    peak: entry.peak,
+    // Shown peak = best OVR of the seasons table (see peak-display.ts).
+    peak: displayedPeak(rows, entry.peak),
     awards,
     records,
     timeline,

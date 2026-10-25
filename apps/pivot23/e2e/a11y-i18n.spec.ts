@@ -104,6 +104,9 @@ test("reduced motion: no running animations on the intro", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await expect(page.getByRole("button", { name: "Inizia", exact: true })).toBeVisible();
+  // The boot curtain's reduced-motion exit is a deliberate 160 ms opacity fade (intro.ts "still");
+  // it removes #boot on animationend. Measure the intro itself, after that hand-off, not a race with it.
+  await expect(page.locator("#boot")).toHaveCount(0);
   await page.waitForTimeout(400);
   const running = await page.evaluate(() =>
     document.getAnimations().filter((a) => a.playState === "running" && Number(a.effect?.getComputedTiming().duration ?? 0) > 50).length,
