@@ -240,7 +240,15 @@ export function settleMemory(s: PlayerState, n: number, apply: (s: PlayerState, 
 
 /* ─────────────── Phase 2: contextual event score ─────────────── */
 
-import { EVENT_TAGS } from "./event-tags";
+import { EVENT_TAGS, LEGACY_TAG_ANOMALIES } from "./event-tags";
+
+/**
+ * From this engine version the rookie events rk1/rk5/rk8/rk10 are no longer dropped by the
+ * "veteran-theme-too-young" exclusion (they are rookie events that only mention a veteran teammate).
+ * DORMANT: ENGINE_VERSION is still 2.22.0-beta, so no career (old or new) changes until the owner
+ * approves bumping ENGINE_VERSION. Careers stamped < 2.23.0 keep the legacy behaviour forever.
+ */
+export const ROOKIE_TAGS_SINCE = "2.23.0";
 
 export type EventTag = "ego" | "coach" | "injury" | "veteran" | "work" | "locker" | "contract" | "rival";
 
@@ -252,7 +260,8 @@ export function eventTags(e: StoryEvent): EventTag[] {
 /** Hard exclusions: an event incompatible with the current state never enters the pool. */
 export function excludedBy(e: StoryEvent, s: PlayerState): string | null {
   const tags = eventTags(e);
-  if (tags.includes("veteran") && s.age < 29) return "veteran-theme-too-young";
+  const rookieFix = LEGACY_TAG_ANOMALIES.includes(e.id) && versionAtLeast(s.engineVersion, ROOKIE_TAGS_SINCE);
+  if (tags.includes("veteran") && s.age < 29 && !rookieFix) return "veteran-theme-too-young";
   if (tags.includes("injury") && s.injuryDrag >= 6 && s.gamesPenalty >= 30) return "already-sidelined";
   return null;
 }
