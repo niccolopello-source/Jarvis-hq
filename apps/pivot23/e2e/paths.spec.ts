@@ -85,6 +85,27 @@ test("awards and playoffs: recap with an award, then a playoff card, reload mid-
   expect(errors).toEqual([]);
 });
 
+test("two separate single taps on consecutive cards both register (only a double tap's repeat is dropped)", async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await open(page, "awardsPlayoffs");
+  await choose(page);
+  await expect(card(page)).toHaveClass(/playoff/);
+  await expect.poll(async () => (await saved(page)).pending, { timeout: 5_000 }).toBe("playoff");
+  const start = (await saved(page)).choices;
+  const first = card(page).locator("button").first();
+  const box = (await first.boundingBox())!;
+  // Two single taps (detail 1 each) at the same spot, the second on the card that replaced the first.
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect.poll(async () => (await saved(page)).choices, { timeout: 10_000 }).toBe(start + 1);
+  await expect(page.locator(".pending-beat.is-held")).toHaveCount(0, { timeout: 10_000 });
+  await expect(card(page).locator("button").first()).toBeVisible();
+  await card(page).locator("button").first().click();
+  await expect.poll(async () => (await saved(page)).choices, { timeout: 10_000 }).toBe(start + 2);
+  expect(errors).toEqual([]);
+});
+
 test("playoff run: play every round to the end of the run without a stall", async ({ page }) => {
   test.setTimeout(120_000);
   const errors: string[] = [];
