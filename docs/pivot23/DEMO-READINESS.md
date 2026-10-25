@@ -1,3 +1,59 @@
+# DEMO READINESS — 2026-10-24 (Phase Zero)
+
+Analyzed commit: `800a2402af81f747b15f92a371f14f441875c31e` (prod `dpl_6S1VZgG845g7YhBqoDWfTRgsNNsj`, READY, same SHA). Decision: **NEAR READY — not declared ready** until R2 (#123) is merged and a real-device pass exists.
+
+Gates use the Master Prompt's official G1–G20 (§16). The earlier table in this PR used its own numbering, and this version replaces it. Evidence is from 2026-10-24 (Europe/Rome) on 800a240 unless a row says otherwise.
+
+| Gate | Name | Status | Evidence |
+|---|---|---|---|
+| G1 | Baseline | PASS | main = 800a240; prod `dpl_6S1VZgG845g7YhBqoDWfTRgsNNsj` READY on the same SHA (CURRENT-STATE-REPORT.md) |
+| G2 | Build | PASS | `pnpm build` exit 0 |
+| G3 | Static quality | PASS | lint and typecheck exit 0 |
+| G4 | Engine tests | PASS | unit 387/387, stats 24/24 |
+| G5 | Determinism | PASS | determinism, rng and version-gate tests; 1200-career full-state fingerprint identical before and after explicit event tags (`grokbot/explicit-event-tags`) |
+| G6 | Saves | PASS | save-safety, g1-persistence and lifecycle-flush e2e (preview, Chromium and WebKit) |
+| G7 | Full career e2e | PASS | e2e preview Chromium 131 passed / 4 skipped, WebKit 131 / 4 (readiness, paths, demo-gate) |
+| G8 | Career Card valid/malformed | PASS | re-checked 25 Oct on main a640e54 (#123 merged): e2e/career-card.spec.ts 17/17 PASS (Chromium, local lab); unit 399/399 PASS |
+| G9 | OVR / awards | PASS | re-checked 25 Oct on main a640e54 (#127 merged): peak-display + legacy-report tests 15/15 PASS; unit 399/399 PASS |
+| G10 | Mobile UX | PASS (emulation) | viewport e2e 320–1440 plus landscape. Real devices: only Pello's acceptance on an older build (15 Oct); agents have not tested this SHA |
+| G11 | Accessibility | PASS (automated only) | Lighthouse 12.8.2 accessibility 100 on mobile and desktop (www, 13:19 CEST); no manual screen-reader pass |
+| G12 | Performance | PASS (lab) | Lighthouse performance 90 mobile / 100 desktop; perf probe at 4× CPU: boot→Inizia 405 ms, one season 1805 ms with 0 long tasks (METRICS-800a240.md on `grokbot/metrics-800a240`). No real-device or field data |
+| G13 | Languages | PASS (tests) | i18n, narrative and copy-review tests. The 'mestiere/nudo' copy fix is pushed on `grokbot/mestiere-copy` (not merged) |
+| G14 | Domain | PASS | re-checked 25 Oct (#119 + #129 deployed, prod deploy a640e54 success): curl no-cache — www.pivot23.com 200; pivot23.vercel.app/, jarvis-hq-pgoc.vercel.app/, pivot23.com/ → 308 to https://www.pivot23.com/ |
+| G15 | Security | PASS | prod headers on 24 Oct: enforcing CSP `script-src 'self'`, HSTS, X-Frame-Options DENY, nosniff, Referrer-Policy |
+| G16 | Analytics | NOT APPLICABLE | Vercel page views only; no persistent analytics implemented (R7) |
+| G17 | Admin | NOT APPLICABLE | no admin panel in the repo |
+| G18 | Deployment | PASS | prod SHA = main 800a240 at the time of measurement. Other PRs were being merged on 24 Oct, so re-check after the deploy |
+| G19 | Privacy / monetization | PASS (ads off) | no ads, pixel or third-party script in prod; #102 privacy text claims Pro/DPA wrongly (R4), unmerged |
+| G20 | Documentation | PASS | CURRENT-STATE-REPORT, OPEN-RISKS, PR-TRIAGE and this file (#128) |
+
+## Demo limits (to declare to anyone who plays the demo)
+- **Beta engine.** It is 2.22.0-beta, and balance can still change. Saves are kept locally across versions, but new careers follow the new rules.
+- **Local saves only.** Saves live in this browser's storage. There are no accounts and no cloud sync, so clearing site data or changing device or browser loses careers.
+- **Known issues on 800a240:**
+  - Career Card can fail on a damaged team colour (R2, fix in #123).
+  - Peak OVR shown can differ from the best season (R6, fix in #127).
+  - Duplicate vercel.app hosts (R5, fix in #119).
+  - Each stays open until the fix is merged and deployed.
+- **Copy.** About 13 Italian lines use the unclear 'mestiere / nudo' wording until `grokbot/mestiere-copy` lands. English has the same rough edges in a few renders.
+- **Fictional game.**
+  - Players, events and outcomes are simulated.
+  - Real NBA team names appear: this is a trademark risk, not cleared.
+  - It is not affiliated with the NBA or any club.
+- **Tested environment.**
+  - Automated: Chromium and WebKit on Linux, emulated phones 320–1440 px, Lighthouse lab runs, CPU-throttled perf.
+  - Real iPhone, Android and Mac: only accepted by Pello on an older build, not re-tested on this SHA.
+- **Offline / slow network.**
+  - After the first load, play is client-side.
+  - The English catalog loads lazily, so the first language switch needs the network.
+- **Balance facts a tester may notice** (seeds 910000–910999 and 920000–920999, METRICS-800a240.md):
+  - Peak is at age 27 on all difficulties.
+  - About 30% of Pro, All-Star and Leggenda careers end at 29–32 with random choices.
+  - Always choosing "Percorso prudente" cuts those early endings to 5–13%, but more careers sink to the 48 OVR floor.
+- **Not in the demo:** ads, accounts, payments, analytics beyond page views, admin.
+
+---
+
 # DEMO READINESS — 2026-10-04
 
 Stato: NOT READY. Data obiettivo 18 ottobre 2026. Non è un gate raggiunto.
@@ -151,7 +207,7 @@ Stato: **CONDITIONALLY READY** per demo tecnica. Dettaglio, criteri, owner: `IND
 | Decisioni una volta / save / archivio | PASS (Chromium, WebKit Linux) | g1-story-reload, save-safety, lifecycle in prod e locale | Safari reale |
 | Mobile emulato 320–1440 + landscape | PASS | readiness viewport in prod | — |
 | Dispositivi fisici | BLOCKED (agenti) | solo riferito da Pello, build precedente | Pello |
-| Ritiri 2.19 (29–32 anni) | FAIL vs 300–340‰ | 184‰ (IC 161–209) vs 323‰ su 2.18, 1000 carriere stessi seed | Lucille/Pello |
+| Ritiri 2.19 (29–32 anni) — STORICO | SUPERATO (storico, non più applicabile; prima: FAIL vs 300–340‰) — sostituito da METRICS-800a240 (PR #133): 2.22 scelte casuali dentro 300–340‰ | 184‰ (IC 161–209) vs 323‰ su 2.18, 1000 carriere stessi seed | Lucille/Pello |
 
 ### Aggiornamento dispositivi — 15 ott 2026
 | iPhone / Mac / Android | ACCETTATO da Pello | «Dispositivi accettati: iPhone, Mac, Android». Modelli, OS, browser, SHA: non comunicati. Dettagli in `DEVICE-MANUAL-QA.md` |

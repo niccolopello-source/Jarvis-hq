@@ -1,0 +1,217 @@
+{
+  "engine": "2.22.0-beta",
+  "seedBase": 920000,
+  "count": 1000,
+  "random/esordio": {
+    "peak": {
+      "median": 74,
+      "ci95": [
+        73,
+        74
+      ]
+    },
+    "peakAge": {
+      "median": 27,
+      "ci95": [
+        27,
+        27
+      ]
+    },
+    "lastSeason29to32_per1000": 12,
+    "lastSeason29to32_wilson95_per1000": [
+      7,
+      21
+    ],
+    "touchesFloor48": 0.205,
+    "touchesFloor48_wilson95": [
+      0.1811,
+      0.2311
+    ]
+  },
+  "random/pro": {
+    "peak": {
+      "median": 71,
+      "ci95": [
+        71,
+        72
+      ]
+    },
+    "peakAge": {
+      "median": 27,
+      "ci95": [
+        27,
+        27
+      ]
+    },
+    "lastSeason29to32_per1000": 320,
+    "lastSeason29to32_wilson95_per1000": [
+      292,
+      350
+    ],
+    "touchesFloor48": 0.242,
+    "touchesFloor48_wilson95": [
+      0.2165,
+      0.2695
+    ]
+  },
+  "random/allstar": {
+    "peak": {
+      "median": 68,
+      "ci95": [
+        68,
+        69
+      ]
+    },
+    "peakAge": {
+      "median": 27,
+      "ci95": [
+        27,
+        27
+      ]
+    },
+    "lastSeason29to32_per1000": 306,
+    "lastSeason29to32_wilson95_per1000": [
+      278,
+      335
+    ],
+    "touchesFloor48": 0.362,
+    "touchesFloor48_wilson95": [
+      0.3328,
+      0.3923
+    ]
+  },
+  "random/leggenda": {
+    "peak": {
+      "median": 67,
+      "ci95": [
+        67,
+        68
+      ]
+    },
+    "peakAge": {
+      "median": 27,
+      "ci95": [
+        27,
+        27
+      ]
+    },
+    "lastSeason29to32_per1000": 311,
+    "lastSeason29to32_wilson95_per1000": [
+      283,
+      340
+    ],
+    "touchesFloor48": 0.391,
+    "touchesFloor48_wilson95": [
+      0.3612,
+      0.4216
+    ]
+  },
+  "prudent/esordio": {
+    "peak": {
+      "median": 74,
+      "ci95": [
+        73,
+        75
+      ]
+    },
+    "peakAge": {
+      "median": 27,
+      "ci95": [
+        27,
+        27
+      ]
+    },
+    "lastSeason29to32_per1000": 0,
+    "lastSeason29to32_wilson95_per1000": [
+      0,
+      4
+    ],
+    "touchesFloor48": 0.166,
+    "touchesFloor48_wilson95": [
+      0.1442,
+      0.1903
+    ],
+    "prudentChoicesTaken": 1115
+  },
+  "prudent/pro": {
+    "peak": {
+      "median": 72,
+      "ci95": [
+        71,
+        72
+      ]
+    },
+    "peakAge": {
+      "median": 27,
+      "ci95": [
+        27,
+        27
+      ]
+    },
+    "lastSeason29to32_per1000": 48,
+    "lastSeason29to32_wilson95_per1000": [
+      36,
+      63
+    ],
+    "touchesFloor48": 0.321,
+    "touchesFloor48_wilson95": [
+      0.2928,
+      0.3506
+    ],
+    "prudentChoicesTaken": 1160
+  },
+  "prudent/allstar": {
+    "peak": {
+      "median": 68,
+      "ci95": [
+        68,
+        69
+      ]
+    },
+    "peakAge": {
+      "median": 27,
+      "ci95": [
+        27,
+        27
+      ]
+    },
+    "lastSeason29to32_per1000": 107,
+    "lastSeason29to32_wilson95_per1000": [
+      89,
+      128
+    ],
+    "touchesFloor48": 0.468,
+    "touchesFloor48_wilson95": [
+      0.4373,
+      0.499
+    ],
+    "prudentChoicesTaken": 1014
+  },
+  "prudent/leggenda": {
+    "peak": {
+      "median": 67,
+      "ci95": [
+        67,
+        68
+      ]
+    },
+    "peakAge": {
+      "median": 27,
+      "ci95": [
+        27,
+        27
+      ]
+    },
+    "lastSeason29to32_per1000": 121,
+    "lastSeason29to32_wilson95_per1000": [
+      102,
+      143
+    ],
+    "touchesFloor48": 0.497,
+    "touchesFloor48_wilson95": [
+      0.4661,
+      0.5279
+    ],
+    "prudentChoicesTaken": 923
+  }
+}

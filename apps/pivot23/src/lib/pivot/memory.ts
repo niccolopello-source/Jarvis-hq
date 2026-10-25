@@ -240,23 +240,13 @@ export function settleMemory(s: PlayerState, n: number, apply: (s: PlayerState, 
 
 /* ─────────────── Phase 2: contextual event score ─────────────── */
 
+import { EVENT_TAGS } from "./event-tags";
+
 export type EventTag = "ego" | "coach" | "injury" | "veteran" | "work" | "locker" | "contract" | "rival";
 
-const TAG_RX: [EventTag, RegExp][] = [
-  ["ego", /ego|giornale|media|riflettor|intervist/],
-  ["coach", /allenator|coach|sistema|panchina|staff/],
-  ["injury", /infortun|ginocchio|fisico|gamba|corpo|caviglia/],
-  ["veteran", /veteran|ritir|ultimo anno|ultima stagione/],
-  ["work", /palestra|lavoro|estate|ripetiz|allenament/],
-  ["locker", /spogliatoio|gruppo|compagn/],
-  ["contract", /contratt|rinnov|mercato|agente/],
-  ["rival", /rival/],
-];
-
-/** Theme tags of a pool event (its authored text is the only metadata the pool carries). */
+/** Theme tags of a pool event: explicit metadata (event-tags.ts), never derived from the text. */
 export function eventTags(e: StoryEvent): EventTag[] {
-  const t = `${e.title} ${e.subtitle}`.toLowerCase();
-  return TAG_RX.filter(([, rx]) => rx.test(t)).map(([k]) => k);
+  return [...(EVENT_TAGS[e.id] ?? [])];
 }
 
 /** Hard exclusions: an event incompatible with the current state never enters the pool. */
