@@ -58,7 +58,32 @@ const IT_DISPLAY_FIXES: ReadonlyArray<readonly [RegExp, string]> = [
   [/ è il volto, si gioca a crescita\./g, " è il volto del nuovo corso."],
 ];
 
+/**
+ * "mestiere / nudo" rewrite (R3). Exact whole-line replacements of stored Italian lines that read
+ * as unclear or awkward ("nudo"). Display-only, like IT_DISPLAY_FIXES: the engine keeps storing
+ * the old wording, so saves, voice keys (anti-repetition), English catalog keys and golden hashes
+ * stay byte-identical, and no version gate is needed. English renders are updated in the catalog.
+ */
+export const IT_LINE_REWRITES: ReadonlyArray<readonly [string, string]> = [
+  ["Il mestiere cambia forma, non peso.", "Il ruolo cambia forma, non peso."],
+  ["Tieni il mestiere, nudo", "Torni alle basi"],
+  ["Ottobre, nudo, di nuovo", "Di nuovo ottobre, senza fronzoli"],
+  ["Il palazzetto è vuoto. Restano le luci basse e i tuoi passi, nudi.", "Il palazzetto è vuoto. Restano le luci basse e l'eco dei tuoi passi."],
+  ["Il mestiere, sentito da fuori, è un altro mestiere.", "Il basket, sentito da fuori, è un altro sport."],
+  ["La palestra, nuda, di lunedì. Entri, e questo è già un mestiere.", "La palestra vuota, di lunedì. Entri, e questo è già lavoro."],
+  ["Lasci correre la settimana. Il mestiere, nudo, basta.", "Lasci correre la settimana. Le basi bastano."],
+  ["Niente copertine. Resta il lavoro, nudo, e tre modi di tenerlo.", "Niente copertine. Resta il lavoro quotidiano, e tre modi di tenerlo."],
+  ["Niente fermo immagine. Il mestiere, nudo, vale più dell'anello in bacheca.", "Niente fermo immagine. Il lavoro di ogni giorno vale più dell'anello in bacheca."],
+  ["La fame, nuda, sul possesso largo", "Pura fame, sul possesso largo"],
+  ["Se arrivi fin qui da ragazzo, non restare educato. La fame, nuda, vale più del copione.", "Se arrivi fin qui da ragazzo, non restare educato. La fame pura vale più del copione."],
+  ["L'ultimo possesso, nudo", "L'ultimo possesso, senza schemi"],
+  ["L'isolamento è una responsabilità, nuda.", "L'isolamento è una responsabilità tutta tua."],
+];
+const IT_LINE_MAP: ReadonlyMap<string, string> = new Map(IT_LINE_REWRITES);
+
 export function itDisplay(text: string): string {
+  const whole = IT_LINE_MAP.get(text);
+  if (whole !== undefined) return whole;
   let out = text;
   for (const [re, to] of IT_DISPLAY_FIXES) out = out.replace(re, to);
   return out;
@@ -75,7 +100,7 @@ export function nx(text: string | null | undefined, lang: Lang): string {
   // give-away word ("No meeting. Just games.") still are, and only an exact full match changes them.
   if (lang === "it" && (EN_PROSE.test(text) || !IT_PROSE.test(text))) {
     const r = translateWith(itCatalog(), text, EN_PROSE);
-    return r.ok ? r.text : text;
+    return r.ok ? r.text : itDisplay(text);
   }
   return lang === "it" ? itDisplay(text) : text;
 }
