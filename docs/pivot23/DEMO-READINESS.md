@@ -13,13 +13,13 @@ Gates use the Master Prompt's official G1–G20 (§16). The earlier table in thi
 | G5 | Determinism | PASS | determinism, rng and version-gate tests; 1200-career full-state fingerprint identical before and after explicit event tags (`grokbot/explicit-event-tags`) |
 | G6 | Saves | PASS | save-safety, g1-persistence and lifecycle-flush e2e (preview, Chromium and WebKit) |
 | G7 | Full career e2e | PASS | e2e preview Chromium 131 passed / 4 skipped, WebKit 131 / 4 (readiness, paths, demo-gate) |
-| G8 | Career Card valid/malformed | FAIL | teamColor crash (R2) stays open on 800a240 until #123 is merged and deployed; not re-verified after that merge |
-| G9 | OVR / awards | FAIL | displayed Peak OVR can differ from the best season OVR (R6) until #127 is merged; the awards unit/stats tests pass |
+| G8 | Career Card valid/malformed | PASS | re-checked 25 Oct on main a640e54 (#123 merged): e2e/career-card.spec.ts 17/17 PASS (Chromium, local lab); unit 399/399 PASS |
+| G9 | OVR / awards | PASS | re-checked 25 Oct on main a640e54 (#127 merged): peak-display + legacy-report tests 15/15 PASS; unit 399/399 PASS |
 | G10 | Mobile UX | PASS (emulation) | viewport e2e 320–1440 plus landscape. Real devices: only Pello's acceptance on an older build (15 Oct); agents have not tested this SHA |
 | G11 | Accessibility | PASS (automated only) | Lighthouse 12.8.2 accessibility 100 on mobile and desktop (www, 13:19 CEST); no manual screen-reader pass |
 | G12 | Performance | PASS (lab) | Lighthouse performance 90 mobile / 100 desktop; perf probe at 4× CPU: boot→Inizia 405 ms, one season 1805 ms with 0 long tasks (METRICS-800a240.md on `grokbot/metrics-800a240`). No real-device or field data |
 | G13 | Languages | PASS (tests) | i18n, narrative and copy-review tests. The 'mestiere/nudo' copy fix is pushed on `grokbot/mestiere-copy` (not merged) |
-| G14 | Domain | FAIL | pivot23.vercel.app and jarvis-hq-pgoc.vercel.app answer 200 until #119 is deployed; not re-verified after the merges in progress |
+| G14 | Domain | PASS | re-checked 25 Oct (#119 + #129 deployed, prod deploy a640e54 success): curl no-cache — www.pivot23.com 200; pivot23.vercel.app/, jarvis-hq-pgoc.vercel.app/, pivot23.com/ → 308 to https://www.pivot23.com/ |
 | G15 | Security | PASS | prod headers on 24 Oct: enforcing CSP `script-src 'self'`, HSTS, X-Frame-Options DENY, nosniff, Referrer-Policy |
 | G16 | Analytics | NOT APPLICABLE | Vercel page views only; no persistent analytics implemented (R7) |
 | G17 | Admin | NOT APPLICABLE | no admin panel in the repo |
