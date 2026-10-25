@@ -94,11 +94,27 @@ test("2.23 careers are deterministic and pre-2.23 careers ignore the stats-OVR k
   }
 });
 
-test("refreshOverall on a 2.23 career reads the attributes, not the choice track", () => {
-  const s = openCareerSim({ seed: 2304, engineVersion: V23 }).s;
-  s.age = 22;
-  const before = refreshOverall(structuredClone(s));
-  const t = structuredClone(s);
-  t.choiceOvr = s.choiceOvr + 3; // the choice track alone no longer moves the OVR
-  assert.equal(refreshOverall(t), before);
+test("option B (lambda 1): refreshOverall reads the attributes, not the choice track", () => {
+  const keep = TUNING.statsOvr.lambda;
+  try {
+    TUNING.statsOvr.lambda = 1;
+    const s = openCareerSim({ seed: 2304, engineVersion: V23 }).s;
+    s.age = 22;
+    const before = refreshOverall(structuredClone(s));
+    const t = structuredClone(s);
+    t.choiceOvr = s.choiceOvr + 3; // the choice track alone no longer moves the OVR
+    assert.equal(refreshOverall(t), before);
+  } finally {
+    TUNING.statsOvr.lambda = keep;
+  }
+});
+
+test("option A (default lambda 0.5): half of the OVR comes from the attributes", () => {
+  assert.equal(TUNING.statsOvr.lambda, 0.5);
+  const s = openCareerSim({ seed: 2305, role: "PG", difficulty: "pro", engineVersion: V23 }).s;
+  s.age = 23;
+  const up = structuredClone(s);
+  spreadOnAttrs(up, 4, "pulse");
+  const d = computeOverall(up) - computeOverall(s);
+  assert.ok(d > 0 && Math.abs(d - 0.5 * TUNING.statsOvr.k * 4) < 0.05, String(d));
 });

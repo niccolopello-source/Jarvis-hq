@@ -84,7 +84,7 @@ export const TUNING = {
    *  Report: docs/pivot23/STATS-OVR-REBALANCE.md. */
   statsOvr: {
     start: 50,
-    lambda: 1,
+    lambda: 0.5,
     k: 0.55,
     pulseToAttrs: 0.6,
     twilightFloorK: 0.74,

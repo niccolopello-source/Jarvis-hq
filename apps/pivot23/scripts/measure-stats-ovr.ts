@@ -1,6 +1,6 @@
 /**
  * Engine metrics re-measure (read-only, no tuning change). Run from apps/pivot23:
- *   node --import=tsx scripts/measure-metrics.ts <seedBase> <count> <out.json>
+ *   node --import=tsx scripts/measure-stats-ovr.ts <seedBase> <count> <out.json>
  * Careers: current ENGINE_VERSION, role i%5, path i%3, draft "random", seeds seedBase..seedBase+count-1,
  * 4 difficulties x 2 choice policies:
  *   random  = engine sim default (drawn choice on every card).
