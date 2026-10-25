@@ -28,7 +28,7 @@ const PREMIERE_KEYS_MS = 16000;
 export type SplashExit = "slice" | "wipe";
 export const SPLASH_EXIT_DEFAULT: SplashExit = "slice";
 /** Shortest time the boot mark stays on screen from navigation start, only to avoid a flash. Never added on top of a slow load. */
-export const SPLASH_MIN_MS = 600;
+export const SPLASH_MIN_MS = 1200;
 const SLICE_BANDS = 4;
 
 export function pickSplashExit(search: string): SplashExit {
