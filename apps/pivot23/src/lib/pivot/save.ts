@@ -515,16 +515,29 @@ function faOffersPlain(offers: unknown): MarketOffer[] {
   return out;
 }
 
+/** Story-card rebuild info (RNG state + heard-lines undo); anything malformed is dropped. */
+function rebuildPlain(v: unknown): { rng: number; pop: number; back: [number, string][] } | undefined {
+  if (!v || typeof v !== "object") return undefined;
+  const r = v as { rng?: unknown; pop?: unknown; back?: unknown };
+  if (!Number.isInteger(r.rng) || (r.rng as number) < 0 || (r.rng as number) > 0xffffffff) return undefined;
+  if (!Number.isInteger(r.pop) || (r.pop as number) < 0 || (r.pop as number) > 24 || !Array.isArray(r.back)) return undefined;
+  const back = r.back.filter((b): b is [number, string] => Array.isArray(b) && Number.isInteger(b[0]) && b[0] >= 0 && typeof b[1] === "string");
+  if (back.length !== r.back.length || back.length > 24) return undefined;
+  return { rng: r.rng as number, pop: r.pop as number, back: back.map(([i, k]) => [i, k]) };
+}
+
 /** Pending JSON-safe: niente run/fx. Story, fa, trade, trade-notice round-trip. */
 function sanitizePending(pending: SavedPending | null): SavedPending | null {
   if (!pending) return null;
   if (pending.kind === "story") {
+    const rebuild = rebuildPlain(pending.rebuild);
     return {
       kind: "story",
       title: pending.title,
       subtitle: pending.subtitle,
       script: pending.script,
-      eventId: pending.eventId,
+      ...(typeof pending.eventId === "string" ? { eventId: pending.eventId } : {}),
+      ...(rebuild ? { rebuild } : {}),
       options: storyOptionsPlain(pending.options),
     };
   }
