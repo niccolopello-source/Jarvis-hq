@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { signalBootAttention } from "@/boot-signal";
 import { t } from "@/lib/pivot/i18n";
 import { hasLiveHint, holdLiveFlush, setAsideLive } from "@/lib/pivot/save";
 
@@ -13,6 +14,9 @@ import { hasLiveHint, holdLiveFlush, setAsideLive } from "@/lib/pivot/save";
 export function CrashFallback({ error }: { error: Error | null }) {
   const [asideFailed, setAsideFailed] = useState(false);
   const [canSetAside] = useState(() => hasLiveHint());
+  useLayoutEffect(() => {
+    signalBootAttention("error");
+  }, []);
   useEffect(() => {
     holdLiveFlush();
   }, []);
