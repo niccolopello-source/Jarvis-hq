@@ -5,6 +5,7 @@ import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
 import { CAREER_NAME_MAX, careerName, chipsFromFx, chipsFromSnapshot, consequenceSchedule, endSentence, formatCareerTotal, getSeasonDisplayLabel, tidyText, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
+import { InstagramLink } from "@/components/pivot/InstagramLink";
 import { SideRail, adBreakAtSeasonEnd } from "@/ads";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
 import { pathFeel, playoffNerves, draftWho, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
@@ -1222,7 +1223,10 @@ export function PivotApp() {
               {t("archive", lang)} · {archive.length}
             </button>
           )}
-          <p className="totem-credit totem-home">Powered by Totem</p>
+          <div className="totem-row totem-row-home">
+            <InstagramLink lang={lang} />
+            <p className="totem-credit totem-home">Powered by Totem</p>
+          </div>
         </section>
       )}
 
@@ -1376,7 +1380,10 @@ export function PivotApp() {
       </div>
       <SideRail side="right" lang={lang} placeholder={t("adReserved", lang)} />
       <div className="ad-foot">
-        <p className="totem-credit">Powered by Totem</p>
+        <div className="totem-row">
+          <InstagramLink lang={lang} />
+          <p className="totem-credit">Powered by Totem</p>
+        </div>
       </div>
     </div>
   );

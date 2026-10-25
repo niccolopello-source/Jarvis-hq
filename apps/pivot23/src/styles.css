@@ -2233,6 +2233,51 @@ img.court-mark-photo {
   }
 }
 
+/* Instagram icon: same row as the Totem credit, bottom-left; credit stays centred. */
+.totem-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  width: 100%;
+}
+.totem-row > .totem-credit {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+}
+.totem-row-home {
+  margin-top: 16px;
+}
+.ig-link {
+  grid-column: 1;
+  grid-row: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--color-muted);
+  border-radius: 10px;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+.ig-link:hover {
+  color: var(--color-chalk);
+}
+.ig-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 0;
+}
+.ad-foot > .totem-row {
+  padding-inline: max(12px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-right));
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@media (min-width: 1180px) {
+  .totem-row-home {
+    display: none;
+  }
+}
+
 .hud-meta,
 .hud-club,
 .hud-line,
@@ -2563,8 +2608,8 @@ img.court-mark-photo {
   .intro-hero.home-screen .ghost-btn.mt-2\.5 {
     margin-top: 6px;
   }
-  .intro-hero.home-screen .totem-home {
-    margin-top: 10px;
+  .intro-hero.home-screen .totem-row-home {
+    margin-top: 0;
   }
 }
 .page-title:focus {
