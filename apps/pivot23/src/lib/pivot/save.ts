@@ -515,6 +515,16 @@ function faOffersPlain(offers: unknown): MarketOffer[] {
   return out;
 }
 
+/** Story-card rebuild info (RNG state + heard-lines undo); anything malformed is dropped. */
+function rebuildPlain(v: unknown): { rng: number; pop: number; back: [number, string][] } | undefined {
+  if (!v || typeof v !== "object") return undefined;
+  const r = v as { rng?: unknown; pop?: unknown; back?: unknown };
+  if (!Number.isInteger(r.rng) || !Number.isInteger(r.pop) || (r.pop as number) < 0 || !Array.isArray(r.back)) return undefined;
+  const back = r.back.filter((b): b is [number, string] => Array.isArray(b) && Number.isInteger(b[0]) && b[0] >= 0 && typeof b[1] === "string");
+  if (back.length !== r.back.length || back.length > 24) return undefined;
+  return { rng: r.rng as number, pop: r.pop as number, back: back.map(([i, k]) => [i, k]) };
+}
+
 /** Pending JSON-safe: niente run/fx. Story, fa, trade, trade-notice round-trip. */
 function sanitizePending(pending: SavedPending | null): SavedPending | null {
   if (!pending) return null;
@@ -525,6 +535,7 @@ function sanitizePending(pending: SavedPending | null): SavedPending | null {
       subtitle: pending.subtitle,
       script: pending.script,
       eventId: pending.eventId,
+      ...(rebuildPlain(pending.rebuild) ? { rebuild: rebuildPlain(pending.rebuild) } : {}),
       options: storyOptionsPlain(pending.options),
     };
   }

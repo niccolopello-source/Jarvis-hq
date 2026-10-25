@@ -47,7 +47,7 @@ import { ENGINE_VERSION, SAVE_VERSION, SIM } from "./config";
 import { diffOf, potentialShiftOf, type DifficultyId } from "./difficulty";
 import { seasonAtmosphere, quietYearChance, quietYearEventBits } from "./feel";
 import { lateCareerEvent } from "./story-late";
-import { createRng, gaussTrim, pick, rand, randInt, rngDepth, runWithRng, type Rng } from "./rng";
+import { createRng, currentRng, gaussTrim, pick, rand, randInt, rngDepth, runWithRng, type Rng } from "./rng";
 import { newCareerId, compactArchiveHistory, isStorageQuota, ARCHIVE_SCHEMA } from "./save";
 import { say, sayOr, sceneVars, fillVars, voiceKey, tooClose } from "./voice";
 import { getLang } from "./i18n";
@@ -1203,6 +1203,60 @@ function buildProceduralIt(s: PlayerState, kind: ProcKind, season = s.season): S
   };
 }
 
+/**
+ * What a late-* or quiet-* card was built from: the RNG state right before the build, plus a
+ * small undo of the voice lines the build marked as heard. Kept in a side table keyed by the
+ * live state object, so careers and saved PlayerState are unchanged. The screen stores it in
+ * the pending card so a resumed save rebuilds the very same card without advancing the RNG.
+ */
+export interface EventRebuild {
+  rng: number;
+  /** Keys the build appended at the end of heardLines. */
+  pop: number;
+  /** Keys the build removed from heardLines, as [index before the build, key]. */
+  back: [number, string][];
+}
+
+const BUILT_AT = new WeakMap<PlayerState, { id: string; rb: EventRebuild }>();
+
+/** How the late-/quiet- card `id` was built on this state object, if known. */
+export function eventRebuildOf(s: PlayerState, id: string): EventRebuild | undefined {
+  const b = BUILT_AT.get(s);
+  return b && b.id === id ? { rng: b.rb.rng, pop: b.rb.pop, back: b.rb.back.map(([i, k]) => [i, k]) } : undefined;
+}
+
+function heardBefore(after: readonly string[], pop: number, back: readonly [number, string][]): string[] {
+  const out = after.slice(0, Math.max(0, after.length - pop));
+  for (const [i, k] of [...back].sort((a, b) => a[0] - b[0])) out.splice(i, 0, k);
+  return out;
+}
+
+function undoOf(before: readonly string[], after: readonly string[]): { pop: number; back: [number, string][] } | null {
+  for (let pop = 0; pop <= Math.min(after.length, 24); pop++) {
+    const kept = after.slice(0, after.length - pop);
+    const back: [number, string][] = [];
+    let j = 0;
+    for (let i = 0; i < before.length; i++) {
+      if (j < kept.length && kept[j] === before[i]) j++;
+      else back.push([i, before[i]!]);
+    }
+    if (j === kept.length && back.length <= 24 && heardBefore(after, pop, back).join("\u0001") === before.join("\u0001")) {
+      return { pop, back };
+    }
+  }
+  return null;
+}
+
+function buildNoted<T extends { id: string }>(s: PlayerState, build: () => T): T {
+  const rng = currentRng()?.getState();
+  const before = [...(s.heardLines ?? [])];
+  const ev = build();
+  const undo = rng === undefined ? null : undoOf(before, s.heardLines ?? []);
+  if (rng !== undefined && undo) BUILT_AT.set(s, { id: ev.id, rb: { rng, ...undo } });
+  else BUILT_AT.delete(s);
+  return ev;
+}
+
 export function pickStoryEvent(s: PlayerState, n: number) {
   return withPlayer(s, () => {
     const remember = (id: string) => {
@@ -1210,14 +1264,14 @@ export function pickStoryEvent(s: PlayerState, n: number) {
       if (s.usedEventIds.length > 64) s.usedEventIds = s.usedEventIds.slice(-48);
     };
     if (s.age >= 31 && rand() < 0.55) {
-      const late = lateCareerEvent(s);
+      const late = buildNoted(s, () => lateCareerEvent(s));
       if (!s.usedEventIds.includes(late.id)) {
         remember(late.id);
         return late;
       }
     }
     if (n > 1 && rand() < quietYearChance(s) * 0.55) {
-      const quiet = quietYearEvent(s);
+      const quiet = buildNoted(s, () => quietYearEvent(s));
       remember(quiet.id);
       return quiet;
     }
@@ -1246,7 +1300,7 @@ export function pickStoryEvent(s: PlayerState, n: number) {
     }
     if (!pool.length) pool = STORY_POOL.filter((e) => !s.usedEventIds.includes(e.id));
     if (!pool.length) {
-      const quiet = quietYearEvent(s);
+      const quiet = buildNoted(s, () => quietYearEvent(s));
       remember(quiet.id);
       return quiet;
     }
@@ -1269,7 +1323,26 @@ export function pickStoryEvent(s: PlayerState, n: number) {
   });
 }
 
-export function storyEventById(s: PlayerState, id?: string, script?: SavedStoryScript): StoryEvent {
+export function storyEventById(s: PlayerState, id?: string, script?: SavedStoryScript, rebuild?: EventRebuild): StoryEvent {
+  const late = script === "late" || (!!id && id.startsWith("late-"));
+  const quiet = script === "quiet" || (!!id && id.startsWith("quiet-"));
+  if (rebuild && Number.isFinite(rebuild.rng) && id && (late || quiet) && !STORY_POOL.some((e) => e.id === id)) {
+    // Exact rebuild: private generator at the stored state (the career RNG does not move), the
+    // heard-lines list as it was before the first build, and the card's own id not yet used.
+    const liveHeard = s.heardLines;
+    const liveUsed = s.usedEventIds;
+    const rng = createRng(s.seed || 1);
+    rng.setState(rebuild.rng);
+    try {
+      s.heardLines = heardBefore(liveHeard ?? [], rebuild.pop, rebuild.back);
+      s.usedEventIds = (liveUsed ?? []).filter((x) => x !== id);
+      const ev = runWithRng(rng, () => (quiet && !late ? quietYearEvent(s) : lateCareerEvent(s)));
+      if (ev.id === id) return ev;
+    } finally {
+      s.heardLines = liveHeard;
+      s.usedEventIds = liveUsed;
+    }
+  }
   const run = (): StoryEvent => {
     if (script === "rookie" || id === "roy-race") return rookieStory();
     if (script === "quiet" || (id && id.startsWith("quiet-"))) return quietYearEvent(s);

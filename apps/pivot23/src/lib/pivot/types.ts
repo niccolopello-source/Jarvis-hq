@@ -530,6 +530,8 @@ export type SavedPending =
       subtitle: string;
       script?: SavedStoryScript;
       eventId?: string;
+      /** late-/quiet- cards only: RNG state + heard-lines undo to rebuild the same card on resume. */
+      rebuild?: { rng: number; pop: number; back: [number, string][] };
       options: { label: string; detail: string }[];
     }
   | { kind: "recap"; row: SeasonRow; qualified: boolean; awardNote: string; door: string }

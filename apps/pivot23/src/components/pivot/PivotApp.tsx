@@ -72,6 +72,8 @@ import {
   START_OVERALL,
   startProPath,
   storyEventById,
+  eventRebuildOf,
+  type EventRebuild,
   tickContract,
   toArchive,
   verdictOf,
@@ -141,7 +143,7 @@ type Tab = CareerTab;
 type Pending =
   | { kind: "path" }
   | { kind: "call"; pick: number; flavor: string }
-  | { kind: "story"; title: string; subtitle: string; options: Opt[]; script?: SavedStoryScript; eventId?: string }
+  | { kind: "story"; title: string; subtitle: string; options: Opt[]; script?: SavedStoryScript; eventId?: string; rebuild?: EventRebuild }
   | { kind: "recap"; row: SeasonRow; qualified: boolean; awardNote: string; door: string }
   | { kind: "playoff"; round: number; opponent: Team; nerves: string }
   | { kind: "fa"; offers: MarketOffer[]; desk: string }
@@ -199,6 +201,7 @@ function pendingFromEvent(
     subtitle: fillTemplate(ev.subtitle, s),
     script,
     eventId: ev.id,
+    ...(eventRebuildOf(s, ev.id) ? { rebuild: eventRebuildOf(s, ev.id) } : {}),
     options: optsFromEvent(ev, s),
   };
 }
@@ -207,7 +210,7 @@ function hydratePending(raw: SavedPending | Pending | null, s: PlayerState): Pen
   if (!raw) return null;
   if (raw.kind === "hold") return null;
   if (raw.kind === "story") {
-    const ev = storyEventById(s, raw.eventId, raw.script);
+    const ev = storyEventById(s, raw.eventId, raw.script, raw.rebuild);
     const runs = optsFromEvent(ev, s);
     const options = (raw.options.length ? raw.options : ev.choices).map((o, i) => {
       const label = fillTemplate(o.label, s);
@@ -221,7 +224,15 @@ function hydratePending(raw: SavedPending | Pending | null, s: PlayerState): Pen
         }),
       };
     });
-    return { kind: "story", title: raw.title, subtitle: raw.subtitle, script: raw.script, eventId: raw.eventId, options };
+    return {
+      kind: "story",
+      title: raw.title,
+      subtitle: raw.subtitle,
+      script: raw.script,
+      eventId: raw.eventId,
+      ...(raw.rebuild ? { rebuild: raw.rebuild } : {}),
+      options,
+    };
   }
   return raw as Pending;
 }
