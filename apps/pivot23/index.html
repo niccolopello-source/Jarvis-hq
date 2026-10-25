@@ -104,6 +104,29 @@
       }
       #boot.is-curtain.leave-brief { animation: curtainFade 0.22s ease-out both; }
       #boot.is-curtain.leave-still { animation: curtainFade 0.16s linear both; }
+      /* Passes-style launch exit (src/intro.ts, SPLASH_EXIT_DEFAULT = "slice"): bands slide apart, one granata flash,
+         then the field opens vertically like a letterbox. clip-path/transform/opacity only, ~450 ms. */
+      #boot.is-curtain.leave-full.fx-slice { will-change: clip-path; animation: curtainSlice 0.46s cubic-bezier(0.7, 0, 0.2, 1) both; }
+      #boot.is-curtain.leave-full.fx-slice::before { content: none; }
+      #boot.is-curtain.leave-full.fx-slice::after {
+        content: ""; position: absolute; inset: 0; background: var(--color-granata-ink); opacity: 0;
+        animation: sliceFlash 0.46s linear both;
+      }
+      #boot.is-curtain.leave-full.fx-slice .boot-mark { animation: none; }
+      #boot.is-curtain.leave-full.fx-slice.leave-now { animation: curtainSlice 0.46s both, curtainFade 0.14s linear both; }
+      .boot-bands { position: fixed; pointer-events: none; }
+      .boot-band { position: absolute; inset: 0; animation: sliceBand 0.46s cubic-bezier(0.7, 0, 0.2, 1) both; }
+      @keyframes curtainSlice {
+        0%, 42% { clip-path: inset(0 0 0 0); }
+        100% { clip-path: inset(50% 0 50% 0); }
+      }
+      @keyframes sliceBand {
+        0% { transform: none; opacity: 1; }
+        40% { transform: translate3d(var(--dx), 0, 0) scale(0.96); opacity: 1; }
+        70% { transform: translate3d(calc(var(--dx) * 3), 0, 0) scale(0.9); opacity: 0; }
+        100% { transform: translate3d(calc(var(--dx) * 3), 0, 0) scale(0.9); opacity: 0; }
+      }
+      @keyframes sliceFlash { 0%, 36% { opacity: 0; } 40% { opacity: 0.55; } 46%, 100% { opacity: 0; } }
       @keyframes curtainWipe {
         from { transform: translate3d(0, 0, 0); }
         to { transform: translate3d(calc(100vw + var(--band) + 45vh), 0, 0); }

@@ -20,6 +20,46 @@ const SKIP_FADE_MS = 160;
 const START_TIMEOUT_MS = 150;
 const DATA_CLEAR_MS = 2400;
 const PREMIERE_KEYS_MS = 16000;
+/**
+ * First-visit exit style. "slice" (default, Passes-style launch screen): the mark splits into horizontal
+ * bands that slide sideways, a one-frame granata flash, then the dark field opens like a letterbox.
+ * "wipe" is the previous broadcast stinger, kept for comparison (`?splash=wipe`).
+ */
+export type SplashExit = "slice" | "wipe";
+export const SPLASH_EXIT_DEFAULT: SplashExit = "slice";
+/** Shortest time the boot mark stays on screen from navigation start, only to avoid a flash. Never added on top of a slow load. */
+export const SPLASH_MIN_MS = 600;
+const SLICE_BANDS = 4;
+
+export function pickSplashExit(search: string): SplashExit {
+  return /(?:^|[?&])splash=wipe(?:&|$)/.test(search) ? "wipe" : SPLASH_EXIT_DEFAULT;
+}
+
+/** Remaining wait so the mark is visible at least `min` ms since navigation start (0 when the app was slower). */
+export function splashHoldMs(now: number, min = SPLASH_MIN_MS): number {
+  return Math.max(0, Math.round(min - now));
+}
+
+/** Replaces the static mark with N clipped copies the exit animation slides apart. Transform/opacity only. */
+function sliceMark(boot: HTMLElement) {
+  const mark = boot.querySelector<HTMLElement>(".boot-mark");
+  if (!mark) return;
+  const box = mark.getBoundingClientRect();
+  const layer = document.createElement("div");
+  layer.className = "boot-bands";
+  layer.style.cssText = `left:${box.left}px;top:${box.top}px;width:${box.width}px;height:${box.height}px`;
+  for (let i = 0; i < SLICE_BANDS; i += 1) {
+    const band = mark.cloneNode(true) as HTMLElement;
+    band.className = "boot-band";
+    const top = (i * 100) / SLICE_BANDS;
+    const bottom = 100 - ((i + 1) * 100) / SLICE_BANDS;
+    band.style.clipPath = `inset(${top}% 0 ${bottom}% 0)`;
+    band.style.setProperty("--dx", `${(i % 2 ? -1 : 1) * (8 + i * 3)}px`);
+    layer.appendChild(band);
+  }
+  mark.style.visibility = "hidden";
+  boot.appendChild(layer);
+}
 
 let curtain: HTMLElement | null = null;
 let mode: IntroMode = "still";
@@ -94,14 +134,32 @@ function playCurtain(): () => void {
   boot.addEventListener("animationend", onEnd);
   window.addEventListener("pointerdown", skip, { capture: true, passive: true });
   window.addEventListener("keydown", skip, true);
-  const fallback = window.setTimeout(finish, CURTAIN_MAX_MS);
   // The home copy keeps its own short entrance; drop the hook once it has played.
   if (mode === "full") clearTimer = window.setTimeout(() => delete root.dataset.intro, DATA_CLEAR_MS);
   // Start once the first commit has settled, so the hand-off never competes with the first input.
   const idle = "requestIdleCallback" in window;
-  const start = () => boot.classList.add(`leave-${mode}`);
-  const startHandle = idle ? window.requestIdleCallback(start, { timeout: START_TIMEOUT_MS }) : window.setTimeout(start, 0);
+  const exit = pickSplashExit(window.location.search);
+  const start = () => {
+    if (finished) return;
+    if (mode === "full" && exit === "slice") {
+      try {
+        sliceMark(boot);
+      } catch {
+        // Decoration only: without bands the field still opens.
+      }
+      boot.classList.add("fx-slice");
+    }
+    boot.classList.add(`leave-${mode}`);
+  };
+  // The app is already live underneath; the hold only stops a sub-600ms flash and never stacks on a slow boot.
+  const hold = mode === "still" ? 0 : splashHoldMs(performance.now());
+  let startHandle = 0;
+  const holdTimer = window.setTimeout(() => {
+    startHandle = idle ? window.requestIdleCallback(start, { timeout: START_TIMEOUT_MS }) : window.setTimeout(start, 0);
+  }, hold);
+  const fallback = window.setTimeout(finish, CURTAIN_MAX_MS + hold);
   return () => {
+    window.clearTimeout(holdTimer);
     if (idle) window.cancelIdleCallback(startHandle);
     else window.clearTimeout(startHandle);
     window.clearTimeout(clearTimer);
