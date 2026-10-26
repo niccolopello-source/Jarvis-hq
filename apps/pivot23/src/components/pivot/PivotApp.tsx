@@ -1,5 +1,5 @@
 
-import { Component, memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Component, memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
 import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components/pivot/LeaguePanel";
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
@@ -1506,6 +1506,16 @@ function DraftView({
   );
 }
 
+/* A double tap is two clicks: the first one decides. When the decision has no hold (a lost playoff
+   round, for one) the next card mounts under the finger and the second click (detail 2) would answer
+   it too. Keyboard activation has detail 0 and a fresh tap detail 1, so only that repeat is dropped. */
+function swallowRepeatTap(event: ReactMouseEvent<HTMLDivElement>) {
+  if (event.detail > 1) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+}
+
 function CareerView(props: {
   player: PlayerState;
   tab: Tab;
@@ -1636,7 +1646,11 @@ function CareerView(props: {
               <LogBlock key={e.id} e={e} chips={props.chips[e.id]} />
             ))}
             {pending && (
-              <div data-pending className={props.locked ? "pending-beat is-held" : "pending-beat"}>
+              <div
+                data-pending
+                className={props.locked ? "pending-beat is-held" : "pending-beat"}
+                onClickCapture={swallowRepeatTap}
+              >
                 <PendingBlock
                   player={player}
                   pending={pending}
