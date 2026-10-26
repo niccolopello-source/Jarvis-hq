@@ -97,7 +97,10 @@ export const TUNING = {
     cpuRookieLift: 1.5,
     /** 2.23 end-of-career lever: multiplier on the injury retirement bars at ages 29-33 (per difficulty, 1 = 2.22 bar).
      *  Higher bar = fewer early exits. Deterministic threshold, consumes no randomness. */
-    retireBarScale: { esordio: 1, pro: 1, allstar: 1.12, leggenda: 1.25 } as Record<DifficultyId, number>,
+    retireBarScale: { esordio: 1, pro: 1.08, allstar: 1.12, leggenda: 1.25 } as Record<DifficultyId, number | Readonly<Record<number, number>>>,
+    /** Pro injury drags cluster just under the age-32 bar, so a uniform scale jumps from ~350 to ~292 early exits.
+     *  This share of careers (picked by seedHash, no RNG) gets the split scale at that age instead. */
+    retireBarSplit: { pro: { age: 32, scale: 1.12, share: 0.5 } } as Partial<Record<DifficultyId, { age: number; scale: number; share: number }>>,
   },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",
@@ -256,9 +259,12 @@ export function injuryRetireBarsOf(career: { engineVersion?: string; difficulty?
 
 /** 2.23 end-of-career lever (TUNING.statsOvr.retireBarScale): multiplier on the injury retirement bar at this summer
  *  age, 1 for every career created before STATS_OVR_SINCE and outside ages 29-33. Pure, no RNG. */
-export function retireBarScaleOf(career: { engineVersion?: string; difficulty?: DifficultyId }, age: number): number {
+export function retireBarScaleOf(career: { engineVersion?: string; difficulty?: DifficultyId; seed?: number | null }, age: number): number {
   if (age < 29 || age > 33 || !usesStatsOvr(career)) return 1;
-  return TUNING.statsOvr.retireBarScale[career.difficulty ?? "pro"] ?? 1;
+  const split = TUNING.statsOvr.retireBarSplit[career.difficulty ?? "pro"];
+  if (split && split.age === age && seedHash(finiteSeed(career.seed), 2323) % 1000 < split.share * 1000) return split.scale;
+  const scale = TUNING.statsOvr.retireBarScale[career.difficulty ?? "pro"] ?? 1;
+  return typeof scale === "number" ? scale : (scale[age] ?? 1);
 }
 
 /** Leggenda 2.20+: minutes bar for this summer age, or undefined when the career keeps the older rule. */
@@ -281,6 +287,8 @@ export function usesAwardsV2(career: { engineVersion?: string }): boolean {
 export function resetTuning() {
   Object.assign(TUNING, TUNING_DEFAULTS);
 }
+
+const finiteSeed = (seed: number | null | undefined) => (Number.isFinite(seed) ? (seed as number) : 0);
 
 /** Small deterministic hash of the career seed and a salt. Never touches the RNG. */
 export function seedHash(seed: number, salt: number): number {
