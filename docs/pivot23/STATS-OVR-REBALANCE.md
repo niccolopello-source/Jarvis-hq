@@ -185,3 +185,23 @@ build, e2e Chromium 153 passed / 4 skipped.
 
 Raccomandazione: All-Star e Leggenda ora in banda su A e B, premi e debutto a posto. Il bump 2.23 si può fare
 con l'ok di Pello; unico punto aperto: Pro 29–32 sopra banda (se va sistemato, stessa leva con Pro ≈1,15).
+
+### 7.3 Pro in banda e prova di bump (26 ott 2026)
+
+Pro: le `injuryDrag` Pro si ammucchiano appena sotto la barra dei 32 anni (2,25 × scala ≈ 2,5). Con una scala
+uniforme il dato salta da ~350 (×1,08–1,11) a ~292 (×1,12); alzare 30 o 31 non cambia nulla. Leva scelta (solo 2.23):
+Pro scala **1,08** a 29–33, più `retireBarSplit` Pro: a 32 anni metà delle carriere (scelta con `seedHash`, nessun
+numero casuale) usa **1,12**. Taratura quota: 0,4 → A 328 / B 333; **0,5 → A 322 / B 327**; 0,6 → A 316 / B 316.
+
+| set | Esordio | Pro | All-Star | Leggenda | prudente Pro/AS/Leg |
+|---|---|---|---|---|---|
+| A | 16 | **322** (294–352) | 316 | 319 | 24 / 85 / 115 |
+| B | 14 | **327** (299–357) | 331 | 330 | 26 / 79 / 114 |
+
+Debutto 61 (Leggenda 60), ROY 0,060, MVP 50 / max 4, DPOY 3 (script `s141-awards`, versione all'apertura).
+Fingerprint invariati. Unit 421/421, stats 24/24, lint, typecheck, build: PASS (con ENGINE_VERSION 2.22).
+
+**Prova di bump a 2.23.0-beta (non committata): FAIL.** Unit 414/421, stats 16/24. Oltre ai test che fissano la
+versione corrente (golden, pin 2.21/2.22: andrebbero aggiornati, non è permesso in questo giro), falliscono tre
+controlli reali sulla nuova versione: ROY giocatore **0,015** (soglia ≥0,03, `awards-v2.stats`), bust ufficiali
+**93/1000** fuori banda 12–18% (P0-LIFE Pro), max MVP **8** su Esordio (limite 6). Bump **non** fatto.
