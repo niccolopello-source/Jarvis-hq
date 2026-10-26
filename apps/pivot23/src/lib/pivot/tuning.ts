@@ -95,6 +95,9 @@ export const TUNING = {
     peakShift: -8,
     /** 2.23 CPU rookie class: OVR lift on top of the lottery lift, so the class debuts at the player's ~60. */
     cpuRookieLift: 1.5,
+    /** 2.23 end-of-career lever: multiplier on the injury retirement bars at ages 29-33 (per difficulty, 1 = 2.22 bar).
+     *  Higher bar = fewer early exits. Deterministic threshold, consumes no randomness. */
+    retireBarScale: { esordio: 1, pro: 1, allstar: 1.12, leggenda: 1.25 } as Record<DifficultyId, number>,
   },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",
@@ -249,6 +252,13 @@ export function injuryRetireBarsOf(career: { engineVersion?: string; difficulty?
     return TUNING.injuryRetireBars221[career.difficulty ?? "pro"] ?? TUNING.injuryRetireBars221.pro;
   }
   return TUNING.injuryRetireBars219[career.difficulty ?? "pro"] ?? TUNING.injuryRetireBars219.pro;
+}
+
+/** 2.23 end-of-career lever (TUNING.statsOvr.retireBarScale): multiplier on the injury retirement bar at this summer
+ *  age, 1 for every career created before STATS_OVR_SINCE and outside ages 29-33. Pure, no RNG. */
+export function retireBarScaleOf(career: { engineVersion?: string; difficulty?: DifficultyId }, age: number): number {
+  if (age < 29 || age > 33 || !usesStatsOvr(career)) return 1;
+  return TUNING.statsOvr.retireBarScale[career.difficulty ?? "pro"] ?? 1;
 }
 
 /** Leggenda 2.20+: minutes bar for this summer age, or undefined when the career keeps the older rule. */

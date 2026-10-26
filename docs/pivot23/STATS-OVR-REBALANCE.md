@@ -154,3 +154,34 @@ Fingerprint gate off invariati: `e5b585ba…d1ae`, `4d949edf…5f73c2a`. Unit 42
 build, e2e 153 passed / 4 skipped.
 
 Raccomandazione: **non** fare ancora il bump: premi e debutto a posto, ritiri 29–32 fuori banda.
+
+### 7.2 Leva fine carriera (26 ott 2026): ritiri 29–32 in banda
+
+Causa misurata (set B, All-Star, 300 carriere): quasi tutte le uscite a 29–32 sono per infortunio (`injuryDrag` ≥ barra),
+soprattutto nell'estate dei 31 anni. Alzare solo le barre 29–32 non basta: oltre ×1,4 il dato resta fermo perché
+l'uscita si sposta all'estate dei 33 (barra 2,5) e l'ultima stagione giocata resta 32.
+
+Modifica (solo gate 2.23, `TUNING.statsOvr.retireBarScale`, funzione `retireBarScaleOf` in `tuning.ts`, usata da
+`careerEndingSignal`): moltiplicatore sulla barra infortuni alle età **29–33** per difficoltà.
+Valori: Esordio 1, Pro 1, **All-Star 1,12**, **Leggenda 1,25**. È una soglia deterministica: nessun numero casuale in
+più, 2.22 non entra mai nel ramo (scala 1). Le tabelle `injuryRetireBars221` restano identiche.
+
+Taratura (1000/cella, casuale, All-Star/Leggenda): ×1,05 → A 354/375, B 367/383; ×1,10 → A 326/354, B 340/370;
+×1,15 → A 304/339, B 316/345; ×1,20 → A 302/332, B 307/341.
+
+`measure-stats-ovr.ts`, 1000/cella, ritiri 29–32 /1000 (IC 95% Wilson):
+
+| set | Esordio | Pro | All-Star prima → ora | Leggenda prima → ora | prudente (Pro/AS/Leg) |
+|---|---|---|---|---|---|
+| A | 16 | 368 | 362 → **316** (288–346) | 379 → **319** (291–349) | 64 / 85 / 115 |
+| B | 14 | 355 | 374 → **331** (303–361) | 386 → **330** (302–360) | 71 / 79 / 114 |
+
+Picco OVR invariato (A/B: 76, 74, 71, 70 a 26 anni), floor48 0. Premi e debutto invariati: debutto mediana 61
+(Leggenda 60), ROY giocatore 0,060, quote ruolo OK (max SG 0,398), stagioni MVP 50 / max 4, DPOY striscia max 3.
+Pro resta fuori banda (368/355), come prima: non toccato in questo giro.
+
+Fingerprint gate off invariati: `e5b585ba…d1ae`, `4d949edf…5f73c2a`. Unit 421/421, stats 24/24, lint, typecheck,
+build, e2e Chromium 153 passed / 4 skipped.
+
+Raccomandazione: All-Star e Leggenda ora in banda su A e B, premi e debutto a posto. Il bump 2.23 si può fare
+con l'ok di Pello; unico punto aperto: Pro 29–32 sopra banda (se va sistemato, stessa leva con Pro ≈1,15).
