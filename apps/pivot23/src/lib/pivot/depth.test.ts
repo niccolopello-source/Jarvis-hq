@@ -4,6 +4,7 @@ import test from "node:test";
 import { STORY_POOL } from "./data.ts";
 import { advanceCareerSim, applyChoiceFx, openCareerSim, pickStoryEvent, playCareerSim, settleCareerMemory, type SimOpts } from "./engine.ts";
 import { classifyChoice, contextScore, eventTags, excludedBy, memoryOf, MEMORY_APPLIED_CAP, MEMORY_ITEM_CAP, MEMORY_TRAIL_CAP, newMemory, usesDepth } from "./memory.ts";
+import { LEGACY_TAG_ANOMALIES } from "./event-tags.ts";
 import { buildLiveSave } from "./save.ts";
 import type { PlayerState, StoryEvent } from "./types.ts";
 
@@ -161,13 +162,24 @@ test("score is readable: named reasons follow the state", () => {
 });
 
 test("incompatible events are excluded", () => {
+  // 2.23.0 (ROOKIE_TAGS_SINCE): the legacy rookie events tagged "veteran" (LEGACY_TAG_ANOMALIES) are no longer
+  // excluded for new careers; careers created as 2.22 keep the old exclusion. A true veteran event stays excluded.
   const vet = STORY_POOL.find((e) => eventTags(e).includes("veteran"));
   if (vet) {
-    const s = fresh();
+    const s = openCareerSim({ seed: 9100, depth: true, engineVersion: "2.22.0-beta" }).s;
+    s.season = 3;
     s.age = 22;
     assert.equal(excludedBy(vet, s), "veteran-theme-too-young");
     s.age = 33;
     assert.equal(excludedBy(vet, s), null);
+  }
+  const trueVet = STORY_POOL.find((e) => eventTags(e).includes("veteran") && !LEGACY_TAG_ANOMALIES.includes(e.id));
+  if (trueVet) {
+    const s = fresh();
+    s.age = 22;
+    assert.equal(excludedBy(trueVet, s), "veteran-theme-too-young");
+    s.age = 33;
+    assert.equal(excludedBy(trueVet, s), null);
   }
   let excluded = 0;
   let youngVet = 0;
@@ -182,7 +194,7 @@ test("incompatible events are excluded", () => {
     for (const c of job.s.choiceLog) {
       const e = STORY_POOL.find((p) => p.title === c.title);
       const row = job.s.seasonHistory.find((r) => r.season === c.season);
-      if (e && row && eventTags(e).includes("veteran") && row.age < 29) youngVet += 1;
+      if (e && row && eventTags(e).includes("veteran") && !LEGACY_TAG_ANOMALIES.includes(e.id) && row.age < 29) youngVet += 1;
     }
   }
   console.log(`DEPTH exclusions applied: ${excluded}; veteran-themed pool events at age < 29: ${youngVet}`);

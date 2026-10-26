@@ -7,10 +7,12 @@ import { ROOKIE_NAMES } from "./teams.ts";
 /* Awards v2 distributions (2.15 careers) vs the 2.14 baseline. 400 careers per version. */
 
 type Out = { y1: number; royPlayer: number; role: Record<string, number>; mvp: number; boardNoTrophy: number; maxMvp: number };
-function sample(version: string): Out {
+// The career is created as `open` and then relabelled to `version` (2.15 rules on a 2.22-created career, as before
+// 2.23 opened). 2.23 careers are created and played as 2.23: the stats-driven OVR is drawn at creation.
+function sample(version: string, open = "2.22.0-beta"): Out {
   const o: Out = { y1: 0, royPlayer: 0, role: {}, mvp: 0, boardNoTrophy: 0, maxMvp: 0 };
   for (const d of ["esordio", "pro", "allstar", "leggenda"]) for (let i = 0; i < 100; i++) {
-    const job = openCareerSim({ seed: 70000 + i * 613, difficulty: d as never });
+    const job = openCareerSim({ seed: 70000 + i * 613, difficulty: d as never, engineVersion: open });
     job.s.engineVersion = version;
     let done = false;
     let last: unknown;
@@ -38,11 +40,12 @@ function sample(version: string): Out {
   return o;
 }
 
-test("awards v2: ROY position balance, player ROY rate, MVP vote consistency", () => {
-  const v2 = sample("2.15.0-beta");
+for (const [label, version, open] of [["2.15", "2.15.0-beta", "2.22.0-beta"], ["2.23", "2.23.0-beta", "2.23.0-beta"]] as const)
+test(`awards v2 (${label} careers): ROY position balance, player ROY rate, MVP vote consistency`, () => {
+  const v2 = sample(version, open);
   const tot = Object.values(v2.role).reduce((a, b) => a + b, 0);
   const share = Object.fromEntries(Object.entries(v2.role).map(([k, v]) => [k, v / tot]));
-  console.log("2.15 ROY role share", share, "player ROY", v2.royPlayer / v2.y1, "MVP seasons", v2.mvp, "max MVP", v2.maxMvp);
+  console.log(`${label} ROY role share`, share, "player ROY", v2.royPlayer / v2.y1, "MVP seasons", v2.mvp, "max MVP", v2.maxMvp);
   for (const r of ["PG", "SG", "SF", "PF", "C"]) assert.ok((share[r] ?? 0) >= 0.06, `${r} ROY share ${share[r]}`);
   assert.ok(Math.max(...Object.values(share)) <= 0.45, `max ROY share ${JSON.stringify(share)}`);
   assert.ok(v2.royPlayer / v2.y1 >= 0.03 && v2.royPlayer / v2.y1 <= 0.2, `player ROY ${v2.royPlayer / v2.y1}`);

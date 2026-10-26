@@ -13,7 +13,9 @@ import type { PlayerState, RoyCandidate, SeasonRow } from "./types.ts";
 /* Awards v2 (AW-01..AW-06, docs/pivot23/ISSUE-REGISTER.md). Repro seeds are on engine 2.14.0-beta. */
 
 function play(seed: number, difficulty: string, version: string, each?: (s: PlayerState, r: SeasonRow) => void): PlayerState {
-  const job = openCareerSim({ seed, difficulty: difficulty as never });
+  // Draft as 2.22.0-beta (the engine these repros were recorded on), then switch the rules: from 2.23.0 the
+  // default engine moves the draft (STATS_OVR_SINCE), which would change the repro careers themselves.
+  const job = openCareerSim({ seed, difficulty: difficulty as never, engineVersion: "2.22.0-beta" });
   job.s.engineVersion = version;
   job.s.royClass = [];
   seedRookieClass(job.s);

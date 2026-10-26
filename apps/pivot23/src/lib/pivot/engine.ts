@@ -1,5 +1,5 @@
 
-import { A1_BARS_SINCE, TUNING, scriptSlotFor, scriptWindowsOf, seedHash, versionAtLeast, worldOf } from "./tuning";
+import { A1_BARS_SINCE, TUNING, usesStatsOvr, scriptSlotFor, scriptWindowsOf, seedHash, versionAtLeast, worldOf } from "./tuning";
 import { INJURY_KINDS, INJURY_SEVERITY, loadInjuryAt, usesInjuryEvents, type InjuryKind } from "./injuries";
 import {
   ATTR_LABELS,
@@ -60,6 +60,11 @@ import { contextScore, DEPTH_SINCE, excludedBy, logSelection, newMemory, recentT
 import {
   MAX_AGE,
   START_OVERALL,
+  naturalCurveAt,
+  realizedPeak,
+  startOverallOf,
+  statsOverall,
+  weightedSkill as weightedSkillOf,
   advancedOf,
   careerEndAge,
   clamp,
@@ -100,6 +105,9 @@ export {
   MAX_AGE,
   PEAK_AGE,
   START_OVERALL,
+  startOverallOf,
+  statsOverall,
+  baseSkillOf,
   apexAgeOf,
   careerEndAge,
   clamp,
@@ -183,7 +191,37 @@ export function imprint(s: PlayerState, delta: number) {
   const room = delta >= 0 ? SIM.choice.max - cur : cur - SIM.choice.min;
   const damp = 0.28 + 0.72 * clamp(room / Math.max(0.5, cap), 0, 1);
   s.choiceOvr = round2(clamp(cur + delta * damp, SIM.choice.min, SIM.choice.max));
+  // 2.23.0+: the pulse lands on the attributes, so the OVR (read from them) moves with every choice and event.
+  if (usesStatsOvr(s) && delta) spreadOnAttrs(s, (delta * TUNING.statsOvr.pulseToAttrs) / TUNING.statsOvr.k, "pulse");
   return refreshOverall(s);
+}
+
+/**
+ * 2.23.0+ only. Moves the weighted role skill by `skill` points, split over the attributes by role weight
+ * (growth and choices build what the role uses; decline hits the body first). No RNG.
+ */
+export function spreadOnAttrs(s: PlayerState, skill: number, kind: "pulse" | "growth" | "decline") {
+  if (!Number.isFinite(skill) || Math.abs(skill) < 1e-9) return;
+  const w = ROLES[s.role]?.weights ?? ROLES.SG.weights;
+  const keys = Object.keys(w) as AttrKey[];
+  const body = (k: AttrKey) => (k === "athleticism" || k === "strength" ? 1.8 : k === "iq" ? 0.35 : 1);
+  const share = (k: AttrKey) => (w[k] ?? 0) * (kind === "decline" ? body(k) : 1);
+  const sumW = keys.reduce((a, k) => a + (w[k] ?? 0), 0) || 1;
+  // Two passes: what a capped attribute (0 or 99) cannot take goes to the others.
+  let left = skill;
+  for (let pass = 0; pass < 2 && Math.abs(left) > 1e-6; pass++) {
+    const open = keys.filter((k) => (left > 0 ? s.attrs[k] < SIM.attr.max : s.attrs[k] > SIM.attr.min) && share(k) > 0);
+    const denom = open.reduce((a, k) => a + share(k) * (w[k] ?? 0), 0);
+    if (denom <= 0) return;
+    const scale = (left * sumW) / denom;
+    let moved = 0;
+    open.forEach((k) => {
+      const before = s.attrs[k];
+      s.attrs[k] = clampAttr(before + scale * share(k));
+      moved += ((s.attrs[k] - before) * (w[k] ?? 0)) / sumW;
+    });
+    left -= moved;
+  }
 }
 
 export function cardRoleScale(role: Role, key: AttrKey) {
@@ -263,6 +301,12 @@ export function dealDraftRound(s: PlayerState) {
   return s.draftHand;
 }
 
+/** 2.23.0+: the sim logs the label as the player read it (placeholders filled, as PivotApp does);
+ *  older careers keep the raw stored label byte-identical. */
+function simLogLabel(s: PlayerState, label: string): string {
+  return usesStatsOvr(s) ? fillTemplate(label, s) : label;
+}
+
 export function fillTemplate(text: string, s: PlayerState) {
   const out = text
     .replace(/__RIVAL__/g, s.rivalName || "il rivale")
@@ -302,7 +346,18 @@ export function applyFx(s: PlayerState, fx: Fx) {
   if (fx.rivalry) s.rivalry = clamp(s.rivalry + fx.rivalry, 0, 100);
   if (fx.morale) s.morale = clamp(s.morale + fx.morale, 0, 100);
   if (fx.gamesPenalty) s.gamesPenalty += Math.round(fx.gamesPenalty * d.injury);
-  imprint(s, contextualPulse(s, fx));
+  imprint(s, usesStatsOvr(s) ? statsPulse(s, fx) : contextualPulse(s, fx));
+}
+
+/** 2.23.0+: the attribute part of an Fx is already on the attributes, so the pulse counts only the rest
+ *  (hidden traits, development, form, injuries, trust, image). An Fx that only moves attributes adds nothing more. */
+export function statsPulse(s: PlayerState, fx: Fx): number {
+  const rest: Fx = { ...fx, attrs: undefined };
+  const numeric = (Object.entries(rest) as [string, unknown][]).some(([k, v]) => k !== "flavor" && typeof v === "number" && v !== 0);
+  const hidden = !!rest.hidden && Object.values(rest.hidden).some((v) => !!v);
+  const any = numeric || hidden;
+  if (!any) return 0;
+  return contextualPulse(s, rest);
 }
 
 /** A story choice: the immediate Fx plus its recorded deferred side (memory.ts). Same Fx, same RNG. */
@@ -318,6 +373,8 @@ export function settleCareerMemory(s: PlayerState, n: number): string[] {
 
 export function applyAging(s: PlayerState) {
   lockExperimentEthic(s);
+  const stats = usesStatsOvr(s);
+  const skillBefore = stats ? weightedSkillOf(s) : 0;
   s.age += 1;
   // Le scelte recenti pesano di più: l'impronta non resta inchiodata al tetto.
   s.choiceOvr = round2(clamp((s.choiceOvr || 0) * 0.86, SIM.choice.min, SIM.choice.max));
@@ -361,7 +418,29 @@ export function applyAging(s: PlayerState) {
   }
   s.form *= 0.68;
   s.gamesPenalty = 0;
+  if (stats) applyNaturalBudget(s, skillBefore);
   refreshOverall(s);
+}
+
+/**
+ * 2.23.0+ only: one year of natural growth or decline, as attributes. The budget is the slope of the career's
+ * age curve (naturalCurveAt) this year, minus what the ageing rules above already moved, converted to skill points.
+ */
+function applyNaturalBudget(s: PlayerState, skillBefore: number) {
+  const k = TUNING.statsOvr.k;
+  let slope = naturalCurveAt(s, s.age) - naturalCurveAt(s, s.age - 1);
+  if (slope > 0) {
+    // Growth years: the curve's step is scaled by how far the player still is from the realized peak compared with
+    // the natural curve. Ahead of the curve (good draft and choices) he grows less, behind it he catches up a bit.
+    const peak = realizedPeak(s) + TUNING.statsOvr.peakShift;
+    const cur = statsOverall(s);
+    const room = peak - naturalCurveAt(s, s.age - 1);
+    const g = room > 0.5 ? (peak - cur) / room : 0;
+    slope *= clamp(g, 0, TUNING.statsOvr.catchUpMax);
+  }
+  const already = weightedSkillOf(s) - skillBefore;
+  const budget = slope / k - already;
+  spreadOnAttrs(s, budget, budget >= 0 ? "growth" : "decline");
 }
 
 function weightedPick(weights: Record<string, number>) {
@@ -448,8 +527,8 @@ export function freshPlayer(
     coachTrust: 55,
     rivalry: 15,
     morale: 55,
-    overall: START_OVERALL,
-    peakOverall: START_OVERALL,
+    overall: usesStatsOvr({ engineVersion: potentialRulesVersion }) ? TUNING.statsOvr.start : START_OVERALL,
+    peakOverall: usesStatsOvr({ engineVersion: potentialRulesVersion }) ? TUNING.statsOvr.start : START_OVERALL,
     potential: 72,
     startAge: 20,
     apexAge: 27,
@@ -621,8 +700,8 @@ function applyDraftCardInner(s: PlayerState, roundIndex: number, cardIndex: numb
   s.rookReady = round2(clamp((s.rookReady || 0) + pulse * 1.4 + rookReadyFromCard(card), 0, 18));
   s.round += 1;
   dealDraftRound(s);
-  s.overall = START_OVERALL;
-  s.peakOverall = START_OVERALL;
+  s.overall = startOverallOf(s);
+  s.peakOverall = startOverallOf(s);
 }
 
 function rookReadyFromCard(card: DraftCard) {
@@ -716,7 +795,7 @@ function playerDraftStock(s: PlayerState): number {
   const skill = weightedSkill(s);
   // Rookies are born at talent 40. Comparing them with a league-average 62
   // taxed every prospect the same ~20 points and pinned the class in the second round.
-  let stock = ready * 1.2 + (s.potential - 72) * 0.42 + (skill - 40) * 0.9 + (s.overall - 60) * 0.28;
+  let stock = ready * 1.2 + (s.potential - 72) * 0.42 + (skill - 40) * 0.9 + (s.overall - (usesStatsOvr(s) ? TUNING.statsOvr.draftStockRef : 60)) * 0.28;
   if (s.originPath === "NCAA") stock += 3.4;
   else if (s.originPath === "Europa") stock += 1.2;
   else if (s.originPath === "G-League") stock -= 2.2;
@@ -1809,7 +1888,7 @@ function simulateRegularSeasonInner(s: PlayerState, n: number): SeasonRow {
   const trust = 1 + (s.coachTrust - 50) * 0.003;
   let min = round1(
     clamp(
-      (17.2 + (ovr - 60) * 0.58 + (s.hidden.motor / 100) * 3.2) * d.minutes * rookCut * vetCut * trust,
+      (17.2 + (ovr - (usesStatsOvr(s) ? TUNING.statsOvr.minutesRef : 60)) * 0.58 + (s.hidden.motor / 100) * 3.2) * d.minutes * rookCut * vetCut * trust,
       11.5,
       s.age >= 34 ? 31.8 : 37.6,
     ),
@@ -1981,7 +2060,7 @@ function simulateRegularSeasonInner(s: PlayerState, n: number): SeasonRow {
       -10.5,
       12.5,
     ),
-  );
+  ) + 0; // + 0 turns a rounded -0 into 0 (same JSON, same arithmetic; deepEqual after a JSON round trip holds)
   row.mood = seasonAtmosphere(s, row);
   applySeasonPulse(s, row);
   settlePlayerAwards(s, row, n);
@@ -3721,7 +3800,7 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
     if (scripted) {
       const ch = simChoice(job, scripted, n);
       applyChoiceFx(s, ch.fx(s), scripted.id);
-      s.choiceLog.push({ season: n, title: scripted.title, pick: ch.label });
+      s.choiceLog.push({ season: n, title: scripted.title, pick: simLogLabel(s, ch.label) });
     } else if (n !== 12 && shouldOfferTrade(s, n)) {
       const t = buildTradeOffer(s);
       if (shouldForceTrade(s)) {
@@ -3736,12 +3815,12 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
       const ev = pickStoryEvent(s, n);
       const ch = simChoice(job, ev, n);
       applyChoiceFx(s, ch.fx(s), ev.id);
-      s.choiceLog.push({ season: n, title: ev.title, pick: ch.label });
+      s.choiceLog.push({ season: n, title: ev.title, pick: simLogLabel(s, ch.label) });
     } else {
       const ev = pickStoryEvent(s, n);
       const ch = simChoice(job, ev, n);
       applyChoiceFx(s, ch.fx(s), ev.id);
-      s.choiceLog.push({ season: n, title: ev.title, pick: ch.label });
+      s.choiceLog.push({ season: n, title: ev.title, pick: simLogLabel(s, ch.label) });
     }
     lockExperimentEthic(s);
     const row = simulateRegularSeason(s, n);
@@ -3756,7 +3835,7 @@ export function advanceCareerSim(job: CareerSimJob): boolean {
         s.choiceLog.push({
           season: n,
           title: playoffRounds(s)[round] || "Playoff",
-          pick: choices[idx]?.label || "Scelta",
+          pick: simLogLabel(s, choices[idx]?.label || "Scelta"),
         });
         if (res.champion || !res.win) break;
       }
@@ -3820,7 +3899,7 @@ export function playCareerSim(opts: SimOpts = {}): PlayerState {
 export function simulateFullCareer(opts: SimOpts = {}) {
   const s = playCareerSim(opts);
   return {
-    start: START_OVERALL,
+    start: startOverallOf(s),
     peak: s.peakOverall,
     end: s.overall,
     hit90: s.peakOverall >= 90,

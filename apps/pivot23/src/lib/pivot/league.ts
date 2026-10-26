@@ -8,7 +8,7 @@ import { royProductionScore } from "./awards-helpers";
 import { freshPlayer, playIsolatedDraft } from "./engine";
 import { createRng, runWithRng } from "./rng";
 import { isolatedRookieBox, roySubSeed, ROY_ROLES } from "./rookie-box";
-import { usesAwardsV2, usesDecisions } from "./tuning";
+import { PRE_STATS_OVR_ENGINE, TUNING, usesAwardsV2, usesDecisions, usesStatsOvr } from "./tuning";
 import { AWARD_MIN_GAMES, PLAYER_KEY, lotteryLiftV2, mvpFatigueV2, mvpHistoryV2, rookieClassPlanV2, royScoreV2 } from "./awards-v2";
 import { EURO_GAMES, NBA_GAMES, PLAYOFF_SEEDS, awardNoteIt } from "./data";
 import type {
@@ -211,6 +211,7 @@ export function seedRookieClass(s: PlayerState): RoyCandidate[] {
     const team = others[(i * 5 + 2) % others.length]!;
     const box = runWithRng(createRng(sub), () => {
       const cpu = freshPlayer(ROOKIE_NAMES[i % ROOKIE_NAMES.length]!, ROY_ROLES[i] || "SF", "USA", 11 + i, s.difficulty, sub, s.engineVersion ?? "");
+      cpu.engineVersion = usesStatsOvr(s) ? s.engineVersion! : usesStatsOvr(cpu) ? PRE_STATS_OVR_ENGINE : cpu.engineVersion; // CPU rookies follow the career rules
       cpu.draftPick = 8 + i * 7;
       cpu.age = 21;
       cpu.league = "NBA";
@@ -243,12 +244,18 @@ function seedRookieClassV2(s: PlayerState): RoyCandidate[] {
     const team = others[slot.teamIndex]!;
     const box = runWithRng(createRng(sub), () => {
       const cpu = freshPlayer(slot.name, slot.role, "USA", 11 + i, s.difficulty, sub, s.engineVersion ?? "");
+      cpu.engineVersion = usesStatsOvr(s) ? s.engineVersion! : usesStatsOvr(cpu) ? PRE_STATS_OVR_ENGINE : cpu.engineVersion; // CPU rookies follow the career rules
       cpu.draftPick = slot.pick;
       cpu.age = 21;
       cpu.league = "NBA";
       cpu.team = cloneTeam(team);
+      const statsOvrClass = usesStatsOvr(cpu);
+      // 2.23: the class is generated with the 2.22 attribute rules (same role mix and box profile), then lifted to the
+      // 2.23 debut level (player debut median ~60, start 50 + k 1.4). 2.22 careers never enter this branch.
+      if (statsOvrClass) cpu.engineVersion = PRE_STATS_OVR_ENGINE;
       playIsolatedDraft(cpu);
-      cpu.overall = Math.min(99, Math.round((cpu.overall + lotteryLiftV2(slot.pick)) * 10) / 10);
+      const lift = lotteryLiftV2(slot.pick) + (statsOvrClass ? TUNING.statsOvr.cpuRookieLift : 0);
+      cpu.overall = Math.min(99, Math.round((cpu.overall + lift) * 10) / 10);
       return isolatedRookieBox(cpu);
     });
     const line = { ppg: box.ppg, rpg: box.rpg, apg: box.apg, gp: slot.gp, min: box.min };
@@ -547,11 +554,14 @@ function buildAwards(
   const v2 = usesAwardsV2(s);
   const mvpPast = v2 ? mvpHistoryV2(s.seasonHistory) : null;
   const repeatCost = mvpPast ? mvpFatigueV2(mvpPast.get(PLAYER_KEY)) : s.mvpCount * 7 + s.titleCount * 2.5;
+  // 2.23.0+ only: past the second career MVP each further one costs a fixed score. No RNG.
+  const careerCost = usesStatsOvr(s) ? Math.max(0, (s.mvpCount | 0) - TUNING.statsOvr.mvpCareerFree) * TUNING.statsOvr.mvpCareerCost : 0;
   const pScore =
     mvpScore(playerProd, box.wins, playerEff, playerImpact, box.gp, games, s.hidden.consistency, playerNar) +
     (rand() - 0.5) * SIM.awards.noise +
     mvpHelpOf(s, d.mvpHelp) -
-    repeatCost;
+    repeatCost -
+    careerCost;
 
   const bestStar = bestStarsByTeam(s);
   const cpu = table

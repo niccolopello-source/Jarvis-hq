@@ -118,7 +118,8 @@ test("gameplay modules do not call Math.random", () => {
    This is a 2.12 career path: on 2.13.0 (#66, D-09 world regress) the same seed reaches 36, so the
    check runs on a career created on 2.12.0-beta, which must still end exactly as before. */
 const legacyCareer = (opts: Parameters<typeof openCareerSim>[0]) => {
-  const job = openCareerSim(opts);
+  // 2.23.0: the draft runs inside openCareerSim, so the legacy version goes in before it (start OVR 60 rules).
+  const job = openCareerSim({ engineVersion: "2.12.0-beta", ...opts });
   job.s.engineVersion = "2.12.0-beta";
   while (!advanceCareerSim(job));
   return job.s;

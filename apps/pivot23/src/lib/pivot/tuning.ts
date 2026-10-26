@@ -77,6 +77,37 @@ export const TUNING = {
   /** Games needed to win the player DPOY, per competition. Only the NBA awards a player DPOY;
    *  58 is the existing rule (full availability weight at 65, see nbaDpoyScore). */
   dpoyMinGames: { NBA: 58 } as Readonly<Record<string, number>>,
+  /** STATS -> OVR (Pello, 25 Oct 2026), careers created on 2.23.0+ only (STATS_OVR_SINCE). The OVR is read from the
+   *  attributes: ovr = start + k * (weighted role skill - weighted skill at creation). Natural growth and ageing are a
+   *  yearly attribute budget (the age curve), every choice/event pulse lands on the attributes, start OVR 50.
+   *  lambda = share of the OVR taken from the attributes (1 = option B, pure; 0.5 = option A, hybrid).
+   *  Report: docs/pivot23/STATS-OVR-REBALANCE.md. */
+  statsOvr: {
+    start: 50,
+    lambda: 0.5,
+    k: 1.4,
+    pulseToAttrs: 0.3,
+    twilightFloorK: 0.74,
+    twilightFloorMin: 52,
+    twilightFloorMax: 72,
+    draftStockRef: 62,
+    catchUpMax: 1.5,
+    peakShift: -8,
+    /** 2.23 CPU rookie class: OVR lift on top of the lottery lift, so the class debuts at the player's ~60. */
+    cpuRookieLift: 1.5,
+    /** 2.23 end-of-career lever: multiplier on the injury retirement bars at ages 29-33 (per difficulty, 1 = 2.22 bar).
+     *  Higher bar = fewer early exits. Deterministic threshold, consumes no randomness. */
+    retireBarScale: { esordio: 1, pro: 1.04, allstar: 1.08, leggenda: 1.12 } as Record<DifficultyId, number | Readonly<Record<number, number>>>,
+    /** 2.23: OVR at which the minutes formula gives its base share (2.22 rule: 60). 2.23 careers sit ~2 OVR higher
+     *  through the prime, so the same OVR buys fewer minutes. Deterministic, no RNG. */
+    minutesRef: 62,
+    /** 2.23: MVP score cost per career MVP beyond mvpCareerFree (caps runaway MVP careers on Esordio). */
+    mvpCareerFree: 2,
+    mvpCareerCost: 4,
+    /** Injury drags cluster just under one bar (Pro 32, All-Star/Leggenda 33), so a uniform scale jumps from ~350 to ~292 early exits.
+     *  This share of careers (picked by seedHash, no RNG) gets the split scale at that age instead. */
+    retireBarSplit: { pro: { age: 32, scale: 1.12, share: 0.25 }, allstar: { age: 33, scale: 1.04, share: 0.5 }, leggenda: { age: 33, scale: 1.18, share: 0.5 } } as Partial<Record<DifficultyId, { age: number; scale: number; share: number }>>,
+  },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",
 };
@@ -149,6 +180,19 @@ export const RULES_INJURY_SINCE = "2.19.0";
  *  Careers created on 2.19 or earlier, and every other difficulty, keep their rules exactly. */
 export const LEGEND_RETIRE_SINCE = "2.20.0";
 
+/** Stats -> OVR (TUNING.statsOvr): first engine version whose careers derive the OVR from the attributes and start at 50.
+ *  Careers created on 2.22 or earlier keep the age-curve OVR exactly. Shared 2.23.0 gate: grokbot/rookie-tags may add
+ *  its own rule under the same release; each rule keeps its own constant. */
+export const STATS_OVR_SINCE = "2.23.0";
+
+/** True when this career was created by STATS_OVR_SINCE (2.23.0) or later. */
+/** ENGINE_VERSION that the CPU rookie class (league.ts) was stamped with before 2.23.0: pinned so older careers keep their rival rookies bit-identical. */
+export const PRE_STATS_OVR_ENGINE = "2.22.0-beta";
+
+export function usesStatsOvr(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, STATS_OVR_SINCE);
+}
+
 /** D-23 step that careers created before WORLD_SINCE (2.13.0) keep. */
 export const LEGACY_DPOY_STREAK_STEP = 0.12;
 
@@ -219,6 +263,16 @@ export function injuryRetireBarsOf(career: { engineVersion?: string; difficulty?
   return TUNING.injuryRetireBars219[career.difficulty ?? "pro"] ?? TUNING.injuryRetireBars219.pro;
 }
 
+/** 2.23 end-of-career lever (TUNING.statsOvr.retireBarScale): multiplier on the injury retirement bar at this summer
+ *  age, 1 for every career created before STATS_OVR_SINCE and outside ages 29-33. Pure, no RNG. */
+export function retireBarScaleOf(career: { engineVersion?: string; difficulty?: DifficultyId; seed?: number | null }, age: number): number {
+  if (age < 29 || age > 33 || !usesStatsOvr(career)) return 1;
+  const split = TUNING.statsOvr.retireBarSplit[career.difficulty ?? "pro"];
+  if (split && split.age === age && seedHash(finiteSeed(career.seed), 2323) % 1000 < split.share * 1000) return split.scale;
+  const scale = TUNING.statsOvr.retireBarScale[career.difficulty ?? "pro"] ?? 1;
+  return typeof scale === "number" ? scale : (scale[age] ?? 1);
+}
+
 /** Leggenda 2.20+: minutes bar for this summer age, or undefined when the career keeps the older rule. */
 export function minutesRetireBarOf(career: { engineVersion?: string; difficulty?: DifficultyId }, age: number): number | undefined {
   if (!versionAtLeast(career.engineVersion, LEGEND_RETIRE_SINCE)) return undefined;
@@ -239,6 +293,8 @@ export function usesAwardsV2(career: { engineVersion?: string }): boolean {
 export function resetTuning() {
   Object.assign(TUNING, TUNING_DEFAULTS);
 }
+
+const finiteSeed = (seed: number | null | undefined) => (Number.isFinite(seed) ? (seed as number) : 0);
 
 /** Small deterministic hash of the career seed and a salt. Never touches the RNG. */
 export function seedHash(seed: number, salt: number): number {

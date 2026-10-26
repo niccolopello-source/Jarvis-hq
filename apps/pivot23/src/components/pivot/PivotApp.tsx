@@ -70,7 +70,7 @@ import {
   shouldForceTrade,
   shouldOfferTrade,
   simulateRegularSeason,
-  START_OVERALL,
+  startOverallOf,
   startProPath,
   storyEventById,
   eventRebuildOf,
@@ -241,8 +241,10 @@ function hydratePending(raw: SavedPending | Pending | null, s: PlayerState): Pen
 }
 
 /** The pending card a live save stores. An answered story card (still on screen during its hold) is stored as none. */
-function savedPendingOf(p: Pending | null, resolved: Pending | null): SavedPending | null {
-  if (p !== null && p === resolved) return null;
+function savedPendingOf(p: Pending | null, resolved: Pending | null, carry?: { from: Pending; next: Pending } | null): SavedPending | null {
+  /* A decision still on screen during a cosmetic hold is saved as already answered: the card that
+     follows it (if any) is what a reload must show. */
+  if (p !== null && p === resolved) return carry && carry.from === p ? (carry.next as SavedPending) : null;
   return p as SavedPending | null;
 }
 
@@ -466,6 +468,8 @@ export function PivotApp() {
      the player already carries its effects: a save written in that window stores no pending card, so a
      reload resumes past the decision instead of offering it (and its effects) a second time. */
   const resolvedPendingRef = useRef<Pending | null>(null);
+  /* Playoff win: the next round is decided at the click, the recap hold only delays showing it. */
+  const carryPendingRef = useRef<{ from: Pending; next: Pending } | null>(null);
   const logRef = useRef(log);
   const screenRef = useRef(screen);
   pendingRef.current = pending;
@@ -490,7 +494,7 @@ export function PivotApp() {
     saveGen.current += 1;
     return saveLive({
       player: playerNow,
-      pending: savedPendingOf(pendingNow, resolvedPendingRef.current),
+      pending: savedPendingOf(pendingNow, resolvedPendingRef.current, carryPendingRef.current),
       log: logNow,
       screen: screenNow,
       tab: tabRef.current,
@@ -519,7 +523,7 @@ export function PivotApp() {
       if (gen !== saveGen.current) return;
       const wrote = saveLive({
         player,
-        pending: savedPendingOf(pending, resolvedPendingRef.current),
+        pending: savedPendingOf(pending, resolvedPendingRef.current, carryPendingRef.current),
         log,
         screen,
         tab: tabRef.current,
@@ -682,8 +686,8 @@ export function PivotApp() {
   function beginCareer() {
     if (!player || !takeGesture("begin")) return;
     const s = structuredClone(player);
-    s.overall = START_OVERALL;
-    s.peakOverall = START_OVERALL;
+    s.overall = startOverallOf(s);
+    s.peakOverall = startOverallOf(s);
     setLog([]);
     setTab("log");
     setScreen("career");
@@ -852,7 +856,11 @@ export function PivotApp() {
       return;
     }
     const nextOpp = withPlayer(s, () => pickPlayoffOpponent(s, round + 1));
-    holdThen(HOLD_RECAP_MS, () => setPending(openPlayoff(s, round + 1, nextOpp)));
+    const next = openPlayoff(s, round + 1, nextOpp);
+    // G1: save the answered round and the next one now; the recap hold is cosmetic only.
+    carryPendingRef.current = { from: pending, next };
+    resolvedPendingRef.current = pending;
+    holdThen(HOLD_RECAP_MS, () => setPending(next));
   }
 
   function goOffseasonOrEnd(s: PlayerState) {
