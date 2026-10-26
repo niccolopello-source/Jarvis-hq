@@ -8,7 +8,7 @@ import { royProductionScore } from "./awards-helpers";
 import { freshPlayer, playIsolatedDraft } from "./engine";
 import { createRng, runWithRng } from "./rng";
 import { isolatedRookieBox, roySubSeed, ROY_ROLES } from "./rookie-box";
-import { PRE_STATS_OVR_ENGINE, usesAwardsV2, usesDecisions, usesStatsOvr } from "./tuning";
+import { PRE_STATS_OVR_ENGINE, TUNING, usesAwardsV2, usesDecisions, usesStatsOvr } from "./tuning";
 import { AWARD_MIN_GAMES, PLAYER_KEY, lotteryLiftV2, mvpFatigueV2, mvpHistoryV2, rookieClassPlanV2, royScoreV2 } from "./awards-v2";
 import { EURO_GAMES, NBA_GAMES, PLAYOFF_SEEDS, awardNoteIt } from "./data";
 import type {
@@ -249,8 +249,13 @@ function seedRookieClassV2(s: PlayerState): RoyCandidate[] {
       cpu.age = 21;
       cpu.league = "NBA";
       cpu.team = cloneTeam(team);
+      const statsOvrClass = usesStatsOvr(cpu);
+      // 2.23: the class is generated with the 2.22 attribute rules (same role mix and box profile), then lifted to the
+      // 2.23 debut level (player debut median ~60, start 50 + k 1.4). 2.22 careers never enter this branch.
+      if (statsOvrClass) cpu.engineVersion = PRE_STATS_OVR_ENGINE;
       playIsolatedDraft(cpu);
-      cpu.overall = Math.min(99, Math.round((cpu.overall + lotteryLiftV2(slot.pick)) * 10) / 10);
+      const lift = lotteryLiftV2(slot.pick) + (statsOvrClass ? TUNING.statsOvr.cpuRookieLift : 0);
+      cpu.overall = Math.min(99, Math.round((cpu.overall + lift) * 10) / 10);
       return isolatedRookieBox(cpu);
     });
     const line = { ppg: box.ppg, rpg: box.rpg, apg: box.apg, gp: slot.gp, min: box.min };

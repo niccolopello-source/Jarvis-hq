@@ -118,3 +118,39 @@ Premi su 2.23 (stessi campioni e soglie di `awards-v2.stats` e D-23, versione im
 - DPOY: striscia massima **11** (limite 5) → **FAIL** (2.22: 2).
 
 Raccomandazione: **non** fare il bump 2.23 finché ROY, DPOY e OVR al debutto non sono sistemati.
+
+### 7.1 Opzione A applicata (26 ott 2026): debutto ≈60 con start 50
+
+Causa misurata: con k 0,55 servono molti più punti attributo per lo stesso OVR (a 27 anni skill 66 vs 46 su 2.22),
+quindi box score, MVP, DPOY e ROY si gonfiano. Modifiche (solo gate 2.23, `TUNING.statsOvr`):
+- `k` 0,55 → **1,4**: le carte del draft muovono abbastanza l'OVR da portare il debutto a ≈60 senza toccare lo start
+  (niente `preDraftSkill`, scartato). Attributi a 27 anni tornano vicini a 2.22 (skill 49,6 vs 46).
+- `pulseToAttrs` 0,6 → **0,3**: leva principale sulle stagioni MVP (0,6 → 67; 0,35 → 55; 0,3 → 50).
+- `peakShift` -2,5 → **-8** (effetto piccolo; -2,5 peggiora MVP 79 e DPOY 6).
+- Nuovo `cpuRookieLift` **1,5**: la classe rookie CPU su 2.23 è generata con le regole attributi 2.22 (stesso mix di
+  ruoli e box) e poi alzata di 1,5 OVR oltre al lottery lift, per debuttare al livello del giocatore. Senza questo
+  passaggio il ruolo SG supera la quota massima (0,47 > 0,45). 2.22 non entra mai nel ramo.
+
+| metrica (2.23) | prima | ora | 2.22 | soglia |
+|---|---|---|---|---|
+| OVR debutto mediana (tutte le difficoltà) | 55 | 61 (Leggenda 60) | 59 | ≈60 |
+| ROY giocatore | 0,028 | **0,060** | 0,055 | ≥0,03 |
+| quote ruolo ROY | OK | OK (max SG ≤0,40) | OK | 0,06–0,45 |
+| stagioni MVP / max per carriera | 109 / 6 | **50 / 4** | 45 / 4 | ≤6 |
+| DPOY striscia max | 11 | **3** | 2 | ≤5 |
+
+`measure-stats-ovr.ts`, 1000/cella, random: picco@età r(ritiri 29–32 /1000)
+
+| set | Esordio | Pro | All-Star | Leggenda | floor48 | mv picked | c |
+|---|---|---|---|---|---|---|---|
+| A | 76@26 r16 | 74@26 r368 | 71@26 r362 | 70@26 r379 | 0 | ≥0,918 | 0,837–0,863 |
+| B | 76@26 r14 | 74@26 r355 | 71@26 r374 | 70@26 r386 | 0 | ≥0,929 | 0,844–0,869 |
+
+Ritiri All-Star B 29–32: **374, fuori banda 300–340** (prima 346). Anche Leggenda B esce dalla banda (324 → 386).
+Provati twilightFloorK/Min, peakShift, lambda, pulseToAttrs: nessuno porta i ritiri in banda senza rompere i premi
+(peakShift -2,5: B All-Star 382). Non fattibile in questo giro: serve una leva dedicata sulla fine carriera.
+
+Fingerprint gate off invariati: `e5b585ba…d1ae`, `4d949edf…5f73c2a`. Unit 421/421, stats 24/24, lint, typecheck,
+build, e2e 153 passed / 4 skipped.
+
+Raccomandazione: **non** fare ancora il bump: premi e debutto a posto, ritiri 29–32 fuori banda.

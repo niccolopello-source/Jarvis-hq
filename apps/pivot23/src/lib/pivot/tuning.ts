@@ -85,14 +85,16 @@ export const TUNING = {
   statsOvr: {
     start: 50,
     lambda: 0.5,
-    k: 0.55,
-    pulseToAttrs: 0.6,
+    k: 1.4,
+    pulseToAttrs: 0.3,
     twilightFloorK: 0.74,
     twilightFloorMin: 52,
     twilightFloorMax: 72,
     draftStockRef: 62,
     catchUpMax: 1.5,
-    peakShift: -2.5,
+    peakShift: -8,
+    /** 2.23 CPU rookie class: OVR lift on top of the lottery lift, so the class debuts at the player's ~60. */
+    cpuRookieLift: 1.5,
   },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",
