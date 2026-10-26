@@ -9,6 +9,7 @@ import { SAVE_VERSION } from "./config";
 import { EURO_TITLE_LINES, playoffSeriesFormat, SERIES_WIN_LINES, seriesWinProbability, simulateSeries } from "./league";
 import { careerCommentary } from "./legacy";
 import { clearLive, loadLive, SAVE_KEY, saveLive, buildLiveSave } from "./save";
+import { retireBarScaleOf } from "./tuning";
 
 const demoCareer = {
   name: "Giulia Rossi",
@@ -84,8 +85,10 @@ test("the same career seed produces the same demo summary", () => {
   assert.notDeepEqual(otherSeed, first, "different seeds should be able to produce different career outcomes");
 });
 
-test("late viability loss or serious injury ends a career while an eligible age-35 player can continue to a recorded age-36 season", () => {
-  const healthy = playCareerSim({ ...demoCareer, seed: 73117 });
+// 2.23.0 scales the end-of-career bars by difficulty (retireBarScaleOf); careers created as 2.22 keep the 2.5 late bar.
+for (const engineVersion of ["2.22.0-beta", undefined] as const)
+test(`late viability loss or serious injury ends a career while an eligible age-35 player can continue to a recorded age-36 season (${engineVersion ?? "current"})`, () => {
+  const healthy = playCareerSim({ ...demoCareer, seed: 73117, ...(engineVersion ? { engineVersion } : {}) });
   const at33 = {
     ...healthy,
     age: 33,
@@ -94,7 +97,7 @@ test("late viability loss or serious injury ends a career while an eligible age-
     seasonHistory: [...healthy.seasonHistory.slice(0, -1), { ...healthy.seasonHistory.at(-1)!, age: 33, min: 18 }],
   };
   assert.equal(isCareerOver(at33), false);
-  assert.equal(isCareerOver({ ...at33, injuryDrag: 2.5 }), true);
+  assert.equal(isCareerOver({ ...at33, injuryDrag: 2.5 * retireBarScaleOf(at33, 33) }), true);
   assert.equal(isCareerOver({
     ...at33,
     seasonHistory: [...at33.seasonHistory.slice(0, -1), { ...at33.seasonHistory.at(-1)!, min: 11.5 }],

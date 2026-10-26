@@ -554,11 +554,14 @@ function buildAwards(
   const v2 = usesAwardsV2(s);
   const mvpPast = v2 ? mvpHistoryV2(s.seasonHistory) : null;
   const repeatCost = mvpPast ? mvpFatigueV2(mvpPast.get(PLAYER_KEY)) : s.mvpCount * 7 + s.titleCount * 2.5;
+  // 2.23.0+ only: past the second career MVP each further one costs a fixed score. No RNG.
+  const careerCost = usesStatsOvr(s) ? Math.max(0, (s.mvpCount | 0) - TUNING.statsOvr.mvpCareerFree) * TUNING.statsOvr.mvpCareerCost : 0;
   const pScore =
     mvpScore(playerProd, box.wins, playerEff, playerImpact, box.gp, games, s.hidden.consistency, playerNar) +
     (rand() - 0.5) * SIM.awards.noise +
     mvpHelpOf(s, d.mvpHelp) -
-    repeatCost;
+    repeatCost -
+    careerCost;
 
   const bestStar = bestStarsByTeam(s);
   const cpu = table

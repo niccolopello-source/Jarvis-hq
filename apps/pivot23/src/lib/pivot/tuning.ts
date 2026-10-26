@@ -97,10 +97,16 @@ export const TUNING = {
     cpuRookieLift: 1.5,
     /** 2.23 end-of-career lever: multiplier on the injury retirement bars at ages 29-33 (per difficulty, 1 = 2.22 bar).
      *  Higher bar = fewer early exits. Deterministic threshold, consumes no randomness. */
-    retireBarScale: { esordio: 1, pro: 1.08, allstar: 1.12, leggenda: 1.25 } as Record<DifficultyId, number | Readonly<Record<number, number>>>,
-    /** Pro injury drags cluster just under the age-32 bar, so a uniform scale jumps from ~350 to ~292 early exits.
+    retireBarScale: { esordio: 1, pro: 1.04, allstar: 1.08, leggenda: 1.12 } as Record<DifficultyId, number | Readonly<Record<number, number>>>,
+    /** 2.23: OVR at which the minutes formula gives its base share (2.22 rule: 60). 2.23 careers sit ~2 OVR higher
+     *  through the prime, so the same OVR buys fewer minutes. Deterministic, no RNG. */
+    minutesRef: 62,
+    /** 2.23: MVP score cost per career MVP beyond mvpCareerFree (caps runaway MVP careers on Esordio). */
+    mvpCareerFree: 2,
+    mvpCareerCost: 4,
+    /** Injury drags cluster just under one bar (Pro 32, All-Star/Leggenda 33), so a uniform scale jumps from ~350 to ~292 early exits.
      *  This share of careers (picked by seedHash, no RNG) gets the split scale at that age instead. */
-    retireBarSplit: { pro: { age: 32, scale: 1.12, share: 0.5 } } as Partial<Record<DifficultyId, { age: number; scale: number; share: number }>>,
+    retireBarSplit: { pro: { age: 32, scale: 1.12, share: 0.25 }, allstar: { age: 33, scale: 1.04, share: 0.5 }, leggenda: { age: 33, scale: 1.18, share: 0.5 } } as Partial<Record<DifficultyId, { age: number; scale: number; share: number }>>,
   },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",

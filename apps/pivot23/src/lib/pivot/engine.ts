@@ -1888,7 +1888,7 @@ function simulateRegularSeasonInner(s: PlayerState, n: number): SeasonRow {
   const trust = 1 + (s.coachTrust - 50) * 0.003;
   let min = round1(
     clamp(
-      (17.2 + (ovr - 60) * 0.58 + (s.hidden.motor / 100) * 3.2) * d.minutes * rookCut * vetCut * trust,
+      (17.2 + (ovr - (usesStatsOvr(s) ? TUNING.statsOvr.minutesRef : 60)) * 0.58 + (s.hidden.motor / 100) * 3.2) * d.minutes * rookCut * vetCut * trust,
       11.5,
       s.age >= 34 ? 31.8 : 37.6,
     ),
