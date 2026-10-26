@@ -87,3 +87,34 @@ Nota: con k 0,35 (prima taratura) l'OVR massimo raggiungibile dagli attributi er
 
 `config.ts`: `ENGINE_VERSION = "2.23.0-beta"`; aggiornare version-gate/ovr-balance-gate, golden `GOLDEN_2_22` +
 nuovo `GOLDEN`, fp di experiment fissati a 2.22, bande 2.23 in injury-retire.stats. Attiva insieme anche ROOKIE_TAGS (2.23.0).
+
+## 7. Decisione di Pello e rimisura dopo il merge di main 99762f6 (26 ott 2026)
+
+**Decisione (Pello, 26 ott 2026): OVR al debutto ≈ 60.** Tuning invariato in questo PR (start 50, lambda 0,5).
+Misura: con start 50 l'OVR della stagione 1 su 2.23 è **mediana 55** (p10 54, p90 55, 400 carriere, tutte le
+difficoltà), non ~60 come scritto al §5. Prova esplorativa (non applicata) con `start: 60` → mediana 65.
+Per arrivare a ≈60 serve quindi start ≈55 oppure un pre-draft più forte: da tarare e rimisurare prima del bump.
+Su 2.22 il debutto è 59 (mediana).
+
+Merge: commit merge normale di main (rookie events #134/#138/#139, stesso gate 2.23.0). Conflitto solo nello script
+`test` di `package.json`: tenuti tutti i file di entrambe le parti. Rookie events e statsOvr non si sovrappongono:
+il rookie slot cambia solo *quale* carta esce (stagioni 2–3), gli effetti passano da `applyChoiceFx` come ogni
+altra carta, quindi niente doppia applicazione. ENGINE_VERSION resta 2.22.0-beta.
+
+Compatibilità: `fp-evtags.mts` → `e5b585ba…d1ae` = main; `scripts/fp1200.mts` → `4d949edf…5f73c2a` = main. VERIFIED.
+
+Rimisura 2.23 (con rookie events), `measure-stats-ovr.ts`, 1000 carriere/cella:
+
+| set | Esordio | Pro | All-Star | Leggenda | prudente fl max | mv | c |
+|---|---|---|---|---|---|---|---|
+| A | 75@26 r10 | 73@27 r324 | 70@27 r331 | 68@27 r337 | 0,106 | ≥0,994 | 0,950–0,953 |
+| B | 75@27 r10 | 73@27 r334 | 70@27 r346 | 69@27 r324 | 0,088 | ≥0,991 | 0,950–0,952 |
+
+Leggenda set B ora 324 (nella banda); All-Star B 346 fuori banda 300–340 (IC 317–376).
+
+Premi su 2.23 (stessi campioni e soglie di `awards-v2.stats` e D-23, versione impostata all'apertura):
+- ROY: quota giocatore **0,028** (soglia ≥0,03) → **FAIL** (2.22: 0,055). Quote ruolo OK (min PG 0,12, max SG 0,34).
+  Stagioni MVP 109 vs 45 su 2.22, max MVP 6 (limite 6).
+- DPOY: striscia massima **11** (limite 5) → **FAIL** (2.22: 2).
+
+Raccomandazione: **non** fare il bump 2.23 finché ROY, DPOY e OVR al debutto non sono sistemati.
