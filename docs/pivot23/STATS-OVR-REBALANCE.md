@@ -205,3 +205,22 @@ Fingerprint invariati. Unit 421/421, stats 24/24, lint, typecheck, build: PASS (
 versione corrente (golden, pin 2.21/2.22: andrebbero aggiornati, non è permesso in questo giro), falliscono tre
 controlli reali sulla nuova versione: ROY giocatore **0,015** (soglia ≥0,03, `awards-v2.stats`), bust ufficiali
 **93/1000** fuori banda 12–18% (P0-LIFE Pro), max MVP **8** su Esordio (limite 6). Bump **non** fatto.
+
+### 7.4 Correzioni 2.23 e attivazione 2.23.0-beta (26 ott 2026)
+
+Tutte le leve valgono solo per carriere 2.23 (`usesStatsOvr`); 2.20–2.22 restano identiche.
+
+- **Bust (P0-LIFE Pro):** riferimento minuti `minutesRef` 62 (prima 60). Bust Pro **130/1000** (banda 12–18%),
+  D-08 13,8%, lab-progression 0.
+- **MVP Esordio:** costo di carriera `mvpCareerCost` 4 per ogni MVP oltre il secondo (`mvpCareerFree` 2), senza RNG.
+  Max MVP per carriera **4–5** (limite 6). `peakShift` resta −8 (valori −12…−16 rompevano il controllo lab).
+- **ROY:** il valore 0,015 era un artefatto del campione `awards-v2.stats` (carriere aperte alla versione corrente e
+  rietichettate). Ora il campione storico apre a 2.22.0-beta; aggiunto un campione 2.23: ROY giocatore **0,055**.
+- **Ritiri:** split per età scelti da `seedHash` (nessun RNG): Pro a 32 (scala 1,12, quota 25%), All-Star a 33
+  (1,04, 50%), Leggenda base 1,12 e a 33 (1,18, 50%). Uscite 29–32 in banda su set di test, A e B.
+- **App (G1):** dopo un turno di playoff vinto, la scelta e il turno successivo vengono salvati subito; la pausa
+  di riepilogo è solo grafica (`PivotApp.tsx` `pickPlayoff`). Nessun effetto sui risultati del motore.
+- **Test aggiornati:** golden e fingerprint 2.22 fissati a 2.22.0-beta e nuovi valori 2.23; test di versione su
+  2.23.0-beta; loop 2.23 in `injury-retire.stats` e `awards-v2.stats` con le stesse bande; nuovo
+  `legacy-saves.test.ts` (salvataggi 2.20/2.21/2.22 caricati e simulati con le proprie regole). Nessuna banda
+  allargata, nessuna copertura rimossa. Fingerprint fp1200 invariato.
