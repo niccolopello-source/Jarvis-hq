@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { ARCHIVE_KEY, archiveStateOf, freshPlayer, isArchivePersisted, loadArchive, saveArchive, toArchive } from "./engine.ts";
+import { ARCHIVE_KEY, storyEventById, archiveStateOf, freshPlayer, isArchivePersisted, loadArchive, saveArchive, toArchive } from "./engine.ts";
 import { createOnce, mayDeleteLive, newLifeAsk } from "./new-life.ts";
 import {
   BACKUP_KEY,
@@ -442,6 +442,60 @@ test("D-20 archive limit: the evicted career is reported, never removed silently
     }
     assert.deepEqual(lastArchiveEvicted().map((e) => e.name), ["Vita 0"]);
     assert.equal(loadArchive().length, 8);
+  } finally {
+    st.restore();
+  }
+});
+
+/* ---------------- Resume hardening: story pending rebuild + eventId ---------------- */
+
+function storyData(p: PlayerState, pending: Record<string, unknown>) {
+  return { ...data(p), pending: { kind: "story", title: "T", subtitle: "S", script: "late", options: [], ...pending } as never };
+}
+
+test("resume: a valid rebuild survives saveLive/loadLive", () => {
+  const st = install();
+  try {
+    const rebuild = { rng: 123456, pop: 2, back: [[0, "a"], [3, "b"]] };
+    assert.equal(saveLive(storyData(player(), { eventId: "late-x", rebuild })), true);
+    const pending = loadLive()?.pending as { eventId?: string; rebuild?: unknown } | null;
+    assert.equal(pending?.eventId, "late-x");
+    assert.deepEqual(pending?.rebuild, rebuild);
+  } finally {
+    st.restore();
+  }
+});
+
+test("resume: a malformed rebuild is dropped (rng outside uint32, pop > 24, bad back)", () => {
+  for (const rebuild of [
+    { rng: -1, pop: 0, back: [] },
+    { rng: 2 ** 32, pop: 0, back: [] },
+    { rng: 1.5, pop: 0, back: [] },
+    { rng: 1, pop: 25, back: [] },
+    { rng: 1, pop: 0, back: [[0, 1]] },
+    "junk",
+  ]) {
+    const st = install();
+    try {
+      saveLive(storyData(player(), { eventId: "late-x", rebuild }));
+      const pending = loadLive()?.pending as { eventId?: string; rebuild?: unknown } | null;
+      assert.equal(pending?.eventId, "late-x", JSON.stringify(rebuild));
+      assert.equal(pending?.rebuild, undefined, JSON.stringify(rebuild));
+    } finally {
+      st.restore();
+    }
+  }
+});
+
+test("resume: a non-string eventId is dropped on load and storyEventById tolerates it", () => {
+  const st = install();
+  try {
+    const p = player();
+    saveLive(storyData(p, { eventId: 42, rebuild: { rng: 1, pop: 0, back: [] } }));
+    const pending = loadLive()?.pending as { eventId?: unknown } | null;
+    assert.ok(pending, "the career still opens");
+    assert.equal(pending?.eventId, undefined);
+    assert.doesNotThrow(() => storyEventById(p, 42 as never, "late"));
   } finally {
     st.restore();
   }

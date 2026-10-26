@@ -1,10 +1,11 @@
 
-import { Component, memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Component, memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
 import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components/pivot/LeaguePanel";
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
 import { CAREER_NAME_MAX, careerName, chipsFromFx, chipsFromSnapshot, consequenceSchedule, endSentence, formatCareerTotal, getSeasonDisplayLabel, tidyText, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
+import { InstagramLink } from "@/components/pivot/InstagramLink";
 import { SideRail, adBreakAtSeasonEnd } from "@/ads";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
 import { pathFeel, playoffNerves, draftWho, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
@@ -72,6 +73,8 @@ import {
   startOverallOf,
   startProPath,
   storyEventById,
+  eventRebuildOf,
+  type EventRebuild,
   tickContract,
   toArchive,
   verdictOf,
@@ -112,6 +115,7 @@ import { advancedOf } from "@/lib/pivot/peak";
 import { displayedPeak } from "@/lib/pivot/peak-display";
 import { defensiveMarks } from "@/lib/pivot/awards-helpers";
 import { CrashFallback } from "./CrashFallback";
+import { signalBootAttention } from "@/boot-signal";
 import { SoundToggle } from "@/intro-sound/SoundToggle";
 import { clearLive, hasLiveSave, lastLoadReport, loadLive, loadSwipe, logSeqFrom, persistentStorageAvailable, releaseLiveFlush, saveLive, saveSwipe, watchLiveConflicts, type LiveLoadReport } from "@/lib/pivot/save";
 import { CAREER_TABS, SwipeTrack } from "@/components/pivot/SwipePager";
@@ -141,7 +145,7 @@ type Tab = CareerTab;
 type Pending =
   | { kind: "path" }
   | { kind: "call"; pick: number; flavor: string }
-  | { kind: "story"; title: string; subtitle: string; options: Opt[]; script?: SavedStoryScript; eventId?: string }
+  | { kind: "story"; title: string; subtitle: string; options: Opt[]; script?: SavedStoryScript; eventId?: string; rebuild?: EventRebuild }
   | { kind: "recap"; row: SeasonRow; qualified: boolean; awardNote: string; door: string }
   | { kind: "playoff"; round: number; opponent: Team; nerves: string }
   | { kind: "fa"; offers: MarketOffer[]; desk: string }
@@ -193,12 +197,14 @@ function pendingFromEvent(
   script: SavedStoryScript,
   s: PlayerState,
 ): Pending {
+  const rebuild = eventRebuildOf(s, ev.id);
   return {
     kind: "story",
     title: fillTemplate(ev.title, s),
     subtitle: fillTemplate(ev.subtitle, s),
     script,
     eventId: ev.id,
+    ...(rebuild ? { rebuild } : {}),
     options: optsFromEvent(ev, s),
   };
 }
@@ -207,7 +213,7 @@ function hydratePending(raw: SavedPending | Pending | null, s: PlayerState): Pen
   if (!raw) return null;
   if (raw.kind === "hold") return null;
   if (raw.kind === "story") {
-    const ev = storyEventById(s, raw.eventId, raw.script);
+    const ev = storyEventById(s, raw.eventId, raw.script, raw.rebuild);
     const runs = optsFromEvent(ev, s);
     const options = (raw.options.length ? raw.options : ev.choices).map((o, i) => {
       const label = fillTemplate(o.label, s);
@@ -221,7 +227,15 @@ function hydratePending(raw: SavedPending | Pending | null, s: PlayerState): Pen
         }),
       };
     });
-    return { kind: "story", title: raw.title, subtitle: raw.subtitle, script: raw.script, eventId: raw.eventId, options };
+    return {
+      kind: "story",
+      title: raw.title,
+      subtitle: raw.subtitle,
+      script: raw.script,
+      eventId: raw.eventId,
+      ...(raw.rebuild ? { rebuild: raw.rebuild } : {}),
+      options,
+    };
   }
   return raw as Pending;
 }
@@ -369,6 +383,12 @@ export function PivotApp() {
     document.documentElement.classList.remove("pivot-live", "pivot-ready");
     initLang();
   }, []);
+
+  // A recovery notice on the first screen must not sit behind the splash (see src/boot-signal.ts).
+  const recoveryAtBoot = loadNotice !== null && loadNotice.state !== "migrated" && screen === "intro";
+  useLayoutEffect(() => {
+    if (recoveryAtBoot) signalBootAttention("recovery");
+  }, [recoveryAtBoot]);
 
   useEffect(() => {
     const lean =
@@ -1222,7 +1242,10 @@ export function PivotApp() {
               {t("archive", lang)} · {archive.length}
             </button>
           )}
-          <p className="totem-credit totem-home">Powered by Totem</p>
+          <div className="totem-row totem-row-home">
+            <InstagramLink lang={lang} />
+            <p className="totem-credit totem-home">Powered by Totem</p>
+          </div>
         </section>
       )}
 
@@ -1376,7 +1399,10 @@ export function PivotApp() {
       </div>
       <SideRail side="right" lang={lang} placeholder={t("adReserved", lang)} />
       <div className="ad-foot">
-        <p className="totem-credit">Powered by Totem</p>
+        <div className="totem-row">
+          <InstagramLink lang={lang} />
+          <p className="totem-credit">Powered by Totem</p>
+        </div>
       </div>
     </div>
   );
@@ -1478,6 +1504,16 @@ function DraftView({
       </div>
     </section>
   );
+}
+
+/* A double tap is two clicks: the first one decides. When the decision has no hold (a lost playoff
+   round, for one) the next card mounts under the finger and the second click (detail 2) would answer
+   it too. Keyboard activation has detail 0 and a fresh tap detail 1, so only that repeat is dropped. */
+function swallowRepeatTap(event: ReactMouseEvent<HTMLDivElement>) {
+  if (event.detail > 1) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
 }
 
 function CareerView(props: {
@@ -1610,7 +1646,11 @@ function CareerView(props: {
               <LogBlock key={e.id} e={e} chips={props.chips[e.id]} />
             ))}
             {pending && (
-              <div data-pending className={props.locked ? "pending-beat is-held" : "pending-beat"}>
+              <div
+                data-pending
+                className={props.locked ? "pending-beat is-held" : "pending-beat"}
+                onClickCapture={swallowRepeatTap}
+              >
                 <PendingBlock
                   player={player}
                   pending={pending}

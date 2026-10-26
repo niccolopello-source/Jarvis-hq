@@ -135,7 +135,7 @@ async function recordIntro(page: import("@playwright/test").Page, slowWipe = fal
     if (slow) {
       document.addEventListener("DOMContentLoaded", () => {
         const style = document.createElement("style");
-        style.textContent = "#boot.is-curtain.leave-full { animation-duration: 6s !important; }";
+        style.textContent = "#boot.is-curtain.leave-full, #boot.is-curtain.leave-full.fx-slice, #boot.is-curtain.leave-full.fx-slice::after, .boot-band { animation-duration: 6s !important; }";
         document.head.append(style);
       });
     }
@@ -166,7 +166,7 @@ test("the intro curtain never blocks the start button and any key skips it", asy
   await expect(page.locator("#boot")).toHaveCount(0);
   const log = await introLog(page);
   expect(log.mode).toBe("full");
-  expect(log.anim).toContain("curtainWipe");
+  expect(log.anim).toMatch(/curtain(Wipe|Slice)/);
   expect(log.keyAt).toBeGreaterThan(0);
   expect(log.removedAt - log.keyAt).toBeLessThan(400);
   expect(await page.evaluate(() => localStorage.getItem("pivot23.introSeen"))).toBe("1");
