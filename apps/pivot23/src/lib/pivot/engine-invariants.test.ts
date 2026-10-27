@@ -6,6 +6,7 @@ import { seedRookieClass } from "./league.ts";
 import { fallbackDraws } from "./rng.ts";
 import { RULES, RULES_DEFAULTS, resetRules } from "./rules.ts";
 import type { PlayerState } from "./types.ts";
+import { usesOvrCurve } from "./tuning.ts";
 
 /* Engine audit (PIVOT 23 master cycle 1): seeded randomness, determinism, invariants. */
 
@@ -159,7 +160,8 @@ test("invariants hold across 320 seeded careers (all difficulties, paths and dra
       if (k > 0) {
         const d = r.overall - H[k - 1]!.overall;
         if (Math.abs(d) > SIM.overall.yoyYoung) bad(`${tag}: overall moved ${d} in a year`);
-        if (H[k - 1]!.age >= s.apexAge && d > 0) bad(`${tag}: overall rose after the peak age ${s.apexAge}`);
+        // 2.24.0 (OVR_CURVE_SINCE): post-apex jitter can tick a season up (hot year), never above the career peak (checked below) and by at most 2.
+        if (H[k - 1]!.age >= s.apexAge && d > (usesOvrCurve(s) ? 2 : 0)) bad(`${tag}: overall rose ${d} after the peak age ${s.apexAge}`);
       }
     });
     for (const [k, v] of Object.entries(s.attrs)) if (!(v >= SIM.attr.min && v <= SIM.attr.max)) bad(`seed ${o.seed}: attr ${k}=${v}`);
@@ -220,6 +222,7 @@ test("golden full-career baseline for fixed seeds (engine output, not run-vs-run
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.20.0-beta")), GOLDEN_2_20);
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.21.0-beta")), GOLDEN_2_21);
   assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.22.0-beta")), GOLDEN_2_22);
+  assert.deepEqual([optsFor(1), optsFor(2), optsFor(3)].map(legacy("2.23.0-beta")), GOLDEN_2_23);
 });
 /* 2.13.0-beta (#66): D-09 world "regress" and the D-23 step 0.16 apply only to careers created
    on 2.13.0 or later, and they move team strength and DPOY voting, so new careers get new values.
@@ -248,8 +251,11 @@ const GOLDEN_2_21 = ["98dfbe1cff63005d", "7d3a61619f2ab3c7", "6145b610683f9847"]
    With the Option A scar (#121); depth + A1 only: 11250cba26abd854, c2294f36017f9258, 9974e4d64f9a01bf.
    Kept unchanged as GOLDEN_2_22 when 2.23.0 opened. */
 const GOLDEN_2_22 = ["a40e6980601afc57", "c2294f36017f9258", "8f8997a50fce81a3"];
-/* 2.23.0-beta (stats-driven OVR STATS_OVR_SINCE, end-of-career bar scale, minutes reference, MVP career cost): all three seeds move. */
-const GOLDEN = ["b196ce60c17a3d40", "4ff9eeffdcfe4299", "8bc11b18d8b95e87"];
+/* 2.23.0-beta (stats-driven OVR STATS_OVR_SINCE, end-of-career bar scale, minutes reference, MVP career cost): all three seeds move.
+   Kept unchanged as GOLDEN_2_23 when 2.24.0 opened. */
+const GOLDEN_2_23 = ["b196ce60c17a3d40", "4ff9eeffdcfe4299", "8bc11b18d8b95e87"];
+/* 2.24.0-beta (OVR curve OVR_CURVE_SINCE: decline jitter, softer wall, soft cap, hot/cold seasons, exits 33-36): all three seeds move. */
+const GOLDEN = ["34f34b4458745985", "e9b12be7132f6760", "0305f4276ba4e6c3"];
 const GOLDEN_2_15 = ["4da0c610aba577b4", "eb62db0aef59b9a9", "ca8469ee05d836c7"];
 const GOLDEN_2_14 = ["d28207b449d5e3c1", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
 const GOLDEN_2_13 = ["9f5583418a7fa740", "b0c282429613a5ef", "c8c2acbea10d0c1c"];

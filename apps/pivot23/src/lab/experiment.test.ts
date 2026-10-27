@@ -47,9 +47,13 @@ test("experiment absent keeps the no-hook fingerprints", () => {
   assert.equal(fp(23017, "2.22.0-beta"), "281950b4373c20fd");
   assert.equal(fp(23034, "2.22.0-beta"), "d4f59906719745f0");
   assert.equal(fp(23102, "2.22.0-beta"), "dfeef411f69e9235");
-  assert.equal(fp(23017), "31e1e1c7f014d714");
-  assert.equal(fp(23034), "13d61d7767e096dd");
-  assert.equal(fp(23102), "e4f95920d096ab2e");
+  // 2.24.0 (OVR curve): new careers move; the 2.23 value stays pinned to careers created as 2.23.
+  assert.equal(fp(23017, "2.23.0-beta"), "31e1e1c7f014d714");
+  assert.equal(fp(23034, "2.23.0-beta"), "13d61d7767e096dd");
+  assert.equal(fp(23102, "2.23.0-beta"), "e4f95920d096ab2e");
+  assert.equal(fp(23017), "4909984f78f14b37");
+  assert.equal(fp(23034), "724c3c275f4cec8d");
+  assert.equal(fp(23102), "31d91edd56546a04");
 });
 
 test("forced minutes move the recorded average without touching the played path", () => {
@@ -61,7 +65,8 @@ test("forced minutes move the recorded average without touching the played path"
   assert.equal(fp(23017, "2.20.0-beta"), "be7cb73d0a40a658");
   assert.equal(fp(23017, "2.21.0-beta"), "9738a8b25ae0f507");
   assert.equal(fp(23017, "2.22.0-beta"), "281950b4373c20fd");
-  assert.equal(fp(23017), "31e1e1c7f014d714");
+  assert.equal(fp(23017, "2.23.0-beta"), "31e1e1c7f014d714");
+  assert.equal(fp(23017), "4909984f78f14b37");
 });
 
 test("work ethic stays locked and a forced injury costs games", () => {

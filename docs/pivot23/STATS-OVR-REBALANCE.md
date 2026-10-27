@@ -224,3 +224,41 @@ Tutte le leve valgono solo per carriere 2.23 (`usesStatsOvr`); 2.20–2.22 resta
   2.23.0-beta; loop 2.23 in `injury-retire.stats` e `awards-v2.stats` con le stesse bande; nuovo
   `legacy-saves.test.ts` (salvataggi 2.20/2.21/2.22 caricati e simulati con le proprie regole). Nessuna banda
   allargata, nessuna copertura rimossa. Fingerprint fp1200 invariato.
+
+## 8. Curva OVR 2.24 e attivazione 2.24.0-beta (27 ott 2026)
+
+Tutte le leve sono in `TUNING.ovrCurve` e valgono solo per carriere create su 2.24.0 o dopo (`usesOvrCurve`,
+`OVR_CURVE_SINCE`). Le carriere 2.12–2.23 restano identiche byte per byte (fingerprint 160 carriere × 2.12–2.23
+uguali a main; golden e fingerprint 2.23 fissati a 2.23.0-beta). I salvataggi in corso tengono la propria
+`engineVersion`: nessuna migrazione (`legacy-saves.test.ts` copre 2.20–2.23).
+
+**Leve:** calo post-picco per età con jitter (`declineJitter` 4,2), muro 2.23 spostato a 28 e più morbido
+(`wallSlope` 0,7), tetto morbido sul potenziale, stagioni calde/fredde (`swing` 5,5, più ampio sopra 80 OVR),
+uscite graduali 34–35 legate al calo dal picco più `exitAgeBonus` {35: 0,3} che conta solo dopo la stagione
+dei 35 anni. Massimo 36 anni invariato.
+
+**Obiettivi e valori misurati** (1000 carriere per difficoltà, 3 blocchi 334/333/333, seed `b*1e6+i*7+11`;
+forte = pot 97, debole = pot 66):
+
+| Gruppo | Calo esatto −1 (obiettivo ≤0,35) | Picco mediano | Fine 33/34/35/36 | Bust per blocco (unione) | ROY (unione) |
+|---|---|---|---|---|---|
+| Esordio | .282/.259/.314 | 76/75/75 | 381/309/179/123 | .045/.057/.057 (.053) | .090 |
+| Pro | .286/.260/.288 | 74/73/73 | 286/226/107/84 | .135/.138/.102 (.125) | .056 |
+| All-Star | .264/.265/.278 | 71/70/70 | 305/230/96/86 | .237/.165/.135 (.179) | .043 |
+| Leggenda | .257/.253/.262 | 70/69/69 | 304/233/101/68 | .234/.180/.156 (.190) | .032 |
+| Pro forte | .322/.277/.316 | 95 | 258/190/65/32 | 0 | .404 |
+| Pro debole | .294/.281/.314 | 65 | 281/255/143/113 | .002 | .001 |
+
+Prima (2.24 prototipo): −1 fino a .377 e un buco a 35 (11–17 uscite su 1000). Picco precoce (≤23) 0 ovunque.
+Bust All-Star/Leggenda su 9 blocchi extra (4–12): .174–.207 (media .192) e .186–.237 (media .208): la varianza
+dei blocchi 1–3 è rumore binomiale (σ≈0,021 a n=333), non corretta. D-08 sull'unione 13,7% (banda 10–15%),
+Pro 12,5% (banda 12–18%).
+
+**Test aggiornati per il bump:** golden e fingerprint 2.23 fissati a 2.23.0-beta, nuovi valori 2.24; test di
+versione su 2.24.0-beta; invariante «nessuna risalita dopo il picco» invariata fino a 2.23, su 2.24 ammessa
+una risalita ≤2 (mai sopra il picco di carriera); casi fissi «sano a 35 continua» fissati a 2.23 e nuovo test
+2.24 che a 35 alcune carriere chiudono e altre ricevono l'offerta per i 36.
+
+**Nota per i giocatori**
+- IT: «Nuove carriere: l'overall cresce e cala in modo più naturale, con stagioni calde e fredde e ritiri tra 33 e 36 anni. Le carriere in corso non cambiano.»
+- EN: "New careers: overall rises and falls more naturally, with hot and cold seasons and retirements between 33 and 36. Careers in progress don't change."
