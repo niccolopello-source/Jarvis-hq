@@ -60,7 +60,8 @@ export function careerEndingSignal(s: PlayerState): "minutes" | "injury" | null 
   if (usesOvrCurve(s) && s.age >= TUNING.ovrCurve.exitFrom && s.age < MAX_AGE) {
     const c = TUNING.ovrCurve;
     const drop = Math.max(0, finite(s.peakOverall, s.overall) - finite(s.overall, 0));
-    const lean = drop * c.exitDeclineW + (s.age - 32) * c.exitAgeW;
+    // The bonus only counts once that age's season is played (the same summer is read again after the birthday).
+    const lean = drop * c.exitDeclineW + (s.age - 32) * c.exitAgeW + (s.seasonHistory.at(-1)?.age === s.age ? (c.exitAgeBonus[s.age] ?? 0) : 0);
     if (lean > seedUnit(s.seed, 24000 + s.age)) return "minutes";
   }
   // From 33 the shipped bar is 2.5. Only 2.19.0+ bars (per difficulty) may set their own value here.

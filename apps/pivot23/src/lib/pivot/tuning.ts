@@ -115,7 +115,7 @@ export const TUNING = {
     declineJitter: 4.2,
     /** Slope of the 2.23 "peak - (age-28)*1.05" wall; 2.24 starts it a year later and softer. */
     wallFrom: 28,
-    wallSlope: 0.85,
+    wallSlope: 0.7,
     /** (2) Soft potential cap: before softAge the ceiling sits softGap points per year under potential+1.4,
      *  and growth slows inside the last softRoom points. */
     softAge: 25,
@@ -132,6 +132,8 @@ export const TUNING = {
     exitDeclineW: 0.03,
     exitAgeW: 0.04,
     exitFrom: 34,
+    /** Extra exit lean by age: the healthy careers that reach 35 would otherwise all play on to 36. */
+    exitAgeBonus: { 35: 0.3 } as Record<number, number>,
   },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",
