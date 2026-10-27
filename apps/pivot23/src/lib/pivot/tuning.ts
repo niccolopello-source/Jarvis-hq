@@ -134,6 +134,8 @@ export const TUNING = {
     exitFrom: 34,
     /** Extra exit lean by age: the healthy careers that reach 35 would otherwise all play on to 36. */
     exitAgeBonus: { 35: 0.3 } as Record<number, number>,
+    /** Per-difficulty override of statsOvr.retireBarScale (injury bar at 29-33) for 2.24 careers; the age split still applies. */
+    retireBarScale: { leggenda: 1.3 } as Partial<Record<DifficultyId, number>>,
   },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",
@@ -309,7 +311,9 @@ export function retireBarScaleOf(career: { engineVersion?: string; difficulty?: 
   if (age < 29 || age > 33 || !usesStatsOvr(career)) return 1;
   const split = TUNING.statsOvr.retireBarSplit[career.difficulty ?? "pro"];
   if (split && split.age === age && seedHash(finiteSeed(career.seed), 2323) % 1000 < split.share * 1000) return split.scale;
-  const scale = TUNING.statsOvr.retireBarScale[career.difficulty ?? "pro"] ?? 1;
+  // 2.24: the OVR curve keeps more Leggenda careers on a heavier load at 29-32, so its base scale can differ (OVR_CURVE_SINCE only).
+  const scale = (usesOvrCurve(career) ? TUNING.ovrCurve.retireBarScale[career.difficulty ?? "pro"] : undefined)
+    ?? TUNING.statsOvr.retireBarScale[career.difficulty ?? "pro"] ?? 1;
   return typeof scale === "number" ? scale : (scale[age] ?? 1);
 }
 

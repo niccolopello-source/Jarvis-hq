@@ -236,6 +236,9 @@ uguali a main; golden e fingerprint 2.23 fissati a 2.23.0-beta). I salvataggi in
 (`wallSlope` 0,7), tetto morbido sul potenziale, stagioni calde/fredde (`swing` 5,5, più ampio sopra 80 OVR),
 uscite graduali 34–35 legate al calo dal picco più `exitAgeBonus` {35: 0,3} che conta solo dopo la stagione
 dei 35 anni. Massimo 36 anni invariato.
+Leggenda: scala della barra infortuni 29–33 a 1,3 solo per carriere 2.24 (`ovrCurve.retireBarScale`; 2.23 resta 1,12),
+perché la curva 2.24 portava le uscite 29–32 a 355/1000. Seed del test (91000+13i): 1,12→355, 1,2→336, 1,24→332,
+**1,3→324** (banda 300–340), 1,35→311. Sui set A (910000) e B (920000) con 1,3: 290 e 297 (con 1,12: 310 e 321).
 
 **Obiettivi e valori misurati** (1000 carriere per difficoltà, 3 blocchi 334/333/333, seed `b*1e6+i*7+11`;
 forte = pot 97, debole = pot 66):

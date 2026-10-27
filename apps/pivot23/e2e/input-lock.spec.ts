@@ -135,6 +135,8 @@ test("three rapid trade acknowledgements open the next story once", async ({ pag
 test("three rapid retirement clicks play the final season once", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const player = career("Lock Retire", 73117);
+  // Pinned to 2.23: on 2.24 this seed takes the hash-picked exit at 35 (exitAgeBonus), so no offer to play at 36.
+  player.engineVersion = "2.23.0-beta";
   player.age = 35;
   player.season = 15;
   player.extraSeason = false;

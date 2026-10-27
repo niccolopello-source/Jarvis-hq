@@ -254,8 +254,8 @@ const GOLDEN_2_22 = ["a40e6980601afc57", "c2294f36017f9258", "8f8997a50fce81a3"]
 /* 2.23.0-beta (stats-driven OVR STATS_OVR_SINCE, end-of-career bar scale, minutes reference, MVP career cost): all three seeds move.
    Kept unchanged as GOLDEN_2_23 when 2.24.0 opened. */
 const GOLDEN_2_23 = ["b196ce60c17a3d40", "4ff9eeffdcfe4299", "8bc11b18d8b95e87"];
-/* 2.24.0-beta (OVR curve OVR_CURVE_SINCE: decline jitter, softer wall, soft cap, hot/cold seasons, exits 33-36): all three seeds move. */
-const GOLDEN = ["34f34b4458745985", "e9b12be7132f6760", "0305f4276ba4e6c3"];
+/* 2.24.0-beta (OVR curve OVR_CURVE_SINCE: decline jitter, softer wall, soft cap, hot/cold seasons, exits 33-36, Leggenda injury bar scale 1.3): all three seeds move. */
+const GOLDEN = ["34f34b4458745985", "e9b12be7132f6760", "b5651d6dbbf16910"];
 const GOLDEN_2_15 = ["4da0c610aba577b4", "eb62db0aef59b9a9", "ca8469ee05d836c7"];
 const GOLDEN_2_14 = ["d28207b449d5e3c1", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
 const GOLDEN_2_13 = ["9f5583418a7fa740", "b0c282429613a5ef", "c8c2acbea10d0c1c"];
