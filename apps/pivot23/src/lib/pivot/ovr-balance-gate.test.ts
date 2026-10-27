@@ -58,8 +58,8 @@ test("gate constants and version rule", () => {
 });
 
 test("new careers are 2.21 and get the Leggenda +2 potential on the same roll", () => {
-  // 2.23.0: the running engine moved on; the +2 Leggenda roll is unchanged for 2.21+ careers.
-  assert.equal(ENGINE_VERSION, "2.23.0-beta");
+  // 2.23.0/2.24.0: the running engine moved on; the +2 Leggenda roll is unchanged for 2.21+ careers.
+  assert.equal(ENGINE_VERSION, "2.24.0-beta");
   assert.equal(openCareerSim({ seed: 9100 }).s.engineVersion, ENGINE_VERSION);
   let moved = 0;
   for (let seed = 1; seed <= 200; seed++) {

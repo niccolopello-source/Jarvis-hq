@@ -1,5 +1,5 @@
 
-import { A1_BARS_SINCE, TUNING, usesStatsOvr, scriptSlotFor, scriptWindowsOf, seedHash, versionAtLeast, worldOf } from "./tuning";
+import { A1_BARS_SINCE, TUNING, usesStatsOvr, usesOvrCurve, seedUnit, scriptSlotFor, scriptWindowsOf, seedHash, versionAtLeast, worldOf } from "./tuning";
 import { INJURY_KINDS, INJURY_SEVERITY, loadInjuryAt, usesInjuryEvents, type InjuryKind } from "./injuries";
 import {
   ATTR_LABELS,
@@ -1862,7 +1862,12 @@ export function simulateRegularSeason(s: PlayerState, n: number): SeasonRow {
 function simulateRegularSeasonInner(s: PlayerState, n: number): SeasonRow {
   const role = ROLES[s.role];
   const a = s.attrs;
-  const ovr = s.overall;
+  // 2.24 (3): hot/cold year (not the rookie year, so ROY keeps its band). The box score reads the OVR plus a seed swing; older careers read the OVR.
+  const oc = TUNING.ovrCurve;
+  // Stars swing a bit more: their season-to-season box score varies as much as anyone's while their OVR barely moves.
+  const swingAmp = oc.swing * (1 + Math.max(0, s.overall - oc.swingHiFrom) * oc.swingHiGain);
+  const swing = usesOvrCurve(s) && n > 1 ? (seedUnit(s.seed, 25000 + n) * 2 - 1) * swingAmp : 0;
+  const ovr = s.overall + swing;
   const d = diffOf(s);
   const games = leagueGames(s);
   const prev = s.seasonHistory[s.seasonHistory.length - 1];
@@ -1888,7 +1893,7 @@ function simulateRegularSeasonInner(s: PlayerState, n: number): SeasonRow {
   const trust = 1 + (s.coachTrust - 50) * 0.003;
   let min = round1(
     clamp(
-      (17.2 + (ovr - (usesStatsOvr(s) ? TUNING.statsOvr.minutesRef : 60)) * 0.58 + (s.hidden.motor / 100) * 3.2) * d.minutes * rookCut * vetCut * trust,
+      (17.2 + (s.overall - (usesStatsOvr(s) ? TUNING.statsOvr.minutesRef : 60)) * 0.58 + (s.hidden.motor / 100) * 3.2) * d.minutes * rookCut * vetCut * trust,
       11.5,
       s.age >= 34 ? 31.8 : 37.6,
     ),
@@ -2070,6 +2075,10 @@ function simulateRegularSeasonInner(s: PlayerState, n: number): SeasonRow {
     }
   });
   s.seasonHistory.push(row);
+  // 2.24 (3): a season above expectations leaves a small attribute gain.
+  if (swing > TUNING.ovrCurve.hotFrom * TUNING.ovrCurve.swing) {
+    spreadOnAttrs(s, (Math.min(1, swing / TUNING.ovrCurve.swing) * TUNING.ovrCurve.hotBoost) / TUNING.statsOvr.k, "pulse");
+  }
   releaseOldTables(s);
   return row;
 }

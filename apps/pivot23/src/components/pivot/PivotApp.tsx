@@ -594,13 +594,18 @@ export function PivotApp() {
 
   function startDraft() {
     releaseLiveFlush();
+    // Test-only (dev server, never in a production build): e2e can open a career on a gated engine, e.g. 2.24.
+    const forced = import.meta.env.DEV ? localStorage.getItem("pivot-e2e-engine") || undefined : undefined;
     const s = freshPlayer(
       careerName(name),
       role,
       nat,
       Number.isFinite(number) ? Math.max(0, Math.min(99, number)) : 23,
       difficulty,
+      undefined,
+      forced,
     );
+    if (forced) s.engineVersion = forced;
     withPlayer(s, () => {
       s.rivalName = pick(RIVAL_NAMES);
       s.coachName = pick(COACH_NAMES);

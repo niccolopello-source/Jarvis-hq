@@ -66,7 +66,7 @@ for (const d of DIFFS) {
    at 29-32 has injuryDrag 0), so 2.20 Leggenda careers also close on a fading role at 31-32. Same seeds. */
 test(`2.20: Leggenda early exits (last season at 29-32) within ${BAND.leggenda[0]}-${BAND.leggenda[1]} per 1000, no fewer than 2.19`, () => {
   resetTuning();
-  assert.equal(ENGINE_VERSION, "2.23.0-beta");
+  assert.equal(ENGINE_VERSION, "2.24.0-beta");
   let early = 0;
   let early219 = 0;
   for (let i = 0; i < N; i++) {
@@ -121,17 +121,31 @@ for (const d of DIFFS) {
   });
 }
 
-/* 2.23.0 (stats-driven OVR + end-of-career bar scale): the same owner bands on careers created by the running engine. */
+/* 2.23.0 (stats-driven OVR + end-of-career bar scale): the same owner bands, pinned to careers created as 2.23 since 2.24.0. */
 for (const d of DIFFS) {
   test(`2.23: early exits (last season at 29-32) on ${d} within ${BAND[d][0]}-${BAND[d][1]} per 1000`, () => {
     resetTuning();
-    assert.equal(ENGINE_VERSION, "2.23.0-beta");
+    assert.equal(ENGINE_VERSION, "2.24.0-beta");
+    let early = 0;
+    for (let i = 0; i < N; i++) {
+      const age = lastAge(91000 + i * 13, d, "2.23.0-beta");
+      if (age >= 29 && age <= 32) early++;
+    }
+    const [lo, hi] = BAND[d];
+    assert.ok(early >= lo && early <= hi, `2.23 ${d} early exits 29-32: ${early}/${N}`);
+  });
+}
+
+/* 2.24.0 (OVR curve): the same owner bands on careers created by the running engine. */
+for (const d of DIFFS) {
+  test(`2.24: early exits (last season at 29-32) on ${d} within ${BAND[d][0]}-${BAND[d][1]} per 1000`, () => {
+    resetTuning();
     let early = 0;
     for (let i = 0; i < N; i++) {
       const age = lastAge(91000 + i * 13, d, ENGINE_VERSION);
       if (age >= 29 && age <= 32) early++;
     }
     const [lo, hi] = BAND[d];
-    assert.ok(early >= lo && early <= hi, `2.23 ${d} early exits 29-32: ${early}/${N}`);
+    assert.ok(early >= lo && early <= hi, `2.24 ${d} early exits 29-32: ${early}/${N}`);
   });
 }

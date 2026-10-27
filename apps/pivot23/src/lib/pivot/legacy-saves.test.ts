@@ -15,8 +15,8 @@ class MemoryStorage implements Storage {
   setItem(k: string, v: string) { this.values.set(k, String(v)); }
 }
 
-/* Salvataggi creati con 2.20–2.22 devono caricarsi e continuare con le loro regole, non con quelle 2.23. */
-for (const version of ["2.20.0-beta", "2.21.0-beta", "2.22.0-beta"]) {
+/* Salvataggi creati con 2.20–2.23 devono caricarsi e continuare con le loro regole, non con quelle della versione corrente. */
+for (const version of ["2.20.0-beta", "2.21.0-beta", "2.22.0-beta", "2.23.0-beta"]) {
   test(`${version} save loads and keeps simulating on its own rules under ${ENGINE_VERSION}`, () => {
     for (const seed of [4101, 4202, 4303]) {
       Object.defineProperty(globalThis, "localStorage", { configurable: true, value: new MemoryStorage() });

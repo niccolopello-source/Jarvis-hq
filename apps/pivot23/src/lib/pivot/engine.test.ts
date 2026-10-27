@@ -86,7 +86,8 @@ test("the same career seed produces the same demo summary", () => {
 });
 
 // 2.23.0 scales the end-of-career bars by difficulty (retireBarScaleOf); careers created as 2.22 keep the 2.5 late bar.
-for (const engineVersion of ["2.22.0-beta", undefined] as const)
+// 2.24.0 adds a hash-picked exit lean at 35 (exitAgeBonus), so the fixed "healthy 35 continues" case is pinned to 2.23.
+for (const engineVersion of ["2.22.0-beta", "2.23.0-beta"] as const)
 test(`late viability loss or serious injury ends a career while an eligible age-35 player can continue to a recorded age-36 season (${engineVersion ?? "current"})`, () => {
   const healthy = playCareerSim({ ...demoCareer, seed: 73117, ...(engineVersion ? { engineVersion } : {}) });
   const at33 = {
@@ -116,6 +117,18 @@ test(`late viability loss or serious injury ends a career while an eligible age-
     ...enteringFinalSeason,
     seasonHistory: [...enteringFinalSeason.seasonHistory, { ...enteringFinalSeason.seasonHistory.at(-1)!, age: 36 }],
   }), true);
+});
+
+test("2.24 healthy careers at 35 split between closing and the offer to play at 36", () => {
+  let offer = 0, finish = 0;
+  for (let seed = 1; seed <= 60; seed++) {
+    const player = playCareerSim({ ...demoCareer, seed });
+    const last = player.seasonHistory.at(-1)!;
+    const at35 = { ...player, age: 35, extraSeason: false, injuryDrag: 0, seasonHistory: [...player.seasonHistory.slice(0, -1), { ...last, age: 35, min: 18 }] };
+    const step = offseasonStep(at35);
+    if (step === "offer") offer += 1; else if (step === "finish") finish += 1;
+  }
+  assert.ok(offer > 0 && finish > 0, `offer ${offer} finish ${finish}`);
 });
 
 test("retirement and forced summer-trade transitions preserve their visible action in choiceLog", () => {
@@ -152,7 +165,8 @@ test("retirement and forced summer-trade transitions preserve their visible acti
 });
 
 test("the final season is played once and then the career closes", () => {
-  const player = playCareerSim({ ...demoCareer, seed: 73117 });
+  // Pinned to 2.23: on 2.24 this seed takes the hash-picked exit at 35 (exitAgeBonus).
+  const player = playCareerSim({ ...demoCareer, seed: 73117, engineVersion: "2.23.0-beta" });
   const last = player.seasonHistory.at(-1)!;
   const at35 = {
     ...player,
