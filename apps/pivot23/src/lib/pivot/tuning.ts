@@ -108,6 +108,28 @@ export const TUNING = {
      *  This share of careers (picked by seedHash, no RNG) gets the split scale at that age instead. */
     retireBarSplit: { pro: { age: 32, scale: 1.12, share: 0.25 }, allstar: { age: 33, scale: 1.04, share: 0.5 }, leggenda: { age: 33, scale: 1.18, share: 0.5 } } as Partial<Record<DifficultyId, { age: number; scale: number; share: number }>>,
   },
+  /** 2.24.0+ only (OVR_CURVE_SINCE): career-shape levers. Older careers never read these. Deterministic (seedHash), no RNG. */
+  ovrCurve: {
+    /** (1) Post-apex yearly decline base by age (OVR points), scaled by wear; jitter spreads it (can hold or tick up). */
+    declineBase: { 27: 0.5, 28: 0.6, 29: 0.7, 30: 0.8, 31: 1.0, 32: 1.25, 33: 1.55, 34: 1.85, 35: 2.15, 36: 2.4 } as Record<number, number>,
+    declineJitter: 4.2,
+    /** Slope of the 2.23 "peak - (age-28)*1.05" wall; 2.24 starts it a year later and softer. */
+    wallFrom: 28,
+    wallSlope: 0.85,
+    /** (2) Soft potential cap: before softAge the ceiling sits softGap points per year under potential+1.4,
+     *  and growth slows inside the last softRoom points. */
+    softAge: 25,
+    softGap: 1.2,
+    softRoom: 5,
+    /** (3) Season swing in OVR points used by the box score (hot/cold year) and attribute boost for hot years. */
+    swing: 5.5,
+    hotFrom: 0.35,
+    hotBoost: 0.6,
+    /** (4) Gradual exits 33-35 tied to decline from peak: retire when (peak-ovr)*declineW + (age-32)*ageW > hash share. */
+    exitDeclineW: 0.03,
+    exitAgeW: 0.04,
+    exitFrom: 34,
+  },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",
 };
@@ -184,6 +206,19 @@ export const LEGEND_RETIRE_SINCE = "2.20.0";
  *  Careers created on 2.22 or earlier keep the age-curve OVR exactly. Shared 2.23.0 gate: grokbot/rookie-tags may add
  *  its own rule under the same release; each rule keeps its own constant. */
 export const STATS_OVR_SINCE = "2.23.0";
+
+/** Career-shape rules (TUNING.ovrCurve): variable decline, soft potential cap, season swing, gradual 33-35 exits. */
+export const OVR_CURVE_SINCE = "2.24.0";
+
+export function usesOvrCurve(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, OVR_CURVE_SINCE);
+}
+
+/** Deterministic 0..1 from the career seed (no RNG consumed). */
+export function seedUnit(seed: unknown, salt: number): number {
+  const n = typeof seed === "number" && Number.isFinite(seed) ? seed : 0;
+  return seedHash(n, salt) / 4294967296;
+}
 
 /** True when this career was created by STATS_OVR_SINCE (2.23.0) or later. */
 /** ENGINE_VERSION that the CPU rookie class (league.ts) was stamped with before 2.23.0: pinned so older careers keep their rival rookies bit-identical. */
