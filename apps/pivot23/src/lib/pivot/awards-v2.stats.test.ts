@@ -40,7 +40,7 @@ function sample(version: string, open = "2.22.0-beta"): Out {
   return o;
 }
 
-for (const [label, version, open] of [["2.15", "2.15.0-beta", "2.22.0-beta"], ["2.23", "2.23.0-beta", "2.23.0-beta"]] as const)
+for (const [label, version, open] of [["2.15", "2.15.0-beta", "2.22.0-beta"], ["2.23", "2.23.0-beta", "2.23.0-beta"], ["2.24", "2.24.0-beta", "2.24.0-beta"]] as const)
 test(`awards v2 (${label} careers): ROY position balance, player ROY rate, MVP vote consistency`, () => {
   const v2 = sample(version, open);
   const tot = Object.values(v2.role).reduce((a, b) => a + b, 0);

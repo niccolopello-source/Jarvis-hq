@@ -123,6 +123,9 @@ export const TUNING = {
     softRoom: 5,
     /** (3) Season swing in OVR points used by the box score (hot/cold year) and attribute boost for hot years. */
     swing: 5.5,
+    /** Above this OVR the swing grows by swingHiGain per point (stars' box score is noisier than their OVR). */
+    swingHiFrom: 80,
+    swingHiGain: 0.07,
     hotFrom: 0.35,
     hotBoost: 0.6,
     /** (4) Gradual exits 33-35 tied to decline from peak: retire when (peak-ovr)*declineW + (age-32)*ageW > hash share. */
