@@ -1,0 +1,14 @@
+/** Read-only: award/bust bands for one engine version. node --import=tsx scripts/ovr-curve-validate.ts <version> */
+import { advanceCareerSim, openCareerSim, playCareerSim } from "../src/lib/pivot/engine";
+import { careerBust } from "../src/lib/pivot/bust";
+import { ROY_ROLES } from "../src/lib/pivot/rookie-box";
+import { ROOKIE_NAMES } from "../src/lib/pivot/teams";
+const V = process.argv[2]!;
+const roles = ["PG","SG","SF","PF","C"] as const, paths = ["NCAA","Europa","G-League"] as const;
+let pb = 0; for (let i = 0; i < 1000; i++) { const s = playCareerSim({ name:"P0-LIFE", role:roles[i%5], nationality:"ITA", number:23, difficulty:"pro", path:paths[i%3], seed:(i+1)*1000+17, draft:"random", engineVersion:V }); if (careerBust(s).bust) pb++; }
+let db = 0, dn = 0; for (const [d,b] of [["esordio",100000],["pro",200000],["allstar",300000],["leggenda",400000]] as const) for (let i=0;i<300;i++,dn++){ const s=playCareerSim({name:"Misura",role:roles[i%5],nationality:"ITA",number:23,difficulty:d,path:paths[i%3],seed:b+i,draft:"random",engineVersion:V}); if(careerBust(s).bust) db++; }
+let maxStreak = 0; for (let i=0;i<300;i++){ const s=playCareerSim({name:"Misura",role:roles[i%5],nationality:"ITA",number:23,difficulty:"esordio",path:paths[i%3],seed:100000+i,draft:"random",engineVersion:V}); let st=0,prev=-9; for(const r of s.seasonHistory){ if(r.awards.includes("DPOY")){ st = r.season===prev+1? st+1:1; prev=r.season; maxStreak=Math.max(maxStreak,st);} } }
+const o = { y1:0, roy:0, role:{} as Record<string,number>, mvp:0, board:0, maxMvp:0 };
+for (const d of ["esordio","pro","allstar","leggenda"]) for (let i=0;i<100;i++){ const job=openCareerSim({seed:70000+i*613,difficulty:d as never,engineVersion:V}); let done=false,last:unknown; while(!done){ done=advanceCareerSim(job); const r=job.s.seasonHistory.at(-1)!; if(r===last)continue; last=r; if(r.awards.includes("MVP"))o.mvp++; if(r.league?.mvpBoard?.[0]?.isPlayer&&!r.awards.includes("MVP")&&r.awards.includes("All-Star")&&r.gp>=65)o.board++; if(r.season===1&&r.league?.royRace?.length){o.y1++; const roy=r.league.awards.find(a=>a.title==="ROY"); let role:string|undefined; if(r.awards.includes("Rookie of the Year")){o.roy++;role=job.s.role;} else {const w=r.league.royRace.find(c=>!c.isPlayer&&c.name===roy?.name); role=w?.role??ROY_ROLES[ROOKIE_NAMES.indexOf(w?.name??"")];} if(role)o.role[role]=(o.role[role]??0)+1;} } o.maxMvp=Math.max(o.maxMvp,job.s.mvpCount); }
+const tot=Object.values(o.role).reduce((a,b)=>a+b,0); const sh=Object.values(o.role).map(v=>v/tot);
+console.log(JSON.stringify({V, proBustP0LIFE:pb/1000, d08Bust:db/dn, dpoyMaxStreakEsordio:maxStreak, royPlayer:+(o.roy/o.y1).toFixed(3), royShareMin:+Math.min(...sh).toFixed(3), royShareMax:+Math.max(...sh).toFixed(3), mvpSeasons:o.mvp, maxMvp:o.maxMvp, boardNoTrophy:o.board}));

@@ -108,6 +108,35 @@ export const TUNING = {
      *  This share of careers (picked by seedHash, no RNG) gets the split scale at that age instead. */
     retireBarSplit: { pro: { age: 32, scale: 1.12, share: 0.25 }, allstar: { age: 33, scale: 1.04, share: 0.5 }, leggenda: { age: 33, scale: 1.18, share: 0.5 } } as Partial<Record<DifficultyId, { age: number; scale: number; share: number }>>,
   },
+  /** 2.24.0+ only (OVR_CURVE_SINCE): career-shape levers. Older careers never read these. Deterministic (seedHash), no RNG. */
+  ovrCurve: {
+    /** (1) Post-apex yearly decline base by age (OVR points), scaled by wear; jitter spreads it (can hold or tick up). */
+    declineBase: { 27: 0.5, 28: 0.6, 29: 0.7, 30: 0.8, 31: 1.0, 32: 1.25, 33: 1.55, 34: 1.85, 35: 2.15, 36: 2.4 } as Record<number, number>,
+    declineJitter: 4.2,
+    /** Slope of the 2.23 "peak - (age-28)*1.05" wall; 2.24 starts it a year later and softer. */
+    wallFrom: 28,
+    wallSlope: 0.7,
+    /** (2) Soft potential cap: before softAge the ceiling sits softGap points per year under potential+1.4,
+     *  and growth slows inside the last softRoom points. */
+    softAge: 25,
+    softGap: 1.2,
+    softRoom: 5,
+    /** (3) Season swing in OVR points used by the box score (hot/cold year) and attribute boost for hot years. */
+    swing: 5.5,
+    /** Above this OVR the swing grows by swingHiGain per point (stars' box score is noisier than their OVR). */
+    swingHiFrom: 80,
+    swingHiGain: 0.07,
+    hotFrom: 0.35,
+    hotBoost: 0.6,
+    /** (4) Gradual exits 33-35 tied to decline from peak: retire when (peak-ovr)*declineW + (age-32)*ageW > hash share. */
+    exitDeclineW: 0.03,
+    exitAgeW: 0.04,
+    exitFrom: 34,
+    /** Extra exit lean by age: the healthy careers that reach 35 would otherwise all play on to 36. */
+    exitAgeBonus: { 35: 0.3 } as Record<number, number>,
+    /** Per-difficulty override of statsOvr.retireBarScale (injury bar at 29-33) for 2.24 careers; the age split still applies. */
+    retireBarScale: { leggenda: 1.3 } as Partial<Record<DifficultyId, number>>,
+  },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",
 };
@@ -184,6 +213,19 @@ export const LEGEND_RETIRE_SINCE = "2.20.0";
  *  Careers created on 2.22 or earlier keep the age-curve OVR exactly. Shared 2.23.0 gate: grokbot/rookie-tags may add
  *  its own rule under the same release; each rule keeps its own constant. */
 export const STATS_OVR_SINCE = "2.23.0";
+
+/** Career-shape rules (TUNING.ovrCurve): variable decline, soft potential cap, season swing, gradual 33-35 exits. */
+export const OVR_CURVE_SINCE = "2.24.0";
+
+export function usesOvrCurve(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, OVR_CURVE_SINCE);
+}
+
+/** Deterministic 0..1 from the career seed (no RNG consumed). */
+export function seedUnit(seed: unknown, salt: number): number {
+  const n = typeof seed === "number" && Number.isFinite(seed) ? seed : 0;
+  return seedHash(n, salt) / 4294967296;
+}
 
 /** True when this career was created by STATS_OVR_SINCE (2.23.0) or later. */
 /** ENGINE_VERSION that the CPU rookie class (league.ts) was stamped with before 2.23.0: pinned so older careers keep their rival rookies bit-identical. */
@@ -269,7 +311,9 @@ export function retireBarScaleOf(career: { engineVersion?: string; difficulty?: 
   if (age < 29 || age > 33 || !usesStatsOvr(career)) return 1;
   const split = TUNING.statsOvr.retireBarSplit[career.difficulty ?? "pro"];
   if (split && split.age === age && seedHash(finiteSeed(career.seed), 2323) % 1000 < split.share * 1000) return split.scale;
-  const scale = TUNING.statsOvr.retireBarScale[career.difficulty ?? "pro"] ?? 1;
+  // 2.24: the OVR curve keeps more Leggenda careers on a heavier load at 29-32, so its base scale can differ (OVR_CURVE_SINCE only).
+  const scale = (usesOvrCurve(career) ? TUNING.ovrCurve.retireBarScale[career.difficulty ?? "pro"] : undefined)
+    ?? TUNING.statsOvr.retireBarScale[career.difficulty ?? "pro"] ?? 1;
   return typeof scale === "number" ? scale : (scale[age] ?? 1);
 }
 

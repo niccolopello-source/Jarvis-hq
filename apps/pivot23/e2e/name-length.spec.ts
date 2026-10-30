@@ -74,6 +74,8 @@ test("a 32-character name survives draft, career, Legacy Report, Career Card and
   }
   await expect(page.locator(".result-view")).toBeVisible();
   const card = page.getByRole("region", { name: "Career Card" });
+  // The Career Card is a lazy chunk: under parallel load it can mount after the default 5 s, so wait for it.
+  await expect(card).toBeVisible({ timeout: 30_000 });
   await expect(card).toContainText(NAME);
   await both(page, "report");
   for (const width of [320, 390]) {
