@@ -1,5 +1,5 @@
 
-import { A1_BARS_SINCE, TUNING, usesStatsOvr, usesOvrCurve, seedUnit, scriptSlotFor, scriptWindowsOf, seedHash, versionAtLeast, worldOf } from "./tuning";
+import { A1_BARS_SINCE, TUNING, usesStatsOvr, usesOvrCurve, usesOvrCurve225, seedUnit, scriptSlotFor, scriptWindowsOf, seedHash, versionAtLeast, worldOf } from "./tuning";
 import { INJURY_KINDS, INJURY_SEVERITY, loadInjuryAt, usesInjuryEvents, type InjuryKind } from "./injuries";
 import {
   ATTR_LABELS,
@@ -152,6 +152,11 @@ export function withPlayer<T>(s: PlayerState, fn: () => T): T {
 }
 
 /** Quanto un evento sposta l'overall: età, ruolo, contenuto della scelta. */
+function finiteNum(n: unknown, fb: number): number {
+  const v = Number(n);
+  return Number.isFinite(v) ? v : fb;
+}
+
 export function contextualPulse(s: PlayerState, fx: Fx): number {
   const ageW = s.age <= 22 ? 1.18 : s.age <= 26 ? 1 : s.age <= 31 ? 0.64 : 0.4;
   const w = ROLES[s.role].weights;
@@ -171,17 +176,19 @@ export function contextualPulse(s: PlayerState, fx: Fx): number {
     (h.chemistry || 0) * 0.01 -
     Math.abs(h.ego || 0) * 0.005 +
     (h.mediaSavvy || 0) * 0.004;
-  const formHit = (fx.form || 0) * 0.16;
+  const dp = usesOvrCurve225(s) ? TUNING.depth225 : null;
+  const formHit = (fx.form || 0) * 0.16 * (dp ? dp.formGain : 1);
   const devHit = (fx.development || 0) * 0.26;
   const injuryHit = -((fx.injuryDrag || 0) * 0.2 + (fx.injuryRisk || 0) * 0.012);
-  const soft =
+  const soft = (dp ? dp.softGain : 1) * (
     (fx.publicImage || 0) * 0.007 +
     (fx.coachTrust || 0) * 0.009 +
     (fx.morale || 0) * 0.008 +
     (fx.rivalry || 0) * 0.004 -
-    (fx.gamesPenalty || 0) * 0.004;
+    (fx.gamesPenalty || 0) * 0.004);
   const raw = (attrHit * 0.2 + hiddenHit + formHit + devHit + injuryHit + soft) * ageW;
-  const signed = Math.abs(raw) < 0.035 ? (raw >= 0 ? 0.045 : -0.04) * ageW : raw;
+  const lo = dp ? dp.minPulse : 0.035;
+  const signed = Math.abs(raw) < lo ? (raw >= 0 ? (dp ? dp.minPulse : 0.045) : (dp ? -dp.minPulse : -0.04)) * ageW : raw;
   return round2(clamp(signed, SIM.choice.eventMin, SIM.choice.eventMax));
 }
 
@@ -318,6 +325,8 @@ export function fillTemplate(text: string, s: PlayerState) {
 
 export function applyFx(s: PlayerState, fx: Fx) {
   const d = diffOf(s);
+  // 2.25: how a choice lands on mood and the coach also sticks as experience.
+  if (usesOvrCurve225(s)) addExperience(s, finiteNum(fx.morale, 0) * TUNING.depth225.expMoraleFx + finiteNum(fx.coachTrust, 0) * TUNING.depth225.expTrustFx);
   if (fx.attrs) {
     const ageS = s.age <= 23 ? 1.22 : s.age <= 27 ? 1 : s.age <= 31 ? 0.7 : 0.45;
     (Object.keys(fx.attrs) as AttrKey[]).forEach((k) => {
@@ -345,8 +354,15 @@ export function applyFx(s: PlayerState, fx: Fx) {
   if (fx.coachTrust) s.coachTrust = clamp(s.coachTrust + fx.coachTrust, 0, 100);
   if (fx.rivalry) s.rivalry = clamp(s.rivalry + fx.rivalry, 0, 100);
   if (fx.morale) s.morale = clamp(s.morale + fx.morale, 0, 100);
+  if (usesOvrCurve225(s) && (fx.morale || fx.coachTrust)) {
+    // 2.25: mood and trust carry into the next games (moderate).
+    const dp = TUNING.depth225;
+    s.form = clamp(s.form + (fx.morale || 0) * dp.moraleToForm + (fx.coachTrust || 0) * dp.trustToForm, -12, 12);
+  }
   if (fx.gamesPenalty) s.gamesPenalty += Math.round(fx.gamesPenalty * d.injury);
-  imprint(s, usesStatsOvr(s) ? statsPulse(s, fx) : contextualPulse(s, fx));
+  const pulse = usesStatsOvr(s) ? statsPulse(s, fx) : contextualPulse(s, fx);
+  if (usesOvrCurve225(s)) addExperience(s, pulse * TUNING.depth225.expPulse);
+  imprint(s, pulse);
 }
 
 /** 2.23.0+: the attribute part of an Fx is already on the attributes, so the pulse counts only the rest
@@ -367,8 +383,27 @@ export function applyChoiceFx(s: PlayerState, fx: Fx, cause: string) {
 }
 
 /** Season-start settlement of the causal memory. No RNG. Returns visible notes. */
+/** 2.25 only: moves the capped experience term. */
+export function addExperience(s: PlayerState, d: number) {
+  if (!Number.isFinite(d) || !d) return;
+  const cap = TUNING.depth225.expCap;
+  s.expOvr = round2(clamp(finiteNum(s.expOvr, 0) + d, -cap, cap));
+}
+
 export function settleCareerMemory(s: PlayerState, n: number): string[] {
-  return settleMemory(s, n, applyFx);
+  const notes = settleMemory(s, n, applyFx);
+  if (usesOvrCurve225(s) && n > 1) {
+    // 2.25: how the last months felt (mood, trust, form) feeds this season's growth. Moderate, capped, no RNG.
+    const dp = TUNING.depth225;
+    const st = (finiteNum(s.morale, 55) - 55) * dp.stateMorale + (finiteNum(s.coachTrust, 55) - 55) * dp.stateTrust + finiteNum(s.form, 0) * dp.stateForm;
+    const d = round2(clamp(st, -dp.stateCap, dp.stateCap));
+    // Experience: the season's mood, trust, form and work ethic, capped per season.
+    const hw = finiteNum(s.hidden?.workEthic, 50) - 50;
+    const ex = (finiteNum(s.morale, 55) - dp.expCenter) * dp.expMorale + (finiteNum(s.coachTrust, 55) - dp.expCenter) * dp.expTrust + finiteNum(s.form, 0) * dp.expForm + hw * dp.expTrait;
+    addExperience(s, clamp(ex - dp.expBias, -dp.expSeasonCap, dp.expSeasonCap));
+    if (d) imprint(s, d); else refreshOverall(s);
+  }
+  return notes;
 }
 
 export function applyAging(s: PlayerState) {
@@ -1891,9 +1926,12 @@ function simulateRegularSeasonInner(s: PlayerState, n: number): SeasonRow {
   const rookCut = s.age <= 20 ? 0.86 : s.age === 21 ? 0.92 : 1;
   const vetCut = s.age >= 33 ? Math.max(0.74, 1 - (s.age - 32) * 0.052) : 1;
   const trust = 1 + (s.coachTrust - 50) * 0.003;
+  // 2.25: morale moves minutes and the box score a little (older careers: 1 and 0).
+  const mood = usesOvrCurve225(s) ? clamp(finiteNum(s.morale, 55) - 55, -45, 45) : 0;
+  const moodMin = 1 + mood * TUNING.depth225.moraleMinutes;
   let min = round1(
     clamp(
-      (17.2 + (s.overall - (usesStatsOvr(s) ? TUNING.statsOvr.minutesRef : 60)) * 0.58 + (s.hidden.motor / 100) * 3.2) * d.minutes * rookCut * vetCut * trust,
+      (17.2 + (s.overall - (usesStatsOvr(s) ? TUNING.statsOvr.minutesRef : 60)) * 0.58 + (s.hidden.motor / 100) * 3.2) * d.minutes * rookCut * vetCut * trust * moodMin,
       11.5,
       s.age >= 34 ? 31.8 : 37.6,
     ),
@@ -1908,7 +1946,7 @@ function simulateRegularSeasonInner(s: PlayerState, n: number): SeasonRow {
     0.1,
     0.34,
   );
-  const formAdj = 1 + s.form * 0.018;
+  const formAdj = 1 + (s.form + mood * TUNING.depth225.moraleForm) * 0.018;
   const cons = 1 + ((s.hidden.consistency - 50) / 100) * 0.08;
   const noise = (amp: number) => {
     const spread = amp * (1.15 - s.hidden.consistency / 140);

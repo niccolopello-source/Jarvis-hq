@@ -139,8 +139,8 @@ export const TUNING = {
   },
   /** 2.25.0+ only (OVR_CURVE_225_SINCE): overrides of ovrCurve plus new levers. Deterministic (seedHash), no RNG. */
   ovrCurve225: {
-    softAge: 26,
-    softGap: 0.8,
+    softAge: 27,
+    softGap: 0.45,
     softRoom: 7,
     exitDeclineW: 0.02,
     exitAgeW: 0.032,
@@ -153,6 +153,44 @@ export const TUNING = {
     floorDrop: 2.5,
     floorJitter: 3,
     floorUntilPot: 74,
+  },
+  /** 2.25.0+ only: "everything affects everything". Soft state (morale, trust, image, rivalry) feeds form, minutes and the OVR pulse,
+   *  with moderate weights. Older careers never read these. */
+  depth225: {
+    /** Minutes multiplier per morale point away from 55 (±~9% at the extremes). */
+    moraleMinutes: 0.002,
+    /** Box-score form bonus per morale point away from 55 (added to s.form in the season formula). */
+    moraleForm: 0.04,
+    /** Gain on the soft (non-attribute) part of the OVR pulse, and on form. */
+    softGain: 1.8,
+    formGain: 1.6,
+    /** Smallest |pulse| a choice can leave (2.24: 0.045 / -0.04). */
+    minPulse: 0.08,
+    /** Spill-over of a choice's soft deltas into form: morale and coach trust move the next games too. */
+    moraleToForm: 0.05,
+    trustToForm: 0.03,
+    /** Gain on the choice/event pulse that lands on the attributes (2.24: 1). */
+    pulseGain: 1.7,
+    /** Season-start state pulse (OVR points): mood, trust and form of the last months feed growth. Capped at ±stateCap. */
+    stateMorale: 0.006,
+    stateTrust: 0.004,
+    stateForm: 0.012,
+    stateCap: 0.3,
+    /** Experience term (added after the curve clamps). Choice/event pulse share, season state weights, trait weight, cap. */
+    expPulse: 1.3,
+    expMorale: 0.16,
+    /** Neutral mood/trust for the experience term (the observed career average). */
+    expCenter: 58,
+    expTrust: 0.008,
+    expForm: 0.03,
+    expTrait: 0.006,
+    expSeasonCap: 0.9,
+    expCap: 2.6,
+    /** Per-choice morale / coach-trust swing kept as experience. */
+    expMoraleFx: 0.11,
+    expTrustFx: 0.02,
+    /** Season drift removed so the average career stays on the 2.24 level. */
+    expBias: 0.3,
   },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",

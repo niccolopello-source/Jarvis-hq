@@ -436,7 +436,10 @@ function ensureApexRolled(s: PlayerState) {
 export function refreshOverall(s: PlayerState) {
   ensureApexRolled(s);
   let o = computeOverall(s);
-  const last = Array.isArray(s.seasonHistory) ? s.seasonHistory[s.seasonHistory.length - 1] : undefined;
+  const last0 = Array.isArray(s.seasonHistory) ? s.seasonHistory[s.seasonHistory.length - 1] : undefined;
+  // 2.25: the experience term rides on top of the curve. Strip last season's share so it never compounds.
+  const exp225 = usesOvrCurve225(s);
+  const last = last0 && exp225 ? { ...last0, overall: last0.overall - finite(s.expByAge?.[last0.age], 0) } : last0;
   if (last && Number.isFinite(last.overall)) {
     const cap = yoyCap(s.age);
     o = clamp(o, last.overall - cap, last.overall + cap);
@@ -467,10 +470,12 @@ export function refreshOverall(s: PlayerState) {
     }
   }
   let potCeil = finite(s.potential, 76) + 1.4;
+  let weakW = 0;
   if (usesOvrCurve225(s)) {
     // 2.25: soft floor for low-potential careers (no more identical weak peaks): a seed-spread ceiling that fades out by floorUntilPot.
     const f = TUNING.ovrCurve225;
     const w = clamp((f.floorUntilPot - finite(s.potential, 76)) / 8, 0, 1);
+    weakW = w;
     potCeil -= w * (f.floorDrop + (seedUnit(s.seed, 25500) * 2 - 1) * f.floorJitter);
   }
   if (curve && age < c.softAge) {
@@ -483,12 +488,26 @@ export function refreshOverall(s: PlayerState) {
     o = Math.min(o, Math.max(ceil, last && Number.isFinite(last.overall) ? last.overall : -Infinity));
   }
   o = Math.min(o, potCeil);
+  if (exp225) {
+    // 2.25: experience (choices, morale, events, traits) is added after every clamp, with its own cap.
+    const e = experienceOf(s);
+    s.expByAge = { ...(s.expByAge ?? {}), [age]: e };
+    o += e;
+    // Low-potential careers keep the downside but cannot climb over their talent ceiling.
+    potCeil += Math.max(0, e) * (1 - weakW);
+  }
   let shown = displayOverall(Number.isFinite(o) ? o : startOverallOf(s));
   if (shown > potCeil) shown = Math.floor(potCeil);
   s.overall = clamp(shown, SIM.overall.min, SIM.overall.max);
   if (!Number.isFinite(s.peakOverall) || s.overall > s.peakOverall) s.peakOverall = s.overall;
   if (s.peakOverall > potCeil) s.peakOverall = Math.floor(potCeil);
   return s.overall;
+}
+
+/** 2.25 only: accumulated experience in OVR points, capped by TUNING.depth225.expCap. */
+export function experienceOf(s: PlayerState): number {
+  const cap = TUNING.depth225.expCap;
+  return Math.round(clamp(finite(s.expOvr, 0), -cap, cap) * 100) / 100;
 }
 
 export function weightedSkill(s: PlayerState) {

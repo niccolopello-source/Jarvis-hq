@@ -429,6 +429,10 @@ export interface PlayerState {
   round: number;
   draftHand: DraftCard[];
   choiceOvr: number;
+  /** 2.25+: experience term (OVR points) from choices, morale, events and traits. */
+  expOvr?: number;
+  /** 2.25+: experience applied at each age, so the next season can strip it. */
+  expByAge?: Record<number, number>;
   season: number;
   extraSeason: boolean;
   international: boolean;
