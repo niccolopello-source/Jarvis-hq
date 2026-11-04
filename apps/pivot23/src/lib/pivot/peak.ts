@@ -1,7 +1,7 @@
 
 /** Curva d'età, picco osservato 26–28, overall intero in display. */
 import { SIM } from "./config";
-import { TUNING, usesStatsOvr, injuryRetireBarsOf, minutesRetireBarOf, retireBarScaleOf, twilightBaseWearOf, usesBustB, usesBustB81, usesDecisions, usesRetireSpread, usesOvrCurve, seedUnit } from "./tuning";
+import { TUNING, usesStatsOvr, injuryRetireBarsOf, minutesRetireBarOf, retireBarScaleOf, twilightBaseWearOf, usesBustB, usesBustB81, usesDecisions, usesRetireSpread, usesOvrCurve, usesOvrCurve225, ovrCurveOf, seedUnit } from "./tuning";
 import { ROLES } from "./data";
 import { NAT_ORIGIN } from "./teams";
 import { rand } from "./rng";
@@ -58,7 +58,7 @@ export function careerEndingSignal(s: PlayerState): "minutes" | "injury" | null 
   }
   // 2.24: gradual exits at 33-35, tied to the decline from the peak (36 stays the hard maximum).
   if (usesOvrCurve(s) && s.age >= TUNING.ovrCurve.exitFrom && s.age < MAX_AGE) {
-    const c = TUNING.ovrCurve;
+    const c = ovrCurveOf(s);
     const drop = Math.max(0, finite(s.peakOverall, s.overall) - finite(s.overall, 0));
     // The bonus only counts once that age's season is played (the same summer is read again after the birthday).
     const lean = drop * c.exitDeclineW + (s.age - 32) * c.exitAgeW + (s.seasonHistory.at(-1)?.age === s.age ? (c.exitAgeBonus[s.age] ?? 0) : 0);
@@ -69,7 +69,9 @@ export function careerEndingSignal(s: PlayerState): "minutes" | "injury" | null 
   // 2.23: the 33 bar is scaled too, or the exit only moves from the 32 summer to the 33 one (last season still 32).
   if (s.injuryDrag >= (lateBar ?? 2.5) * retireBarScaleOf(s, s.age)) return "injury";
   const lastSeason = s.seasonHistory.at(-1);
-  if (lastSeason && lastSeason.min <= 11.5) return "minutes";
+  // 2.25: the late minutes bar eases at 33-34 (smaller cliff); every older career keeps 11.5.
+  const lateMin = usesOvrCurve225(s) ? (TUNING.ovrCurve225.lateMinutesBar[s.age] ?? 11.5) : 11.5;
+  if (lastSeason && lastSeason.min <= lateMin) return "minutes";
   return null;
 }
 
@@ -443,7 +445,7 @@ export function refreshOverall(s: PlayerState) {
   const age = finite(s.age, apex);
   // Intero: dopo l'apex il display scende, niente plateau che sposta il picco.
   const curve = usesOvrCurve(s);
-  const c = TUNING.ovrCurve;
+  const c = ovrCurveOf(s);
   if (age > apex && last && Number.isFinite(last.overall)) {
     if (curve) {
       // 2.24 (1): variable decline. Wear (injuries, low work ethic) speeds it up; the seed jitter can hold the year.
@@ -464,7 +466,13 @@ export function refreshOverall(s: PlayerState) {
         : Math.min(o, s.peakOverall - (age - 28) * 1.05);
     }
   }
-  const potCeil = finite(s.potential, 76) + 1.4;
+  let potCeil = finite(s.potential, 76) + 1.4;
+  if (usesOvrCurve225(s)) {
+    // 2.25: soft floor for low-potential careers (no more identical weak peaks): a seed-spread ceiling that fades out by floorUntilPot.
+    const f = TUNING.ovrCurve225;
+    const w = clamp((f.floorUntilPot - finite(s.potential, 76)) / 8, 0, 1);
+    potCeil -= w * (f.floorDrop + (seedUnit(s.seed, 25500) * 2 - 1) * f.floorJitter);
+  }
   if (curve && age < c.softAge) {
     // 2.24 (2): soft cap. Under softAge the ceiling sits lower, and growth slows close to it.
     const ceil = potCeil - (c.softAge - age) * c.softGap;
