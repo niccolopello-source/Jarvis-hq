@@ -75,6 +75,10 @@ test("end of a full career: report and card, archive, reload, reopen — identic
   expect(text).not.toMatch(/undefined|NaN|null|\{\w+\}/);
   expect(text).not.toMatch(/autenticat|unic[ao]\b|ufficialmente|rarit|authenticated|officially verified|legendary|epic/i);
   expect(await noOverflow(page)).toBe(true);
+  // Free themes carry no "Gratis" tag; the season table keeps its first column in view while scrolling.
+  await expect(page.locator(".lc-theme-tag")).toHaveCount(0);
+  const sticky = await page.locator(".lr-table tbody tr > :first-child").first().evaluate((el) => getComputedStyle(el).position);
+  expect(sticky).toBe("sticky");
   await page.waitForTimeout(800);
   await shot(page, "card-mobile-390", card);
   await shot(page, "result-mobile-390-full");
