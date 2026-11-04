@@ -4,7 +4,7 @@ import { useLang } from "@/lib/pivot/i18n";
 import { nationLabel, playoffResultLabel, roleLabel } from "@/lib/pivot/labels";
 import { nx } from "@/lib/pivot/narrative";
 import { buildLegacyReport, cardFaceOf, type CardFace, type LegacyReport } from "@/lib/pivot/legacy-report";
-import { fmtDec, fmtInt, lt, narrativeOf, pickLabel, recordLabel, recordValue, seasonsLabel, timelineLine } from "@/lib/pivot/legacy-i18n";
+import { fmtDec, fmtInt, legacyAwardLabel, lt, narrativeOf, pickLabel, recordLabel, recordValue, seasonsLabel, timelineLine } from "@/lib/pivot/legacy-i18n";
 import { COSMETIC_FLAGS, loadCardTheme, saveCardTheme, themeById, visibleThemes, type CardTheme } from "@/lib/pivot/cosmetics";
 import type { ArchiveCareer } from "@/lib/pivot/types";
 import type { Lang } from "@/lib/pivot/i18n";
@@ -175,7 +175,7 @@ export function LegacyReportView({ report, uid }: { report: LegacyReport; uid: s
             [lt("jersey", lang), r.number !== null ? `#${r.number}` : null],
             [lt("role", lang), r.roleCode ? roleLabel(r.roleCode, lang) : roleLabel(r.roleLabel, lang)],
             [lt("nation", lang), r.nationality ? nationLabel(r.nationality, lang) : null],
-            [lt("origin", lang), r.originPath ? nx(r.originPath, lang) : null],
+            [lt("origin", lang), r.originPath ? nx(r.originPath, lang).replace(/^G-League$/, "G League") : null],
             [lt("draft", lang), draft],
           ]}
         />
@@ -210,7 +210,7 @@ export function LegacyReportView({ report, uid }: { report: LegacyReport; uid: s
       <Section title={lt("awards", lang)} id={`${uid}-awards`}>
         {r.awards.length ? (
           <ul className="lr-chips">
-            {r.awards.map(([id, n]) => <li key={id}>{n > 1 ? `${n}× ${id}` : id}</li>)}
+            {r.awards.map(([id, n]) => <li key={id}>{n > 1 ? `${n}× ${legacyAwardLabel(id, lang)}` : legacyAwardLabel(id, lang)}</li>)}
           </ul>
         ) : (
           <p className="lr-muted">{lt("noAwards", lang)}</p>
