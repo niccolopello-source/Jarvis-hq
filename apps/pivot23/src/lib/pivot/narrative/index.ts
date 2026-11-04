@@ -51,11 +51,15 @@ function itCatalog(): Catalog {
  * stays byte-identical (saves, English catalog keys and golden hashes depend on it); only what an
  * Italian reader sees is corrected. Move the fix into the engine with a version gate (2.20).
  */
-const IT_DISPLAY_FIXES: ReadonlyArray<readonly [RegExp, string]> = [
+const IT_DISPLAY_FIXES: ReadonlyArray<readonly [RegExp, string | ((...m: string[]) => string)]> = [
   // engine.ts nationStory: "Dai una mano a la tua Nazionale / a la Nazionale Italiana"
   [/\bDai una mano a la (tua Nazionale|Nazionale Italiana)\b/g, "Dai una mano alla $1"],
   // world.ts draft news: "$STAR è il volto, si gioca a crescita."
   [/ è il volto, si gioca a crescita\./g, " è il volto del nuovo corso."],
+  // legacy.ts closing: "Quindici stagioni, o più: 16 anni di referto." -> "16 stagioni a referto."
+  [/Quindici stagioni, o più: (\d+) anni di referto\./g, "$1 stagioni a referto."],
+  // legacy.ts closing: "Quattro maglie, o più. 5 squadre." -> "5 maglie diverse."
+  [/Quattro maglie, o più\. (\d+) (squadre|città)\./g, (_m: string, n: string, w: string) => w === "città" ? `${n} città diverse.` : `${n} maglie diverse.`],
 ];
 
 /**
@@ -85,7 +89,7 @@ export function itDisplay(text: string): string {
   const whole = IT_LINE_MAP.get(text);
   if (whole !== undefined) return whole;
   let out = text;
-  for (const [re, to] of IT_DISPLAY_FIXES) out = out.replace(re, to);
+  for (const [re, to] of IT_DISPLAY_FIXES) out = typeof to === "string" ? out.replace(re, to) : out.replace(re, to);
   return out;
 }
 
