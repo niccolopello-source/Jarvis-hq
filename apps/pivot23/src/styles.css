@@ -2619,3 +2619,4 @@ img.court-mark-photo {
   outline: 2px solid var(--color-accent);
   outline-offset: 4px;
 }
+.name-count{display:block;text-align:right;font-size:.75rem;opacity:.6;margin-top:4px}
