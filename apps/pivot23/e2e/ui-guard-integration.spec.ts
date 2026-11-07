@@ -100,6 +100,12 @@ for (const width of [360, 390, 1280]) for (const lang of ["it", "en"] as const) 
       expect(lastBox.x + lastBox.width).toBeLessThanOrEqual(wrapBox.x + wrapBox.width + 1);
       for (const cell of await table.locator("tbody tr > :last-child, thead th:nth-child(2)").all()) expect(await cell.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
     }
+    for (const row of await table.locator("tbody tr").all()) {
+      const boxes = await row.locator("th,td").evaluateAll(cells=>cells.map(c=>{const r=c.getBoundingClientRect();return {top:r.top,bottom:r.bottom};}));
+      expect(Math.max(...boxes.map(b=>b.bottom))-Math.min(...boxes.map(b=>b.bottom))).toBeLessThanOrEqual(1);
+      expect(Math.max(...boxes.map(b=>b.top))-Math.min(...boxes.map(b=>b.top))).toBeLessThanOrEqual(1);
+    }
+    for (const score of await table.locator(".lr-score").all()) expect(await score.evaluate(el=>{const r=document.createRange();r.selectNodeContents(el);return r.getClientRects().length;})).toBe(1);
     const tableFooter = page.locator(".ad-foot");
     if (await tableFooter.isVisible()) {
       await table.evaluate(el => el.scrollIntoView({ block: "center" }));

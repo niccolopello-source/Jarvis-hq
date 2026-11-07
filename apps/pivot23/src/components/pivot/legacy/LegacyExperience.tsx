@@ -153,6 +153,11 @@ function Facts({ items }: { items: [string, string | null | undefined][] }) {
   );
 }
 
+/** Presentation only: keep a series score together while the surrounding result wraps. */
+function PlayoffCell({ text }: { text: string }) {
+  return <>{text.split(/(\d+-\d+)/g).map((part, i) => /\d+-\d+/.test(part) ? <span className="lr-score" key={i}>{part}</span> : part)}</>;
+}
+
 export function LegacyReportView({ report, uid }: { report: LegacyReport; uid: string }) {
   const lang = useLang();
   const [all, setAll] = useState(false);
@@ -271,7 +276,7 @@ export function LegacyReportView({ report, uid }: { report: LegacyReport; uid: s
                     <td>{fmtDec(row.rpg, lang)}</td>
                     <td>{fmtDec(row.apg, lang)}</td>
                     <td>{Number.isFinite(row.wins) && Number.isFinite(row.losses) ? `${row.wins}-${row.losses}` : lt("noData", lang)}</td>
-                    <td>{playoffResultLabel(row.playoff, lang) || lt("noData", lang)}</td>
+                    <td><PlayoffCell text={playoffResultLabel(row.playoff, lang) || lt("noData", lang)} /></td>
                   </tr>
                 ))}
               </tbody>
