@@ -1,0 +1,7 @@
+import{readFileSync,writeFileSync}from'node:fs';import{gunzipSync}from'node:zlib';import{firstDiff}from'./json-diff.mjs';import{pathToFileURL}from'node:url';
+export function compareCopies(a,b){
+ const failures=[];const inputDiff=firstDiff(a.cases,b.cases,'$.cases');if(inputDiff)failures.push({mismatch:inputDiff});if(a.rows.length!==b.rows.length)failures.push({mismatch:'$.rows.length'});
+ const rows=a.rows.map((x,i)=>{const y=b.rows[i];const mismatch=!y?'$.missing':x.id!==y.id?'$.id':x.stage!==y.stage?'$.stage':firstDiff(x.canonical,y.canonical);if(mismatch)failures.push({id:x.id,stage:x.stage,mismatch});return{id:x.id,stage:x.stage,mismatch,baseSha256:x.fullCanonicalSha256,finalSha256:y?.fullCanonicalSha256};});
+ return{cases:a.cases.length,checkpoints:rows.length,pass:rows.filter(x=>!x.mismatch).length,fail:failures.length,normalization:'NONE; clock and UUID fixed IN INPUT; display text intentionally differs, all persisted strings compared',failures,rows};
+}
+if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){const[a,b,out]=process.argv.slice(2);const result=compareCopies(JSON.parse(gunzipSync(readFileSync(a))),JSON.parse(gunzipSync(readFileSync(b))));writeFileSync(out,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({cases:result.cases,checkpoints:result.checkpoints,pass:result.pass,fail:result.fail,first:result.failures[0]??null}));if(result.fail)process.exitCode=1;}

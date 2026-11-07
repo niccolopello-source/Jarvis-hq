@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {join,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const here=dirname(fileURLToPath(import.meta.url));
-let raw:string;let naturalRaw:string;let natural:any;
+let raw:string;let naturalRaw:string;let natural:{development:{season:number;before:number;after:number}[]};
 test.beforeAll(()=>{const f=join(mkdtempSync(join(tmpdir(),'copy-fixture-')),'save.json');execFileSync('node',['--import=tsx',join(here,'fixtures/make-copy-save.ts'),f]);raw=readFileSync(f,'utf8');const nf=f+'.natural';execFileSync('node',['--import=tsx',join(here,'fixtures/make-copy-save.ts'),nf,'natural']);naturalRaw=readFileSync(nf,'utf8');natural=JSON.parse(readFileSync(nf+'.metadata.json','utf8'));});
 for(const lang of ['it','en'] as const) test(`EDGE ${lang}: forced independent presentation cases → actual Life → retirement → Legacy/archive`,async({page})=>{
  await page.setViewportSize({width:390,height:900});await page.emulateMedia({reducedMotion:'reduce'});
