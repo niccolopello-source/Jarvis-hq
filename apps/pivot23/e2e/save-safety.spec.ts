@@ -169,11 +169,17 @@ test("save from a newer version is not opened and not deleted", async ({ page })
     }
   }, raw);
   await page.goto("/");
-  await expect(page.getByText("versione più recente")).toBeVisible();
+  await expect(page.getByTestId("live-protection")).toHaveAttribute("data-reason","data");
+  await expect(page.getByTestId("live-protection")).toHaveAttribute("data-ready","true");
+  await expect(page.getByRole("button",{name:"Inizia",exact:true})).toHaveCount(0);
+  expect(await liveSave(page)).toBe(raw);
+  expect(await page.evaluate(()=>[localStorage.getItem("pivot-v2-save-backup"),sessionStorage.getItem("pivot-v2-save")])).toEqual([null,null]);
+  await page.reload();
+  await expect(page.getByTestId("live-protection")).toHaveAttribute("data-ready","true");
   expect(await liveSave(page)).toBe(raw);
 });
 
-test("browser without storage: the player is told saving is off", async ({ page }) => {
+test("unreadable browser storage locks boot rather than treating the store as absent", async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(window, "localStorage", {
       configurable: true,
@@ -183,8 +189,12 @@ test("browser without storage: the player is told saving is off", async ({ page 
     });
   });
   await page.goto("/");
-  await expect(page.getByText("Questo browser non permette di salvare")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "PIVOT" })).toBeVisible();
+  await expect(page.getByTestId("live-protection")).toHaveAttribute("data-reason","data");
+  await expect(page.getByTestId("live-protection")).toHaveAttribute("data-ready","true");
+  await expect(page.getByRole("heading", { name: "Salvataggio protetto" })).toBeVisible();
+  await expect(page.getByRole("button",{name:"Inizia",exact:true})).toHaveCount(0);
+  await page.waitForTimeout(650);
+  expect(await page.evaluate(()=>[sessionStorage.getItem("pivot-v2-save"),sessionStorage.getItem("pivot-v2-save-backup")])).toEqual([null,null]);
 });
 
 test("full archive: the last winter warns which career will leave, the result says it left (D-20)", async ({ page }) => {
