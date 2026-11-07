@@ -4,10 +4,11 @@ import type { DevRow } from './types';
 import { nx } from './narrative';
 
 export function contextualText(text: string, lang: Lang, ctx: {rivalName?:string;age?:number} = {}): string {
- const token='PivotRivalDisplayToken';
+ let token='PivotRivalDisplayToken';
+ while(text.includes(token)) token+='X';
  let out=nx(text.replaceAll('__RIVAL__',token),lang);
  const rival=ctx.rivalName?.trim();
- out=out.replaceAll(token, rival && !rival.includes('__') ? rival : t('copyOpponent',lang));
+ out=out.replaceAll(token, () => rival && !rival.includes('__') ? rival : t('copyOpponent',lang));
  if (typeof ctx.age === "number" && Number.isFinite(ctx.age) && ctx.age < 30) {
   const ageLines = [
    "Arrivare a ottobre intero: a quest'età è l'unico orgoglio che conta.",

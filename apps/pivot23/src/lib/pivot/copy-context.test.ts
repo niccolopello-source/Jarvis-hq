@@ -28,6 +28,8 @@ test('rival uses already generated name, or neutral fallback; no raw placeholder
   const empty=contextualText(source,lang,{rivalName:''});
   assert.match(empty,lang==='en'?/an opponent/:/un avversario/);assert.doesNotMatch(empty,/Elijah|__|PivotRival/);
  }
+ assert.equal(contextualText('PivotRivalDisplayToken','it'),'PivotRivalDisplayToken');
+ assert.equal(contextualText('__RIVAL__','it',{rivalName:'Name $&'}),'Name $&');
  assert.equal(archivedRival([{title:'Lo scontro con Elijah Voss'}]),'Elijah Voss');
  assert.equal(archivedRival([{title:'Lo scontro con __RIVAL__'}]),undefined);
 });
