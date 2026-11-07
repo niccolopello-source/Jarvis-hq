@@ -2144,6 +2144,11 @@ function StatMini({ l, v }: { l: string; v: string }) {
   );
 }
 
+/** A series score is one readable token; surrounding prose may wrap normally. */
+function SeriesScoreText({text}:{text:string}) {
+  return <>{text.split(/(\d+-\d+)/g).map((part,i)=>/^\d+-\d+$/.test(part)?<span key={i} style={{whiteSpace:"nowrap"}}>{part}</span>:part)}</>;
+}
+
 function SeasonSheet({ player }: { player: PlayerState }) {
   const history = player.seasonHistory;
   const lang = useLang();
@@ -2313,7 +2318,7 @@ const StatsTab = memo(function StatsTab({
               {r.ppg.toFixed(1)}/{r.rpg.toFixed(1)}/{r.apg.toFixed(1)}
             </div>
             <span className="text-[10.5px] text-muted">
-              {playoffResultLabel(r.playoff, lang) || "—"}
+              <SeriesScoreText text={playoffResultLabel(r.playoff, lang) || "—"} />
               {r.awards.length ? ` · ${r.awards.map((a) => awardLabel(a, lang)).join(" · ")}` : ""}
             </span>
           </div>

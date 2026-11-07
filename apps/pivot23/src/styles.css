@@ -1745,6 +1745,7 @@ img.court-mark-photo {
 .career-view {
   touch-action: pan-y;
   overflow: hidden;
+  overflow: clip; /* carousel transforms own x; hidden would still permit native focus/scrollIntoView drift */
   flex: 1;
   min-height: 0;
   display: flex;
@@ -1759,6 +1760,7 @@ img.court-mark-photo {
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  overflow: clip;
   touch-action: pan-y;
 }
 .swipe-track {
@@ -1992,6 +1994,7 @@ img.court-mark-photo {
   transition: box-shadow 280ms ease;
 }
 @media (prefers-reduced-motion: reduce) {
+  .swipe-track { transition: none; }
   .fade-in,
   .tab-pane,
   .flag-mark,
