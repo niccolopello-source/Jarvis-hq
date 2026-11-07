@@ -15,7 +15,10 @@
     "test:all": "pnpm run test && pnpm run test:stats",
     "test:e2e:preview": "E2E_PREVIEW=1 playwright test",
     "check:headers": "node scripts/check-headers.mjs",
-    "lab": "node --import=tsx scripts/lab-runner.ts"
+    "lab": "node --import=tsx scripts/lab-runner.ts",
+    "test:compat": "node scripts/compatibility/run.mjs",
+    "test:compat:types": "tsc --noEmit --target ES2022 --lib ES2022,DOM --module ESNext --moduleResolution Bundler --allowImportingTsExtensions --skipLibCheck --strict scripts/compatibility/worker.ts scripts/compatibility/phases-worker.ts",
+    "test:compat:tools": "node --test scripts/compatibility/json-diff.test.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "2.0.1",
