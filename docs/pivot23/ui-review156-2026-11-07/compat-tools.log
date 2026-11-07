@@ -1,0 +1,19 @@
+
+> pivot23-demo@0.1.0 test:compat:tools /workspace/pivot23-ui-integration/apps/pivot23
+> node --test scripts/compatibility/json-diff.test.mjs scripts/compatibility/compare.test.mjs
+
+✔ comparison supported mismatch with explicit allowance=false (39.662164ms)
+✔ comparison supported mismatch with explicit allowance=true (36.977725ms)
+✔ comparison diagnostic mismatch with explicit allowance=false (39.255551ms)
+✔ comparison diagnostic mismatch with explicit allowance=true (40.054888ms)
+✔ full JSON diff includes RNG, contracts, pending and world without gameplay projection (0.928006ms)
+✔ first JSON path includes absent fields, array length and primitive type changes (0.145909ms)
+✔ object key order is not state normalization; all values still compared (0.107021ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 224.141385

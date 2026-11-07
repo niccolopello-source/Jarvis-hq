@@ -1,6 +1,8 @@
 # PIVOT23 — punto 2, integrazione UI/Legacy con guard punto 1
 
 Bozza in verifica, non merge/deploy; punto3 non iniziato.
+
+**Seguito review Lucille156:** [nuovo report tecnico](UI-REVIEW156-2026-11-07.md), runtime12bf603: tabella mobile/Squadra/Playoff e ruoloSG corretti;468unit e90E2E PASS,2skip preesistenti. Le sezioni sotto conservano le prove della milestone b381ec6, non sono le nuove immagini.
 Base guard155 HEAD2840aba327da20c746595524851d422129354119. Branch `grokbot/ui-guard-integration`.
 Merge149:3ac095b948bda1bbdd53ba13e746b8e89d328784; merge150:88e2461693fa631f0f06d0cfce85a6b8fca61bd5. Entrambi OPEN/draft base main all'ispezione live. Un conflitto package.json risolto mantenendo tutti i test/comandi155 e aggiungendo legacy-polish149. Merge150 automatico, compreso LegacyExperience condiviso.
 149: label/display Legacy, incluse tre chiusure già presenti, non catalogo narrativo esteso. 150: rail OFF, tema free, footer, sticky/scroll tabella. Engine/save/world/RNG/guard invariati rispetto155.

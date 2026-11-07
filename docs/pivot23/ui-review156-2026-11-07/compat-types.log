@@ -1,0 +1,4 @@
+
+> pivot23-demo@0.1.0 test:compat:types /workspace/pivot23-ui-integration/apps/pivot23
+> tsc --noEmit --target ES2022 --lib ES2022,DOM --module ESNext --moduleResolution Bundler --allowImportingTsExtensions --skipLibCheck --strict scripts/compatibility/worker.ts scripts/compatibility/phases-worker.ts
+

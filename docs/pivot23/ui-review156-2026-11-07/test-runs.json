@@ -1,0 +1,85 @@
+{
+  "cwd": "apps/pivot23",
+  "runtime": "12bf6033e07580fee5f707879fd3c9f876af0b59",
+  "runs": [
+    {
+      "command": "pnpm run test",
+      "log": "unit-final.log",
+      "exit": 0,
+      "pass": 468,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "command": "pnpm run typecheck",
+      "log": "types-final.log",
+      "exit": 0
+    },
+    {
+      "command": "pnpm run lint",
+      "log": "lint-final.log",
+      "exit": 0
+    },
+    {
+      "command": "pnpm run build",
+      "log": "build-final.log",
+      "exit": 0
+    },
+    {
+      "command": "pnpm run test:compat:types",
+      "log": "compat-types.log",
+      "exit": 0
+    },
+    {
+      "command": "pnpm run test:compat:tools",
+      "log": "compat-tools.log",
+      "exit": 0,
+      "pass": 7
+    },
+    {
+      "command": "E2E_PREVIEW=1 E2E_PORT=4201 UI_SHOTS=/workspace/point2-review156/screenshots pnpm exec playwright test e2e/ui-guard-integration.spec.ts e2e/career-card.spec.ts e2e/a11y-i18n.spec.ts e2e/demo-readiness.spec.ts e2e/ads-desktop.spec.ts e2e/instagram-link.spec.ts e2e/future-save-protection.spec.ts e2e/lifecycle-flush.spec.ts e2e/native-lifecycle-protection.spec.ts --workers=2",
+      "log": "e2e-final.log",
+      "exit": 0,
+      "pass": 90,
+      "skip": 2,
+      "fail": 0,
+      "responsiveCases": 6,
+      "nativeHistoryPersisted": false
+    }
+  ],
+  "red": {
+    "revision": "250db9e6b4b5a59e9bea72daf3bcfaa1fb0b7aa2",
+    "log": "table-red.log",
+    "exit": 1,
+    "assertion": "real Team data present; column no longer visible after horizontal scroll"
+  },
+  "intermediateFailures": [
+    {
+      "log": "table-green.log",
+      "exit": 1,
+      "pass": 2,
+      "fail": 4,
+      "reason": "fixed table min622 redistributed 100 excess pixels, so sticky left76 did not match first-column width"
+    },
+    {
+      "log": "table-green2.log",
+      "exit": 1,
+      "pass": 2,
+      "fail": 4,
+      "reason": "fixed table min622 redistributed 100 excess pixels, so sticky left76 did not match first-column width"
+    },
+    {
+      "log": "table-built-green.log",
+      "exit": 1,
+      "pass": 2,
+      "fail": 4,
+      "reason": "fixed table min622 redistributed 100 excess pixels, so sticky left76 did not match first-column width"
+    }
+  ],
+  "notes": [
+    "Intermediate geometry.log is a diagnostic run, not an additional suite pass.",
+    "First RED invoked at incorrect root/cwd exit254 was setup error, not product RED.",
+    "No threshold weakened; two adsON skips are pre-existing conditional cases."
+  ],
+  "recordedAt": "2026-11-07 23:48:21 Europe/Rome (CET)"
+}
