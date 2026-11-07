@@ -1,5 +1,7 @@
 # PIVOT23 — punto2 rifinito, punto3 IT/EN in bozza
 
+ULTIMO FOLLOW-UP: runtime `0cfab7f752537dc87554c17c9aecdd6632b9af60`, harness `db9d761a2fb59342a0c9e0a19d504c6c727ec3ea`. La sezione finale Lucille/Dallak157 aggiorna gli snapshot precedenti, senza cancellarne provenienza e limiti.
+
 Snapshot tecnico dell'8 novembre 2026, Europe/Rome (CET). Nessun merge PR/main, deploy manuale, modifica env/settings/ads o save reale. Punto4 NON iniziato. Questa è una consegna per review indipendente, non una promessa di demo pronta o una certificazione universale.
 
 ## Stack e perimetro
@@ -97,3 +99,64 @@ Lette direttamente le nuove immagini finali ENVita(root ora interamente visibile
 Raw/log/diagnostici: `file:///workspace/point3-evidence/`. Immagini finali pulite: `file:///workspace/point3-evidence/final-b1ee/screenshots-b1ee/` e `file:///workspace/point3-evidence/final-b1ee/ui-screenshots-b1ee/`. Copia report reviewer `file:///workspace/point3-evidence/REPORT.md` e dentro `final-b1ee/REPORT.md`; ZIP `file:///workspace/point3-evidence/final-b1ee.zip`. Manifest/log/corpus sintetico replicati in `copy-integration-2026-11-08/` nel repo. I log intermedi restano hashati nel manifest e sul box, inclusi errori di cwd/tsx, selettori vecchi e aspettative copy aggiornate legittimamente; non sono spacciati per bug prodotto.
 
 Nessuna modifica applicativa dopo b1ee. HEAD consegna include soltanto harness/prove/report successivi; SHA esatta e URL draft/preview letti dopo pubblicazione nel riscontro finale. Punto2 rifinito, punto3 pronto per review della bozza, non punto4 e non merge/produzione.
+
+
+## Follow-up Lucille/Dallak157 — 8nov2026, prima di4
+
+Punto2 UI può considerarsi chiuso nel campione della review, NON universalmente. Questa sezione supersede i conteggi finali precedenti solo dove esplicitamente indicato. Branch e draft157 invariati; append commit normali, niente amend/force/merge/main/deploy manuale/env/ads. Nessuna attivazione225 o modifica engine/save/RNG.
+
+### MEDIO: Traguardi con helper premi comune
+
+Il difetto era reale: ReviewTab usava `nx(m.label)` anziché il formatter premi di Legacy. Ora riusa `legacyAwardLabel`, esteso per gli ID già esistenti NBA Champion/EuroLeague Champion/Finals MVP/FMVP: IT Campione NBA/Campione di Eurolega/MVP delle Finali; Rookie dell'anno già comune. EN conserva i nomi canonici ufficiali. Gli ID engine e le stringhe persistite non cambiano. Test IT su tutti e3i premi osservati nel DOM, più unit su array canonico immutato e nomi IT/EN. I premi nella riga stagione di Vita riusano lo stesso helper. Non riscritta la grammatica dei generatori.
+
+### HYPOTHESIS OVR: provenienza spiegata, non motore alterato
+
+La vecchia fixture era una carriera simulata completa su cui venivano poi SOSTITUITI soltanto devLog e choices per tre edge indipendenti:62→59,62→62,62→63, non una traiettoria completa di carriera. Confrontarla con le ultime stagioni65/64/64/61 o con la testata59 era fuorviante. La fixture edge è conservata, chiamata visibilmente `Copy EDGE fixture` e negli screenshot `edge-*`; resta sotto assert pertinenti per calo/stabilità/età/rival. Le ripetizioni del titolo estate S1/S2 sono presenti due volte nell'INPUT forzato, su stagioni diverse: DOM3righe per3DevRow e chiavi stagione+label distinte, non doppio rendering. Non eliminato il caso ripetuto e nessuna modifica a probabilità o azioni estive.
+
+Aggiunta fixture NATURAL separata, `Copy natural replay`: output completo reale `playCareerSim`, seed777002, ruolo SF, NCAA, nazionalità generata Spagna. Non sostituiti storia/OVR/devLog/scelte/premi/rival. Solo identificativo sintetico del test. Ultime stagioni11–14: età31/32/33/34, OVR65/64/64/61; ultimo DevRow14 è61→59 e la testata finale età35/OVR59. La simulazione registra la stagione regolare prima dei playoff e poi applica l'estate (`engine.ts3873–3928`); la testata non è lo snapshot della stagione regolare. Non si richiede che ogni DevRow.before equivalga alla precedente riga regolare: sono fasi diverse. Questa prova spiega il caso osservato, non certifica ogni possibile derivazione.
+
+Le righe S.1/S.2/S.14 ora mostrano anche l'anno sportivo reale del DevRow (es.2026-27 o2039-40), evitando di leggere S.1 come l'ultima estate della testata. Nessun dato cambiato per rendere verde il test. La modalità NATURAL affronta anch'essa Vita→ritiro→Legacy→archivio in IT/EN; la modalità EDGE rimane separata. Metadata della fixture conserva tutte le coppie season/age/OVR/before/after/label per audit.
+
+### BASSI: numeri e scorrimento
+
+Statistiche strutturate, sviluppo OVR e attributi di Vita, testata e altri pannelli numerici del medesimo componente riusano `fmtDec` di Legacy: una cifra decimale, virgola IT/punto EN. Nessuna conversione numerica nei save né nei calcoli, né riscrittura di stringhe monetarie storiche. Il titolo estate duplicato è spiegato sopra, non nascosto con deduplica.
+
+La vecchia immagine era catturata con scrollTop=scrollHeight: una intestazione precedente può legittimamente restare parzialmente sopra il viewport, senza essere un nuovo blocco sovrapposto. Il percorso di lettura ora usa scroll nativo verso Scelte/Choices; `scroll-padding-block` sullo slide e `scroll-margin-block-start` sui suoi h4 garantiscono spazio dopo la chrome. Assert reale bounding-box: heading.y ≥ chrome.bottom+8, IT/EN sia NATURAL che EDGE; non solo spostamento manuale della screenshot. Le nuove immagini mostrano Scelte/Choices interi. UIA/B/C precedente resta PASS nel campione.
+
+### Gate forte richiesto: CROSS156→finale, non within-run soltanto
+
+Base esatta `e8aef27988f475dc068402262af91a59c1b0839b`, fonte estratta con git archive in directory isolata; finale runtime `0cfab7f752537dc87554c17c9aecdd6632b9af60`, senza modifiche applicative dopo. Worker e comparator riproducibili nel repo: `scripts/compatibility/copy-isolation.mjs`, `copy-isolation-compare.mjs`, relativo test3casi. Due processi separati, nessun oggetto o cache RNG condiviso fra revisioni. Stessa versione Node/dependency installata, niente save reale.
+
+INPUT controllati prima della creazione: Date.now=1794081600000, crypto.randomUUID restituisce una sequenza deterministica identica; seed e opzioni espliciti, policy scelte alterna primo/ultimo indice per stagione, audit registra ID/titolo/indice/pick. Il careerId nasce già dall'input controllato, NON viene escluso o cancellato dopo il confronto. Nessuna normalizzazione. Nessuna esclusione delle stringhe persistite, nemmeno placeholder o testo canonico divenuto diverso in vista.
+
+Campione9casi:3percorsi naturali (777001PG/NCAA,777002SG/Europa,777003SF/G-League) e6edge(880010–880015,PF/C) per rival presente/assente, archivio legacy senza card/fingerprint/schema come INPUT storico, delta-3/0/-0.25/+1/-1, età21/34/19/20 e assente. Un secondo DevRow età-sensibile esercita davvero il ramo età anche nei casi delta0. I titoli e i PICK vengono renderizzati entrambi in IT/EN, incluse scelte archiviate con fallback neutro; i finali sono esercitati su tutti3i percorsi.
+
+Ogni checkpoint prima/dopo resa confronta FULL PlayerState serializzabile, envelope completo/checksum, log canonico, n/opts, audit/count/order, archivio completo generato da toArchive (input legacy privato soltanto dei campi non presenti nel vecchio schema), verdetto canonico finale, RNG salvato e RNG ATTIVO `job.rng.getState()`. Il render viene eseguito con CURRENT===job.rng, stato misurato prima/dopo e fallbackDraws tracciato. Poi si continuano le STESSE scelte fino a fine carriera: non una statistica finale isolata.
+
+Esito:137coppie di checkpoint PASS,9input/9finali,0mismatch; nessun primo JSON path differente. Le uscite render-only sono conservate separatamente e possono differire intenzionalmente; tutto il contenuto persistito resta dentro il confronto canonico. Comparator sensitività3PASS: modifica PICK, RNG attivo, perdita/ordine dei checkpoint causano FAIL al primo path. Il precedente within-run5carriere rimane storia, non viene riciclato come questo nuovo gate.
+
+Comandi dalla directory apps/pivot23, dopo estrazione BASE_APP e collegamento delle dipendenze già installate:
+
+```sh
+node --test scripts/compatibility/copy-isolation-compare.test.mjs
+node --import=tsx scripts/compatibility/copy-isolation.mjs BASE_APP cross156.json.gz
+node --import=tsx scripts/compatibility/copy-isolation.mjs FINAL_APP cross-final.json.gz
+node scripts/compatibility/copy-isolation-compare.mjs cross156.json.gz cross-final.json.gz cross-comparison.json
+```
+
+Raw per-run gzip completi (non solo digest), display IT/EN, SHA dei sorgenti/harness, metadata fixture, comandi ed exit nel manifest follow-up. Copertura mirata, NON una campagna13versioni, nessuna prova universale. Compattazione legacy89081 resta OPEN esattamente come prima e non è stata normalizzata o corretta.
+
+### Esiti di questo follow-up
+
+-483unit PASS/0FAIL/0SKIP; typecheck PASS. Il primo lint ha rilevato `any` nel solo tipo metadata E2E: corretto con il tipo preciso, lint finale PASS, non regola disabilitata.
+-84E2E affetti PASS/0FAIL/0SKIP sul runtime0cfab, incluse4journey copy NATURAL/EDGE IT/EN,6responsive, axe/tastiera/PNG e regressioni guard future/native lifecycle. Build PASS.7tool compatibilità esistenti PASS,3nuovi comparator sensitivity PASS; compat types PASS.
+-Full200 CONCLUSO sullo stesso runtime0cfab:195PASS/0FAIL/5SKIP preesistenti (2adsON,1DEV engine flag,2perf opt-in). Run9,4min. Gli84mirati sono un sottoinsieme già rieseguito, NON195+84casi distinti. Il precedente full193/5su6591 NON è usato come risultato finale.
+-192/198file protetti155 ancora identici, le medesime6eccezioni dichiarate sopra. Generator engine, save, guard, config, RNG immutati.
+-CI157 della SHA97 precedente:10SUCCESS conclusi, osservati live prima del nuovo push. Per la nuova HEAD lo stato viene letto dopo push: resta gate aperto finché non conclude, nessuna anticipazione PASS.
+-Nuove immagini54confermate(12copy+42UI), con hash/dimensioni/source runtime nel manifest, evidenze aggiornate8nov2026 00:56 Europe/Rome (CET). `file:///workspace/point3-followup157/`, report anche nella cartella per Lucille. Nessun punto4 prima di review chiusa e CI finale completa.
+
+
+I due raw completi per revisione sono preservati sul box (circa5,46MB ciascuno), non eliminati o sostituiti con soli digest:
+- `file:///workspace/point3-followup157/cross156.json.gz`
+- `file:///workspace/point3-followup157/cross-final.json.gz`
+Nel repo restano worker/comparator/test riproducibili, manifest con SHA256/size dei raw, risultato137coppie e log lossless, senza allegare11MB binari alla diff. La directory reviewer contiene `REPORT.md` e lo ZIP delle sole immagini/report. Source app ricontrollata byte-identica al runtime0cfab dopo tutta la campagna. Nessun punto4 avviato; review finale parent/Lucille/Dallak e CI nuova HEAD ancora gate separati.
