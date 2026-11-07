@@ -14,7 +14,7 @@ Il boundary ora è **unico proprietario** di `pagehide`: nello stesso callback s
 
 La stessa sequenza è GREEN dopo il fix; il test definitivo usa `/robots.txt` reale, senza routing: round 1 nella pagina successiva, lease 0 fuori app, ritorno history con round 1 e un solo writer, reload ancora un solo writer. Il controllo riguarda una mutazione realmente solo RAM con autosave pendente, non una scrittura diretta del raw da parte del test.
 
-**Limite BFCache:** tentativo con flag di disabilitazione rimosso; `pageshow.persisted=false`, notRestoredReasons contiene `masked`. History traversal/reload e cleanup/reacquisizione verificati, **freeze→restore BFCache effettivo NON osservato**. Non si attribuisce una causa non dimostrata a Web Locks.
+**BFCache — PASS supplementare successivo, non suite committed:** il primo runner headless-shell sopra aveva `pageshow.persisted=false`, reason `masked`, quindi non provava freeze/restore. Un ulteriore test con full Chromium headless già installato (`channel:"chromium"`) ha osservato e asserito **pageshow.persisted=true, notRestoredReasons=null**, round1 conservato, lease0 fuori app/1 al ritorno e dopo reload. Primo tentativo full Chromium: timeout30s di `goBack()` in attesa di un nuovo load, snapshot già Round2; conservato come FAIL test-driver. Variante corretta usa `goBack({waitUntil:"commit"})`, mantiene tutti gli assert e aggiunge assert persisted=true: **PASS1**. Non conta fra i58 test della suite committed e non certifica tutti i browser/device. Fonte, comando, SHA256 config/spec/log: [supplemento immutato](review155-bfcache-supplement/review155-bfcache-supplement.json); [log PASS](review155-bfcache-supplement/review155-bfcache-full-chromium-commit.log). Runtime155 invariato. Safari/Firefox/device reali/HTTP LAN/vecchie tab NON certificati.
 
 ## P2: metadata wrapper prima del raw
 
@@ -98,6 +98,9 @@ E2E_PREVIEW=1 E2E_PORT=4197 pnpm exec playwright test e2e/future-save-protection
 E2E_PREVIEW=1 E2E_PORT=4197 pnpm exec playwright test e2e/save-recovery.spec.ts e2e/save-safety.spec.ts
 ```
 
-NOT RUN localmente: intera suite E2E del repository; freeze BFCache effettivo; Safari/Firefox/device fisici/HTTP LAN reale; save reali/produzione; identità universale legacy o frequenza naturale del controesempio. I test browser sono Chromium headless su build locale, non desktop automation.
+NOT RUN localmente: intera suite E2E del repository; Safari/Firefox/device fisici/HTTP LAN reale; save reali/produzione; identità universale legacy o frequenza naturale del controesempio. I test browser sono Chromium headless su build locale, non desktop automation.
 
 **Consegna per Dallak: protezione corretta da riesaminare, limite legacy OPEN, nessuna promessa demo pronta, nessun punto 2, nessun merge/deploy autorizzato da questa relazione.**
+
+
+Aggiornamento documentale punto2: Dallak ha comunicato PASS finale protezione nel perimetro verificato e nessun blocker residuo per avvio2. CI head2840aba conclusa10SUCCESS;184browserPASS+5skip condizionali preesistenti. Il limite legacy89081 rimane OPEN e non solo visivo. Nessuna modifica al runtime155.

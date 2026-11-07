@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:177177) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+native history return pageshow.persisted=true
+native history notRestoredReasons=null
+  ✓  1 ../../../review155-bfcache-tests/native-bfcache.spec.ts:6:5 › native navigation flushes RAM-only draft mutation before releasing the writer (1.3s)
+
+  1 passed (8.0s)
