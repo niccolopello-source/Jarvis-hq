@@ -1,0 +1,61 @@
+{
+  "url": "https://github.com/niccolopello-source/Jarvis-hq/pull/154",
+  "isDraft": true,
+  "state": "OPEN",
+  "head": "394af85fd154868d45b213efce0be10e883abea0",
+  "observedEuropeRome": "2026-11-07T22:39:17.002166+01:00",
+  "observedEuropeAmsterdam": "2026-11-07T22:39:17.003537+01:00",
+  "main": "33810f74ebfb3e1a9ffd5daa0db646993ebb3d7f",
+  "checks": [
+    {
+      "name": "lint, types, unit, build, e2e (production build)",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "lint, types, unit, build, e2e (production build)",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "lint, types, unit, build, e2e (production build)",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "statistical engine checks (~4 min)",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "statistical engine checks (~4 min)",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "statistical engine checks (~4 min)",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "Vercel Preview Comments",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "Vercel – jarvis-hq",
+      "status": "SUCCESS",
+      "conclusion": null
+    },
+    {
+      "name": "Vercel – jarvis-hq-pgoc",
+      "status": "SUCCESS",
+      "conclusion": null
+    },
+    {
+      "name": "Vercel – pivot23",
+      "status": "SUCCESS",
+      "conclusion": null
+    }
+  ]
+}

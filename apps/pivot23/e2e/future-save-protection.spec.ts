@@ -244,3 +244,52 @@ for (const engine of [undefined, null, 225, "", "garbage"])
       page.getByRole("group", { name: "Sezioni della carriera" }),
     ).toHaveCount(0);
   });
+
+test("unreadable primary storage never mounts or falls back to a valid legacy session", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  const value = raw("2.24.0-beta");
+  await page.addInitScript((value) => {
+    const original = window.localStorage;
+    original.setItem("pivot-v2-save", value);
+    sessionStorage.setItem("pivot-v2-save", value);
+    Object.defineProperty(window, "__syntheticReadLocal", {
+      value: () => original.getItem("pivot-v2-save"),
+    });
+    Object.defineProperty(window, "localStorage", {
+      configurable: true,
+      get() {
+        throw new DOMException("synthetic denied", "SecurityError");
+      },
+    });
+  }, value);
+  await page.goto("/");
+  await expect(page.getByTestId("live-protection")).toHaveAttribute(
+    "data-reason",
+    "data",
+  );
+  await expect(page.getByTestId("live-protection")).toHaveAttribute(
+    "data-ready",
+    "true",
+  );
+  await page.waitForTimeout(650);
+  await page.evaluate(() =>
+    window.dispatchEvent(new PageTransitionEvent("pagehide")),
+  );
+  expect(
+    await page.evaluate(() =>
+      (
+        window as unknown as { __syntheticReadLocal(): string }
+      ).__syntheticReadLocal(),
+    ),
+  ).toBe(value);
+  expect(
+    await page.evaluate(() => sessionStorage.getItem("pivot-v2-save")),
+  ).toBe(value);
+  await expect(
+    page.getByRole("group", { name: "Sezioni della carriera" }),
+  ).toHaveCount(0);
+  expect(errors).toEqual([]);
+});

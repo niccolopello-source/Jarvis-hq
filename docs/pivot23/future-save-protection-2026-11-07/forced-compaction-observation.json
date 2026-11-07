@@ -1,0 +1,46 @@
+{
+  "main": {
+    "fixture": "forced synthetic dynasty event at index10; no CPU stars",
+    "seed": 89081,
+    "engineVersion": "2.24.0-beta",
+    "before": {
+      "memoryEvents": 16,
+      "persistedEvents": 10,
+      "memoryDynasty": true,
+      "persistedDynasty": false
+    },
+    "after": {
+      "memoryDynasty": [
+        "Synthetic Dynasty"
+      ],
+      "persistedDynasty": [
+        "Synthetic Dynasty non molla l'anello: tris consecutivo."
+      ]
+    },
+    "fullMismatch": "$.rngState",
+    "persistibleMismatch": "$.player.rngState",
+    "rngEqual": false
+  },
+  "draft": {
+    "fixture": "forced synthetic dynasty event at index10; no CPU stars",
+    "seed": 89081,
+    "engineVersion": "2.24.0-beta",
+    "before": {
+      "memoryEvents": 16,
+      "persistedEvents": 10,
+      "memoryDynasty": true,
+      "persistedDynasty": false
+    },
+    "after": {
+      "memoryDynasty": [
+        "Synthetic Dynasty"
+      ],
+      "persistedDynasty": [
+        "Synthetic Dynasty non molla l'anello: tris consecutivo."
+      ]
+    },
+    "fullMismatch": "$.rngState",
+    "persistibleMismatch": "$.player.rngState",
+    "rngEqual": false
+  }
+}
