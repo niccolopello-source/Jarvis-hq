@@ -16,7 +16,7 @@ for(const lang of ['it','en'] as const) test(`copy ${lang}: simulated save → a
  await expect(page.getByText(lang==='it'?'La preparazione per ottobre conta a ogni età.':'Preparation for October matters at every age.',{exact:false})).toBeVisible();
  await expect(page.locator('.review-pane')).toContainText(lang==='it'?'tre azioni di Elijah Voss':'three plays by Elijah Voss');
  expect(await page.locator('body').innerText()).not.toContain('__RIVAL__');
- const scoreLines=await page.locator('.review-pane').evaluate(el=>{
+ const scoreLines=await page.locator('.swipe-slide.on').evaluate(el=>{
   const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);const lines:number[]=[];
   while(walker.nextNode()){const node=walker.currentNode;for(const m of (node.textContent??'').matchAll(/\b\d-\d\b/g)){const range=document.createRange();range.setStart(node,m.index!);range.setEnd(node,m.index!+m[0].length);lines.push(range.getClientRects().length);}}
   return lines;
