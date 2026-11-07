@@ -60,6 +60,8 @@ const IT_DISPLAY_FIXES: ReadonlyArray<readonly [RegExp, string | ((...m: string[
   [/Quindici stagioni, o più: (\d+) anni di referto\./g, "$1 stagioni a referto."],
   // legacy.ts closing: "Quattro maglie, o più. 5 squadre." -> "5 maglie diverse."
   [/Quattro maglie, o più\. (\d+) (squadre|città)\./g, (_m: string, n: string, w: string) => w === "città" ? `${n} città diverse.` : `${n} maglie diverse.`],
+  // feel.ts: "Dalla G-League al salto." -> official spelling
+  [/\bG-League\b/g, "G League"],
 ];
 
 /**

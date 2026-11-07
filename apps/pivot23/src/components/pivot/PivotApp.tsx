@@ -1272,7 +1272,8 @@ export function PivotApp() {
           <p className="lede">{t("setupLede", lang)}</p>
           <label className="group-label" htmlFor="setup-name">{t("setupName", lang)}</label>
           <div className="group-card">
-            <input id="setup-name" className="text-input" maxLength={CAREER_NAME_MAX} autoComplete="off" placeholder={t("namePlaceholder", lang)} value={name} onChange={(e) => setName(e.target.value)} />
+            <input id="setup-name" className="text-input" maxLength={CAREER_NAME_MAX} autoComplete="off" placeholder={t("namePlaceholder", lang)} value={name} onChange={(e) => setName(e.target.value)} aria-describedby="setup-name-count" />
+            <span id="setup-name-count" className="name-count" aria-live="polite">{name.length}/{CAREER_NAME_MAX}</span>
           </div>
           <span className="group-label" id="setup-role-label">{t("setupRole", lang)}</span>
           <div className="grid grid-cols-2 gap-2 mb-6" role="group" aria-labelledby="setup-role-label">
