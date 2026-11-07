@@ -112,6 +112,9 @@ export function itDisplay(text: string): string {
   }
   out = out.replace(/\bA Atlanta\b/g, "Ad Atlanta").replace(/\ba Atlanta\b/g, "ad Atlanta");
   out = out.replace(/(A|Ad) ([^,.]+), la piazza di \2 entra già caldo\./g, "$1 $2, il pubblico è già caldo.");
+  out=out.replaceAll("Il gesto, a settembre, è un altro di un palmo.","Il gesto, a settembre, è cambiato di poco.")
+    .replaceAll("Il ruolo, a settembre, è un altro di un palmo.","Il ruolo, a settembre, è leggermente cambiato.")
+    .replaceAll("una uscita nuova","un'uscita nuova");
   for (const [from, to] of IT_ROUTE_REWRITES) out = out.replaceAll(from, to);
   for (const [re, to] of IT_DISPLAY_FIXES) out = typeof to === "string" ? out.replace(re, to) : out.replace(re, to);
   return out;

@@ -10,6 +10,7 @@ export function contextualText(text: string, lang: Lang, ctx: {rivalName?:string
  const rival=ctx.rivalName?.trim();
  out=out.replaceAll(token, () => rival && !rival.includes('__') ? rival : t('copyOpponent',lang));
  if (typeof ctx.age === "number" && Number.isFinite(ctx.age) && ctx.age < 30) {
+  if(ctx.age<=20 && text.includes("la pazienza che a vent'anni non avevi")) return t('copyEveryAge',lang);
   const ageLines = [
    "Arrivare a ottobre intero: a quest'età è l'unico orgoglio che conta.",
    "Arrivare a ottobre intero: a quest'età è l'unico orgoglio che conta, e tu l'hai tenuto senza dichiararlo.",

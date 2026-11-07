@@ -111,3 +111,15 @@ test('route endings state recorded preparation, not an unsupported successful tr
   for(const lang of ['it','en'] as const){assert.match(nx(source,lang),/pre-draft/);assert.doesNotMatch(nx(source,lang),/immagin|imagined|never stopped|mai smesso/);}
  }
 });
+
+test('sampled Italian grammar and impossible retrospective at age nineteen are corrected only on display',async()=>{
+ await loadNarrativeEn();
+ assert.equal(nx("Il gesto, a settembre, è un altro di un palmo.",'it'),"Il gesto, a settembre, è cambiato di poco.");
+ assert.equal(nx("Il ruolo, a settembre, è un altro di un palmo.",'it'),"Il ruolo, a settembre, è leggermente cambiato.");
+ assert.match(nx('Sei tornato con una uscita nuova.','it'),/un'uscita/);
+ const line="Luglio è stato una stanza chiusa: ghiaccio, camminate, la pazienza che a vent'anni non avevi.";
+ for(const lang of ['it','en'] as const){
+  assert.equal(contextualText(line,lang,{age:19}),t('copyEveryAge',lang));
+  assert.equal(contextualText(line,lang,{age:21}),nx(line,lang));
+ }
+});
