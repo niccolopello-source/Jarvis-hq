@@ -390,3 +390,108 @@ test("future backup wrapper schema wins even when inner raw is invalid or missin
       assert.equal(st[target].getItem(key), raw);
     }
 });
+
+test("wrapper version metadata precedes invalid raw; malformed is not numeric future", () => {
+  for (const [value, status] of [
+    [{ v: "2", raw: 42 }, "malformed"],
+    [{ raw: 42 }, "missing"],
+    [{ v: 2, raw: 42 }, "future-schema"],
+    [{ v: 1, raw: 42 }, "corrupt"],
+    [{ v: null, raw: 42 }, "missing"],
+    [{ v: "2", raw: JSON.stringify({ v: 3 }) }, "future-schema"],
+  ] as const) {
+    for (const target of ["local", "session"] as const)
+      for (const key of [BACKUP_KEY, BACKUP_PREV_KEY, CRASH_BACKUP_KEY]) {
+        const st = setup(),
+          raw = JSON.stringify(value);
+        st[target].setItem(key, raw);
+        assert.equal(classifyPersistedRaw(raw, true), status);
+        assert.equal(inspectLiveProtection().blocked, status !== "corrupt");
+        if (status !== "corrupt") {
+          const before = [...st.local.values, ...st.session.values];
+          assert.equal(loadLive(), null);
+          assert.equal(saveLive(data()), false);
+          assert.equal(clearLive(), false);
+          assert.equal(restoreLiveBackup(), false);
+          assert.deepEqual([...st.local.values, ...st.session.values], before);
+        }
+      }
+  }
+});
+
+import { registerLiveFlush, finishLiveDocument } from "./live-protection.ts";
+test("single lifecycle owner flushes before release synchronously, honors stale cleanup and denied data", () => {
+  const st = setup(),
+    trace: string[] = [];
+  const old = registerLiveFlush(() => {
+    trace.push("old");
+    return true;
+  });
+  const clean = registerLiveFlush(() => {
+    trace.push("flush");
+    return true;
+  });
+  old();
+  finishLiveDocument(() => trace.push("release"));
+  assert.deepEqual(trace, ["flush", "release"]);
+  clean();
+  trace.length = 0;
+  finishLiveDocument(() => trace.push("release"));
+  assert.deepEqual(trace, ["release"]);
+  const stop = registerLiveFlush(() => {
+    throw new Error("must not flush future");
+  });
+  st.local.setItem(SAVE_KEY, JSON.stringify({ v: 3 }));
+  finishLiveDocument(() => trace.push("release2"));
+  assert.deepEqual(trace, ["release", "release2"]);
+  stop();
+});
+test("lifecycle releases even when registered flush throws, without async coordination", () => {
+  setup();
+  let released = false;
+  const stop = registerLiveFlush(() => {
+    throw new Error("synthetic flush failure");
+  });
+  assert.throws(() =>
+    finishLiveDocument(() => {
+      released = true;
+    }),
+  );
+  assert.equal(released, true);
+  stop();
+});
+
+test("export of backup returns the WHOLE wrapper with exact whitespace, not only inner raw", () => {
+  const st = setup(),
+    inner = JSON.stringify({ v: 3, opaque: "synthetic" }),
+    wrapper =
+      "  " +
+      JSON.stringify({ v: 1, at: 1, reason: "future", raw: inner }) +
+      "\n ";
+  st.local.setItem(BACKUP_KEY, wrapper);
+  const bytes = exportLiveRaw(
+    `localStorage/${BACKUP_KEY}`,
+    rawSaveHash(wrapper),
+  );
+  const decoded = Buffer.from(bytes).toString("utf16le");
+  assert.equal(decoded, wrapper);
+  assert.notEqual(decoded, inner);
+  assert.equal(st.local.getItem(BACKUP_KEY), wrapper);
+});
+
+test("stale disposer cannot clear a newer registration of the same callback", () => {
+  setup();
+  let calls = 0;
+  const fn = () => {
+    calls++;
+    return true;
+  };
+  const stale = registerLiveFlush(fn),
+    current = registerLiveFlush(fn);
+  stale();
+  finishLiveDocument(() => {});
+  assert.equal(calls, 1);
+  current();
+  finishLiveDocument(() => {});
+  assert.equal(calls, 1);
+});

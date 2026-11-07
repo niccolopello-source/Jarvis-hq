@@ -61,11 +61,12 @@ export function classifyPersistedRaw(raw: string, wrapper = false): SlotStatus {
   if (!object(value)) return "corrupt";
   if (wrapper) {
     if (typeof value.v === "number" && value.v > 1) return "future-schema";
-    if (typeof value.raw !== "string") return "corrupt";
-    const inner = classifyPersistedRaw(value.raw);
+    const inner =
+      typeof value.raw === "string" ? classifyPersistedRaw(value.raw) : null;
     if (inner === "future-schema" || inner === "future-engine") return inner;
     if (value.v === undefined || value.v === null) return "missing";
     if (value.v !== 1) return "malformed";
+    if (inner === null) return "corrupt";
     return inner;
   }
   // Recognizable future headers win even when checksum/player/other fields are damaged.
@@ -249,4 +250,26 @@ export function exportLiveRaw(
     bytes[i * 2 + 1] = n >>> 8;
   }
   return bytes;
+}
+
+/** One app registers its synchronous RAM flush; only the lifecycle owner invokes it. */
+let registeredFlush: { flush: () => boolean } | null = null;
+export function registerLiveFlush(flush: () => boolean): () => void {
+  const registration = { flush };
+  registeredFlush = registration;
+  return () => {
+    if (registeredFlush === registration) registeredFlush = null;
+  };
+}
+export function flushRegisteredLive(): boolean {
+  if (!livePersistenceAllowed()) return false;
+  return registeredFlush?.flush() ?? false;
+}
+/** Same native callback: verify/flush then release. Never coordinate separate listeners via microtasks. */
+export function finishLiveDocument(release: () => void): void {
+  try {
+    flushRegisteredLive();
+  } finally {
+    release();
+  }
 }

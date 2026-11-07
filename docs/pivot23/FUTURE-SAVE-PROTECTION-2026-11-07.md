@@ -21,7 +21,7 @@ Evidenze osservate il 7 novembre 2026, 22:39 Europe/Rome / Europe/Amsterdam (CET
 | Versioni | Parser numerico della sola persistenza; prerelease/build suffix confrontati per major/minor/patch; nessun restamp | 2.9 < 2.24; 2.25 beta/release e 3.0 bloccati. Gate storici intatti |
 | Guardia | Rilettura effettiva degli slot a ogni commit mutante; load/MEM, save, clear, rotation, crash, restore legacy, reset/new, finalizzazione UI, gesture, callback e pagehide | Cache solo se il raw riletto coincide; non sostituisce un errore di lettura |
 | Boot | PivotApp/CrashFallback non montati prima di lease e classificazione sicure; unmount e cancellazione/invalidazione timer al lock | Boot/refresh/focus/storage/pageshow/pagehide e pending autosave sintetici |
-| Concorrenza | Web Lock esclusivo per durata documento, `ifAvailable`, nessuna coda/fallback scrivente; un writer per origine anche stesso careerId | Seconda scheda read-only. Rilascio in microtask dopo flush sincrono di pagehide; ripresa su focus/pageshow |
+| Concorrenza | Web Lock esclusivo per durata documento, `ifAvailable`, nessuna coda/fallback scrivente; un writer per origine anche stesso careerId | Seconda scheda read-only. Snapshot precedente: rilascio tramite microtask; il presunto ordine flush→release è smentito dal test nativo RED della review #155. Superato dal follow-up sincrono; ripresa su focus/pageshow |
 | Errori lock | API assente, getter negato, throw sincrono o rejection diventano read-only, non crash | RED sul candidato precedente e GREEN con nuovo handler; controlli browser |
 | Recovery | Solo conservazione + export esplicito raw, hash atteso anti-scelta-stale; messaggi IT/EN nei dizionari esistenti | Download UTF-16LE senza BOM, conserva esattamente code unit DOMString, anche surrogate isolate; NON stringify |
 | Restore/import | Nessun nuovo restore sostitutivo, import, archivio rotante o reset distruttivo nella recovery nuova | Non applicabili restore futuro con quota/hash/copia verificata: non esiste tale operazione. Il vecchio restore API resta solo dove nessuno slot è futuro/ambiguo/illeggibile |
@@ -44,7 +44,7 @@ Evidenze osservate il 7 novembre 2026, 22:39 Europe/Rome / Europe/Amsterdam (CET
 | `pnpm run test` | **PASS 456/456**, zero skip/fail; include headers, version gate, i18n/copy e regressioni legacy |
 | `pnpm run test:stats` | **PASS 49/49**, soglie invariate; non è un nuovo benchmark 48.600 carriere |
 | `pnpm run typecheck`, `lint`, `build` | **PASS** tutti; build produzione soltanto locale |
-| `test:compat:types`, `test:compat:tools` | **PASS**, 8 test tool incluso gate diagnostico esplicito |
+| `test:compat:types`, `test:compat:tools` | **PASS**, 7 test tool (3 json-diff + 4 comparatore), incluso gate diagnostico esplicito |
 | E2E produzione locale, batch sei spec | **PASS 52/52** |
 | Successivo E2E spec protezione con boot illeggibile aggiuntivo | **PASS 30/30**; 53 test distinti complessivi |
 | Campagna main→patch | **9 comandi exit 0**; interpretazione distinta nelle tabelle sotto |
@@ -123,3 +123,8 @@ Le dipendenze Chromium del runner sono state installate sul box; il primo tentat
 Nuovo draft protezione: apertura a valle dell'unico push; CI della nuova PR **non ancora avviata in questo snapshot pre-push**. Il riscontro operativo riporta URL/stato effettivamente osservati dopo l'apertura. Nessuna attestazione anticipata di CI verde o demo pronta.
 
 **Conclusione:** implementazione coesa in bozza, prove riproducibili e limiti negativi espliciti; pronta da sottoporre a Dallak, NON punto 1 dichiarato chiuso, NON autorizzazione merge, NON demo certificata. Ordine eventuale dello stack solo proposto dopo review; nessuna attivazione 2.25.
+
+
+## Errata e seguito review #155
+
+Il conteggio harness precedente **8 era errato: sono 7 test**, 3 json-diff + 4 comparatore; i log/hash originali restano immutati. I test browser sintetici precedenti NON provavano l'ordine fra listener di un evento nativo. La review ha portato a una riproduzione runtime reale (round solo RAM perso all'uscita sul codice 8d84ec7) e correzione sincrona: vedere [FUTURE-SAVE-REVIEW155-2026-11-07.md](FUTURE-SAVE-REVIEW155-2026-11-07.md). La protezione si valuta separatamente dal [limite legacy aperto](issues/LEGACY-SAVE-COMPACTION-RNG.md).

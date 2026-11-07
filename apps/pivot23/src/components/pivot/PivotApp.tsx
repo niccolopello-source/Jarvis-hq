@@ -1,4 +1,4 @@
-import { livePersistenceAllowed, canPersistEngineVersion } from "@/lib/pivot/live-protection";
+import { registerLiveFlush, livePersistenceAllowed, canPersistEngineVersion } from "@/lib/pivot/live-protection";
 
 import { Component, memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
@@ -400,20 +400,8 @@ export function PivotApp() {
     document.documentElement.classList.toggle("pivot-lean", lean);
   }, []);
 
-  useEffect(() => {
-    const sync = () => {
-      document.documentElement.classList.toggle("pivot-asleep", document.hidden);
-      if (document.visibilityState === "hidden") flushLive();
-    };
-    sync();
-    document.addEventListener("visibilitychange", sync);
-    const onPageHide = () => flushLive();
-    window.addEventListener("pagehide", onPageHide);
-    return () => {
-      document.removeEventListener("visibilitychange", sync);
-      window.removeEventListener("pagehide", onPageHide);
-    };
-  }, []);
+  // LivePersistenceBoundary owns native lifecycle ordering; no second pagehide listener here.
+  useEffect(() => registerLiveFlush(flushLive), []);
 
   useEffect(() => {
     const last = { t: 0, x: 0, y: 0 };

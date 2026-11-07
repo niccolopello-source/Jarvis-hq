@@ -8,6 +8,8 @@ import {
 } from "react";
 import {
   acquireLiveWriter,
+  finishLiveDocument,
+  flushRegisteredLive,
   exportLiveRaw,
   hasLiveWriter,
   inspectLiveProtection,
@@ -41,15 +43,18 @@ export function LivePersistenceBoundary({ children }: { children: ReactNode }) {
       if (!hasLiveWriter()) acquire();
       else refresh();
     };
-    // Keep the lease through the synchronous pagehide flush, then release for BFCache/other tabs.
+    // The sole lifecycle owner flushes RAM and releases in this SAME synchronous callback.
     const hide = () => {
-      queueMicrotask(() => {
-        if (alive) {
-          stop();
-          refresh();
-        }
-      });
+      if (alive) finishLiveDocument(stop);
     };
+    const visibility = () => {
+      document.documentElement.classList.toggle(
+        "pivot-asleep",
+        document.hidden,
+      );
+      if (document.visibilityState === "hidden") flushRegisteredLive();
+    };
+    document.addEventListener("visibilitychange", visibility);
     const unsub = subscribeLiveProtection(refresh);
     window.addEventListener("storage", refresh);
     window.addEventListener("focus", wake);
@@ -64,6 +69,7 @@ export function LivePersistenceBoundary({ children }: { children: ReactNode }) {
       window.removeEventListener("focus", wake);
       window.removeEventListener("pageshow", wake);
       window.removeEventListener("pagehide", hide);
+      document.removeEventListener("visibilitychange", visibility);
     };
   }, []);
   useEffect(() => {
