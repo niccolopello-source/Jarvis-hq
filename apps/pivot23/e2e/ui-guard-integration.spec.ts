@@ -77,6 +77,12 @@ for (const width of [360, 390, 1280]) for (const lang of ["it", "en"] as const) 
       await expect.poll(() => table.evaluate(el => el.scrollLeft)).toBeGreaterThan(0);
       expect(Math.abs((await first.boundingBox())!.x - before)).toBeLessThanOrEqual(1);
     }
+    const tableFooter = page.locator(".ad-foot");
+    if (await tableFooter.isVisible()) {
+      await table.evaluate(el => el.scrollIntoView({ block: "center" }));
+      const box = (await table.boundingBox())!;
+      expect(box.y + box.height).toBeLessThanOrEqual((await tableFooter.boundingBox())!.y);
+    }
     if (out) await page.screenshot({ path: join(out, `${width}-${lang}-table.png`), animations: "disabled" });
     const themes = page.locator(".lc-themes"); await themes.evaluate(el => el.scrollIntoView({ block: "end" }));
     const footer = page.locator(".ad-foot");
