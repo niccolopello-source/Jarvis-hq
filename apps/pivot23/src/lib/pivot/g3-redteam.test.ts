@@ -112,9 +112,10 @@ function tamper(raw: string, edit: (save: Record<string, unknown>) => void): str
 function expectRejectKept(st: ReturnType<typeof install>, raw: string, state: string) {
   assert.equal(loadLive(), null);
   assert.equal(lastLoadReport().state, state);
-  assert.equal(lastLoadReport().backedUp, true);
+  assert.equal(lastLoadReport().backedUp, state !== "future");
   assert.equal(st.local.getItem(SAVE_KEY), raw, "original left in place");
-  assert.equal(JSON.parse(st.local.getItem(BACKUP_KEY)!).raw, raw, "original copied to backup");
+  if (state === "future") assert.equal(st.local.getItem(BACKUP_KEY), null, "future never rotated");
+  else assert.equal(JSON.parse(st.local.getItem(BACKUP_KEY)!).raw, raw, "original copied to backup");
 }
 
 /* ------------------------------ live save matrix ------------------------------ */
@@ -336,7 +337,7 @@ test("M12 storage unavailable (getter throws): no crash, nothing claimed as save
   try {
     const p = midCareer(322);
     assert.equal(saveLive(live(p)), false);
-    assert.equal(loadLive()?.player.seed, p.seed, "this tab still has the career in memory");
+    assert.equal(loadLive(), null, "unreadable is not absent: no stale MEM fallback");
     saveArchive(toArchive(finished(323)));
     assert.deepEqual(lastArchiveWrite(), { ok: false, persisted: false, reason: "unavailable" });
     assert.equal(loadArchive().length, 1, "memory copy for this tab");

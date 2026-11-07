@@ -1,6 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { CrashFallback } from "@/components/pivot/CrashFallback";
+import { LivePersistenceBoundary } from "@/components/pivot/LivePersistenceBoundary";
 import { PivotApp } from "@/components/pivot/PivotApp";
 import "./styles.css";
 import { IntroCurtain, prepareIntro } from "./intro";
@@ -51,9 +52,9 @@ armIntroSound();
 
 createRoot(root).render(
   <>
-    <AppErrorBoundary>
+    <LivePersistenceBoundary><AppErrorBoundary>
       <PivotApp />
-    </AppErrorBoundary>
+    </AppErrorBoundary></LivePersistenceBoundary>
     <IntroCurtain />
     <WebAnalytics />
   </>,

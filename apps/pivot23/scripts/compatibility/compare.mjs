@@ -3,7 +3,9 @@ import { createReadStream, writeFileSync } from "node:fs";
 import { createGunzip } from "node:zlib";
 import { createInterface } from "node:readline";
 import { createHash } from "node:crypto";
-const [main,draft,prefix] = process.argv.slice(2);
+const [main,draft,prefix,mode] = process.argv.slice(2);
+if(mode && mode!=="--allow-diagnostic-changes")throw new Error("unknown comparison mode");
+const isDiagnostic=id=>id.startsWith("engine-version/") || id.startsWith("recovery/") || id==="missing-rng";
 if (!main || !draft || !prefix) throw new Error("usage: compare.mjs MAIN.jsonl.gz DRAFT.jsonl.gz OUT_PREFIX");
 function lines(p) { return createInterface({input:createReadStream(p).pipe(createGunzip()),crlfDelay:Infinity})[Symbol.asyncIterator](); }
 import { firstDiff } from "./json-diff.mjs";
@@ -34,10 +36,11 @@ while(true) {
    if(p.age===36)coverage.retirement36++;
  } else if(left.id.startsWith("engine-version/") || left.id.startsWith("recovery/") || left.id==="missing-rng") diagnostics.push({id:left.id,main:left.value,draft:right.value});
 }
-const summary={fullCrossRevision:{checkpoints:total,pass:rows.filter(r=>r.status==="PASS").length,fail:rows.filter(r=>r.status==="FAIL").length},perVersion,coverage:Object.fromEntries(Object.entries(coverage).map(([k,v])=>[k,v instanceof Set?[...v]:v])),resume:{checks:resume.length,fullPass:resume.filter(r=>r.fullStatus==="PASS").length,fullFail:resume.filter(r=>r.fullStatus==="FAIL").length,persistedFail:resume.filter(r=>r.persistedStatus==="FAIL").length,rngFail:resume.filter(r=>r.rngStatus==="FAIL").length},diagnostics};
+const count=list=>({checkpoints:list.length,pass:list.filter(r=>r.status==="PASS").length,fail:list.filter(r=>r.status==="FAIL").length});
+const summary={comparisonMode:mode??"strict",supportedCrossRevision:count(rows.filter(r=>!isDiagnostic(r.id))),diagnosticCrossRevision:count(rows.filter(r=>isDiagnostic(r.id))),fullCrossRevision:{checkpoints:total,pass:rows.filter(r=>r.status==="PASS").length,fail:rows.filter(r=>r.status==="FAIL").length},perVersion,coverage:Object.fromEntries(Object.entries(coverage).map(([k,v])=>[k,v instanceof Set?[...v]:v])),resume:{checks:resume.length,fullPass:resume.filter(r=>r.fullStatus==="PASS").length,fullFail:resume.filter(r=>r.fullStatus==="FAIL").length,persistedFail:resume.filter(r=>r.persistedStatus==="FAIL").length,rngFail:resume.filter(r=>r.rngStatus==="FAIL").length},diagnostics};
 writeFileSync(`${prefix}-summary.json`,JSON.stringify(summary,null,2));
 writeFileSync(`${prefix}-checkpoints.jsonl`,rows.map(r=>JSON.stringify(r)).join("\n")+"\n");
 writeFileSync(`${prefix}-resume.jsonl`,resume.map(r=>JSON.stringify(r)).join("\n")+"\n");
 writeFileSync(`${prefix}-mismatches.json`,JSON.stringify(mismatches,null,2));
 console.log(JSON.stringify({...summary,diagnostics:undefined},null,2));
-if(summary.fullCrossRevision.fail)process.exitCode=1;
+if(summary.supportedCrossRevision.fail || (!mode && summary.fullCrossRevision.fail))process.exitCode=1;

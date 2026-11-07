@@ -1,3 +1,4 @@
+import { livePersistenceAllowed, canPersistEngineVersion } from "@/lib/pivot/live-protection";
 
 import { Component, memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
 import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
@@ -347,6 +348,7 @@ export function PivotApp() {
     setLocked(true);
     holdTimer.current = window.setTimeout(() => {
       holdTimer.current = 0;
+      if (!livePersistenceAllowed()) return;
       setLocked(false);
       fn();
     }, ms);
@@ -432,6 +434,8 @@ export function PivotApp() {
   }, []);
 
   useEffect(() => () => {
+    saveGen.current += 1;
+    simJob.current = null;
     if (holdTimer.current) window.clearTimeout(holdTimer.current);
     holdTimer.current = 0;
     if (simTimer.current) window.clearTimeout(simTimer.current);
@@ -477,6 +481,7 @@ export function PivotApp() {
   screenRef.current = screen;
 
   function flushLive() {
+    if (!livePersistenceAllowed()) return false;
     const screenNow = screenRef.current;
     const playerNow = playerRef.current;
     if ((screenNow !== "draft" && screenNow !== "career") || !playerNow) return false;
@@ -520,7 +525,7 @@ export function PivotApp() {
     savedPendingRef.current = pending;
     const gen = ++saveGen.current;
     const run = () => {
-      if (gen !== saveGen.current) return;
+      if (gen !== saveGen.current || !livePersistenceAllowed()) return;
       const wrote = saveLive({
         player,
         pending: savedPendingOf(pending, resolvedPendingRef.current, carryPendingRef.current),
@@ -541,7 +546,7 @@ export function PivotApp() {
     }
     let idle = 0;
     const t = window.setTimeout(() => {
-      if (gen !== saveGen.current) return;
+      if (gen !== saveGen.current || !livePersistenceAllowed()) return;
       if (w.requestIdleCallback) idle = w.requestIdleCallback(run, { timeout: 900 });
       else run();
     }, 360);
@@ -558,6 +563,7 @@ export function PivotApp() {
   }, [screen]);
 
   function takeGesture(token: string) {
+    if (!livePersistenceAllowed()) return false;
     /* G3-B01: during a hold the decision buttons are only pointer-events:none, so keyboard
        (Enter/Space) still reaches them after the 600 ms window. A decision already taken owns
        the hold: refuse every other decision until its transition has run. */
@@ -593,9 +599,12 @@ export function PivotApp() {
   }
 
   function startDraft() {
+    if (!livePersistenceAllowed()) return;
     releaseLiveFlush();
     // Test-only (dev server, never in a production build): e2e can open a career on a gated engine, e.g. 2.24.
     const forced = import.meta.env.DEV ? localStorage.getItem("pivot-e2e-engine") || undefined : undefined;
+    // Future DEV experiments must use isolated laboratory memory, never live storage keys.
+    if (forced && !canPersistEngineVersion(forced)) return;
     const s = freshPlayer(
       careerName(name),
       role,
@@ -632,7 +641,7 @@ export function PivotApp() {
   }
 
   function runOneSim() {
-    if (simBusy) return;
+    if (simBusy || !livePersistenceAllowed()) return;
     releaseLiveFlush();
     setSimBusy(true);
     setSimShow(false);
@@ -647,7 +656,7 @@ export function PivotApp() {
     simJob.current = job;
     const t0 = performance.now();
     const pump = () => {
-      if (simJob.current !== job) return;
+      if (simJob.current !== job || !livePersistenceAllowed()) return;
       const elapsed = performance.now() - t0;
       if (elapsed >= 1000) setSimShow(true);
       if (elapsed >= 10000) setSimSlow(true);
@@ -1067,6 +1076,7 @@ export function PivotApp() {
   }
 
   function finish(s: PlayerState) {
+    if (!livePersistenceAllowed()) return;
     const key = `${s.seed}:${s.seasonHistory.length}:${s.age}`;
     if (finishedCareerKey.current === key) return;
     finishedCareerKey.current = key;
@@ -1099,6 +1109,7 @@ export function PivotApp() {
 
   /** "Nuova vita" / "Un'altra vita": asks first whenever something could be lost. */
   function requestNewLife(origin: NewLifeOrigin) {
+    if (!livePersistenceAllowed()) return;
     if (newLifeBusy.current || newLife) return;
     const ask = newLifeAsk(careerFacts());
     if (ask === "none") {
@@ -1109,6 +1120,7 @@ export function PivotApp() {
   }
 
   function startNewLife(origin: NewLifeOrigin, confirmed: boolean) {
+    if (!livePersistenceAllowed()) return;
     if (newLifeBusy.current) return;
     newLifeBusy.current = true;
     try {
@@ -1132,6 +1144,7 @@ export function PivotApp() {
   }
 
   function retryArchive() {
+    if (!livePersistenceAllowed()) return;
     if (!player || newLifeBusy.current) return;
     newLifeBusy.current = true;
     try {

@@ -1,6 +1,7 @@
 
 /** Resume mid-vita: una chiave, stesso seed, stessa carta. */
 
+import { configureLiveValidator, inspectLiveProtection, livePersistenceAllowed, classifyPersistedRaw } from "./live-protection";
 import { pruneWorld, WORLD_EVENT_CAP } from "./world";
 import { sha256 } from "./card";
 import { compactMemory } from "./memory";
@@ -119,6 +120,7 @@ function holds(s: Storage, key: string, value: string): boolean {
 }
 
 function writeStore(s: Storage, key: string, value: string): boolean {
+  if (!livePersistenceAllowed()) return false;
   /* SR-02: a save this build could not open and could not back up is never written over. */
   if (key === SAVE_KEY && !releaseUnsaved(s)) return false;
   const memory = remembered(s);
@@ -127,6 +129,7 @@ function writeStore(s: Storage, key: string, value: string): boolean {
   if (memory.get(key) === value && holds(s, key, value)) return true;
   memory.delete(key);
   try {
+    if (!livePersistenceAllowed()) return false;
     s.setItem(key, value);
     if (!holds(s, key, value)) return false;
     memory.set(key, value);
@@ -137,16 +140,19 @@ function writeStore(s: Storage, key: string, value: string): boolean {
        Hint e swipe si possono sacrificare per far entrare la vita. */
     if (key === SAVE_KEY) {
       try {
+        if (!livePersistenceAllowed()) return false;
         s.removeItem(HINT_KEY);
       } catch {
         /* ignore */
       }
       try {
+        if (!livePersistenceAllowed()) return false;
         s.removeItem(SWIPE_KEY);
       } catch {
         /* ignore */
       }
       try {
+        if (!livePersistenceAllowed()) return false;
         s.setItem(key, value);
         if (!holds(s, key, value)) return false;
         memory.set(key, value);
@@ -161,6 +167,7 @@ function writeStore(s: Storage, key: string, value: string): boolean {
 
 /** Writes to localStorage and sessionStorage. `persistent` is true only when localStorage holds the value. */
 function writeEach(key: string, value: string): { any: boolean; persistent: boolean } {
+  if (!livePersistenceAllowed()) return { any: false, persistent: false };
   const local = storage();
   const session = sessionStore();
   let persistent = false;
@@ -175,7 +182,9 @@ function writeEach(key: string, value: string): { any: boolean; persistent: bool
   }
   if (any && key !== SAVE_KEY) {
     for (const s of failed) {
+      if (!livePersistenceAllowed()) break;
       try {
+        if (!livePersistenceAllowed()) break;
         s.removeItem(key);
       } catch {
         /* ignore */
@@ -204,14 +213,16 @@ function readFirst(key: string): string | null {
 
 /** Removes `key` from every store. True only when no store still holds it. */
 function removeAll(key: string): boolean {
+  if (!livePersistenceAllowed()) return false;
   let clean = true;
   for (const s of stores()) {
     if (!s) continue;
-    if (key === SAVE_KEY && !releaseUnsaved(s)) {
+    if (!livePersistenceAllowed() || (key === SAVE_KEY && !releaseUnsaved(s))) {
       clean = false;
       continue;
     }
     try {
+      if (!livePersistenceAllowed()) return false;
       s.removeItem(key);
     } catch {
       /* checked below */
@@ -227,6 +238,7 @@ function removeAll(key: string): boolean {
 
 /** Can this browser keep a career after the tab closes? Probes localStorage with a throwaway key. */
 export function persistentStorageAvailable(): boolean {
+  if (!livePersistenceAllowed()) return false;
   const s = storage();
   if (!s) return false;
   const probe = "pivot-v2-probe";
@@ -597,6 +609,7 @@ const FLUSH_HOLD_KEY = "pivot-v2-flush-hold";
 
 /** A set-aside must survive the pagehide that reload itself emits. */
 export function holdLiveFlush(): void {
+  if (!livePersistenceAllowed()) return;
   try {
     sessionStorage.setItem(FLUSH_HOLD_KEY, "1");
   } catch {
@@ -605,6 +618,7 @@ export function holdLiveFlush(): void {
 }
 
 export function releaseLiveFlush(): void {
+  if (!livePersistenceAllowed()) return;
   try {
     sessionStorage.removeItem(FLUSH_HOLD_KEY);
   } catch {
@@ -628,13 +642,14 @@ export function saveLive(data: {
   tab: LiveSave["tab"];
   logSeq: number;
 }): boolean {
-  if (liveFlushHeld()) return false;
+  if (liveFlushHeld() || !livePersistenceAllowed()) return false;
   let last: LiveSave | null = null;
   for (const level of [0, 1, 2, 3]) {
     try {
       const payload = buildLiveSave(data.player, data.pending, data.log, data.screen, data.tab, data.logSeq, level);
       last = payload;
       const json = JSON.stringify(payload);
+      if (classifyPersistedRaw(json) !== "supported") return false;
       /* Success means the browser will still have this career after the tab closes. */
       if (writeEach(SAVE_KEY, json).persistent) {
         MEM = payload;
@@ -863,6 +878,7 @@ export function lastLoadReport(): LiveLoadReport {
 export const BACKUP_PREV_KEY = "pivot-v2-save-backup-prev";
 
 function backupRaw(raw: string, reason: LiveLoadState): boolean {
+  if (!livePersistenceAllowed()) return false;
   const s = storage() ?? sessionStore();
   if (!s) return false;
   let prevRaw: unknown;
@@ -878,6 +894,7 @@ function backupRaw(raw: string, reason: LiveLoadState): boolean {
     /* SR-03: a different readable backup (for example a save from a newer build) is moved aside
        first. If it cannot be moved, nothing is overwritten. */
     try {
+      if (!livePersistenceAllowed()) return false;
       s.setItem(BACKUP_PREV_KEY, prev);
       if (s.getItem(BACKUP_PREV_KEY) !== prev) return false;
     } catch {
@@ -886,6 +903,7 @@ function backupRaw(raw: string, reason: LiveLoadState): boolean {
   }
   const value = JSON.stringify({ v: 1, reason, at: Date.now(), raw });
   try {
+    if (!livePersistenceAllowed()) return false;
     s.setItem(BACKUP_KEY, value);
     return s.getItem(BACKUP_KEY) === value;
   } catch {
@@ -948,6 +966,7 @@ export function readLiveBackup(): { reason: string; at: number; raw: string } | 
  * store now holds it. The backup itself is kept.
  */
 export function restoreLiveBackup(): boolean {
+  if (!livePersistenceAllowed()) return false;
   const backup = readLiveBackup();
   if (!backup) return false;
   writeGen += 1;
@@ -994,6 +1013,13 @@ function classify(raw: string): Classified {
 const PROBLEM_RANK: Record<string, number> = { corrupt: 1, incompatible: 2, future: 3 };
 
 export function loadLive(): LiveSave | null {
+  const protection = inspectLiveProtection(false);
+  if (protection.blocked) {
+    MEM = null;
+    const future = protection.slots.some(s => s.status === "future-schema" || s.status === "future-engine");
+    LAST_LOAD = { state: future ? "future" : "incompatible", version: undefined, backedUp: false };
+    return null;
+  }
   const report: LiveLoadReport = { state: "none", version: undefined, backedUp: false };
   try {
     const local = storage();
@@ -1069,6 +1095,7 @@ export function hasLiveHint(): boolean {
  * On failure the in-memory copy is kept, so the caller can tell the player nothing was lost.
  */
 export function clearLive(): boolean {
+  if (!livePersistenceAllowed()) return false;
   writeGen += 1;
   const gone = removeAll(SAVE_KEY);
   removeAll(HINT_KEY);
@@ -1093,6 +1120,7 @@ export const CRASH_BACKUP_KEY = "pivot-v2-save-crashed";
  * verified. Returns true when the home will open clean on reload.
  */
 export function setAsideLive(): boolean {
+  if (!livePersistenceAllowed()) return false;
   let held = false;
   for (const s of stores()) {
     if (!s) continue;
@@ -1106,6 +1134,7 @@ export function setAsideLive(): boolean {
     held = true;
     const value = JSON.stringify({ v: 1, reason: "crashed", at: Date.now(), raw });
     try {
+      if (!livePersistenceAllowed()) return false;
       s.setItem(CRASH_BACKUP_KEY, value);
       if (s.getItem(CRASH_BACKUP_KEY) !== value) return false;
     } catch {
@@ -1190,3 +1219,6 @@ export function logSeqFrom(log: LogEntry[]): number {
   }
   return max + 1;
 }
+
+// Registered after declarations; the guard validates persisted shape/checksum without importing save cyclically.
+configureLiveValidator(isLiveSave);
