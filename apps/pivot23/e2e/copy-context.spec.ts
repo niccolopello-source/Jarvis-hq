@@ -16,7 +16,16 @@ for(const lang of ['it','en'] as const) test(`copy ${lang}: simulated save → a
  await expect(page.getByText(lang==='it'?'La preparazione per ottobre conta a ogni età.':'Preparation for October matters at every age.',{exact:false})).toBeVisible();
  await expect(page.locator('.review-pane')).toContainText(lang==='it'?'tre azioni di Elijah Voss':'three plays by Elijah Voss');
  expect(await page.locator('body').innerText()).not.toContain('__RIVAL__');
- const out=process.env.COPY_SHOTS;if(out){mkdirSync(out,{recursive:true});await page.screenshot({path:join(out,`390-${lang}-life.png`),fullPage:true});}
+ const out=process.env.COPY_SHOTS;
+ if(out){
+  mkdirSync(out,{recursive:true});
+  await page.getByText(lang==='it'?"Al termine dell'estate, l'overall è diminuito.":"At summer's end, overall has decreased.",{exact:false}).scrollIntoViewIfNeeded();
+  await page.screenshot({path:join(out,`390-${lang}-development.png`),animations:'disabled'});
+  await page.locator('.swipe-slide.on').evaluate(el=>{el.scrollTop=el.scrollHeight;});
+  console.log('COPY_GEOMETRY',lang,await page.evaluate(()=>({width:innerWidth,documentWidth:document.documentElement.scrollWidth,x:scrollX,roots:[...document.querySelectorAll('.career-view,.swipe-pager,.swipe-slide.on')].map(el=>({class:el.className,x:el.getBoundingClientRect().x,width:el.getBoundingClientRect().width,scrollLeft:el.scrollLeft}))})));
+  await page.screenshot({path:join(out,`390-${lang}-life.png`),animations:'disabled'});
+ }
+
  await page.getByRole('button',{name:lang==='it'?'Storia':'Story',exact:true}).click();
  await page.getByRole('button',{name:lang==='it'?/Chiudi ora/:/Retire now/}).click();
  await expect(page.getByRole('region',{name:'Career Card'})).toBeVisible();
