@@ -1,0 +1,33 @@
+
+Running 1 test using 1 worker
+
+(node:60796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:60817) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+synthetic UI seed7107 2.24.0-beta 11 rows
+  ✘  1 e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity (1.4s)
+
+
+  1) e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity 
+
+    Error: DejaVu Sans, sans-serif: Squadra
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      110 |     for (const font of ["Arial, sans-serif", "DejaVu Sans, sans-serif", "serif"]) {
+      111 |       await table.locator("table").evaluate((el,font)=>{el.style.fontFamily=font;},font);
+    > 112 |       for (const header of await table.locator("thead th").all()) expect(await header.evaluate(el=>el.scrollWidth<=el.clientWidth),`${font}: ${await header.innerText()}`).toBe(true);
+          |                                                                                                                                                                            ^
+      113 |     }
+      114 |     await table.locator("table").evaluate(el=>{el.style.fontFamily="";});
+      115 |     const tableFooter = page.locator(".ad-foot");
+        at /workspace/pivot23-ui-integration/apps/pivot23/e2e/ui-guard-integration.spec.ts:112:172
+
+    Error Context: test-results/ui-guard-integration-360px-99efb--Legacy-and-theme-integrity/error-context.md
+
+  1 failed
+    e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity 

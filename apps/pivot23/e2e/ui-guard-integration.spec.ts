@@ -96,7 +96,7 @@ for (const width of [360, 390, 1280]) for (const lang of ["it", "en"] as const) 
       expect(await teamCells.first().evaluate(el => { const r=el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)); })).toBe(true);
       const last = table.locator("tbody tr").first().locator("td").last();
       const lastBox = (await last.boundingBox())!; const wrapBox = (await table.boundingBox())!;
-      expect(lastBox.x).toBeGreaterThanOrEqual(teamBox.x + teamBox.width - 1);
+      expect(Math.abs(lastBox.x - teamBox.x - teamBox.width)).toBeLessThanOrEqual(1);
       expect(lastBox.x + lastBox.width).toBeLessThanOrEqual(wrapBox.x + wrapBox.width + 1);
       for (const cell of await table.locator("tbody tr > :last-child, thead th:nth-child(2)").all()) expect(await cell.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
     }
@@ -106,6 +106,12 @@ for (const width of [360, 390, 1280]) for (const lang of ["it", "en"] as const) 
       expect(Math.max(...boxes.map(b=>b.top))-Math.min(...boxes.map(b=>b.top))).toBeLessThanOrEqual(1);
     }
     for (const score of await table.locator(".lr-score").all()) expect(await score.evaluate(el=>{const r=document.createRange();r.selectNodeContents(el);return r.getClientRects().length;})).toBe(1);
+    // Font fallback must not crop identity headers (CI156 exposed this with Italian Squadra).
+    for (const font of ["Arial, sans-serif", "DejaVu Sans, sans-serif", "serif"]) {
+      await table.locator("table").evaluate((el,font)=>{el.style.fontFamily=font;},font);
+      for (const header of await table.locator("thead th").all()) expect(await header.evaluate(el=>el.scrollWidth<=el.clientWidth),`${font}: ${await header.innerText()}`).toBe(true);
+    }
+    await table.locator("table").evaluate(el=>{el.style.fontFamily="";});
     const tableFooter = page.locator(".ad-foot");
     if (await tableFooter.isVisible()) {
       await table.evaluate(el => el.scrollIntoView({ block: "center" }));

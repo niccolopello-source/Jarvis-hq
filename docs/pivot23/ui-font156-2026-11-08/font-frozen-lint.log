@@ -1,0 +1,4 @@
+
+> pivot23-demo@0.1.0 lint /workspace/pivot23-ui-integration/apps/pivot23
+> eslint . --max-warnings=0
+

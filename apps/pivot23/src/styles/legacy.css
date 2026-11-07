@@ -88,13 +88,13 @@
   scrollbar-width: thin; }
 .lr-table th:first-child, .lr-table td:first-child { position: sticky; left: 0; z-index: 1; background: var(--color-bg); }
 .lr-table-wrap:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
-.lr-table { width: 100%; min-width: 522px; table-layout: fixed; border-collapse: separate; border-spacing: 0; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.lr-table { width: 100%; min-width: 538px; table-layout: fixed; border-collapse: separate; border-spacing: 0; font-size: 12.5px; font-variant-numeric: tabular-nums; }
 .lr-table th, .lr-table td { padding: 6px 6px; text-align: left; vertical-align: middle; border-bottom: 1px solid var(--color-line); white-space: nowrap; }
 .lr-table thead th { color: var(--color-muted); font-weight: 600; }
 
 /* Keep identity visible at every horizontal offset; long playoff results wrap, not truncate. */
 .lr-table th:first-child, .lr-table td:first-child { width: 76px; }
-.lr-table th:nth-child(2), .lr-table td:nth-child(2) { position: sticky; left: 76px; width: 64px; z-index: 1; background: var(--color-bg); }
+.lr-table th:nth-child(2), .lr-table td:nth-child(2) { position: sticky; left: 76px; width: 80px; z-index: 1; background: var(--color-bg); }
 .lr-table thead th:nth-child(3) { width: 34px; }
 .lr-table thead th:nth-child(4), .lr-table thead th:nth-child(5), .lr-table thead th:nth-child(6) { width: 46px; }
 .lr-table thead th:nth-child(7) { width: 50px; }
@@ -106,3 +106,13 @@
 .lr-table th, .lr-table td { box-sizing: border-box; }
 
 .lr-score { white-space: nowrap; overflow-wrap: normal; }
+
+/* At the horizontal end, the result fills the space beside the two frozen identity columns.
+   Middle columns can be partial while dragging, but no orphan W-L digits remain at the end. */
+@supports (width: 1cqw) {
+  .lr-table-wrap { container-type: inline-size; }
+  @media (max-width: 767px) {
+    .lr-table { --lr-playoff-width: max(160px, calc(100cqw - 156px)); min-width: calc(378px + var(--lr-playoff-width)); }
+    .lr-table th:last-child, .lr-table td:last-child { width: var(--lr-playoff-width); }
+  }
+}
