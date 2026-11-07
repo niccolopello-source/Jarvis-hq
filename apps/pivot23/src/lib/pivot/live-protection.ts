@@ -192,36 +192,42 @@ export function acquireLiveWriter(onChange: () => void): () => void {
   let cancelled = false,
     release: (() => void) | undefined;
   const token = Symbol("live-writer");
-  const locks = typeof navigator !== "undefined" ? navigator.locks : undefined;
-  if (!locks) {
-    queueMicrotask(onChange);
-    return () => {
-      cancelled = true;
-    };
-  }
-  void locks
-    .request(
-      "pivot23-live-persistence-v1",
-      { mode: "exclusive", ifAvailable: true },
-      async (lock) => {
-        if (!lock || cancelled) {
+  try {
+    const locks =
+      typeof navigator !== "undefined" ? navigator.locks : undefined;
+    if (!locks || typeof locks.request !== "function") {
+      queueMicrotask(onChange);
+      return () => {
+        cancelled = true;
+      };
+    }
+    void locks
+      .request(
+        "pivot23-live-persistence-v1",
+        { mode: "exclusive", ifAvailable: true },
+        async (lock) => {
+          if (!lock || cancelled) {
+            onChange();
+            return;
+          }
+          lease = token;
           onChange();
-          return;
-        }
-        lease = token;
-        onChange();
-        await new Promise<void>((done) => {
-          release = done;
-          if (cancelled) done();
-        });
+          await new Promise<void>((done) => {
+            release = done;
+            if (cancelled) done();
+          });
+          if (lease === token) lease = null;
+          onChange();
+        },
+      )
+      .catch(() => {
         if (lease === token) lease = null;
         onChange();
-      },
-    )
-    .catch(() => {
-      if (lease === token) lease = null;
-      onChange();
-    });
+      });
+  } catch {
+    // Security-policy getters and synchronous API failures must also fail closed.
+    queueMicrotask(onChange);
+  }
   return () => {
     cancelled = true;
     if (lease === token) lease = null;

@@ -106,6 +106,7 @@ const manifest = {
       "run.mjs",
       "worker.ts",
       "phases-worker.ts",
+      "world-compaction-probe.mjs",
       "compare.mjs",
       "json-diff.mjs",
     ].map((p) => [p, hash(readFileSync(resolve(here, p)))]),
@@ -169,6 +170,7 @@ try {
     for (const [worker, suffix] of [
       ["worker.ts", ""],
       ["phases-worker.ts", "-phases"],
+      ["world-compaction-probe.mjs", "-compaction"],
     ]) {
       const file = `${name}${suffix}.jsonl.gz`;
       run(
@@ -179,7 +181,7 @@ try {
       await capture(file);
     }
   for (const [name] of targets.filter(([name]) => name !== "main"))
-    for (const suffix of ["", "-phases"]) {
+    for (const suffix of ["", "-phases", "-compaction"]) {
       const prefix = `comparison-${name}${suffix}`;
       run(
         prefix,

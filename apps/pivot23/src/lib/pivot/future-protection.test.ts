@@ -260,3 +260,133 @@ test("quota and export read failure do not unlock a future primary or write any 
   assert.deepEqual([...st.local.values, ...st.session.values], before);
   assert.equal(inspectLiveProtection().blocked, true);
 });
+
+import { acquireLiveWriter } from "./live-protection.ts";
+test("unavailable, inaccessible, throwing and rejecting lock API fail closed without crashing", async () => {
+  const original = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+  try {
+    for (const mode of ["absent", "getter", "throws", "rejects"]) {
+      let notified = 0;
+      const fake =
+        mode === "getter"
+          ? {
+              get locks() {
+                throw new Error("denied");
+              },
+            }
+          : mode === "absent"
+            ? {}
+            : {
+                locks: {
+                  request() {
+                    if (mode === "throws") throw new Error("denied");
+                    return Promise.reject(new Error("denied"));
+                  },
+                },
+              };
+      Object.defineProperty(globalThis, "navigator", {
+        configurable: true,
+        value: fake,
+      });
+      let stop = () => {};
+      assert.doesNotThrow(() => {
+        stop = acquireLiveWriter(() => {
+          notified++;
+        });
+      });
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      assert.equal(notified, 1, mode);
+      stop();
+    }
+  } finally {
+    if (original) Object.defineProperty(globalThis, "navigator", original);
+    else Reflect.deleteProperty(globalThis, "navigator");
+  }
+});
+test("130 mixed future primary/session/backup cells preserve every raw copy across three restart attempts", () => {
+  const d = data(),
+    base = buildLiveSave(d.player, null, [], "career", "log", 1);
+  const raw = (kind: string) =>
+    kind === "corrupt"
+      ? "{"
+      : kind === "future-schema"
+        ? JSON.stringify({ ...base, v: 3, player: null })
+        : kind === "future-engine"
+          ? JSON.stringify({ ...base, player: { engineVersion: "3.0" } })
+          : kind === "checksum"
+            ? JSON.stringify({ ...base, c: "bad" })
+            : kind === "incomplete"
+              ? JSON.stringify({ v: 2 })
+              : JSON.stringify(base);
+  let cells = 0;
+  for (const primary of [
+    "none",
+    "legacy",
+    "corrupt",
+    "future-schema",
+    "future-engine",
+    "checksum",
+    "incomplete",
+  ])
+    for (const session of [
+      "none",
+      "legacy",
+      "corrupt",
+      "future-schema",
+      "future-engine",
+    ])
+      for (const backup of [
+        "none",
+        "legacy",
+        "corrupt",
+        "future-schema",
+        "future-engine",
+      ]) {
+        if (![primary, session, backup].some((k) => k.startsWith("future-")))
+          continue;
+        cells++;
+        const st = setup();
+        assert.equal(saveLive(d), true);
+        st.local.removeItem(SAVE_KEY);
+        st.session.removeItem(SAVE_KEY);
+        if (primary !== "none") st.local.setItem(SAVE_KEY, raw(primary));
+        if (session !== "none") st.session.setItem(SAVE_KEY, raw(session));
+        if (backup !== "none")
+          st.local.setItem(
+            BACKUP_KEY,
+            JSON.stringify({ v: 1, at: 1, raw: raw(backup) }),
+          );
+        const before = [...st.local.values, ...st.session.values],
+          label = `${primary}/${session}/${backup}`;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          assert.equal(loadLive(), null, label);
+          assert.equal(saveLive(d), false, label);
+          assert.equal(clearLive(), false, label);
+          assert.equal(setAsideLive(), false, label);
+          assert.equal(restoreLiveBackup(), false, label);
+          assert.deepEqual(
+            [...st.local.values, ...st.session.values],
+            before,
+            label,
+          );
+        }
+      }
+  assert.equal(cells, 130);
+});
+test("future backup wrapper schema wins even when inner raw is invalid or missing", () => {
+  for (const target of ["local", "session"] as const)
+    for (const key of [BACKUP_KEY, BACKUP_PREV_KEY, CRASH_BACKUP_KEY]) {
+      const st = setup(),
+        raw = JSON.stringify({ v: 2, raw: 42 });
+      st[target].setItem(key, raw);
+      assert.equal(
+        inspectLiveProtection().slots.find(
+          (s) => s.id === `${target}Storage/${key}`,
+        )?.status,
+        "future-schema",
+      );
+      assert.equal(saveLive(data()), false);
+      assert.equal(clearLive(), false);
+      assert.equal(st[target].getItem(key), raw);
+    }
+});

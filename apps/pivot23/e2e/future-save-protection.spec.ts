@@ -173,23 +173,51 @@ test("same-career concurrent tab cannot autosave; future write wins over pending
   ).toBe(future);
   await second.close();
 });
-test("no Web Locks fails closed without touching future or legacy copies", async ({
-  page,
-}) => {
-  const value = raw("2.24.0-beta");
-  await page.addInitScript((value) => {
-    Object.defineProperty(navigator, "locks", { value: undefined });
-    localStorage.setItem("pivot-v2-save", value);
-  }, value);
-  await page.goto("/");
-  await expect(page.getByTestId("live-protection")).toHaveAttribute(
-    "data-reason",
-    "writer",
-  );
-  expect(await page.evaluate(() => localStorage.getItem("pivot-v2-save"))).toBe(
-    value,
-  );
-});
+for (const mode of ["missing", "getter", "rejects"])
+  for (const engine of ["2.24.0-beta", "3.0.0"])
+    test(`Web Locks ${mode}: fails closed and preserves engine ${engine}`, async ({
+      page,
+    }) => {
+      const errors: string[] = [];
+      page.on("pageerror", (e) => errors.push(e.message));
+      const value = raw(engine);
+      await page.addInitScript(
+        ({ value, mode }) => {
+          if (mode === "getter")
+            Object.defineProperty(navigator, "locks", {
+              get() {
+                throw new Error("synthetic denied");
+              },
+            });
+          else
+            Object.defineProperty(navigator, "locks", {
+              value:
+                mode === "missing"
+                  ? undefined
+                  : {
+                      request() {
+                        return Promise.reject(new Error("synthetic denied"));
+                      },
+                    },
+            });
+          localStorage.setItem("pivot-v2-save", value);
+        },
+        { value, mode },
+      );
+      await page.goto("/");
+      await expect(page.getByTestId("live-protection")).toHaveAttribute(
+        "data-reason",
+        engine === "3.0.0" ? "data" : "writer",
+      );
+      await expect(page.getByTestId("live-protection")).toHaveAttribute(
+        "data-ready",
+        "true",
+      );
+      expect(
+        await page.evaluate(() => localStorage.getItem("pivot-v2-save")),
+      ).toBe(value);
+      expect(errors).toEqual([]);
+    });
 
 for (const engine of [undefined, null, 225, "", "garbage"])
   test(`unknown engine ${String(engine)} boots read-only, not a fresh career`, async ({
