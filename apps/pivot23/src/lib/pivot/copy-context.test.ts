@@ -12,7 +12,7 @@ test('team/location copy is grammatical without modifying stored text', async ()
 
 import { contextualText, developmentText, archivedRival } from './copy-context';
 import { seasonsLabel, legacyAwardLabel, timelineLine } from './legacy-i18n';
-import { nationLabel, roleLabel } from './labels';
+import { nationLabel, roleLabel, italianTeamPreposition } from './labels';
 import { t } from './i18n';
 import { NBA_TEAMS, EURO_TEAMS } from './teams';
 import { playCareerSim } from './engine';
@@ -117,6 +117,7 @@ test('sampled Italian grammar and impossible retrospective at age nineteen are c
  assert.equal(nx("Il gesto, a settembre, è un altro di un palmo.",'it'),"Il gesto, a settembre, è cambiato di poco.");
  assert.equal(nx("Il ruolo, a settembre, è un altro di un palmo.",'it'),"Il ruolo, a settembre, è leggermente cambiato.");
  assert.match(nx('Sei tornato con una uscita nuova.','it'),/un'uscita/);
+ assert.equal(italianTeamPreposition('Houston Rockets','da'),'dagli Houston Rockets');
  const line="Luglio è stato una stanza chiusa: ghiaccio, camminate, la pazienza che a vent'anni non avevi.";
  for(const lang of ['it','en'] as const){
   assert.equal(contextualText(line,lang,{age:19}),t('copyEveryAge',lang));

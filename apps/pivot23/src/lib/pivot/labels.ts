@@ -194,7 +194,7 @@ export function awardNoteLabel(note: string, lang: UiLang): string {
 /** Articles for known team ids only; unknown historical names are not guessed. */
 export function italianTeamPreposition(name: string, prep: "a"|"da"|"con"): string {
   let article: "i"|"gli"|"il"|"lo"|"la"|"l'";
-  if (NBA_TEAMS.some(t=>t.name===name)) article=/^[AEIOU]/.test(name)?"gli":"i";
+  if (NBA_TEAMS.some(t=>t.name===name)) article=/^[AEIOU]/.test(name)||name==="Houston Rockets"?"gli":"i";
   else if (EURO_TEAMS.some(t=>t.name===name)) {
     article=["Virtus Bologna","Crvena Zvezda"].includes(name)?"la":["EA7 Olimpia Milano","ALBA Berlino","AS Monaco","Anadolu Efes","Olympiacos"].includes(name)?"l'":name==="Zalgiris Kaunas"?"lo":"il";
   } else return `${prep} ${name}`;
