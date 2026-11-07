@@ -200,6 +200,10 @@ export const fmtInt = (n: number, lang: Lang) => n.toLocaleString(lang === "en" 
 
 /** Award names on the Legacy screen: one name per award, Italian names in Italian. Display only. */
 const AWARD_IT: Readonly<Record<string, string>> = {
+  "NBA Champion": "Campione NBA",
+  "EuroLeague Champion": "Campione di Eurolega",
+  "Finals MVP": "MVP delle Finali",
+  FMVP: "MVP delle Finali",
   "Most Improved Player": "Giocatore più migliorato",
   MIP: "Giocatore più migliorato",
   "Sixth Man": "Sesto uomo dell'anno",
@@ -211,6 +215,7 @@ const AWARD_IT: Readonly<Record<string, string>> = {
   DPOY: "Difensore dell'anno",
 };
 const AWARD_EN: Readonly<Record<string, string>> = {
+  FMVP: "Finals MVP",
   "Sixth Man": "Sixth Man of the Year",
   "6MOY": "Sixth Man of the Year",
   MIP: "Most Improved Player",

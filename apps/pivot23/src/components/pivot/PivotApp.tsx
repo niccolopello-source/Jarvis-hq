@@ -87,6 +87,7 @@ import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
 import { ModalDialog } from "@/components/pivot/Dialog";
 import { LazyChunk } from "@/components/pivot/ChunkBoundary";
 import { attrLabel, chipLabel, confLabel, seedLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel } from "@/lib/pivot/labels";
+import { fmtDec, legacyAwardLabel } from "@/lib/pivot/legacy-i18n";
 import { contextualText, developmentText, archivedRival } from "@/lib/pivot/copy-context";
 import { loadNarrativeEn, nx } from "@/lib/pivot/narrative";
 import { withLegacyFacts } from "@/lib/pivot/legacy-report";
@@ -1595,11 +1596,11 @@ function CareerView(props: {
               </div>
               {last ? (
                 <div className="hud-line tabular">
-                  {last.ppg.toFixed(1)}
+                  {fmtDec(last.ppg, lang)}
                   <span>/</span>
-                  {last.rpg.toFixed(1)}
+                  {fmtDec(last.rpg, lang)}
                   <span>/</span>
-                  {last.apg.toFixed(1)}
+                  {fmtDec(last.apg, lang)}
                   <span>{t("lastSeason", lang)}</span>
                 </div>
               ) : null}
@@ -2040,9 +2041,9 @@ function RecapCard({
       </p>
       <div className="totals-strip mb-3">
         {[
-          [row.ppg.toFixed(1), "PPG"],
-          [row.rpg.toFixed(1), "RPG"],
-          [row.apg.toFixed(1), "APG"],
+          [fmtDec(row.ppg, lang), "PPG"],
+          [fmtDec(row.rpg, lang), "RPG"],
+          [fmtDec(row.apg, lang), "APG"],
         ].map(([v, l]) => (
           <div key={l} className="totals-cell">
             <div className="tv">{v}</div>
@@ -2051,29 +2052,29 @@ function RecapCard({
         ))}
       </div>
       <div className="font-display text-[13px] mb-2 tabular text-muted">
-        {row.gp} GP · {row.min.toFixed(1)} MIN
+        {row.gp} GP · {fmtDec(row.min, lang)} MIN
       </div>
       <div className="grid grid-cols-3 gap-1.5 text-center text-[11px] text-muted mb-2">
-        <StatMini l="STL" v={row.spg.toFixed(1)} />
-        <StatMini l="BLK" v={row.bpg.toFixed(1)} />
-        <StatMini l="TOV" v={row.tov.toFixed(1)} />
-        <StatMini l="FG%" v={(row.fg * 100).toFixed(1)} />
-        <StatMini l="3P%" v={(row.tp * 100).toFixed(1)} />
-        <StatMini l="FT%" v={(row.ft * 100).toFixed(1)} />
-        <StatMini l="TS%" v={(row.ts * 100).toFixed(1)} />
-        <StatMini l="PER" v={row.per.toFixed(1)} />
-        <StatMini l="+/-" v={`${row.plusMinus > 0 ? "+" : ""}${row.plusMinus.toFixed(1)}`} />
+        <StatMini l="STL" v={fmtDec(row.spg, lang)} />
+        <StatMini l="BLK" v={fmtDec(row.bpg, lang)} />
+        <StatMini l="TOV" v={fmtDec(row.tov, lang)} />
+        <StatMini l="FG%" v={fmtDec(row.fg * 100, lang)} />
+        <StatMini l="3P%" v={fmtDec(row.tp * 100, lang)} />
+        <StatMini l="FT%" v={fmtDec(row.ft * 100, lang)} />
+        <StatMini l="TS%" v={fmtDec(row.ts * 100, lang)} />
+        <StatMini l="PER" v={fmtDec(row.per, lang)} />
+        <StatMini l="+/-" v={`${row.plusMinus > 0 ? "+" : ""}${fmtDec(row.plusMinus, lang)}`} />
       </div>
       {(() => {
         const adv = advancedOf(row);
         return (
           <div className="grid grid-cols-3 gap-1.5 text-center text-[11px] text-muted mb-2">
-            <StatMini l="USG%" v={adv.usg.toFixed(1)} />
-            <StatMini l="AST%" v={adv.astPct.toFixed(1)} />
-            <StatMini l="eFG%" v={(adv.efg * 100).toFixed(1)} />
-            <StatMini l="TOV%" v={adv.tovPct.toFixed(1)} />
-            <StatMini l="BPM" v={`${adv.bpm > 0 ? "+" : ""}${adv.bpm.toFixed(1)}`} />
-            <StatMini l="VORP" v={`${adv.vorp > 0 ? "+" : ""}${adv.vorp.toFixed(1)}`} />
+            <StatMini l="USG%" v={fmtDec(adv.usg, lang)} />
+            <StatMini l="AST%" v={fmtDec(adv.astPct, lang)} />
+            <StatMini l="eFG%" v={fmtDec(adv.efg * 100, lang)} />
+            <StatMini l="TOV%" v={fmtDec(adv.tovPct, lang)} />
+            <StatMini l="BPM" v={`${adv.bpm > 0 ? "+" : ""}${fmtDec(adv.bpm, lang)}`} />
+            <StatMini l="VORP" v={`${adv.vorp > 0 ? "+" : ""}${fmtDec(adv.vorp, lang)}`} />
           </div>
         );
       })()}
@@ -2123,8 +2124,8 @@ function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
         </span>
       </p>
       <div className="font-display text-[17px] mb-1 tabular">
-        {row.ppg.toFixed(1)} / {row.rpg.toFixed(1)} / {row.apg.toFixed(1)}
-        <span className="text-muted text-[13px] font-sans"> · {row.gp} GP · PER {row.per.toFixed(1)}</span>
+        {fmtDec(row.ppg, lang)} / {fmtDec(row.rpg, lang)} / {fmtDec(row.apg, lang)}
+        <span className="text-muted text-[13px] font-sans"> · {row.gp} GP · PER {fmtDec(row.per, lang)}</span>
       </div>
       {row.awards.length > 0 && (
         <p className="text-[13px] text-wood mb-1">{row.awards.map((a) => awardLabel(a, lang)).join(" · ")}</p>
@@ -2190,9 +2191,9 @@ function SeasonSheet({ player }: { player: PlayerState }) {
       </div>
       <div className="totals-strip mb-3">
         {[
-          [row.ppg.toFixed(1), "PPG"],
-          [row.rpg.toFixed(1), "RPG"],
-          [row.apg.toFixed(1), "APG"],
+          [fmtDec(row.ppg, lang), "PPG"],
+          [fmtDec(row.rpg, lang), "RPG"],
+          [fmtDec(row.apg, lang), "APG"],
         ].map(([v, l]) => (
           <div key={l} className="totals-cell">
             <div className="tv">{v}</div>
@@ -2202,14 +2203,14 @@ function SeasonSheet({ player }: { player: PlayerState }) {
       </div>
       <div className="grid grid-cols-3 gap-1.5 text-center text-[11px] text-muted mb-3">
         <StatMini l="GP" v={String(row.gp)} />
-        <StatMini l="MIN" v={row.min.toFixed(1)} />
-        <StatMini l="PER" v={row.per.toFixed(1)} />
-        <StatMini l="TS%" v={(row.ts * 100).toFixed(1)} />
-        <StatMini l="STL" v={row.spg.toFixed(1)} />
-        <StatMini l="BLK" v={row.bpg.toFixed(1)} />
-        <StatMini l="FG%" v={(row.fg * 100).toFixed(1)} />
-        <StatMini l="3P%" v={(row.tp * 100).toFixed(1)} />
-        <StatMini l="+/-" v={`${row.plusMinus > 0 ? "+" : ""}${row.plusMinus.toFixed(1)}`} />
+        <StatMini l="MIN" v={fmtDec(row.min, lang)} />
+        <StatMini l="PER" v={fmtDec(row.per, lang)} />
+        <StatMini l="TS%" v={fmtDec(row.ts * 100, lang)} />
+        <StatMini l="STL" v={fmtDec(row.spg, lang)} />
+        <StatMini l="BLK" v={fmtDec(row.bpg, lang)} />
+        <StatMini l="FG%" v={fmtDec(row.fg * 100, lang)} />
+        <StatMini l="3P%" v={fmtDec(row.tp * 100, lang)} />
+        <StatMini l="+/-" v={`${row.plusMinus > 0 ? "+" : ""}${fmtDec(row.plusMinus, lang)}`} />
       </div>
       <p className="stat-legend">{t("statLegend", lang)}</p>
       <details className="adv-stats">
@@ -2219,18 +2220,18 @@ function SeasonSheet({ player }: { player: PlayerState }) {
         const def = defensiveMarks(row);
         return (
           <div className="grid grid-cols-3 gap-1.5 text-center text-[11px] text-muted mb-3">
-            <StatMini l="USG%" v={adv.usg.toFixed(1)} />
-            <StatMini l="AST%" v={adv.astPct.toFixed(1)} />
-            <StatMini l="REB%" v={adv.rebPct.toFixed(1)} />
-            <StatMini l="eFG%" v={(adv.efg * 100).toFixed(1)} />
-            <StatMini l="TOV%" v={adv.tovPct.toFixed(1)} />
-            <StatMini l="STL%" v={def.stlPct.toFixed(1)} />
-            <StatMini l="BLK%" v={def.blkPct.toFixed(1)} />
-            <StatMini l="DWS" v={def.dws.toFixed(1)} />
-            <StatMini l="DBPM" v={`${def.dbpm > 0 ? "+" : ""}${def.dbpm.toFixed(1)}`} />
-            <StatMini l="BPM" v={`${adv.bpm > 0 ? "+" : ""}${adv.bpm.toFixed(1)}`} />
-            <StatMini l="WS" v={adv.ws.toFixed(1)} />
-            <StatMini l="VORP" v={`${adv.vorp > 0 ? "+" : ""}${adv.vorp.toFixed(1)}`} />
+            <StatMini l="USG%" v={fmtDec(adv.usg, lang)} />
+            <StatMini l="AST%" v={fmtDec(adv.astPct, lang)} />
+            <StatMini l="REB%" v={fmtDec(adv.rebPct, lang)} />
+            <StatMini l="eFG%" v={fmtDec(adv.efg * 100, lang)} />
+            <StatMini l="TOV%" v={fmtDec(adv.tovPct, lang)} />
+            <StatMini l="STL%" v={fmtDec(def.stlPct, lang)} />
+            <StatMini l="BLK%" v={fmtDec(def.blkPct, lang)} />
+            <StatMini l="DWS" v={fmtDec(def.dws, lang)} />
+            <StatMini l="DBPM" v={`${def.dbpm > 0 ? "+" : ""}${fmtDec(def.dbpm, lang)}`} />
+            <StatMini l="BPM" v={`${adv.bpm > 0 ? "+" : ""}${fmtDec(adv.bpm, lang)}`} />
+            <StatMini l="WS" v={fmtDec(adv.ws, lang)} />
+            <StatMini l="VORP" v={`${adv.vorp > 0 ? "+" : ""}${fmtDec(adv.vorp, lang)}`} />
           </div>
         );
       })()}
@@ -2315,11 +2316,11 @@ const StatsTab = memo(function StatsTab({
           </div>
           <div className="text-right">
             <div className="font-display text-wood text-[15px]">
-              {r.ppg.toFixed(1)}/{r.rpg.toFixed(1)}/{r.apg.toFixed(1)}
+              {fmtDec(r.ppg, lang)}/{fmtDec(r.rpg, lang)}/{fmtDec(r.apg, lang)}
             </div>
             <span className="text-[10.5px] text-muted">
               <SeriesScoreText text={playoffResultLabel(r.playoff, lang) || "—"} />
-              {r.awards.length ? ` · ${r.awards.map((a) => awardLabel(a, lang)).join(" · ")}` : ""}
+              {r.awards.length ? ` · ${r.awards.map((a) => legacyAwardLabel(a, lang)).join(" · ")}` : ""}
             </span>
           </div>
         </div>
@@ -2327,10 +2328,10 @@ const StatsTab = memo(function StatsTab({
       <h4 className="font-display text-[19px] mt-4 mb-2">{t("summerDev", lang)}</h4>
       {player.devLog.length === 0 && <p className="text-muted text-[12.5px] italic">{t("summerDevEmpty", lang)}</p>}
       {player.devLog.map((d) => (
-        <div key={d.season + d.label} className="flex gap-2.5 py-1.5 text-[13px] border-b border-line">
-          <span className="text-wood font-display min-w-[36px]">{tf("seasonShort", { n: d.season }, lang)}</span>
+        <div data-development-season={d.season} key={d.season + d.label} className="flex gap-2.5 py-1.5 text-[13px] border-b border-line">
+          <span className="text-wood font-display min-w-[62px] shrink-0"><span className="block">{getSeasonDisplayLabel(d.season)}</span><small>{tf("seasonShort", { n: d.season }, lang)}</small></span>
           <span>
-            {nx(d.label, lang)} — {developmentText(d, lang, player.seasonHistory.find(r=>r.season===d.season)?.age)} · {d.before.toFixed(1)}→{d.after.toFixed(1)}
+            {nx(d.label, lang)} — {developmentText(d, lang, player.seasonHistory.find(r=>r.season===d.season)?.age)} · {fmtDec(d.before, lang)}→{fmtDec(d.after, lang)}
           </span>
         </div>
       ))}
@@ -2379,7 +2380,7 @@ const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
               <i aria-hidden="true" />
               <div>
                 <b>{getSeasonDisplayLabel(m.season)}</b>
-                <span>{nx(m.label, lang)}</span>
+                <span>{nx(legacyAwardLabel(m.label, lang), lang)}</span>
               </div>
             </div>
           ))}
@@ -2399,7 +2400,7 @@ function AttrBars({ attrs }: { attrs: Record<AttrKey, number> }) {
         <div key={k} className="mb-2.5">
           <div className="flex justify-between text-[12.5px] text-muted mb-0.5">
             <span>{attrLabel(k, lang)}</span>
-            <b className="text-chalk">{attrs[k].toFixed(1)}</b>
+            <b className="text-chalk">{fmtDec(attrs[k], lang)}</b>
           </div>
           <div className="attr-bar-track">
             <div className="attr-bar-fill" style={{ width: `${attrs[k]}%` }} />

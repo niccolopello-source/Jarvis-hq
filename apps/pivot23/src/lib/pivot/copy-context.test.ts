@@ -11,7 +11,7 @@ test('team/location copy is grammatical without modifying stored text', async ()
 });
 
 import { contextualText, developmentText, archivedRival } from './copy-context';
-import { seasonsLabel, legacyAwardLabel, timelineLine } from './legacy-i18n';
+import { seasonsLabel, legacyAwardLabel, timelineLine, fmtDec } from './legacy-i18n';
 import { nationLabel, roleLabel, italianTeamPreposition } from './labels';
 import { t } from './i18n';
 import { NBA_TEAMS, EURO_TEAMS } from './teams';
@@ -123,4 +123,12 @@ test('sampled Italian grammar and impossible retrospective at age nineteen are c
   assert.equal(contextualText(line,lang,{age:19}),t('copyEveryAge',lang));
   assert.equal(contextualText(line,lang,{age:21}),nx(line,lang));
  }
+});
+
+test('Life and Legacy share localized canonical awards and decimal presentation without editing identifiers',()=>{
+ const awards=['Rookie of the Year','NBA Champion','Finals MVP'];const raw=JSON.stringify(awards);
+ assert.deepEqual(awards.map(id=>legacyAwardLabel(id,'it')),["Rookie dell'anno","Campione NBA","MVP delle Finali"]);
+ assert.deepEqual(awards.map(id=>legacyAwardLabel(id,'en')),awards);
+ assert.equal(fmtDec(62,'it'),'62,0');assert.equal(fmtDec(62,'en'),'62.0');
+ assert.equal(JSON.stringify(awards),raw);
 });
