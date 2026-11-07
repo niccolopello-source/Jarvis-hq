@@ -1,0 +1,85 @@
+{
+  "observedCET": "2026-11-07 23:37:07 CET Europe/Amsterdam = Europe/Rome",
+  "runtime": "b381ec6a83d0514b353fa6ac63c0d9c0b9621a4b",
+  "logs": {
+    "point2-ui-red.log": {
+      "path": "/workspace/point2-ui-red.log",
+      "sha256": "b41df63e77e2be3e2e41e2b8cc53dc34be5673545f9ffe12358b4e40c4269909",
+      "bytes": 2166,
+      "exitCode": 1,
+      "meaning": "expected product RED: card award"
+    },
+    "point2-footer-red.log": {
+      "path": "/workspace/point2-footer-red.log",
+      "sha256": "86fce2ec8a1ed08e9edeea41766b8de26c6c81bb09a00b013f7f7f98b2a05b55",
+      "bytes": 1727,
+      "exitCode": 1,
+      "meaning": "expected product RED: footer geometry"
+    },
+    "point2-timeline-red.log": {
+      "path": "/workspace/point2-timeline-red.log",
+      "sha256": "9a6b153c423887cb08c9acff7075bf3aee201595b91668e83995869cd810e79d",
+      "bytes": 1019,
+      "exitCode": 1,
+      "meaning": "expected unit RED: raw timeline award"
+    },
+    "point2-browser-spacing-attempt.log": {
+      "path": "/workspace/point2-browser-spacing-attempt.log",
+      "sha256": "86659aa95c57ea91e512b6fa35d3f92225708d4b42c57f0bfbd0c5aa01f1c7a3",
+      "bytes": 16520,
+      "exitCode": 1,
+      "meaning": "failed margin-only hypothesis,89PASS1FAIL2existingSKIP"
+    },
+    "point2-browser-pre-timeline.log": {
+      "path": "/workspace/point2-browser-pre-timeline.log",
+      "sha256": "23adf9136a55d512a9fc344addf3e95243fd13211cdb01b07e3720bc2e7b6d40",
+      "bytes": 14968,
+      "exitCode": 0,
+      "meaning": "8757 runtime90PASS2existingSKIP, before timeline follow-up"
+    },
+    "point2-browser-final.log": {
+      "path": "/workspace/point2-browser-final.log",
+      "sha256": "7756f710acab0e12f96620b22a0c44f7c3eed9c5aaf4cd2ae45cd0cd8a512d67",
+      "bytes": 14968,
+      "exitCode": 0,
+      "meaning": "final b381 runtime90PASS2existingSKIP"
+    },
+    "point2-quality-final.log": {
+      "path": "/workspace/point2-quality-final.log",
+      "sha256": "e558ac3d21ba297f78fcd7413304f85f160184ed7c8fe46ab5b53eb38c2954c0",
+      "bytes": 48451,
+      "exitCode": 0,
+      "meaning": "final b381467unit/type/lint/compattypes/7tools"
+    },
+    "point2-build-final.log": {
+      "path": "/workspace/point2-build-final.log",
+      "sha256": "847d9a9a3d4a82d84b58cfdc34661fee46eae2372b9de68f2a113d6b8126c945",
+      "bytes": 1075,
+      "exitCode": 0,
+      "meaning": "final b381 production build local"
+    },
+    "point2-browser-missing.log": {
+      "path": "/workspace/point2-browser-missing.log",
+      "sha256": "1551979ba2e98bf8c4eb055955a94abe8e9c06bff3bbcb12b35b5e89fc66ff9d",
+      "bytes": 1867,
+      "exitCode": 1,
+      "meaning": "setup failure, browser not installed; NOT a product RED; installed required Chromium before rerun"
+    }
+  },
+  "browserFinal": {
+    "total": 92,
+    "pass": 90,
+    "fail": 0,
+    "skip": 2,
+    "skipReason": "pre-existing ads-ON conditional tests with default flagOFF; no new skip"
+  },
+  "unitFinal": {
+    "pass": 467,
+    "fail": 0,
+    "skip": 0
+  },
+  "harnessTools": 7,
+  "screenshots": 20,
+  "fullStatsFullCompatibility": "NOT RUN locally in point2;198 protected source files byte-identical155",
+  "browserCommand": "E2E_PREVIEW=1 E2E_PORT=4201 UI_SHOTS=/workspace/point2-evidence/screenshots pnpm exec playwright test e2e/ui-guard-integration.spec.ts e2e/career-card.spec.ts e2e/a11y-i18n.spec.ts e2e/demo-readiness.spec.ts e2e/ads-desktop.spec.ts e2e/instagram-link.spec.ts e2e/future-save-protection.spec.ts e2e/lifecycle-flush.spec.ts e2e/native-lifecycle-protection.spec.ts --workers=2"
+}

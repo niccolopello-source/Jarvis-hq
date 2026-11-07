@@ -1,0 +1,40 @@
+
+Running 1 test using 1 worker
+
+(node:6083) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+synthetic UI seed7107 2.24.0-beta 11 rows
+  ✘  1 e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity (5.9s)
+
+
+  1) e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('region', { name: 'Career Card' }).locator('.lc-honors')
+    Expected substring: "Sesto uomo dell'anno"
+    Received string:    "Sixth Man"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" getByRole('region', { name: 'Career Card' }).locator('.lc-honors') with timeout 5000ms
+      - waiting for getByRole('region', { name: 'Career Card' }).locator('.lc-honors')
+        14 × locator resolved to <ul class="lc-honors">…</ul>
+           - unexpected value "Sixth Man"
+
+
+      35 |     const out = process.env.UI_SHOTS;
+      36 |     if (out) { mkdirSync(out, { recursive: true }); await card.screenshot({ path: join(out, `${width}-${lang}-card.png`), animations: "disabled" }); }
+    > 37 |     await expect(card.locator(".lc-honors")).toContainText(award);
+         |                                              ^
+      38 |     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      39 |     await expect(page.locator(".lc-theme-tag")).toHaveCount(0);
+      40 |     for (const rail of await page.locator(".ad-rail").all()) {
+        at /workspace/pivot23-ui-integration/apps/pivot23/e2e/ui-guard-integration.spec.ts:37:46
+
+    Error Context: test-results/ui-guard-integration-360px-99efb--Legacy-and-theme-integrity/error-context.md
+
+  1 failed
+    e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity 

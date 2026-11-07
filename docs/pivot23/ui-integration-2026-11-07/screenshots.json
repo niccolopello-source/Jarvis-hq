@@ -1,0 +1,142 @@
+{
+  "1280-en-card.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/1280-en-card.png",
+    "sha256": "454da09aeb95d3d4bd669bab0d030b4a46cc4740443b6c0341a9b35571bb1d56",
+    "bytes": 74566,
+    "width": 420,
+    "height": 444
+  },
+  "1280-en-table.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/1280-en-table.png",
+    "sha256": "ef679d07e24f3d7892b73d0c0d8cd38f57dc240098b33fb61fcb979eca138550",
+    "bytes": 104923,
+    "width": 1280,
+    "height": 900
+  },
+  "1280-en-themes.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/1280-en-themes.png",
+    "sha256": "3566e827efda046d29e8936931d4b8ad375a413d39f56b267cd2998a82d29705",
+    "bytes": 127996,
+    "width": 1280,
+    "height": 900
+  },
+  "1280-it-card.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/1280-it-card.png",
+    "sha256": "f653bd4f310dc8c68ad9dbb1d533212be1ae0b9f060bbdf05dcd6a79df0b3ea4",
+    "bytes": 73594,
+    "width": 420,
+    "height": 443
+  },
+  "1280-it-table.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/1280-it-table.png",
+    "sha256": "ceb5ea0670e4c2859cd37637d205d407fcd06e9ae14aef8829abfcdbdf76a978",
+    "bytes": 107950,
+    "width": 1280,
+    "height": 900
+  },
+  "1280-it-themes.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/1280-it-themes.png",
+    "sha256": "4b31c997a38f3bf3930481b06f517ef90393521a99b2dbe740619da30b6a870f",
+    "bytes": 126808,
+    "width": 1280,
+    "height": 900
+  },
+  "360-en-card.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/360-en-card.png",
+    "sha256": "63500bcd19ea926e79a0a8edf5ed55acc9e023cad797a5e9b90222b40daa74cc",
+    "bytes": 65990,
+    "width": 320,
+    "height": 436
+  },
+  "360-en-export.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/360-en-export.png",
+    "sha256": "9324d66d1fc0cf6415ad46707edb40d865125868c7299665a0cb9926419fd3ea",
+    "bytes": 731067,
+    "width": 1080,
+    "height": 1350
+  },
+  "360-en-table.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/360-en-table.png",
+    "sha256": "b550b3b709d9607ecb3322ab654bfd3148465a31e22adf8597656597a2694804",
+    "bytes": 76055,
+    "width": 360,
+    "height": 900
+  },
+  "360-en-themes.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/360-en-themes.png",
+    "sha256": "62b0edd209601656d342f41bf4423a4f80b0bc9145271d2a97f804b72f9d6bc0",
+    "bytes": 105040,
+    "width": 360,
+    "height": 900
+  },
+  "360-it-card.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/360-it-card.png",
+    "sha256": "f33c4c1a9ea6ea106c74a2a772ab862bb8710668226a6c9c6e80ae44dd84b46d",
+    "bytes": 65097,
+    "width": 320,
+    "height": 455
+  },
+  "360-it-export.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/360-it-export.png",
+    "sha256": "db8d30508ac981f11aff105f9b422564afe41c58202762598fded937f92f6380",
+    "bytes": 724451,
+    "width": 1080,
+    "height": 1350
+  },
+  "360-it-table.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/360-it-table.png",
+    "sha256": "45c3fef75f71e03e4b0263a5c40365ea1a2ec95de973d3e902170666e80d949e",
+    "bytes": 74455,
+    "width": 360,
+    "height": 900
+  },
+  "360-it-themes.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/360-it-themes.png",
+    "sha256": "b36e0e1d24ecd0adc454fa89741c58454b991934af4c9b69e6a2111d31ffa9d9",
+    "bytes": 102423,
+    "width": 360,
+    "height": 900
+  },
+  "390-en-card.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/390-en-card.png",
+    "sha256": "57355ef6b418431f4642541ed57f5be5f5b92da1f43ad2b5f062dc71ba704e79",
+    "bytes": 69132,
+    "width": 350,
+    "height": 438
+  },
+  "390-en-table.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/390-en-table.png",
+    "sha256": "0524dea439d172d2c12c03547e93fe7117b526afb0e5a4e6b66e25cfb07ca68e",
+    "bytes": 84014,
+    "width": 390,
+    "height": 900
+  },
+  "390-en-themes.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/390-en-themes.png",
+    "sha256": "de696cf79322f6e192b74010ef1e08d05e72c93fa0d15008edd2d94eccc56a39",
+    "bytes": 107842,
+    "width": 390,
+    "height": 900
+  },
+  "390-it-card.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/390-it-card.png",
+    "sha256": "0af1a8372bcae30e88767fd6c003b4cac7a191aa282670e677adb177bcae2e20",
+    "bytes": 68127,
+    "width": 350,
+    "height": 439
+  },
+  "390-it-table.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/390-it-table.png",
+    "sha256": "60dd58da8218369e47e1a95dc2e72c63acc5ff82552971613302d30e4f6bc738",
+    "bytes": 81183,
+    "width": 390,
+    "height": 900
+  },
+  "390-it-themes.png": {
+    "fileURL": "file:///workspace/point2-evidence/screenshots/390-it-themes.png",
+    "sha256": "3ccf579c21575b5239153f086426756d1cd8aca8019206371d37cc6c196025d0",
+    "bytes": 106887,
+    "width": 390,
+    "height": 900
+  }
+}

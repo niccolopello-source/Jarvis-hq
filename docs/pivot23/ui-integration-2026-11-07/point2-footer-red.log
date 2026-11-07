@@ -1,0 +1,32 @@
+
+Running 1 test using 1 worker
+
+(node:6639) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+synthetic UI seed7107 2.24.0-beta 11 rows
+1280-it footer gap=-0.3125
+  ✘  1 e2e/ui-guard-integration.spec.ts:16:3 › 1280px IT: synthetic retirement, responsive Legacy and theme integrity (1.2s)
+
+
+  1) e2e/ui-guard-integration.spec.ts:16:3 › 1280px IT: synthetic retirement, responsive Legacy and theme integrity 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 828
+    Received:    828.3125
+
+      85 |       const t = (await themes.boundingBox())!; const f = (await footer.boundingBox())!;
+      86 |       console.log(`${width}-${lang} footer gap=${f.y - t.y - t.height}`);
+    > 87 |       expect(t.y + t.height).toBeLessThanOrEqual(f.y);
+         |                              ^
+      88 |     }
+      89 |     expect(await card.evaluate(el => el.getAnimations({ subtree: true }).filter(a => a.playState === "running").length)).toBe(0);
+      90 |     const axe = await new AxeBuilder({ page }).include(".legacy-experience").withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+        at /workspace/pivot23-ui-integration/apps/pivot23/e2e/ui-guard-integration.spec.ts:87:30
+
+    Error Context: test-results/ui-guard-integration-1280p-0ed78--Legacy-and-theme-integrity/error-context.md
+
+  1 failed
+    e2e/ui-guard-integration.spec.ts:16:3 › 1280px IT: synthetic retirement, responsive Legacy and theme integrity 
