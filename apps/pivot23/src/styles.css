@@ -2204,6 +2204,9 @@ img.court-mark-photo {
     pointer-events: none;
     user-select: none;
   }
+  .ad-rail.ad-rail-off {
+    border-inline: 0;
+  }
   .ad-foot {
     display: grid;
     place-items: center;
