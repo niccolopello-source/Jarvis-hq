@@ -51,7 +51,7 @@
 
 .lc-actions { max-width: 420px; margin: 14px auto 0; }
 .lc-status { min-height: 1.2em; margin: 6px 0 0; font-size: 13px; color: var(--color-muted); }
-.lc-themes { max-width: 420px; margin: 10px auto 48px; padding: 0; border: 0; min-width: 0; }
+.lc-themes { max-width: 420px; margin: 10px auto 40px; scroll-margin-bottom: 8px; padding: 0; border: 0; min-width: 0; }
 .lc-themes legend { font-weight: 700; font-size: 14px; margin-bottom: 8px; }
 .lc-theme-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
 .lc-theme { display: grid; gap: 4px; justify-items: start; padding: 8px; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-panel); color: var(--color-chalk); text-align: left; cursor: pointer; min-height: 44px; }
