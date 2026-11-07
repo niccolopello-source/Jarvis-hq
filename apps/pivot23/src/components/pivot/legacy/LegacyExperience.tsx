@@ -246,7 +246,8 @@ export function LegacyReportView({ report, uid }: { report: LegacyReport; uid: s
       ) : null}
       {r.rows.length > 0 ? (
         <Section title={lt("seasonsTable", lang)} id={`${uid}-seasons`}>
-          <div className="lr-table-wrap" tabIndex={0} role="group" aria-labelledby={`${uid}-seasons`}>
+          <p className="lr-scroll-hint" id={`${uid}-scroll-hint`}>{lt("tableScrollHint", lang)}</p>
+          <div className="lr-table-wrap" tabIndex={0} role="group" aria-labelledby={`${uid}-seasons`} aria-describedby={`${uid}-scroll-hint`}>
             <table className="lr-table">
               <thead>
                 <tr>

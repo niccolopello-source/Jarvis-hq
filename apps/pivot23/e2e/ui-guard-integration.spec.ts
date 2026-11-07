@@ -30,6 +30,8 @@ for (const width of [360, 390, 1280]) for (const lang of ["it", "en"] as const) 
     await page.getByRole("button", { name: lang === "it" ? /Chiudi ora/ : /Retire now/ }).click();
     const card = page.getByRole("region", { name: "Career Card" });
     await expect(card).toBeVisible();
+    expect(JSON.parse(raw).player.role).toBe("SG");
+    await expect(card.locator(".lc-meta").first()).toContainText(lang === "it" ? "Guardia tiratrice" : "Shooting guard");
     const award = lang === "it" ? "Sesto uomo dell'anno" : "Sixth Man of the Year";
     await expect(page.locator(".lr-chips")).toContainText(award);
     await expect(page.locator(".lr-timeline")).toContainText(award);
@@ -46,6 +48,9 @@ for (const width of [360, 390, 1280]) for (const lang of ["it", "en"] as const) 
     for (const button of await page.locator(".lc-theme").all()) expect((await button.boundingBox())!.height).toBeGreaterThanOrEqual(44);
     const archiveBefore = await page.evaluate(() => localStorage.getItem("pivot-v2-archive"));
     const beforeCardText = await card.innerText();
+    await expect(card).toHaveAttribute("data-theme", "standard");
+    await expect(page.locator("[data-theme-option=standard]")).toHaveAttribute("aria-pressed", "true");
+    if (out) { await page.locator(".lc-themes").evaluate(el=>el.scrollIntoView({block:"end"})); await page.screenshot({path:join(out,`${width}-${lang}-grafite.png`),animations:"disabled"}); }
     const obsidian = page.locator("[data-theme-option=obsidian]");
     await obsidian.focus(); await page.keyboard.press("Enter");
     await expect(obsidian).toHaveAttribute("aria-pressed", "true");
@@ -73,10 +78,27 @@ for (const width of [360, 390, 1280]) for (const lang of ["it", "en"] as const) 
     const table = page.locator(".lr-table-wrap"); await table.scrollIntoViewIfNeeded(); await table.focus(); await expect(table).toBeFocused();
     const first = table.locator("tbody tr > :first-child").first();
     expect(await first.evaluate(el => getComputedStyle(el).position)).toBe("sticky");
+    const teamCells = table.locator("tbody tr > :nth-child(2)");
+    const expectedTeams = (JSON.parse(raw).player.seasonHistory as {teamAbbr:string}[]).slice(-10).map(r => r.teamAbbr);
+    expect(await teamCells.allTextContents()).toEqual(expectedTeams);
+    await expect(table.locator("thead th").nth(1)).toHaveText(lang === "it" ? "Squadra" : "Team");
+    await table.evaluate(el => { el.scrollLeft = 0; });
+    if (out) await page.screenshot({ path: join(out, `${width}-${lang}-table-start.png`), animations: "disabled" });
     if (width < 1000) {
       const before = (await first.boundingBox())!.x; await page.keyboard.press("ArrowRight");
       await expect.poll(() => table.evaluate(el => el.scrollLeft)).toBeGreaterThan(0);
       expect(Math.abs((await first.boundingBox())!.x - before)).toBeLessThanOrEqual(1);
+      await table.evaluate(el => { el.scrollLeft = el.scrollWidth; });
+      if (out) await page.screenshot({ path: join(out, `${width}-${lang}-table-end.png`), animations: "disabled" });
+      const seasonBox = (await first.boundingBox())!;
+      const teamBox = (await teamCells.first().boundingBox())!;
+      expect(teamBox.x).toBeGreaterThanOrEqual(seasonBox.x + seasonBox.width - 1);
+      expect(await teamCells.first().evaluate(el => { const r=el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)); })).toBe(true);
+      const last = table.locator("tbody tr").first().locator("td").last();
+      const lastBox = (await last.boundingBox())!; const wrapBox = (await table.boundingBox())!;
+      expect(lastBox.x).toBeGreaterThanOrEqual(teamBox.x + teamBox.width - 1);
+      expect(lastBox.x + lastBox.width).toBeLessThanOrEqual(wrapBox.x + wrapBox.width + 1);
+      for (const cell of await table.locator("tbody tr > :last-child, thead th:nth-child(2)").all()) expect(await cell.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
     }
     const tableFooter = page.locator(".ad-foot");
     if (await tableFooter.isVisible()) {
@@ -85,6 +107,10 @@ for (const width of [360, 390, 1280]) for (const lang of ["it", "en"] as const) 
       expect(box.y + box.height).toBeLessThanOrEqual((await tableFooter.boundingBox())!.y);
     }
     if (out) await page.screenshot({ path: join(out, `${width}-${lang}-table.png`), animations: "disabled" });
+    const lastRow = table.locator("tbody tr").last();
+    await lastRow.evaluate(el=>el.scrollIntoView({block:"end"}));
+    if (await tableFooter.isVisible()) { const r=(await lastRow.boundingBox())!; expect(r.y+r.height).toBeLessThanOrEqual((await tableFooter.boundingBox())!.y); }
+    if(out) await page.screenshot({path:join(out,`${width}-${lang}-last-row-footer.png`),animations:"disabled"});
     const themes = page.locator(".lc-themes"); await themes.evaluate(el => el.scrollIntoView({ block: "end" }));
     const footer = page.locator(".ad-foot");
     if (out) await page.screenshot({ path: join(out, `${width}-${lang}-themes.png`), animations: "disabled" });

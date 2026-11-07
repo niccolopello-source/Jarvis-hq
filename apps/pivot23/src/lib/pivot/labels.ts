@@ -20,6 +20,7 @@ const ROLE_EN: Record<Role, string> = {
 export function roleLabel(role: Role | string, lang: UiLang): string {
   const r = role as Role;
   if (lang === "en") return ROLE_EN[r] ?? String(role);
+  if (r === "SG") return "Guardia tiratrice";
   return ROLES[r]?.label ?? String(role);
 }
 

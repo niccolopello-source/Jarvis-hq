@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { fmtInt, legacyAwardLabel, lt, pickLabel, timelineLine } from "./legacy-i18n.ts";
-import { playoffResultLabel } from "./labels.ts";
+import { roleLabel, playoffResultLabel } from "./labels.ts";
 import { nx } from "./narrative/index.ts";
 import { EN_LEGACY } from "./narrative/en/legacy.ts";
 
@@ -43,4 +43,9 @@ test("timeline award labels follow the Legacy UI language", () => {
   const item = { kind: "award" as const, subject: "Sixth Man", yearLabel: "2026-27", value: 1 };
   assert.equal(timelineLine(item, "it"), "Sesto uomo dell'anno");
   assert.equal(timelineLine(item, "en"), "Sixth Man of the Year");
+});
+
+test("SG presentation has equivalent precise IT/EN role labels", () => {
+  assert.equal(roleLabel("SG", "it"), "Guardia tiratrice");
+  assert.equal(roleLabel("SG", "en"), "Shooting guard");
 });
