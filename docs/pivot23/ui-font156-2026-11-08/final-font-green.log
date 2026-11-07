@@ -1,0 +1,23 @@
+
+Running 6 tests using 2 workers
+
+(node:62995) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:62996) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:63021) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:63028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+synthetic UI seed7107 2.24.0-beta 11 rows
+synthetic UI seed7107 2.24.0-beta 11 rows
+  ✓  2 e2e/ui-guard-integration.spec.ts:16:3 › 390px EN: synthetic retirement, responsive Legacy and theme integrity (2.8s)
+  ✓  1 e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity (2.8s)
+1280-it footer gap=7.6875
+  ✓  3 e2e/ui-guard-integration.spec.ts:16:3 › 1280px IT: synthetic retirement, responsive Legacy and theme integrity (2.3s)
+  ✓  4 e2e/ui-guard-integration.spec.ts:16:3 › 360px EN: synthetic retirement, responsive Legacy and theme integrity (2.5s)
+1280-en footer gap=8.234375
+  ✓  5 e2e/ui-guard-integration.spec.ts:16:3 › 1280px EN: synthetic retirement, responsive Legacy and theme integrity (2.2s)
+  ✓  6 e2e/ui-guard-integration.spec.ts:16:3 › 390px IT: synthetic retirement, responsive Legacy and theme integrity (2.3s)
+
+  6 passed (15.5s)
