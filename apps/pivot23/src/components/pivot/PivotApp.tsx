@@ -87,6 +87,7 @@ import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
 import { ModalDialog } from "@/components/pivot/Dialog";
 import { LazyChunk } from "@/components/pivot/ChunkBoundary";
 import { attrLabel, chipLabel, confLabel, seedLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel } from "@/lib/pivot/labels";
+import { contextualText, developmentText, archivedRival } from "@/lib/pivot/copy-context";
 import { loadNarrativeEn, nx } from "@/lib/pivot/narrative";
 import { withLegacyFacts } from "@/lib/pivot/legacy-report";
 
@@ -1924,7 +1925,7 @@ function PendingBlock(props: {
           <span className="transfer-arrow">→</span>
           <TeamMark team={to} size={52} number={player.number} />
         </div>
-        <p className="feel-line">{nx(pending.pitch, lang)}</p>
+        <p className="feel-line">{contextualText(pending.pitch, lang, {rivalName: player.rivalName})}</p>
         <div className="flex flex-col gap-2">
           <button className="choice-btn offer-btn" style={{ ["--club" as string]: to.color }} onClick={() => props.onTrade(true)}>
             <span className="font-display font-semibold text-[16px] text-chalk">{tf("tradeAccept", { team: to.name }, lang)}</span>
@@ -1949,7 +1950,7 @@ function PendingBlock(props: {
           <span className="transfer-arrow">→</span>
           <TeamMark team={pending.team} size={56} number={player.number} />
         </div>
-        <p className="feel-line">{t("tradeForced", lang)} {nx(pending.pitch, lang)}</p>
+        <p className="feel-line">{t("tradeForced", lang)} {contextualText(pending.pitch, lang, {rivalName: player.rivalName})}</p>
         <button className="primary-btn mt-4" onClick={props.onForcedTradeAck}>
           {t("tradeEnterLocker", lang)}
         </button>
@@ -2096,7 +2097,7 @@ function RecapCard({
       )}
       {row.season === 1 && row.league?.royRace?.length ? <RoyBoard race={row.league.royRace} /> : null}
       {row.mood && (
-        <p className="feel-line">{nx(row.mood, lang)}</p>
+        <p className="feel-line">{contextualText(row.mood, lang, {age: row.age})}</p>
       )}
       <p className="feel-line door">{nx(door, lang)}</p>
       <button className="ghost-btn" onClick={onGo}>
@@ -2128,7 +2129,7 @@ function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
       {row.awards.length > 0 && (
         <p className="text-[13px] text-wood mb-1">{row.awards.map((a) => awardLabel(a, lang)).join(" · ")}</p>
       )}
-      {row.mood && <p className="feel-line">{nx(row.mood, lang)}</p>}
+      {row.mood && <p className="feel-line">{contextualText(row.mood, lang, {age: row.age})}</p>}
       {result && <p className="text-[13px] text-muted italic">{nx(result, lang)}</p>}
     </div>
   );
@@ -2324,7 +2325,7 @@ const StatsTab = memo(function StatsTab({
         <div key={d.season + d.label} className="flex gap-2.5 py-1.5 text-[13px] border-b border-line">
           <span className="text-wood font-display min-w-[36px]">{tf("seasonShort", { n: d.season }, lang)}</span>
           <span>
-            {nx(d.label, lang)} — {nx(d.line, lang)} · {d.before.toFixed(1)}→{d.after.toFixed(1)}
+            {nx(d.label, lang)} — {developmentText(d, lang, player.seasonHistory.find(r=>r.season===d.season)?.age)} · {d.before.toFixed(1)}→{d.after.toFixed(1)}
           </span>
         </div>
       ))}
@@ -2358,8 +2359,8 @@ const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
         <div key={i} className="flex gap-2 py-1.5 text-[13px] border-b border-line">
           <span className="text-wood font-display min-w-[36px]">{tf("seasonShort", { n: c.season }, lang)}</span>
           <span>
-            <span className="text-muted">{nx(c.title, lang)}: </span>
-            {nx(c.pick, lang)}
+            <span className="text-muted">{contextualText(c.title, lang, {rivalName: player.rivalName})}: </span>
+            {contextualText(c.pick, lang, {rivalName: player.rivalName})}
             {choiceShowsVoidedExtraYear(c, player) ? <span className="text-muted"> — {t("extraYearVoided", lang)}</span> : null}
           </span>
         </div>
@@ -2522,6 +2523,7 @@ function ArchiveView({
   onBack: () => void;
 }) {
   const lang = useLang();
+  const rivalName = viewing ? archivedRival(viewing.choices) : undefined;
   if (viewing) {
     return (
       <section className="fade-in">
@@ -2544,7 +2546,7 @@ function ArchiveView({
         <h4 className="font-display text-[18px] mt-4 mb-2">{t("choices", lang)}</h4>
         {viewing.choices.map((c, i) => (
           <div key={i} className="text-[13px] py-1 text-muted">
-            {tf("seasonShort", { n: c.season }, lang)} {nx(c.title, lang)}: <span className="text-chalk">{nx(c.pick, lang)}</span>
+            {tf("seasonShort", { n: c.season }, lang)} {contextualText(c.title, lang, {rivalName: rivalName})}: <span className="text-chalk">{contextualText(c.pick, lang, {rivalName: rivalName})}</span>
             {choiceShowsVoidedExtraYear(c, viewing) ? <span> — {t("extraYearVoided", lang)}</span> : null}
           </div>
         ))}

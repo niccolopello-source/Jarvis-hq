@@ -7,6 +7,8 @@
  * Fallback is always the stored text, unchanged: an unknown string is never blanked or guessed
  * (also while the English chunk is not loaded yet).
  */
+import { italianTeamPreposition } from "../labels";
+import { NBA_TEAMS, EURO_TEAMS } from "../teams";
 import { chromePairs, type Lang } from "../i18n";
 import { LEGACY_EN_IT } from "./legacy-it";
 import { EN_PROSE, IT_PROSE } from "./markers";
@@ -70,6 +72,11 @@ const IT_DISPLAY_FIXES: ReadonlyArray<readonly [RegExp, string | ((...m: string[
  * the old wording, so saves, voice keys (anti-repetition), English catalog keys and golden hashes
  * stay byte-identical, and no version gate is needed. English renders are updated in the catalog.
  */
+const IT_ROUTE_REWRITES: ReadonlyArray<readonly [string,string]> = [
+  ["Sei arrivato dall'Europa. Si sente ancora, nel modo in cui leggi il campo.", "Il tuo percorso pre-draft era europeo. Il resto lo raccontano le stagioni."],
+  ["Hai bruciato le tappe. Il grezzo, all'inizio, era il punto di forza e il rischio.", "Il tuo percorso pre-draft era la G League. La carriera si è costruita stagione per stagione."],
+];
+
 export const IT_LINE_REWRITES: ReadonlyArray<readonly [string, string]> = [
   ["Il mestiere cambia forma, non peso.", "Il ruolo cambia forma, non peso."],
   ["Tieni il mestiere, nudo", "Torni alle basi"],
@@ -91,6 +98,18 @@ export function itDisplay(text: string): string {
   const whole = IT_LINE_MAP.get(text);
   if (whole !== undefined) return whole;
   let out = text;
+  // Stored team names are stable ids; articles belong to the Italian display only.
+  for (const team of [...NBA_TEAMS,...EURO_TEAMS]) {
+    const escaped=team.name.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    out=out.replace(new RegExp(`\\b(a|ad|da|con) ${escaped}\\b`,"gi"),(match, prep:string)=>{
+      const key=prep.toLowerCase()==="ad"?"a":prep.toLowerCase() as "a"|"da"|"con";
+      const phrase=italianTeamPreposition(team.name,key);
+      return match[0]===match[0].toUpperCase()?phrase[0].toUpperCase()+phrase.slice(1):phrase;
+    });
+  }
+  out = out.replace(/\bA Atlanta\b/g, "Ad Atlanta").replace(/\ba Atlanta\b/g, "ad Atlanta");
+  out = out.replace(/(A|Ad) ([^,.]+), la piazza di \2 entra già caldo\./g, "$1 $2, il pubblico è già caldo.");
+  for (const [from, to] of IT_ROUTE_REWRITES) out = out.replaceAll(from, to);
   for (const [re, to] of IT_DISPLAY_FIXES) out = typeof to === "string" ? out.replace(re, to) : out.replace(re, to);
   return out;
 }
