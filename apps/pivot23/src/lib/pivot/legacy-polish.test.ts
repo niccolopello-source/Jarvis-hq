@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { fmtInt, legacyAwardLabel, lt, pickLabel } from "./legacy-i18n.ts";
+import { fmtInt, legacyAwardLabel, lt, pickLabel, timelineLine } from "./legacy-i18n.ts";
 import { playoffResultLabel } from "./labels.ts";
 import { nx } from "./narrative/index.ts";
 import { EN_LEGACY } from "./narrative/en/legacy.ts";
@@ -36,4 +36,11 @@ test("legacy closing lines drop the redundant 'o più' count", () => {
   assert.equal(nx("Quindici stagioni, o più: 16 anni di referto. La longevità, qui, non è un incidente.", "it"), "16 stagioni a referto. La longevità, qui, non è un incidente.");
   assert.equal(nx("Quattro maglie, o più. 5 squadre. Il mestiere è stato un viaggio, non una casa.", "it"), "5 maglie diverse. Il mestiere è stato un viaggio, non una casa.");
   assert.equal(EN_LEGACY["Quattro maglie, o più. {0} squadre. Il mestiere è stato un viaggio, non una casa."], "{0} different jerseys. Your career was a journey, not a home.");
+});
+
+// Presentation only: the timeline must use the same award label as chips/card/PNG.
+test("timeline award labels follow the Legacy UI language", () => {
+  const item = { kind: "award" as const, subject: "Sixth Man", yearLabel: "2026-27", value: 1 };
+  assert.equal(timelineLine(item, "it"), "Sesto uomo dell'anno");
+  assert.equal(timelineLine(item, "en"), "Sixth Man of the Year");
 });

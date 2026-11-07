@@ -32,6 +32,7 @@ for (const width of [360, 390, 1280]) for (const lang of ["it", "en"] as const) 
     await expect(card).toBeVisible();
     const award = lang === "it" ? "Sesto uomo dell'anno" : "Sixth Man of the Year";
     await expect(page.locator(".lr-chips")).toContainText(award);
+    await expect(page.locator(".lr-timeline")).toContainText(award);
     const out = process.env.UI_SHOTS;
     if (out) { mkdirSync(out, { recursive: true }); await card.screenshot({ path: join(out, `${width}-${lang}-card.png`), animations: "disabled" }); }
     await expect(card.locator(".lc-honors")).toContainText(award);

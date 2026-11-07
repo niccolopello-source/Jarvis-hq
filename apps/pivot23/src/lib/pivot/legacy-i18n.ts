@@ -240,7 +240,7 @@ export function timelineLine(item: TimelineItem, lang: Lang): string {
     case "move":
       return lt("tlMove", lang, { team: lang === "en" ? theTeam(item.subject, lang) : `${/^[AEIOUaeiou]/.test(item.subject) ? "ad" : "a"} ${item.subject}` });
     case "award":
-      return lt((item.value ?? 1) > 1 ? "tlAward" : "tlAwardOnce", lang, { award: item.subject });
+      return lt((item.value ?? 1) > 1 ? "tlAward" : "tlAwardOnce", lang, { award: legacyAwardLabel(item.subject, lang) });
     case "title":
       return lt("tlTitle", lang, { team: theTeam(item.subject, lang) });
     case "finals":
