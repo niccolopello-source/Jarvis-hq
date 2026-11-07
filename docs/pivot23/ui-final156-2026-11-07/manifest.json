@@ -1,0 +1,299 @@
+{
+  "runtime": "95fd5dc4980e52a2efa659b530f9dd5b5140135e",
+  "images": {
+    "1280-en-card.png": {
+      "sha256": "454da09aeb95d3d4bd669bab0d030b4a46cc4740443b6c0341a9b35571bb1d56",
+      "dimensions": [
+        420,
+        444
+      ]
+    },
+    "1280-en-grafite.png": {
+      "sha256": "2d8426d039f2ec076f03f6bf2b70531b2f98fb16028e9412084e7222549288c2",
+      "dimensions": [
+        1280,
+        900
+      ]
+    },
+    "1280-en-last-row-footer.png": {
+      "sha256": "82490128629969b26f9a52d26dcfbf3380c186e613ae67e2ffd96af6f4467477",
+      "dimensions": [
+        1280,
+        900
+      ]
+    },
+    "1280-en-table-start.png": {
+      "sha256": "6f746e7854a189cb80fe24fb87026a40bd8d303604aa6295087ec7156f7659ff",
+      "dimensions": [
+        1280,
+        900
+      ]
+    },
+    "1280-en-table.png": {
+      "sha256": "6f746e7854a189cb80fe24fb87026a40bd8d303604aa6295087ec7156f7659ff",
+      "dimensions": [
+        1280,
+        900
+      ]
+    },
+    "1280-en-themes.png": {
+      "sha256": "3566e827efda046d29e8936931d4b8ad375a413d39f56b267cd2998a82d29705",
+      "dimensions": [
+        1280,
+        900
+      ]
+    },
+    "1280-it-card.png": {
+      "sha256": "5c3484b0a5c320bc3e6f69b34db22f2f221edf184d56c668039f7d16a9979627",
+      "dimensions": [
+        420,
+        443
+      ]
+    },
+    "1280-it-grafite.png": {
+      "sha256": "4bbbcce070979673f492654b4d0d89d04f076ef82e446e77b1b7d2f5df70cdac",
+      "dimensions": [
+        1280,
+        900
+      ]
+    },
+    "1280-it-last-row-footer.png": {
+      "sha256": "1638061c18ee172dbaf92462fb766440f7f92744af60a2c75b34c4198541180a",
+      "dimensions": [
+        1280,
+        900
+      ]
+    },
+    "1280-it-table-start.png": {
+      "sha256": "a59bbec98b5c2edee1c82b9af8660680d8104ebddbf8a3ec7bf502d2861ad3de",
+      "dimensions": [
+        1280,
+        900
+      ]
+    },
+    "1280-it-table.png": {
+      "sha256": "a59bbec98b5c2edee1c82b9af8660680d8104ebddbf8a3ec7bf502d2861ad3de",
+      "dimensions": [
+        1280,
+        900
+      ]
+    },
+    "1280-it-themes.png": {
+      "sha256": "64bb5290664b93252fa75a5d978032a063bfd9f190967a4af1814d00968e4b58",
+      "dimensions": [
+        1280,
+        900
+      ]
+    },
+    "360-en-card.png": {
+      "sha256": "63500bcd19ea926e79a0a8edf5ed55acc9e023cad797a5e9b90222b40daa74cc",
+      "dimensions": [
+        320,
+        436
+      ]
+    },
+    "360-en-export.png": {
+      "sha256": "9324d66d1fc0cf6415ad46707edb40d865125868c7299665a0cb9926419fd3ea",
+      "dimensions": [
+        1080,
+        1350
+      ]
+    },
+    "360-en-grafite.png": {
+      "sha256": "87da51dbf6173f726dfa610f168dd2f4eaac7fe7ee6941ce814c4afda35c92d1",
+      "dimensions": [
+        360,
+        900
+      ]
+    },
+    "360-en-last-row-footer.png": {
+      "sha256": "eb16ce40ffd0f05a5ea41179c61f1763d76b6be4b3ab63b4ba6d5a9b8d83f80b",
+      "dimensions": [
+        360,
+        900
+      ]
+    },
+    "360-en-table-end.png": {
+      "sha256": "9ae65694c461aa90bb5613618ca24928bb5a8284b26f4405e312a324a16f0c0e",
+      "dimensions": [
+        360,
+        900
+      ]
+    },
+    "360-en-table-start.png": {
+      "sha256": "3e239c5c083b5c0bd874c12b67b2b132474cec5a01b3379a096ff77930824b22",
+      "dimensions": [
+        360,
+        900
+      ]
+    },
+    "360-en-table.png": {
+      "sha256": "9ae65694c461aa90bb5613618ca24928bb5a8284b26f4405e312a324a16f0c0e",
+      "dimensions": [
+        360,
+        900
+      ]
+    },
+    "360-en-themes.png": {
+      "sha256": "62b0edd209601656d342f41bf4423a4f80b0bc9145271d2a97f804b72f9d6bc0",
+      "dimensions": [
+        360,
+        900
+      ]
+    },
+    "360-it-card.png": {
+      "sha256": "78ed2d5b2bab5ad3483fc13f19123012f90025801cfbaacf6255540e719ef9bc",
+      "dimensions": [
+        320,
+        456
+      ]
+    },
+    "360-it-export.png": {
+      "sha256": "19d0e0682f00a5b932625467b04c07976f5b2548ee9ca75f7e90ddc1295612a4",
+      "dimensions": [
+        1080,
+        1350
+      ]
+    },
+    "360-it-grafite.png": {
+      "sha256": "078d140efdac2ffb8c98e32a7fe3a99a74922f19bdf6234d975198e1c4de33c3",
+      "dimensions": [
+        360,
+        900
+      ]
+    },
+    "360-it-last-row-footer.png": {
+      "sha256": "9e3bc9d8f5c6c6fe1a48154859f04a2ddf68f0f041912ad589e18293723788ee",
+      "dimensions": [
+        360,
+        900
+      ]
+    },
+    "360-it-table-end.png": {
+      "sha256": "c14fae56a9faca455506bd7155729406cb7fb1a1631701cb25e488236430696e",
+      "dimensions": [
+        360,
+        900
+      ]
+    },
+    "360-it-table-start.png": {
+      "sha256": "115e27d52535015e289ec41fbe99d1db4c62dcb4413943200b328be486b08c03",
+      "dimensions": [
+        360,
+        900
+      ]
+    },
+    "360-it-table.png": {
+      "sha256": "c14fae56a9faca455506bd7155729406cb7fb1a1631701cb25e488236430696e",
+      "dimensions": [
+        360,
+        900
+      ]
+    },
+    "360-it-themes.png": {
+      "sha256": "3024a3050b5fd0ed46a3227fb15fbd5f6cf327a455bc2a44dfe304bc0c8dff8b",
+      "dimensions": [
+        360,
+        900
+      ]
+    },
+    "390-en-card.png": {
+      "sha256": "57355ef6b418431f4642541ed57f5be5f5b92da1f43ad2b5f062dc71ba704e79",
+      "dimensions": [
+        350,
+        438
+      ]
+    },
+    "390-en-grafite.png": {
+      "sha256": "2472276ac362da9161e18d663c8e88dd09078126775203de25f5a55d603bd3bb",
+      "dimensions": [
+        390,
+        900
+      ]
+    },
+    "390-en-last-row-footer.png": {
+      "sha256": "758eb2a3b21d277f820dbaa1e9e0d75ff31bcc895e456ad62d0dba2213577896",
+      "dimensions": [
+        390,
+        900
+      ]
+    },
+    "390-en-table-end.png": {
+      "sha256": "94d8197108c298111e231df24a9576cc2c91b7bee52cf1611063ecbd0d963836",
+      "dimensions": [
+        390,
+        900
+      ]
+    },
+    "390-en-table-start.png": {
+      "sha256": "dbd74ee60ff35753b636d80e48b955409d144f0dbf572dbd71b35ae14a69ef9e",
+      "dimensions": [
+        390,
+        900
+      ]
+    },
+    "390-en-table.png": {
+      "sha256": "94d8197108c298111e231df24a9576cc2c91b7bee52cf1611063ecbd0d963836",
+      "dimensions": [
+        390,
+        900
+      ]
+    },
+    "390-en-themes.png": {
+      "sha256": "de696cf79322f6e192b74010ef1e08d05e72c93fa0d15008edd2d94eccc56a39",
+      "dimensions": [
+        390,
+        900
+      ]
+    },
+    "390-it-card.png": {
+      "sha256": "d869085a7c7d7c0d1f494ad37e4ac3301645d7502e5d6fa986d7f86295c593be",
+      "dimensions": [
+        350,
+        439
+      ]
+    },
+    "390-it-grafite.png": {
+      "sha256": "8d618eaac39f1381950380df74149269b164bdc8d1d5727410da2c34b317bb21",
+      "dimensions": [
+        390,
+        900
+      ]
+    },
+    "390-it-last-row-footer.png": {
+      "sha256": "323fd662ab865b0dc296eebfa7fb43beba80191561a95c6cfdb205dbd2ed2fcd",
+      "dimensions": [
+        390,
+        900
+      ]
+    },
+    "390-it-table-end.png": {
+      "sha256": "34cdafde31351c7eb21b943d0b923f7ac5f7aeaaa560664ef333a7e472e46033",
+      "dimensions": [
+        390,
+        900
+      ]
+    },
+    "390-it-table-start.png": {
+      "sha256": "8392ffa55e065581a4bc7e1b7fdecdce3e09033ed389bec48148da02b8f5fb4a",
+      "dimensions": [
+        390,
+        900
+      ]
+    },
+    "390-it-table.png": {
+      "sha256": "34cdafde31351c7eb21b943d0b923f7ac5f7aeaaa560664ef333a7e472e46033",
+      "dimensions": [
+        390,
+        900
+      ]
+    },
+    "390-it-themes.png": {
+      "sha256": "c495e3c396ad016eab8c772e57d1899f2c601a6bee6b87c887a05cb2f83f645f",
+      "dimensions": [
+        390,
+        900
+      ]
+    }
+  }
+}

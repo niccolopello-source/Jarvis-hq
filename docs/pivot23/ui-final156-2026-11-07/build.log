@@ -1,0 +1,22 @@
+
+> pivot23-demo@0.1.0 build /workspace/pivot23-ui-integration/apps/pivot23
+> tsc --noEmit && vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 2288 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              8.15 kB │ gzip:   2.72 kB
+dist/assets/LegacyExperience-Cdj7agVw.css    7.21 kB │ gzip:   2.13 kB
+dist/assets/index-BwkkIuDG.css              73.04 kB │ gzip:  14.60 kB
+dist/assets/rolldown-runtime-XKyaHtl9.js     0.72 kB │ gzip:   0.42 kB
+dist/assets/CareerChart-I69VioDj.js          0.96 kB │ gzip:   0.49 kB
+dist/assets/LegacyExperience-B6Tpp4JQ.js    22.71 kB │ gzip:   8.16 kB
+dist/assets/react-vendor-b2NgTULZ.js       218.75 kB │ gzip:  68.27 kB
+dist/assets/narrative-BtomZlfm.js          287.56 kB │ gzip:  91.42 kB
+dist/assets/index-C8NtCHyp.js              314.87 kB │ gzip: 106.83 kB
+dist/assets/chart-vendor-CTqq8GOx.js       353.59 kB │ gzip: 102.96 kB
+dist/assets/catalog-en-BcNWKS0g.js         410.58 kB │ gzip: 136.96 kB
+
+✓ built in 450ms
