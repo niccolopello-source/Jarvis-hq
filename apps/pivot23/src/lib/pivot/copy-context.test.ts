@@ -101,3 +101,11 @@ test('real complete synthetic simulations keep full state and RNG unchanged afte
  }
  assert.ok(placeholders>0,'sample must actually exercise simulated rival placeholder');
 });
+
+
+test('route endings state recorded preparation, not an unsupported successful trajectory',async()=>{
+ await loadNarrativeEn();
+ for(const source of ["Tutto è partito da un campus universitario.","Il ragazzo cresciuto in Europa è arrivato più lontano di quanto molti immaginassero.","Chi ha bruciato le tappe non ha mai smesso di correre."]){
+  for(const lang of ['it','en'] as const){assert.match(nx(source,lang),/pre-draft/);assert.doesNotMatch(nx(source,lang),/immagin|imagined|never stopped|mai smesso/);}
+ }
+});

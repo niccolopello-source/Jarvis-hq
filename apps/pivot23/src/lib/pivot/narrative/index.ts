@@ -73,6 +73,9 @@ const IT_DISPLAY_FIXES: ReadonlyArray<readonly [RegExp, string | ((...m: string[
  * stay byte-identical, and no version gate is needed. English renders are updated in the catalog.
  */
 const IT_ROUTE_REWRITES: ReadonlyArray<readonly [string,string]> = [
+  ["Tutto è partito da un campus universitario.", "La tua preparazione pre-draft era il percorso NCAA."],
+  ["Il ragazzo cresciuto in Europa è arrivato più lontano di quanto molti immaginassero.", "La tua preparazione pre-draft era l'accademia europea."],
+  ["Chi ha bruciato le tappe non ha mai smesso di correre.", "La tua preparazione pre-draft era la G League."],
   ["Sei arrivato dall'Europa. Si sente ancora, nel modo in cui leggi il campo.", "Il tuo percorso pre-draft era europeo. Il resto lo raccontano le stagioni."],
   ["Hai bruciato le tappe. Il grezzo, all'inizio, era il punto di forza e il rischio.", "Il tuo percorso pre-draft era la G League. La carriera si è costruita stagione per stagione."],
 ];
