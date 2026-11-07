@@ -28,7 +28,10 @@ function cardLabels(face: CardFace, lang: Lang): PngLabels {
     ages: face.ages ? `${lt("age", lang)} ${face.ages}` : "",
     seasons: face.seasons ? seasonsLabel(face.seasons, lang) : "",
     stats,
-    honors: face.honors.map(([id, n]) => (n > 1 ? `${n}× ${id}` : id)),
+    honors: face.honors.map(([id, n]) => {
+      const name = legacyAwardLabel(id, lang);
+      return n > 1 ? `${n}× ${name}` : name;
+    }),
     verdict: nx(face.verdict, lang),
     footer: lt("footer", lang),
     peak: `${lt("peak", lang)} ${face.peak}`,
