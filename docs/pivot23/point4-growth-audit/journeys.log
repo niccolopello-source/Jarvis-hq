@@ -1,0 +1,45 @@
+
+Running 32 tests using 2 workers
+
+(node:130559) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:130560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   2 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save future engine (1.3s)
+  ✓   3 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save future schema (1.0s)
+  ✓   4 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-backup future engine (1.1s)
+  ✓   5 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-backup future schema (1.1s)
+  ✓   6 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-backup-prev future engine (1.1s)
+  ✓   7 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-backup-prev future schema (1.1s)
+  ✓   8 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-crashed future engine (1.1s)
+  ✓   9 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-crashed future schema (1.1s)
+  ✓  10 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save future engine (1.1s)
+  ✓  11 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save future schema (1.1s)
+  ✓  12 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-backup future engine (1.1s)
+  ✓  13 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-backup future schema (1.1s)
+  ✓  14 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-backup-prev future engine (1.2s)
+  ✓  15 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-backup-prev future schema (1.2s)
+  ✓  16 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-crashed future engine (1.2s)
+  ✓  17 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-crashed future schema (1.1s)
+  ✓  18 e2e/future-save-protection.spec.ts:99:1 › read-only export preserves raw UTF16 code units and failure leaves bytes intact (398ms)
+  ✓  19 e2e/future-save-protection.spec.ts:133:1 › same-career concurrent tab cannot autosave; future write wins over pending timer/pagehide (2.0s)
+  ✓  20 e2e/future-save-protection.spec.ts:178:5 › Web Locks missing: fails closed and preserves engine 2.24.0-beta (328ms)
+  ✓  21 e2e/future-save-protection.spec.ts:178:5 › Web Locks missing: fails closed and preserves engine 3.0.0 (401ms)
+  ✓  22 e2e/future-save-protection.spec.ts:178:5 › Web Locks getter: fails closed and preserves engine 2.24.0-beta (337ms)
+  ✓  23 e2e/future-save-protection.spec.ts:178:5 › Web Locks getter: fails closed and preserves engine 3.0.0 (373ms)
+  ✓  24 e2e/future-save-protection.spec.ts:178:5 › Web Locks rejects: fails closed and preserves engine 2.24.0-beta (351ms)
+  ✓  25 e2e/future-save-protection.spec.ts:178:5 › Web Locks rejects: fails closed and preserves engine 3.0.0 (327ms)
+  ✓  26 e2e/future-save-protection.spec.ts:223:3 › unknown engine undefined boots read-only, not a fresh career (910ms)
+  ✓  27 e2e/future-save-protection.spec.ts:223:3 › unknown engine null boots read-only, not a fresh career (895ms)
+  ✓  28 e2e/future-save-protection.spec.ts:223:3 › unknown engine 225 boots read-only, not a fresh career (882ms)
+  ✓  29 e2e/future-save-protection.spec.ts:223:3 › unknown engine  boots read-only, not a fresh career (860ms)
+  ✓  30 e2e/future-save-protection.spec.ts:223:3 › unknown engine garbage boots read-only, not a fresh career (874ms)
+  ✓  31 e2e/future-save-protection.spec.ts:248:1 › unreadable primary storage never mounts or falls back to a valid legacy session (1.0s)
+(node:131501) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+native history return pageshow.persisted=false
+native history notRestoredReasons={"src":null,"id":null,"url":"http://127.0.0.1:5314/","name":null,"reasons":[{"reason":"masked"}],"children":[]}
+  ✓  32 e2e/native-lifecycle-protection.spec.ts:6:1 › native navigation flushes RAM-only draft mutation before releasing the writer (1.7s)
+  ✓   1 e2e/engine-224-career.spec.ts:28:1 › 2.24 forced: full career with a mid-career reload keeps engine 2.24 and ends on the Legacy Report (1.5m)
+
+  32 passed (1.5m)

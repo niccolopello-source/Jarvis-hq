@@ -1,0 +1,142 @@
+
+> pivot23-demo@0.1.0 test:stats /workspace/pivot23-ui-integration/apps/pivot23
+> node --import=tsx --test src/lib/pivot/engine.stats.test.ts src/lib/pivot/replayability.stats.test.ts src/lib/pivot/balance-decisions.stats.test.ts src/lib/pivot/bust.stats.test.ts src/lib/pivot/awards-v2.stats.test.ts src/lib/pivot/injury-retire.stats.test.ts src/lib/pivot/ovr-curve-224.stats.test.ts src/lib/pivot/ovr-curve-225.stats.test.ts src/lib/pivot/choices-depth-225.stats.test.ts
+
+2.15 ROY role share { SF: 0.195, SG: 0.3875, C: 0.155, PF: 0.17, PG: 0.0925 } player ROY 0.075 MVP seasons 33 max MVP 4
+2.23 ROY role share { SF: 0.2175, SG: 0.3925, C: 0.1425, PF: 0.1575, PG: 0.09 } player ROY 0.055 MVP seasons 50 max MVP 4
+2.24 ROY role share { SF: 0.2125, SG: 0.385, C: 0.1475, PF: 0.1575, PG: 0.0975 } player ROY 0.04 MVP seasons 60 max MVP 4
+✔ awards v2 (2.15 careers): ROY position balance, player ROY rate, MVP vote consistency (6494.540357ms)
+✔ awards v2 (2.23 careers): ROY position balance, player ROY rate, MVP vote consistency (6985.945426ms)
+✔ awards v2 (2.24 careers): ROY position balance, player ROY rate, MVP vote consistency (6719.053042ms)
+✔ D-11: seeded story windows give 21 distinct calendars over seeds 1..2000 (8.623146ms)
+✔ D-23: no DPOY streak longer than 5 over 300 Esordio careers (seeds 100000+) (7235.340511ms)
+✔ D-08 bust rate lands in 10–15% over 1,200 careers (300 per difficulty) (21762.548394ms)
+2.25 best-worst peak gap 1.99
+2.25 morale up-down peak gap 0.74
+✔ 2.25 best vs worst choices: measurable, plausible peak gap (30812.448569ms)
+✔ 2.25 high vs low morale choices: measurable, plausible peak gap (18581.346892ms)
+✔ 1,000 Pro careers meet the P0-LIFE age distribution without changing the peak window (19560.864802ms)
+✔ an already-won MVP or title makes the next one less common on Esordio (37663.583374ms)
+✔ P1-INJ: 2.19 careers use the per-difficulty bars, 2.14-2.18 keep the A2 bars (1.722469ms)
+✔ P1-INJ: 2.19 early exits (last season at 29-32) on esordio within 0-20 per 1000 (18909.944953ms)
+✔ P1-INJ: 2.19 early exits (last season at 29-32) on pro within 300-340 per 1000 (13612.513541ms)
+✔ P1-INJ: 2.19 early exits (last season at 29-32) on allstar within 300-340 per 1000 (11042.836611ms)
+✔ P1-INJ: 2.19 early exits (last season at 29-32) on leggenda within 300-340 per 1000 (10496.071438ms)
+✔ 2.20: Leggenda early exits (last season at 29-32) within 300-340 per 1000, no fewer than 2.19 (21023.733203ms)
+✔ 2.20: esordio careers end exactly where 2.19 careers end (200 seeds) (6766.60053ms)
+✔ 2.20: pro careers end exactly where 2.19 careers end (200 seeds) (5410.601552ms)
+✔ 2.20: allstar careers end exactly where 2.19 careers end (200 seeds) (4441.951145ms)
+✔ 2.21 OVR balance: early exits (last season at 29-32) on esordio within 0-20 per 1000 (15478.867839ms)
+✔ 2.21 OVR balance: early exits (last season at 29-32) on pro within 300-340 per 1000 (13166.662139ms)
+✔ 2.21 OVR balance: early exits (last season at 29-32) on allstar within 300-340 per 1000 (11334.877086ms)
+✔ 2.21 OVR balance: early exits (last season at 29-32) on leggenda within 300-340 per 1000 (10970.672201ms)
+✔ 2.22: early exits (last season at 29-32) on esordio within 0-20 per 1000 (17287.808204ms)
+✔ 2.22: early exits (last season at 29-32) on pro within 300-340 per 1000 (13634.252219ms)
+✔ 2.22: early exits (last season at 29-32) on allstar within 300-340 per 1000 (12003.923441ms)
+✔ 2.22: early exits (last season at 29-32) on leggenda within 300-340 per 1000 (11532.334724ms)
+✔ 2.23: early exits (last season at 29-32) on esordio within 0-20 per 1000 (20224.554945ms)
+✔ 2.23: early exits (last season at 29-32) on pro within 300-340 per 1000 (15732.619463ms)
+✔ 2.23: early exits (last season at 29-32) on allstar within 300-340 per 1000 (13287.572682ms)
+✔ 2.23: early exits (last season at 29-32) on leggenda within 300-340 per 1000 (12204.227329ms)
+✔ 2.24: early exits (last season at 29-32) on esordio within 0-20 per 1000 (17939.893758ms)
+✔ 2.24: early exits (last season at 29-32) on pro within 300-340 per 1000 (15565.051453ms)
+✔ 2.24: early exits (last season at 29-32) on allstar within 300-340 per 1000 (12983.978081ms)
+✔ 2.24: early exits (last season at 29-32) on leggenda within 300-340 per 1000 (12047.908263ms)
+esordio 2.24 {
+  minus1: 0.275974025974026,
+  early: 0,
+  corrPer: 0.9381687996680796,
+  peak: 76,
+  end36: 0.14,
+  maxEnd: 36
+} 2.23 {
+  minus1: 0.7409420289855072,
+  early: 0.052,
+  corrPer: 0.9942469636518935,
+  peak: 76,
+  end36: 0.868,
+  maxEnd: 36
+}
+pro 2.24 {
+  minus1: 0.2665350444225074,
+  early: 0,
+  corrPer: 0.9318286410339529,
+  peak: 74,
+  end36: 0.072,
+  maxEnd: 36
+} 2.23 {
+  minus1: 0.7184542586750788,
+  early: 0.1,
+  corrPer: 0.9938062272275376,
+  peak: 74,
+  end36: 0.528,
+  maxEnd: 36
+}
+allstar 2.24 {
+  minus1: 0.2565217391304348,
+  early: 0,
+  corrPer: 0.9195089670301921,
+  peak: 71,
+  end36: 0.032,
+  maxEnd: 36
+} 2.23 {
+  minus1: 0.6830318690783808,
+  early: 0.192,
+  corrPer: 0.9944000562694485,
+  peak: 71,
+  end36: 0.44,
+  maxEnd: 36
+}
+leggenda 2.24 {
+  minus1: 0.24875621890547264,
+  early: 0,
+  corrPer: 0.90747391206589,
+  peak: 70,
+  end36: 0.052,
+  maxEnd: 36
+} 2.23 {
+  minus1: 0.592948717948718,
+  early: 0.212,
+  corrPer: 0.9943716066323882,
+  peak: 70,
+  end36: 0.488,
+  maxEnd: 36
+}
+strong 2.24 {
+  minus1: 0.28588957055214725,
+  early: 0,
+  corrPer: 0.9408437992709285,
+  peak: 95,
+  end36: 0.024,
+  maxEnd: 36
+}
+weak 2.24 {
+  minus1: 0.273308957952468,
+  early: 0,
+  corrPer: 0.7152657228902655,
+  peak: 65,
+  end36: 0.124,
+  maxEnd: 36
+}
+✔ 2.24 curve (esordio, 250 careers): varied decline, no early peak, PER decoupled, same peak, spread exits, 36 max (11968.985257ms)
+✔ 2.24 curve (pro, 250 careers): varied decline, no early peak, PER decoupled, same peak, spread exits, 36 max (8819.308077ms)
+✔ 2.24 curve (allstar, 250 careers): varied decline, no early peak, PER decoupled, same peak, spread exits, 36 max (6681.950899ms)
+✔ 2.24 curve (leggenda, 250 careers): varied decline, no early peak, PER decoupled, same peak, spread exits, 36 max (6396.221399ms)
+✔ 2.24 curve (strong Pro, 250 careers): varied decline, no early peak, 36 max (5825.174026ms)
+✔ 2.24 curve (weak Pro, 250 careers): varied decline, no early peak, 36 max (2985.245481ms)
+✔ 2.24 Pro bust rate lands in 12–18% (1,000 P0-LIFE careers) (15532.701249ms)
+✔ 2.24 D-08 bust 10–15% (1,200 careers) and D-23 DPOY streak ≤5 (300 Esordio) (17874.959913ms)
+✔ 2.25 is not active (0.715868ms)
+✔ 2.25 retirement shape (NCAA) (8330.001417ms)
+✔ 2.25 retirement shape (Europa) (8302.389761ms)
+✔ 2.25 retirement shape (G-League) (7479.168601ms)
+✔ 2.25 weak Pro peaks spread around a soft floor (~62±3) (2664.157489ms)
+✔ 100 seeded Pro careers are structurally distinct and not one cluster (2386.997806ms)
+ℹ tests 49
+ℹ suites 0
+ℹ pass 49
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 317418.35941

@@ -1,0 +1,24 @@
+{
+  "node": "v24.22.1",
+  "at": "2026-11-08 01:14:28 CET Europe/Rome",
+  "root": "/workspace/pivot23-ui-integration/apps/pivot23",
+  "profiles": [
+    "random",
+    "best",
+    "worst",
+    "morale-up",
+    "morale-down",
+    "star",
+    "role",
+    "low-initial-morale",
+    "high-initial-morale"
+  ],
+  "seedFormula": "940000+index*97",
+  "careers": 1080,
+  "singleSeasons": 360,
+  "harnessSha256": "1942d7c8a8beaaf7d49d5d85dfa5bb198132c6d23da5bc08076e182477a1b3b9",
+  "files": {
+    "careers.json": "11c417f07b03f0db79ba1b3d2467731bdb0dde5ac8a42dcecb42719b6d4f68d5",
+    "sensitivity.json": "62923f365225ac44c9864f6a3e791366d7c85eaea2259ef31cb52539d2774034"
+  }
+}
