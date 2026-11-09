@@ -1252,6 +1252,7 @@ html.pivot-asleep .mark-arcs {
 }
 .lang-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin: 0 0 18px;
 }
@@ -2631,3 +2632,26 @@ img.court-mark-photo {
 
 /* Life headings remain readable after native anchor/focus scrolling below career chrome. */
 .swipe-slide h4 { scroll-margin-block-start: 12px; }
+
+/*
+ * Simplified Chinese (2026-11-09). System CJK fonts only: no web font, no CDN, CSP unchanged.
+ * Wide tracking is designed for Latin capitals and hurts ideographs, so it is reset for zh,
+ * except the PIVOT brand marks. Line breaking follows the strict CJK rules.
+ */
+:root:lang(zh) {
+  --font-display: Figtree, -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "WenQuanYi Micro Hei", "Segoe UI", system-ui, sans-serif;
+  --font-sans: Figtree, -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "WenQuanYi Micro Hei", "Segoe UI", system-ui, sans-serif;
+}
+:root:lang(zh) body {
+  line-break: strict;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+:root:lang(zh) :where(body *:not(.display-title):not(.boot-word):not(svg *)) {
+  letter-spacing: normal !important;
+}
+/* Spanish runs ~20% longer than English: long words may break inside narrow chips and buttons. */
+:root:lang(es) :where(button, .lang-btn, .eyebrow, .tab, [role="tab"]) {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
