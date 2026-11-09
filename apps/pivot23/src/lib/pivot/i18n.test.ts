@@ -3,11 +3,15 @@ import test from "node:test";
 import { DEMO_LANGS, awardLabel, chromeGaps, demoLang, difficultyFace, msgKeys, t, tf } from "./i18n.ts";
 import { confLabel, dossierPlace, nationLabel, playoffResultLabel, roleLabel, roundLabel } from "./labels.ts";
 
-test("the demo offers only Italian and English", () => {
-  assert.deepEqual(DEMO_LANGS, ["it", "en"]);
+// Owner decision 2026-11-09 ("PIVOT 23 è sbarcato in Cina"): the selector offers Italian, English, Spanish and
+// Simplified Chinese. This test previously pinned ["it", "en"] and demoLang("es") -> "it"; the expectation is
+// updated to the new decision, not removed. Unknown languages still fall back to Italian.
+test("the demo offers Italian, English, Spanish and Chinese (owner decision 2026-11-09)", () => {
+  assert.deepEqual(DEMO_LANGS, ["it", "en", "es", "zh"]);
   assert.equal(demoLang("it"), "it");
   assert.equal(demoLang("en"), "en");
-  assert.equal(demoLang("es"), "it");
+  assert.equal(demoLang("es"), "es");
+  assert.equal(demoLang("zh"), "zh");
   assert.equal(demoLang("fr"), "it");
   assert.equal(demoLang(null), "it");
   assert.equal(demoLang(undefined), "it");
@@ -131,13 +135,14 @@ test("copy review 2026-10-13: Italian and English chrome carry the same placehol
   assert.deepEqual(bad, []);
 });
 
-test("owner decisions 2026-10-14: guide4Body (L-01; qualified local-save claim 2026-11-07), difficulty EN (L-02), es off", () => {
+test("owner decisions 2026-10-14: guide4Body (L-01; qualified local-save claim 2026-11-07), difficulty EN (L-02); es on since 2026-11-09", () => {
   assert.match(t("guide4Body", "it"), /ultimo salvataggio riuscito/);
   assert.match(t("guide4Body", "en"), /last successful save/);
   for (const l of ["it", "en"] as const) assert.doesNotMatch(t("guide4Body", l), /stessa carta|same card/);
   assert.equal(difficultyFace("esordio", "en").desc, "Generous growth, rare injuries, more open playoffs. Made for learning the game.");
   assert.equal(difficultyFace("leggenda", "en").desc, "Injuries pile up and the playoffs are a war. Only the special ones survive.");
-  assert.ok(!(DEMO_LANGS as readonly string[]).includes("es"));
+  // 2026-11-09: Spanish is switched on by the owner (was: assert es is NOT offered).
+  assert.ok((DEMO_LANGS as readonly string[]).includes("es"));
 });
 
 test("demo hardening 2026-10-16: ES raceNbaCap matches IT/EN (three All-NBA tiers, no 'escalones')", () => {
