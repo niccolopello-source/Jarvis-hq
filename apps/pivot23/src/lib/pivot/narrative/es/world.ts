@@ -84,4 +84,13 @@ export const ES_WORLD: Readonly<Record<string, string>> = {
   "{DEST} punta su {NAME}. {OLD} resta fuori dal quadro.": "{DEST} apuesta por {NAME}. {OLD} queda fuera del cuadro.",
   "Cambio di faccia a {DEST}: entra {NAME}, esce {OLD}.": "Una cara nueva en {DEST}: entra {NAME}, sale {OLD}.",
   "A {CITY} il draft spinge verso la crescita. {STAR} è il volto, si gioca a {SYS}.": "En {CITY}, el draft empuja hacia el desarrollo. {STAR} es la cara de la era {SYS}.",
+  "{NAME} cambia casacca: da {FROM} a {DEST}, da svincolato.": "{NAME} cambia de camiseta: de {FROM} a {DEST}, como agente libre.",
+  "{DEST} ({GOAL}) chiama {NAME} dal mercato. {FROM} resta senza volto.": "{DEST} ({GOAL}) se lleva a {NAME} en la agencia libre. {FROM} se queda sin cara.",
+  "{NAME}, ancora {AGE} anni, sceglie {DEST} per crescere. Addio {FROM}.": "{NAME}, con solo {AGE} años, elige {DEST} para crecer. Adiós, {FROM}.",
+  "{TO} ({GOAL}) pesca {A}. {FROM} ({NEED}) prende {B}.": "{TO} ({GOAL}) se lleva a {A}. {FROM} ({NEED}) recibe a {B}.",
+  "{CITY} cambia sistema: {SYS}.": "{CITY} cambia de sistema: {SYS}.",
+  "Cambio di identità a {CITY}. Il palazzetto vedrà {SYS}.": "Cambio de identidad en {CITY}. El pabellón verá {SYS}.",
+  "Fine corsa in panchina a {CITY}. La piazza chiede un altro volto.": "Fin del camino en el banquillo de {CITY}. La afición quiere una cara nueva.",
+  "{CITY} abbandona {OLD}. Adesso si gioca a {SYS}.": "{CITY} abandona {OLD}. Ahora el estilo es {SYS}.",
+  "{NAME}, tre giugno di fila. Il resto della lega prende atto.": "{NAME}, tres junios seguidos. El resto de la liga toma nota.",
 };

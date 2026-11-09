@@ -84,4 +84,13 @@ export const ZH_WORLD: Readonly<Record<string, string>> = {
   "{DEST} punta su {NAME}. {OLD} resta fuori dal quadro.": "{DEST}押注{NAME}。{OLD}出局。",
   "Cambio di faccia a {DEST}: entra {NAME}, esce {OLD}.": "{DEST}来了新面孔：{NAME}加盟，{OLD}离队。",
   "A {CITY} il draft spinge verso la crescita. {STAR} è il volto, si gioca a {SYS}.": "在{CITY}，选秀推动着球队走向培养路线。{STAR}是{SYS}时代的门面。",
+  "{NAME} cambia casacca: da {FROM} a {DEST}, da svincolato.": "{NAME}换了球衣：以自由球员身份从{FROM}转投{DEST}。",
+  "{DEST} ({GOAL}) chiama {NAME} dal mercato. {FROM} resta senza volto.": "{DEST}（{GOAL}）在自由市场签下{NAME}。{FROM}失去了门面。",
+  "{NAME}, ancora {AGE} anni, sceglie {DEST} per crescere. Addio {FROM}.": "年仅{AGE}岁的{NAME}选择{DEST}来成长。再见，{FROM}。",
+  "{TO} ({GOAL}) pesca {A}. {FROM} ({NEED}) prende {B}.": "{TO}（{GOAL}）得到{A}。{FROM}（{NEED}）得到{B}。",
+  "{CITY} cambia sistema: {SYS}.": "{CITY}更换体系：{SYS}。",
+  "Cambio di identità a {CITY}. Il palazzetto vedrà {SYS}.": "{CITY}改换身份。球馆将看到{SYS}。",
+  "Fine corsa in panchina a {CITY}. La piazza chiede un altro volto.": "{CITY}的教练之路走到尽头。球迷想要新面孔。",
+  "{CITY} abbandona {OLD}. Adesso si gioca a {SYS}.": "{CITY}放弃{OLD}。现在的风格是{SYS}。",
+  "{NAME}, tre giugno di fila. Il resto della lega prende atto.": "{NAME}，连续三个六月。联盟其他球队记下了。",
 };

@@ -147,5 +147,7 @@ export const ZH_PLAYOFF_DOORS: Readonly<Record<string, string>> = {
   "Se aspetti di essere pronto, la serie è finita.": "如果你要等到准备好，系列赛就结束了。",
   "Aiuta tardi, arrivi lo stesso": "协防晚了，照样赶到",
   "Il contrasto bello è quello che non si vede in copertina.": "漂亮的防守是永远上不了封面的那一次。",
+  "L'anello è di chi arriva terzo": "戒指属于第三个到场的人",
+  "Fai grande chi deve chiudere. Poi, se resta, chiudi tu.": "成就那个负责终结的人。然后，如果还有余力，由你来终结。",
   "Un rifiuto, un passaggio, un canestro altrui. La serie, per una sera, ha il tuo orario.": "一次拒绝，一次传球，别人的进球。这一晚，系列赛按你的节奏走。",
 };

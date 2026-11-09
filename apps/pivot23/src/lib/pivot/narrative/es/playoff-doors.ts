@@ -147,5 +147,7 @@ export const ES_PLAYOFF_DOORS: Readonly<Record<string, string>> = {
   "Se aspetti di essere pronto, la serie è finita.": "Si esperas a estar listo, la serie se acaba.",
   "Aiuta tardi, arrivi lo stesso": "Ayuda tarde, llega igualmente",
   "Il contrasto bello è quello che non si vede in copertina.": "La parada bonita es la que nunca sale en portada.",
+  "L'anello è di chi arriva terzo": "El anillo es de quien llega tercero",
+  "Fai grande chi deve chiudere. Poi, se resta, chiudi tu.": "Haz grande a quien tiene que cerrar. Luego, si queda algo, cierras tú.",
   "Un rifiuto, un passaggio, un canestro altrui. La serie, per una sera, ha il tuo orario.": "Un rechazo, un pase, la canasta de otro. Por una noche, la serie va a tu hora.",
 };
