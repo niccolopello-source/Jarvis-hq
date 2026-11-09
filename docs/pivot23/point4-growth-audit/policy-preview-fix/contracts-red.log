@@ -1,0 +1,134 @@
+✔ attribute-only Fx has no duplicate statsPulse, both 2.24 and dormant 2.25 (14.399933ms)
+✔ no discrete training or contextual-pulse age gate between 25 and 26 (4.081512ms)
+✔ experience saturates at the existing symmetric cap and choices draw no extra RNG (11.808256ms)
+✔ representative same seed/actions replay includes full PlayerState and active RNG (39.095899ms)
+✖ REAL an5 policy previews preserve job cursor and full input player (3.895012ms)
+✖ REAL an5 alternatives preview actual next coach; real choice spends exactly one draw (2.158299ms)
+✖ REAL an5 throwing preview restores nested RNG context and leaves job untouched (3.409421ms)
+✖ REAL an5 preview supports exact zero cursor despite setState zero sentinel (2.516053ms)
+✖ full policy careers equal preview-free replay of the same picks (state + active RNG) (59.524891ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 4
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 277.182115
+
+✖ failing tests:
+
+test at scripts/point4/causal-contract.test.mjs:31:1
+✖ REAL an5 policy previews preserve job cursor and full input player (3.895012ms)
+  AssertionError [ERR_ASSERTION]: best preview cannot spend job RNG
+  + actual - expected
+  
+  + 2952227453
+  - 3584063123
+  
+      at TestContext.<anonymous> (file://REPO/apps/pivot23/scripts/point4/causal-contract.test.mjs:36:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2952227453,
+    expected: 3584063123,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/point4/causal-contract.test.mjs:41:1
+✖ REAL an5 alternatives preview actual next coach; real choice spends exactly one draw (2.158299ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 4151957596
+  - 2320391783
+  
+      at TestContext.<anonymous> (file://REPO/apps/pivot23/scripts/point4/causal-contract.test.mjs:46:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 4151957596,
+    expected: 2320391783,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/point4/causal-contract.test.mjs:55:1
+✖ REAL an5 throwing preview restores nested RNG context and leaves job untouched (3.409421ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 1184602837
+  - 3648004320
+  
+      at file://REPO/apps/pivot23/scripts/point4/causal-contract.test.mjs:60:12
+      at Module.runWithRng (REPO/apps/pivot23/src/lib/pivot/rng.ts:78:12)
+      at TestContext.<anonymous> (file://REPO/apps/pivot23/scripts/point4/causal-contract.test.mjs:57:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1184602837,
+    expected: 3648004320,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/point4/causal-contract.test.mjs:64:1
+✖ REAL an5 preview supports exact zero cursor despite setState zero sentinel (2.516053ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1831565813 !== 0
+  
+      at TestContext.<anonymous> (file://REPO/apps/pivot23/scripts/point4/causal-contract.test.mjs:68:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1831565813,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/point4/causal-contract.test.mjs:75:1
+✖ full policy careers equal preview-free replay of the same picks (state + active RNG) (59.524891ms)
+  AssertionError [ERR_ASSERTION]: 940000/best step 8
+  + actual - expected
+  
+  + 363290292
+  - 1412409141
+  
+      at TestContext.<anonymous> (file://REPO/apps/pivot23/scripts/point4/causal-contract.test.mjs:84:121)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 363290292,
+    expected: 1412409141,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

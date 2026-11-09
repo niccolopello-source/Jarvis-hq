@@ -1,0 +1,21 @@
+{
+  "node": "v24.22.1",
+  "at": "2026-11-09 08:06:20 CET Europe/Rome",
+  "root": "REPO/apps/pivot23",
+  "profiles": [
+    "best",
+    "worst",
+    "morale-up",
+    "morale-down"
+  ],
+  "seedFormula": "940000+index*97",
+  "careers": 480,
+  "singleSeasons": 0,
+  "harnessSha256": "08ff72243668c70a015aac8f31a505531d90fbdcf7d95a66c0ccffc39c888d40",
+  "previewModuleSha256": "49e14fab246b720263a4551bcd88fcc6ddab8e680638156b0c0e5f0ff50827f1",
+  "mode": "--policies-only",
+  "files": {
+    "careers.json": "efe8ac5628ab373f54292d28243aec6074f40f6bcf5e18a9620220e9ab06ae84",
+    "sensitivity.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  }
+}

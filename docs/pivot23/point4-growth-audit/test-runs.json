@@ -90,5 +90,69 @@
     "summary": [
       "  32 passed (1.5m)"
     ]
+  },
+  "policyPreviewFix_2026-11-09": {
+    "typecheck": {
+      "status": "PASS",
+      "log": "/workspace/point4-growth-audit/rerun-20261109/typecheck.log",
+      "sha256": "b84c009cf482817a780171b2e983d686f1019fdb2c8eb9ced5e9bf2daa222cd8",
+      "summary": [
+        "exit 0"
+      ]
+    },
+    "lint": {
+      "status": "PASS",
+      "log": "/workspace/point4-growth-audit/rerun-20261109/lint.log",
+      "sha256": "b447228a6bc2258075e6229cb5c42db412c54a6c8a4068193dba918fea83bd9b",
+      "summary": [
+        "exit 0"
+      ]
+    },
+    "unit": {
+      "status": "PASS",
+      "log": "/workspace/point4-growth-audit/rerun-20261109/unit.log",
+      "sha256": "cbb2506ff6f74399ad229d969c7ecde48eae23ca569e275c85dbac4a92beb0de",
+      "summary": [
+        "\u2139 tests 483",
+        "\u2139 pass 483",
+        "\u2139 fail 0",
+        "\u2139 skipped 0",
+        "\u2139 tests 9",
+        "\u2139 pass 9",
+        "\u2139 fail 0",
+        "\u2139 skipped 0",
+        "exit 0"
+      ]
+    },
+    "build": {
+      "status": "PASS",
+      "log": "/workspace/point4-growth-audit/rerun-20261109/build.log",
+      "sha256": "603f0b1d19073f2758560793557e0931c8eddf49a83302339cb02525de74e04d",
+      "summary": [
+        "exit 0"
+      ]
+    },
+    "point4": {
+      "status": "PASS",
+      "log": "/workspace/point4-growth-audit/rerun-20261109/point4.log",
+      "sha256": "7179919af04ff5696285434d6874080aeb3db4d5804ecf41deb5caa5bea4727b",
+      "summary": [
+        "\u2139 tests 9",
+        "\u2139 pass 9",
+        "\u2139 fail 0",
+        "\u2139 skipped 0",
+        "exit 0"
+      ]
+    },
+    "redGreen": {
+      "naivePreview_4ff3afd": "FAIL atteso 5/9 (contracts-red.log)",
+      "isolatedRngOnly_uncommitted0132": "FAIL atteso 1/9 heardLines (contracts-red-rng-only.log)",
+      "final": "PASS 9/9 (contracts-green.log)"
+    },
+    "policiesRerun": {
+      "careersSha256": "efe8ac5628ab373f54292d28243aec6074f40f6bcf5e18a9620220e9ab06ae84",
+      "replayByteIdentical": true,
+      "careers": 480
+    }
   }
 }

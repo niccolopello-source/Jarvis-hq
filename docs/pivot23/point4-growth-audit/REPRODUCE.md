@@ -6,6 +6,8 @@ node --import=tsx --test scripts/point4/causal-contract.test.mjs
 node --import=tsx scripts/point4/causal-audit.mjs . /workspace/repro-point4-a
 node --import=tsx scripts/point4/causal-audit.mjs . /workspace/repro-point4-b
 python3 scripts/point4/analyze.py /workspace/repro-point4-a
+# solo i 4 profili policy dopo la correzione preview (9nov): stessi 120 seed
+node --import=tsx scripts/point4/causal-audit.mjs . /workspace/repro-point4-policies --policies-only
 cmp /workspace/repro-point4-a/careers.json /workspace/repro-point4-b/careers.json
 cmp /workspace/repro-point4-a/sensitivity.json /workspace/repro-point4-b/sensitivity.json
 pnpm test
