@@ -20,11 +20,11 @@ Parametri finali provati: levelExitFrom34, weakOvr60, weakW0,06, starOvr65, star
 
 Holdout 990000 PRIMA: A1 16,8%, a 36 13,5%, gradiente +3pp: il problema è confermato anche fuori dal campione di tuning (PASS della diagnosi).
 
-Sweep (`scripts/point5/lever-sweep.mjs`, 15 combinazioni × 3 set di seed): le leve sono in conflitto con i vincoli esistenti.
+Sweep (`scripts/point5/lever-sweep.mjs`, 15 combinazioni; 9 provate su tutti e tre i set di seed): le leve sono in conflitto con i vincoli esistenti.
 - Uscita deboli più forte o da 33/34 → A1 e gradiente OK, ma mediana scende a 33 o reach35 < 0,28 nel gate esistente (FAIL A4; la soglia NON si abbassa).
 - Compensare con coda stelle più lunga → gate OK ma quota a 36 sale a 16–22% (FAIL A3) e A1 resta ~10–11% su 760000.
-- Uscita deboli solo a 35 → A1 8–11%, a 36 17–22%.
-Nessuna combinazione supera A1–A4 su tutti e tre i set. Per la regola scritta in CRITERIA.md: documentato, src NON modificato.
+- Uscita deboli solo a 35 → A1 4–11%; con coda stelle debole reach35 del gate 0,22–0,26 (FAIL A4), con coda forte a 36 17–22% (FAIL A3).
+Nessuna combinazione provata supera A1–A4 su tutti e tre i set (non è una prova che non esista). Per la regola scritta in CRITERIA.md: documentato, src NON modificato.
 
 ## Conclusione
 - Problema 2.25 reale e misurato (HYPOTHESIS sulla causa, misura PASS): troppi deboli a 35–36 (17–20%), longevità quasi indipendente dal livello (+3/+7pp).
