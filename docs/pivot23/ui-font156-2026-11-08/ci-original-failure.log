@@ -1,0 +1,394 @@
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	﻿2026-11-07T22:55:39.8037090Z ##[group]Run pnpm run test:e2e:preview
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:39.8037399Z ^[[36;1mpnpm run test:e2e:preview^[[0m
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:39.8055430Z shell: /usr/bin/bash -e {0}
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:39.8055647Z env:
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:39.8055860Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:39.8056125Z   CI: true
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:39.8056294Z ##[endgroup]
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:40.1614743Z $ E2E_PREVIEW=1 playwright test
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:41.3899125Z [WebServer] $ tsc --noEmit && vite build
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:49.2661720Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:49.2662350Z Running 196 tests using 2 workers
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:49.2662694Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:49.8713672Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:49.8928715Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:50.2054924Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:50.2497164Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:51.5913720Z   ✓    1 e2e/a11y-i18n.spec.ts:103:1 › reduced motion: no running animations on the intro (1.1s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:53.8491675Z   ✓    3 e2e/a11y-i18n.spec.ts:117:1 › no Content-Security-Policy violations through a played season (meaningful with E2E_PREVIEW=1) (2.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:56.6595275Z   ✓    4 e2e/ads-desktop.spec.ts:57:5 › ads: phone › zero requests to ad hosts on phone (2.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:55:59.4656837Z   ✓    5 e2e/ads-desktop.spec.ts:57:5 › ads: tabletLandscape › zero requests to ad hosts on tabletLandscape (2.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:02.2667749Z   ✓    6 e2e/ads-desktop.spec.ts:57:5 › ads: ipadAsMac › zero requests to ad hosts on ipadAsMac (2.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:04.9801242Z   ✓    2 e2e/a11y-i18n.spec.ts:36:3 › main screens pass axe in it (14.5s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:05.1024989Z   ✓    7 e2e/ads-desktop.spec.ts:69:3 › ads: desktop › flag OFF build: desktop also makes zero ad requests and shows the reserved placeholder (2.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:05.1998078Z   -    9 e2e/ads-desktop.spec.ts:77:3 › ads: desktop › flag ON: desktop requests only the CMP until consent
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:05.2899919Z   -   10 e2e/ads-desktop.spec.ts:85:3 › ads: desktop › flag ON: with TCF consent the ad script loads, non-personalised, slot keeps its size
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:05.4474190Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:05.7640268Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:11.3774411Z   ✓   11 e2e/career-card.spec.ts:61:1 › end of a full career: report and card, archive, reload, reopen — identical data (5.6s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:13.7342257Z   ✓   12 e2e/career-card.spec.ts:122:1 › guest: no login, no network beyond the app, PNG export works locally (2.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:15.5807810Z   ✓   13 e2e/career-card.spec.ts:150:3 › layout at 320px: no horizontal overflow, nothing clipped (1.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:16.6431380Z   ✓   14 e2e/career-card.spec.ts:150:3 › layout at 375px: no horizontal overflow, nothing clipped (1.1s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:17.7503586Z   ✓   15 e2e/career-card.spec.ts:150:3 › layout at 390px: no horizontal overflow, nothing clipped (1.1s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:18.8312172Z   ✓   16 e2e/career-card.spec.ts:150:3 › layout at 430px: no horizontal overflow, nothing clipped (1.1s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:19.8043683Z   ✓    8 e2e/a11y-i18n.spec.ts:36:3 › main screens pass axe in en (14.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:19.9836218Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:20.3280321Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:20.7918356Z   ✓   17 e2e/career-card.spec.ts:150:3 › layout at 768px: no horizontal overflow, nothing clipped (1.9s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:21.9177001Z   ✓   19 e2e/career-card.spec.ts:150:3 › layout at 1280px: no horizontal overflow, nothing clipped (1.1s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:23.7111719Z   ✓   18 e2e/career-card.spec.ts:170:3 › axe AA on card and report (en) (3.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:25.0631868Z   ✓   20 e2e/career-card.spec.ts:170:3 › axe AA on card and report (it) (3.1s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:25.1361567Z   ✓   21 e2e/career-card.spec.ts:187:1 › keyboard: theme buttons and export are reachable and work with Enter (1.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:25.2436975Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:25.6329543Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:25.9583997Z   ✓   23 e2e/career-card.spec.ts:203:1 › reduced motion: the card does not animate (810ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:26.9650823Z   ✓   24 e2e/career-card.spec.ts:211:1 › prototype themes are not offered in the default build (997ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:28.9418683Z   ✓   25 e2e/career-card.spec.ts:218:1 › played career closed from the retirement screen: sparse data are omitted, not invented (2.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:29.1131375Z   ✓   22 e2e/chunk-failure.spec.ts:29:1 › chart chunk keeps failing: bounded retries, stable fallback, career still playable (3.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:29.2833314Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:29.6046450Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:31.1072426Z   ✓   26 e2e/career-card.spec.ts:236:1 › legacy archive entry (written before Missione 2, no facts, no card) still opens after refresh (2.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:31.3190222Z   ✓   27 e2e/chunk-failure.spec.ts:61:1 › chart chunk fails once: retry loads the chart (1.7s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:32.5419906Z   ✓   28 e2e/career-card.spec.ts:258:1 › mobile PNG export downloads a complete 1080×1350 image (1.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:34.5660088Z   ✓   30 e2e/career-card.spec.ts:272:1 › S2-F damaged team colour in an archived career: the Career Card still opens (2.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:34.7016328Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:35.0018687Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:40.3778845Z   ✓   31 e2e/demo-readiness.spec.ts:20:1 › the boot page is a static fallback and the home mark can sweep (5.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:41.6535915Z BOOT_FRAMES {"widths":[281,420,420],"worstMs":17}
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:41.6634824Z   ✓   32 e2e/demo-readiness.spec.ts:50:1 › the boot mark lights the real logo once and stays still when motion is reduced (1.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:42.2267925Z   ✓   33 e2e/demo-readiness.spec.ts:104:1 › the home premiere can be skipped and does not block the start button (554ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:44.0599463Z   ✓   34 e2e/demo-readiness.spec.ts:155:1 › the intro curtain never blocks the start button and any key skips it (1.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:46.2485833Z   ✓   35 e2e/demo-readiness.spec.ts:176:1 › a returning visit gets the brief intro and Escape skips the premiere (2.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:47.2743861Z   ✓   36 e2e/demo-readiness.spec.ts:198:1 › reduced motion gets a fade-only intro with no rising copy and no premiere (1.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:56:47.4748810Z   ✓   37 e2e/demo-readiness.spec.ts:217:1 › a failed boot script still shows the logo and the reload link (192ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:57:01.3676271Z   ✓   38 e2e/demo-readiness.spec.ts:225:1 › the year sheet explains the main stats and hides the advanced ones (13.9s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:57:01.5100258Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:57:01.8394856Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:57:02.7302282Z   ✓   39 e2e/demo-readiness.spec.ts:262:1 › a failed write shows the warning and a reload keeps the previous save (864ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:57:03.9200624Z   ✓   40 e2e/demo-readiness.spec.ts:286:1 › choosing to play at 36 leaves the retirement card (1.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:57:11.5184773Z   ✓   41 e2e/demo-readiness.spec.ts:297:1 › the age-36 season is played once and the career then closes (7.6s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:57:11.8538368Z STARTUP {"interactiveMs":270,"cores":4,"reduced":false,"lean":false,"domContentLoaded":170.60000000000582,"load":171.29999999998836,"firstContentfulPaint":132}
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:57:33.8351600Z MOTION [{"width":320,"reduced":"none","normal":"markSweep","lean":false},{"width":390,"reduced":"none","normal":"markSweep","lean":false},{"width":768,"reduced":"none","normal":"markSweep","lean":false},{"width":1440,"reduced":"none","normal":"markSweep","lean":false}]
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:57:33.8463615Z   ✓   42 e2e/demo-readiness.spec.ts:342:1 › welcome becomes clickable and the mark follows reduced motion on every viewport (22.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:57:55.7479374Z DEMO_GATE {"steps":44,"kinds":{"pending-beat":39,"playoff":5,"market":2},"reloadedOn":["playoff","market"]}
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:57:55.7731116Z   ✓   29 e2e/demo-gate.spec.ts:7:1 › a reload while a playoff or market card is pending brings back the same saved decision (1.4m)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:07.4461166Z   ✓   44 e2e/demo.spec.ts:11:1 › a player can start a career, finish a season and resume the saved recap (11.6s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:09.9468819Z   ✓   45 e2e/demo.spec.ts:94:1 › a completed simulated career keeps its Career Card through archive reload on mobile (2.5s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:11.5960935Z   ✓   46 e2e/demo.spec.ts:118:1 › a double or triple click in the draft consumes one round (1.6s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:11.6459158Z   -   47 e2e/engine-224-career.spec.ts:28:1 › 2.24 forced: full career with a mid-career reload keeps engine 2.24 and ends on the Legacy Report
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:11.9885557Z   ✓   48 e2e/favicon.spec.ts:3:1 › the brand icon is a real image, not the page, and the boot still shows the mark (330ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:13.0513808Z   ✓   49 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save future engine (1.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:14.0847715Z   ✓   50 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save future schema (1.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:15.0611857Z   ✓   51 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-backup future engine (969ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:16.0421944Z   ✓   52 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-backup future schema (972ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:17.0401704Z   ✓   53 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-backup-prev future engine (989ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:18.0190064Z   ✓   54 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-backup-prev future schema (968ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:19.0513487Z   ✓   55 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-crashed future engine (1.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:20.0661899Z   ✓   56 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-crashed future schema (1.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:21.1015621Z   ✓   57 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save future engine (1.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:22.0436983Z   ✓   58 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save future schema (934ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:23.0196864Z   ✓   59 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-backup future engine (965ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:24.0573548Z   ✓   60 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-backup future schema (1.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:25.0465301Z   ✓   61 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-backup-prev future engine (979ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:26.0471780Z   ✓   62 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-backup-prev future schema (983ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:27.0766442Z   ✓   63 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-crashed future engine (1.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:28.0395610Z   ✓   64 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-crashed future schema (954ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:28.3603872Z   ✓   65 e2e/future-save-protection.spec.ts:99:1 › read-only export preserves raw UTF16 code units and failure leaves bytes intact (313ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:30.4746935Z   ✓   66 e2e/future-save-protection.spec.ts:133:1 › same-career concurrent tab cannot autosave; future write wins over pending timer/pagehide (2.1s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:30.7962365Z   ✓   67 e2e/future-save-protection.spec.ts:178:5 › Web Locks missing: fails closed and preserves engine 2.24.0-beta (314ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:31.1134525Z   ✓   68 e2e/future-save-protection.spec.ts:178:5 › Web Locks missing: fails closed and preserves engine 3.0.0 (307ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:31.4551443Z   ✓   69 e2e/future-save-protection.spec.ts:178:5 › Web Locks getter: fails closed and preserves engine 2.24.0-beta (328ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:31.8152200Z   ✓   70 e2e/future-save-protection.spec.ts:178:5 › Web Locks getter: fails closed and preserves engine 3.0.0 (343ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:32.1152334Z   ✓   71 e2e/future-save-protection.spec.ts:178:5 › Web Locks rejects: fails closed and preserves engine 2.24.0-beta (282ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:32.3951208Z   ✓   72 e2e/future-save-protection.spec.ts:178:5 › Web Locks rejects: fails closed and preserves engine 3.0.0 (271ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:33.2519961Z   ✓   73 e2e/future-save-protection.spec.ts:223:3 › unknown engine undefined boots read-only, not a fresh career (848ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:34.1026673Z   ✓   74 e2e/future-save-protection.spec.ts:223:3 › unknown engine null boots read-only, not a fresh career (842ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:35.0067216Z   ✓   75 e2e/future-save-protection.spec.ts:223:3 › unknown engine 225 boots read-only, not a fresh career (894ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:35.8507239Z   ✓   76 e2e/future-save-protection.spec.ts:223:3 › unknown engine  boots read-only, not a fresh career (836ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:36.7250389Z   ✓   77 e2e/future-save-protection.spec.ts:223:3 › unknown engine garbage boots read-only, not a fresh career (864ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:37.6831446Z   ✓   78 e2e/future-save-protection.spec.ts:248:1 › unreadable primary storage never mounts or falls back to a valid legacy session (950ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:38.0382116Z wrote g1 saves {
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:38.0383065Z   playoff: 'seed 4200 season 7',
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:38.0383697Z   fa: 'seed 4200 season 12',
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:38.0384183Z   trade: 'seed 4200 season 3'
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:38.0384668Z }
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:43.8988328Z   ✓   79 e2e/g1-persistence.spec.ts:59:3 › G1 playoff: reload keeps the pending decision; a kill right after the click keeps it applied once (5.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:49.8172523Z   ✓   80 e2e/g1-persistence.spec.ts:59:3 › G1 fa: reload keeps the pending decision; a kill right after the click keeps it applied once (5.9s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:50.1263135Z wrote g1 saves {
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:50.1263488Z   playoff: 'seed 4200 season 7',
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:50.1263738Z   fa: 'seed 4200 season 12',
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:50.1263952Z   trade: 'seed 4200 season 3'
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:50.1264163Z }
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:51.6322436Z CAREER_STEPS 42
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:51.6430492Z   ✓   43 e2e/demo-readiness.spec.ts:385:1 › a career started from the welcome can reach the archive (1.3m)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:55.9761443Z   ✓   81 e2e/g1-persistence.spec.ts:59:3 › G1 trade: reload keeps the pending decision; a kill right after the click keeps it applied once (5.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:57.3951456Z   ✓   83 e2e/g1-persistence.spec.ts:97:1 › G1 archive: a record that disagrees with its card is shown with a warning, not hidden (1.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:57.4199257Z   ✓   82 e2e/demo-readiness.spec.ts:431:1 › a four-core device still sees the home sweep, and Totem stays out of the career (5.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:58:59.0275848Z   ✓   85 e2e/demo-readiness.spec.ts:469:1 › desktop legacy: the card-theme selector clears the fixed footer (1.6s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:59:14.4343434Z   ✓   84 e2e/g1-story-reload.spec.ts:41:3 › G1 DEF-01 story: reload 0 ms after the click applies the decision exactly once (17.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:59:16.0401303Z   ✓   86 e2e/g1-story-reload.spec.ts:41:3 › G1 DEF-01 story: reload 150 ms after the click applies the decision exactly once (17.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:59:32.2208231Z   ✓   87 e2e/g1-story-reload.spec.ts:41:3 › G1 DEF-01 story: reload 400 ms after the click applies the decision exactly once (17.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:59:33.7350507Z   ✓   88 e2e/g1-story-reload.spec.ts:41:3 › G1 DEF-01 story: reload 800 ms after the click applies the decision exactly once (17.7s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:59:50.2021598Z   ✓   89 e2e/g1-story-reload.spec.ts:41:3 › G1 DEF-01 story: reload 1500 ms after the click applies the decision exactly once (18.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:59:50.6449263Z   ✓   91 e2e/g1-story-reload.spec.ts:75:1 › G1 DEF-03 an unreadable archive is reported on the home and left untouched across reloads (435ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:59:51.6830770Z   ✓   90 e2e/g1-story-reload.spec.ts:41:3 › G1 DEF-01 story: reload 2000 ms after the click applies the decision exactly once (17.9s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:59:55.3949405Z   ✓   92 e2e/g3-idempotency.spec.ts:59:1 › keyboard on a held (visually disabled) story choice does not apply the choice twice (4.7s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T22:59:57.0645225Z   ✓   93 e2e/g3-idempotency.spec.ts:77:1 › reload during a story decision neither skips it nor applies it twice (5.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:14.3580678Z   ✓   94 e2e/g3-idempotency.spec.ts:127:1 › rapid double/triple click on every draft round consumes one round each and changes nothing (18.9s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:14.8192381Z   ✓   96 e2e/g6-onboarding.spec.ts:15:3 › landscape phone 844×390: Inizia is on screen without scrolling (449ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:15.1848694Z   ✓   97 e2e/g6-onboarding.spec.ts:15:3 › landscape phone 667×375: Inizia is on screen without scrolling (357ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:15.5796784Z   ✓   98 e2e/g6-onboarding.spec.ts:15:3 › landscape phone 640×360: Inizia is on screen without scrolling (387ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:15.9499668Z   ✓   99 e2e/g6-onboarding.spec.ts:26:1 › keyboard: Enter on Inizia hands focus to the setup heading, page starts at the top (363ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:16.7546544Z   ✓  100 e2e/g6-onboarding.spec.ts:40:1 › double tap on Inizia opens setup once and Home goes back cleanly (795ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:17.2120255Z   ✓  101 e2e/g6-onboarding.spec.ts:53:1 › audio unavailable: AudioContext throws, the home and Inizia still work (447ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:23.2977674Z RUNNING ["markSweep@[object SVGAnimatedString]:1"]
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:25.1829798Z   ✓  102 e2e/g6-onboarding.spec.ts:69:1 › the premiere ends: nothing keeps animating on the home (8.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:30.3474112Z   ✓  103 e2e/home-premiere.spec.ts:34:1 › the logo premiere lasts 4.8 s and never draws a basketball (5.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:31.5373791Z   ✓  104 e2e/home-premiere.spec.ts:57:1 › Start works during the premiere and going back home does not replay it (1.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:32.4746570Z   ✓  105 e2e/home-premiere.spec.ts:74:1 › Salta ends the premiere at once and it never comes back in the session (928ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:32.8746283Z   ✓  106 e2e/home-premiere.spec.ts:88:1 › reduced motion: no premiere, no skip chip, Start usable straight away (391ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:33.4306464Z   ✓  107 e2e/home-premiere.spec.ts:102:1 › mobile, iPad and desktop share the same logo premiere (546ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:33.6819715Z wrote crash save
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:34.5913830Z   ✓  108 e2e/init-failure.spec.ts:15:1 › a save that crashes the screens: reload alone loops, 'set aside' opens a clean home and keeps a copy (873ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:36.1684127Z   ✓  109 e2e/input-lock.spec.ts:98:1 › three rapid playoff clicks resolve one round (1.6s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:37.6975102Z   ✓  110 e2e/input-lock.spec.ts:115:1 › three rapid trade acknowledgements open the next story once (1.5s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:39.3317712Z   ✓  111 e2e/input-lock.spec.ts:135:1 › three rapid retirement clicks play the final season once (1.6s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:39.6741789Z   ✓  112 e2e/instagram-link.spec.ts:6:3 › instagram icon sits bottom-left on the Totem row at 375x667 (330ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:40.0748552Z   ✓  113 e2e/instagram-link.spec.ts:6:3 › instagram icon sits bottom-left on the Totem row at 390x844 (391ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:40.4102876Z   ✓  114 e2e/instagram-link.spec.ts:6:3 › instagram icon sits bottom-left on the Totem row at 768x1024 (327ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:40.7673718Z   ✓  115 e2e/instagram-link.spec.ts:6:3 › instagram icon sits bottom-left on the Totem row at 1280x800 (348ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:41.0956089Z   ✓  116 e2e/instagram-link.spec.ts:6:3 › instagram icon sits bottom-left on the Totem row at 1440x900 (319ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:41.3601023Z   ✓  117 e2e/instagram-link.spec.ts:37:1 › instagram label follows the language (256ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:44.6753662Z   ✓  118 e2e/intro-sound.spec.ts:135:1 › first visit without interaction: no AudioContext is ever created (silent intro) (3.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:45.8998676Z gesture at 915 ms -> cues at 1400, 2400, 3400 ms
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:45.9148452Z   ✓  119 e2e/intro-sound.spec.ts:147:1 › a gesture mid-premiere schedules only the remaining cues, on the animation beats (1.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:46.2546154Z   ✓  120 e2e/intro-sound.spec.ts:165:1 › a gesture before the first beat schedules the two dribbles and the swish (330ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:49.2917695Z   ✓  121 e2e/intro-sound.spec.ts:182:1 › muted (stored off): a gesture creates nothing; the toggle turns sound on and the rest plays in sync (3.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:52.6171702Z   ✓  122 e2e/intro-sound.spec.ts:202:1 › muting mid-play stops the sounds at once and the choice persists across reloads (3.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:00:55.9967437Z   ✓  123 e2e/intro-sound.spec.ts:222:1 › Salta as the first gesture: nothing plays (3.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:00.6940808Z   ✓  124 e2e/intro-sound.spec.ts:234:1 › Salta and Inizia stop a playing sequence; going back home never replays it (4.7s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:02.5570761Z   ✓  125 e2e/intro-sound.spec.ts:266:1 › reduced motion: off by default, gestures create nothing; the explicit switch plays the cues once (1.9s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:02.9679882Z   ✓  126 e2e/intro-sound.spec.ts:284:1 › the switch speaks Italian and English (400ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:07.2775886Z   ✓  127 e2e/intro-sound.spec.ts:295:1 › real Web Audio (no mock): a gesture mid-premiere plays without errors or CSP violations (4.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:12.4330089Z premiere end (class removed) 4818 ms, scheduled sound end 4800 ms
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:12.4434594Z   ✓  128 e2e/intro-sound.spec.ts:307:1 › the sound lasts exactly until the premiere ends and the home is final (5.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:13.8952714Z   ✓  129 e2e/intro-sound.spec.ts:325:1 › a long task right before the gesture does not push the cues off the beat (1.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:14.0292910Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:14.3213900Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:14.7130986Z   ✓  130 e2e/lifecycle-flush.spec.ts:48:1 › pagehide flushes the career still only in RAM (368ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:15.0331111Z   ✓  131 e2e/lifecycle-flush.spec.ts:55:1 › visibility hidden flushes the career still only in RAM and marks the tab asleep (310ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:15.3577785Z   ✓  132 e2e/lifecycle-flush.spec.ts:63:1 › returning visible does not invent a second career or clear the flush (317ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:15.6679637Z   ✓  133 e2e/lifecycle-flush.spec.ts:77:1 › a second pagehide and a following visibility hidden stay idempotent (302ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:15.7997283Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:16.0789503Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:16.4131597Z   ✓  134 e2e/lifecycle-flush.spec.ts:91:1 › pagehide after the delayed save does not drop or rewrite the career (299ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:16.6906782Z   ✓  135 e2e/lifecycle-flush.spec.ts:99:1 › pagehide and visibility hidden with no career do not create a save (268ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:17.3361398Z   ✓  136 e2e/lifecycle-flush.spec.ts:112:1 › the ordinary delayed save still lands without a lifecycle event (637ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:19.0461082Z G5_SMOKE {"steps":41,"cardKinds":["pending-beat","pending-beat is-held"],"seasons":0}
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:19.0606808Z   ✓   95 e2e/g5-smoke.spec.ts:18:1 › G5 smoke: long-name career, draft to archive, refresh resume, double activation, no console errors (1.4m)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:01:46.6535866Z   ✓  138 e2e/narrative-lang.spec.ts:58:3 › 4 played seasons read entirely in English (27.6s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:20.2900427Z   ✓  139 e2e/narrative-lang.spec.ts:58:3 › 4 played seasons read entirely in Italian (33.6s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:39.0146642Z   ✓  137 e2e/name-length.spec.ts:27:1 › a 32-character name survives draft, career, Legacy Report, Career Card and archive at 320/390 px (1.4m)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:39.4525477Z wrote path saves {
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:39.4525854Z   injury: 'seed 4200 season 8',
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:39.4526102Z   fa: 'seed 4200 season 12',
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:39.4526727Z   awardsPlayoffs: 'seed 4200 season 7',
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:39.4527097Z   playoffFinals: 'seed 4201 season 12'
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:39.4527399Z }
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:41.1049158Z   ✓  140 e2e/offline-after-load.spec.ts:17:1 › offline after load: draft, first season beats and save still work, no page errors (20.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:41.5039452Z wrote path saves {
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:41.5039939Z   injury: 'seed 4200 season 8',
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:41.5040292Z   fa: 'seed 4200 season 12',
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:41.5040644Z   awardsPlayoffs: 'seed 4200 season 7',
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:41.5041064Z   playoffFinals: 'seed 4201 season 12'
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:41.5041382Z }
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:44.6262628Z   ✓  141 e2e/paths.spec.ts:57:1 › injury: the scripted injury card shows, survives a reload, and the season goes on (5.1s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:49.3242504Z   ✓  142 e2e/paths.spec.ts:109:1 › playoff run: play every round to the end of the run without a stall (7.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:50.6032441Z   ✓  143 e2e/paths.spec.ts:68:1 › awards and playoffs: recap with an award, then a playoff card, reload mid-playoffs, one decision per round (6.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:52.8677166Z   ✓  145 e2e/paths.spec.ts:88:1 › two separate single taps on consecutive cards both register (only a double tap's repeat is dropped) (2.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:52.8679343Z   -  146 e2e/perf-probe.spec.ts:9:1 › startup and first interactions on a throttled phone viewport
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:52.8680664Z   -  147 e2e/perf-probe.spec.ts:45:1 › profile: Inizia tap, story choice and season recap
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:53.0115745Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:53.3061630Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:54.3739852Z   ✓  144 e2e/paths.spec.ts:135:1 › free agency: offers are shown, survive a reload, signing moves the career on (5.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:54.5147179Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:54.8100940Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:02:59.6344310Z   ✓  148 e2e/readiness.spec.ts:107:3 › no horizontal overflow or tiny targets at 320×568 (6.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:01.1692539Z   ✓  149 e2e/readiness.spec.ts:107:3 › no horizontal overflow or tiny targets at 1440×900 (6.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:05.8537740Z   ✓  150 e2e/readiness.spec.ts:107:3 › no horizontal overflow or tiny targets at 360×740 (6.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:07.3531002Z   ✓  151 e2e/readiness.spec.ts:107:3 › no horizontal overflow or tiny targets at 667×375 (6.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:12.0621590Z   ✓  152 e2e/readiness.spec.ts:107:3 › no horizontal overflow or tiny targets at 375×667 (6.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:13.5345677Z   ✓  153 e2e/readiness.spec.ts:107:3 › no horizontal overflow or tiny targets at 844×390 (6.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:18.2571327Z   ✓  154 e2e/readiness.spec.ts:107:3 › no horizontal overflow or tiny targets at 390×844 (6.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:19.7007253Z   ✓  155 e2e/readiness.spec.ts:107:3 › no horizontal overflow or tiny targets at 640×400 (6.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:20.9311301Z wrote hud saves 30
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:24.4270724Z   ✓  156 e2e/readiness.spec.ts:107:3 › no horizontal overflow or tiny targets at 393×852 (6.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:30.6706044Z   ✓  158 e2e/readiness.spec.ts:107:3 › no horizontal overflow or tiny targets at 430×932 (6.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:36.9386624Z   ✓  159 e2e/readiness.spec.ts:107:3 › no horizontal overflow or tiny targets at 768×1024 (6.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:43.1582436Z   ✓  160 e2e/readiness.spec.ts:107:3 › no horizontal overflow or tiny targets at 1024×768 (6.2s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:53.4811331Z   ✓  157 e2e/readiness.spec.ts:155:1 › career header text keeps AA contrast on every NBA club colour (33.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:54.0258265Z   ✓  162 e2e/readiness.spec.ts:174:1 › keyboard only: every focused control shows a ring and focus follows the new story card (537ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:03:56.8725414Z   ✓  161 e2e/resume-late-quiet.spec.ts:40:3 › P1 resume: a late-* card rebuilt after reload keeps its text and its consequences (13.7s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:04:10.5053205Z   ✓  164 e2e/resume-late-quiet.spec.ts:40:3 › P1 resume: a quiet-* card rebuilt after reload keeps its text and its consequences (13.6s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:04:16.9307071Z   ✓  165 e2e/s3-viewports.spec.ts:40:5 › S3 it 320: overflow, axe, placeholders (6.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:04:23.2937273Z   ✓  166 e2e/s3-viewports.spec.ts:40:5 › S3 it 390: overflow, axe, placeholders (6.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:04:29.6498238Z   ✓  167 e2e/s3-viewports.spec.ts:40:5 › S3 it zoom200: overflow, axe, placeholders (6.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:04:36.1710199Z   ✓  168 e2e/s3-viewports.spec.ts:40:5 › S3 it desktop: overflow, axe, placeholders (6.5s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:04:38.8461543Z   ✓  169 e2e/s3-viewports.spec.ts:57:3 › S3 it keyboard: every Tab stop on home and setup shows a focus ring (2.7s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:04:45.2019925Z   ✓  170 e2e/s3-viewports.spec.ts:40:5 › S3 en 320: overflow, axe, placeholders (6.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:04:51.6350220Z   ✓  171 e2e/s3-viewports.spec.ts:40:5 › S3 en 390: overflow, axe, placeholders (6.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:04:58.0606097Z   ✓  172 e2e/s3-viewports.spec.ts:40:5 › S3 en zoom200: overflow, axe, placeholders (6.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:03.5573632Z FULL_CAREER {"steps":37,"reloadedAtSeason":6,"cardKinds":["pending-beat","pending-beat is-held"]}
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:03.5730496Z   ✓  163 e2e/readiness.spec.ts:207:1 › a full career: draft to retirement to archive, with a reload in the middle (1.2m)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:05.0412542Z   ✓  173 e2e/s3-viewports.spec.ts:40:5 › S3 en desktop: overflow, axe, placeholders (7.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:06.0329248Z   ✓  174 e2e/s3-viewports.spec.ts:57:3 › S3 en keyboard: every Tab stop on home and setup shows a focus ring (2.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:06.4564122Z   ✓  176 e2e/save-recovery.spec.ts:51:1 › SR-C7 unreadable archive: the notice shows on every load, the raw is kept, no crash or console error (410ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:06.5764597Z   ✓  175 e2e/save-recovery.spec.ts:14:1 › SR-02 future save stays read-only even after quota recovers; no fallback career or rotation (1.5s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:06.6352313Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:06.7320573Z wrote Ritiro Test retire
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:07.0140431Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:07.1176610Z wrote archive 8 oldest Archivio 1
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:07.6260814Z   ✓  178 e2e/save-safety.spec.ts:149:1 › damaged save: the home says so and the data is kept (461ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:08.1013919Z   ✓  179 e2e/save-safety.spec.ts:163:1 › save from a newer version is not opened and not deleted (466ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:09.0083046Z   ✓  177 e2e/save-safety.spec.ts:54:1 › finished career with archive written: live save removed, Un'altra vita needs no dialog (2.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:09.0761420Z   ✓  180 e2e/save-safety.spec.ts:182:1 › unreadable browser storage locks boot rather than treating the store as absent (961ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:10.0826250Z   ✓  182 e2e/save-safety.spec.ts:200:1 › full archive: the last winter warns which career will leave, the result says it left (D-20) (992ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:10.4569120Z   ✓  183 e2e/splash-recovery.spec.ts:19:1 › corrupted save: the recovery notice shows and the splash is gone at once, not after its hold (360ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:10.8056039Z   ✓  184 e2e/splash-recovery.spec.ts:39:1 › a normal boot raises no attention signal and still opens the home (331ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:11.3577113Z   ✓  185 e2e/team-name.spec.ts:34:1 › a long franchise name stays readable on a phone Finals card (540ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:11.3936371Z   ✓  181 e2e/save-safety.spec.ts:68:1 › finished career is not resumed as if it were still running (2.4s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:11.8674019Z   ✓  186 e2e/team-name.spec.ts:82:1 › the home screen offers Italian and English only (494ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:12.1720479Z synthetic UI seed7107 2.24.0-beta 11 rows
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:13.5688420Z   ✘  188 e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity (1.3s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:14.5304728Z   ✓  187 e2e/save-safety.spec.ts:78:1 › archive unwritable: live save kept, notice shown, dialog cancel keeps everything (3.1s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:15.4301826Z synthetic UI seed7107 2.24.0-beta 11 rows
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:16.4355690Z   ✓  189 e2e/save-safety.spec.ts:123:1 › archive unwritable: confirm deletes once, keyboard reachable, double tap safe (1.9s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:16.8933978Z   ✓  191 e2e/save-safety.spec.ts:141:1 › reload during an active career resumes it (446ms)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:17.1270541Z synthetic UI seed7107 2.24.0-beta 11 rows
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:17.4999392Z   ✘  190 e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity (retry #1) (1.9s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:18.2349455Z synthetic UI seed7107 2.24.0-beta 11 rows
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:20.2004592Z   ✓  192 e2e/ui-guard-integration.spec.ts:16:3 › 390px EN: synthetic retirement, responsive Legacy and theme integrity (3.0s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:21.6186286Z 1280-it footer gap=7.6875
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:21.8796850Z   ✓  193 e2e/ui-guard-integration.spec.ts:16:3 › 360px EN: synthetic retirement, responsive Legacy and theme integrity (3.5s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:22.9453400Z   ✓  194 e2e/ui-guard-integration.spec.ts:16:3 › 1280px IT: synthetic retirement, responsive Legacy and theme integrity (2.7s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:23.5139896Z   ✘  195 e2e/ui-guard-integration.spec.ts:16:3 › 390px IT: synthetic retirement, responsive Legacy and theme integrity (1.5s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:24.1802548Z 1280-en footer gap=7.9375
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:24.2696662Z synthetic UI seed7107 2.24.0-beta 11 rows
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:25.5691207Z   ✓  196 e2e/ui-guard-integration.spec.ts:16:3 › 1280px EN: synthetic retirement, responsive Legacy and theme integrity (2.6s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:26.2297016Z   ✘  197 e2e/ui-guard-integration.spec.ts:16:3 › 390px IT: synthetic retirement, responsive Legacy and theme integrity (retry #1) (1.8s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.6175140Z native history return pageshow.persisted=false
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.6242747Z native history notRestoredReasons={"src":null,"id":null,"url":"http://127.0.0.1:4173/","name":null,"reasons":[{"reason":"masked"}],"children":[]}
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.7523209Z   ✓  198 e2e/native-lifecycle-protection.spec.ts:6:1 › native navigation flushes RAM-only draft mutation before releasing the writer (1.6s)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8147241Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8151969Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8167533Z   1) e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8168190Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8168398Z     Error: expect(received).toBe(expected) // Object.is equality
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8168737Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8168847Z     Expected: true
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8169244Z     Received: false
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8169439Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8169706Z        99 |       expect(lastBox.x).toBeGreaterThanOrEqual(teamBox.x + teamBox.width - 1);
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8170588Z       100 |       expect(lastBox.x + lastBox.width).toBeLessThanOrEqual(wrapBox.x + wrapBox.width + 1);
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8171392Z     > 101 |       for (const cell of await table.locator("tbody tr > :last-child, thead th:nth-child(2)").all()) expect(await cell.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8172186Z           |                                                                                                                                                                          ^
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8172529Z       102 |     }
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8172832Z       103 |     for (const row of await table.locator("tbody tr").all()) {
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8173470Z       104 |       const boxes = await row.locator("th,td").evaluateAll(cells=>cells.map(c=>{const r=c.getBoundingClientRect();return {top:r.top,bottom:r.bottom};}));
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8174180Z         at /home/runner/work/Jarvis-hq/Jarvis-hq/apps/pivot23/e2e/ui-guard-integration.spec.ts:101:170
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8174485Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8174810Z     Error Context: test-results/ui-guard-integration-360px-99efb--Legacy-and-theme-integrity/error-context.md
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8175172Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8175548Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8176239Z     test-results/ui-guard-integration-360px-99efb--Legacy-and-theme-integrity/trace.zip
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8176610Z     Usage:
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8176707Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8177067Z         pnpm exec playwright show-trace test-results/ui-guard-integration-360px-99efb--Legacy-and-theme-integrity/trace.zip
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8177452Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8177742Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8177966Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8178252Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8178501Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8178672Z     Error: expect(received).toBe(expected) // Object.is equality
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8178875Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8179145Z     Expected: true
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8179334Z     Received: false
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8179445Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8179680Z        99 |       expect(lastBox.x).toBeGreaterThanOrEqual(teamBox.x + teamBox.width - 1);
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8180205Z       100 |       expect(lastBox.x + lastBox.width).toBeLessThanOrEqual(wrapBox.x + wrapBox.width + 1);
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8181099Z     > 101 |       for (const cell of await table.locator("tbody tr > :last-child, thead th:nth-child(2)").all()) expect(await cell.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8182026Z           |                                                                                                                                                                          ^
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8182573Z       102 |     }
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8182876Z       103 |     for (const row of await table.locator("tbody tr").all()) {
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8183507Z       104 |       const boxes = await row.locator("th,td").evaluateAll(cells=>cells.map(c=>{const r=c.getBoundingClientRect();return {top:r.top,bottom:r.bottom};}));
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8184207Z         at /home/runner/work/Jarvis-hq/Jarvis-hq/apps/pivot23/e2e/ui-guard-integration.spec.ts:101:170
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8184521Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8184877Z     Error Context: test-results/ui-guard-integration-360px-99efb--Legacy-and-theme-integrity-retry1/error-context.md
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8185254Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8185606Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8186161Z     test-results/ui-guard-integration-360px-99efb--Legacy-and-theme-integrity-retry1/trace.zip
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8186548Z     Usage:
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8186800Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8187181Z         pnpm exec playwright show-trace test-results/ui-guard-integration-360px-99efb--Legacy-and-theme-integrity-retry1/trace.zip
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8187588Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8187883Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8188110Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8188493Z   2) e2e/ui-guard-integration.spec.ts:16:3 › 390px IT: synthetic retirement, responsive Legacy and theme integrity 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8188944Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8189327Z     Error: expect(received).toBe(expected) // Object.is equality
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8189537Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8189618Z     Expected: true
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8189795Z     Received: false
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8189903Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8190128Z        99 |       expect(lastBox.x).toBeGreaterThanOrEqual(teamBox.x + teamBox.width - 1);
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8190635Z       100 |       expect(lastBox.x + lastBox.width).toBeLessThanOrEqual(wrapBox.x + wrapBox.width + 1);
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8191411Z     > 101 |       for (const cell of await table.locator("tbody tr > :last-child, thead th:nth-child(2)").all()) expect(await cell.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8192156Z           |                                                                                                                                                                          ^
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8192498Z       102 |     }
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8192768Z       103 |     for (const row of await table.locator("tbody tr").all()) {
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8193387Z       104 |       const boxes = await row.locator("th,td").evaluateAll(cells=>cells.map(c=>{const r=c.getBoundingClientRect();return {top:r.top,bottom:r.bottom};}));
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8194075Z         at /home/runner/work/Jarvis-hq/Jarvis-hq/apps/pivot23/e2e/ui-guard-integration.spec.ts:101:170
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8194377Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8194698Z     Error Context: test-results/ui-guard-integration-390px-4a921--Legacy-and-theme-integrity/error-context.md
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8195049Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8195374Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8195893Z     test-results/ui-guard-integration-390px-4a921--Legacy-and-theme-integrity/trace.zip
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8196251Z     Usage:
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8196344Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8196693Z         pnpm exec playwright show-trace test-results/ui-guard-integration-390px-4a921--Legacy-and-theme-integrity/trace.zip
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8197082Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8197362Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8197585Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8197855Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8198082Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8198249Z     Error: expect(received).toBe(expected) // Object.is equality
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8198585Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8198667Z     Expected: true
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8198842Z     Received: false
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8198949Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8199359Z        99 |       expect(lastBox.x).toBeGreaterThanOrEqual(teamBox.x + teamBox.width - 1);
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8199869Z       100 |       expect(lastBox.x + lastBox.width).toBeLessThanOrEqual(wrapBox.x + wrapBox.width + 1);
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8200633Z     > 101 |       for (const cell of await table.locator("tbody tr > :last-child, thead th:nth-child(2)").all()) expect(await cell.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8201493Z           |                                                                                                                                                                          ^
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8201827Z       102 |     }
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8202100Z       103 |     for (const row of await table.locator("tbody tr").all()) {
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8202725Z       104 |       const boxes = await row.locator("th,td").evaluateAll(cells=>cells.map(c=>{const r=c.getBoundingClientRect();return {top:r.top,bottom:r.bottom};}));
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8203420Z         at /home/runner/work/Jarvis-hq/Jarvis-hq/apps/pivot23/e2e/ui-guard-integration.spec.ts:101:170
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8203864Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8204429Z     Error Context: test-results/ui-guard-integration-390px-4a921--Legacy-and-theme-integrity-retry1/error-context.md
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8205053Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8205603Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8206514Z     test-results/ui-guard-integration-390px-4a921--Legacy-and-theme-integrity-retry1/trace.zip
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8207136Z     Usage:
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8207279Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8207910Z         pnpm exec playwright show-trace test-results/ui-guard-integration-390px-4a921--Legacy-and-theme-integrity-retry1/trace.zip
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8208556Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8209214Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8209578Z 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8209686Z   2 failed
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8210467Z     e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8211594Z     e2e/ui-guard-integration.spec.ts:16:3 › 390px IT: synthetic retirement, responsive Legacy and theme integrity 
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8212257Z   5 skipped
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:28.8212521Z   189 passed (9.8m)
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:29.0388900Z [ELIFECYCLE] Command failed with exit code 1.
+lint, types, unit, build, e2e (production build)	Run pnpm run test:e2e:preview	2026-11-07T23:05:29.0671525Z ##[error]Process completed with exit code 1.

@@ -4,7 +4,7 @@ import { useLang } from "@/lib/pivot/i18n";
 import { nationLabel, playoffResultLabel, roleLabel } from "@/lib/pivot/labels";
 import { nx } from "@/lib/pivot/narrative";
 import { buildLegacyReport, cardFaceOf, type CardFace, type LegacyReport } from "@/lib/pivot/legacy-report";
-import { fmtDec, fmtInt, lt, narrativeOf, pickLabel, recordLabel, recordValue, seasonsLabel, timelineLine } from "@/lib/pivot/legacy-i18n";
+import { fmtDec, fmtInt, legacyAwardLabel, lt, narrativeOf, pickLabel, recordLabel, recordValue, seasonsLabel, timelineLine } from "@/lib/pivot/legacy-i18n";
 import { COSMETIC_FLAGS, loadCardTheme, saveCardTheme, themeById, visibleThemes, type CardTheme } from "@/lib/pivot/cosmetics";
 import type { ArchiveCareer } from "@/lib/pivot/types";
 import type { Lang } from "@/lib/pivot/i18n";
@@ -28,7 +28,10 @@ function cardLabels(face: CardFace, lang: Lang): PngLabels {
     ages: face.ages ? `${lt("age", lang)} ${face.ages}` : "",
     seasons: face.seasons ? seasonsLabel(face.seasons, lang) : "",
     stats,
-    honors: face.honors.map(([id, n]) => (n > 1 ? `${n}× ${id}` : id)),
+    honors: face.honors.map(([id, n]) => {
+      const name = legacyAwardLabel(id, lang);
+      return n > 1 ? `${n}× ${name}` : name;
+    }),
     verdict: nx(face.verdict, lang),
     footer: lt("footer", lang),
     peak: `${lt("peak", lang)} ${face.peak}`,
@@ -107,7 +110,7 @@ function ThemePicker({ themeId, previewId, onPick }: { themeId: string; previewI
           >
             <span className="lc-swatch" style={themeStyle(t)} aria-hidden />
             <span className="lc-theme-name">{t.name[lang === "en" ? "en" : "it"]}</span>
-            <span className="lc-theme-tag">{t.availability === "free" ? lt("themeFree", lang) : lt("themePrototype", lang)}</span>
+            {t.availability !== "free" && <span className="lc-theme-tag">{lt("themePrototype", lang)}</span>}
           </button>
         ))}
       </div>
@@ -150,6 +153,11 @@ function Facts({ items }: { items: [string, string | null | undefined][] }) {
   );
 }
 
+/** Presentation only: keep a series score together while the surrounding result wraps. */
+function PlayoffCell({ text }: { text: string }) {
+  return <>{text.split(/(\d+-\d+)/g).map((part, i) => /\d+-\d+/.test(part) ? <span className="lr-score" key={i}>{part}</span> : part)}</>;
+}
+
 export function LegacyReportView({ report, uid }: { report: LegacyReport; uid: string }) {
   const lang = useLang();
   const [all, setAll] = useState(false);
@@ -175,7 +183,7 @@ export function LegacyReportView({ report, uid }: { report: LegacyReport; uid: s
             [lt("jersey", lang), r.number !== null ? `#${r.number}` : null],
             [lt("role", lang), r.roleCode ? roleLabel(r.roleCode, lang) : roleLabel(r.roleLabel, lang)],
             [lt("nation", lang), r.nationality ? nationLabel(r.nationality, lang) : null],
-            [lt("origin", lang), r.originPath ? nx(r.originPath, lang) : null],
+            [lt("origin", lang), r.originPath ? nx(r.originPath, lang).replace(/^G-League$/, "G League") : null],
             [lt("draft", lang), draft],
           ]}
         />
@@ -210,7 +218,7 @@ export function LegacyReportView({ report, uid }: { report: LegacyReport; uid: s
       <Section title={lt("awards", lang)} id={`${uid}-awards`}>
         {r.awards.length ? (
           <ul className="lr-chips">
-            {r.awards.map(([id, n]) => <li key={id}>{n > 1 ? `${n}× ${id}` : id}</li>)}
+            {r.awards.map(([id, n]) => <li key={id}>{n > 1 ? `${n}× ${legacyAwardLabel(id, lang)}` : legacyAwardLabel(id, lang)}</li>)}
           </ul>
         ) : (
           <p className="lr-muted">{lt("noAwards", lang)}</p>
@@ -243,7 +251,8 @@ export function LegacyReportView({ report, uid }: { report: LegacyReport; uid: s
       ) : null}
       {r.rows.length > 0 ? (
         <Section title={lt("seasonsTable", lang)} id={`${uid}-seasons`}>
-          <div className="lr-table-wrap" tabIndex={0} role="group" aria-labelledby={`${uid}-seasons`}>
+          <p className="lr-scroll-hint" id={`${uid}-scroll-hint`}>{lt("tableScrollHint", lang)}</p>
+          <div className="lr-table-wrap" tabIndex={0} role="group" aria-labelledby={`${uid}-seasons`} aria-describedby={`${uid}-scroll-hint`}>
             <table className="lr-table">
               <thead>
                 <tr>
@@ -267,7 +276,7 @@ export function LegacyReportView({ report, uid }: { report: LegacyReport; uid: s
                     <td>{fmtDec(row.rpg, lang)}</td>
                     <td>{fmtDec(row.apg, lang)}</td>
                     <td>{Number.isFinite(row.wins) && Number.isFinite(row.losses) ? `${row.wins}-${row.losses}` : lt("noData", lang)}</td>
-                    <td>{playoffResultLabel(row.playoff, lang) || lt("noData", lang)}</td>
+                    <td><PlayoffCell text={playoffResultLabel(row.playoff, lang) || lt("noData", lang)} /></td>
                   </tr>
                 ))}
               </tbody>

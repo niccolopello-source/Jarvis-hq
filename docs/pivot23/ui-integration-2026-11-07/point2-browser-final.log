@@ -1,0 +1,150 @@
+
+Running 92 tests using 2 workers
+
+(node:20501) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20502) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20533) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+wrote Ritiro Test retire
+wrote Ritiro Test retire
+wrote archive 8 oldest Archivio 1
+wrote archive 8 oldest Archivio 1
+  ✓   2 e2e/a11y-i18n.spec.ts:103:1 › reduced motion: no running animations on the intro (814ms)
+  ✓   3 e2e/a11y-i18n.spec.ts:117:1 › no Content-Security-Policy violations through a played season (meaningful with E2E_PREVIEW=1) (1.8s)
+  ✓   4 e2e/ads-desktop.spec.ts:57:5 › ads: phone › zero requests to ad hosts on phone (2.6s)
+  ✓   5 e2e/ads-desktop.spec.ts:57:5 › ads: tabletLandscape › zero requests to ad hosts on tabletLandscape (2.6s)
+  ✓   6 e2e/ads-desktop.spec.ts:57:5 › ads: ipadAsMac › zero requests to ad hosts on ipadAsMac (2.7s)
+  ✓   1 e2e/a11y-i18n.spec.ts:36:3 › main screens pass axe in it (12.3s)
+  ✓   7 e2e/ads-desktop.spec.ts:69:3 › ads: desktop › flag OFF build: desktop also makes zero ad requests and shows the reserved placeholder (2.6s)
+  -   9 e2e/ads-desktop.spec.ts:77:3 › ads: desktop › flag ON: desktop requests only the CMP until consent
+  -  10 e2e/ads-desktop.spec.ts:85:3 › ads: desktop › flag ON: with TCF consent the ad script loads, non-personalised, slot keeps its size
+(node:21084) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+wrote Ritiro Test retire
+wrote archive 8 oldest Archivio 1
+  ✓  11 e2e/career-card.spec.ts:61:1 › end of a full career: report and card, archive, reload, reopen — identical data (4.8s)
+  ✓  12 e2e/career-card.spec.ts:122:1 › guest: no login, no network beyond the app, PNG export works locally (2.5s)
+  ✓  13 e2e/career-card.spec.ts:150:3 › layout at 320px: no horizontal overflow, nothing clipped (1.6s)
+  ✓  14 e2e/career-card.spec.ts:150:3 › layout at 375px: no horizontal overflow, nothing clipped (818ms)
+  ✓  15 e2e/career-card.spec.ts:150:3 › layout at 390px: no horizontal overflow, nothing clipped (785ms)
+  ✓   8 e2e/a11y-i18n.spec.ts:36:3 › main screens pass axe in en (12.0s)
+(node:21435) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+wrote Ritiro Test retire
+wrote archive 8 oldest Archivio 1
+  ✓  16 e2e/career-card.spec.ts:150:3 › layout at 430px: no horizontal overflow, nothing clipped (669ms)
+  ✓  18 e2e/career-card.spec.ts:150:3 › layout at 768px: no horizontal overflow, nothing clipped (1.5s)
+  ✓  19 e2e/career-card.spec.ts:150:3 › layout at 1280px: no horizontal overflow, nothing clipped (726ms)
+  ✓  17 e2e/career-card.spec.ts:170:3 › axe AA on card and report (en) (2.7s)
+  ✓  21 e2e/career-card.spec.ts:187:1 › keyboard: theme buttons and export are reachable and work with Enter (1.1s)
+  ✓  22 e2e/career-card.spec.ts:203:1 › reduced motion: the card does not animate (467ms)
+  ✓  23 e2e/career-card.spec.ts:211:1 › prototype themes are not offered in the default build (677ms)
+  ✓  20 e2e/career-card.spec.ts:170:3 › axe AA on card and report (it) (2.7s)
+(node:21725) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+wrote Ritiro Test retire
+wrote archive 8 oldest Archivio 1
+  ✓  24 e2e/career-card.spec.ts:218:1 › played career closed from the retirement screen: sparse data are omitted, not invented (1.7s)
+  ✓  26 e2e/career-card.spec.ts:236:1 › legacy archive entry (written before Missione 2, no facts, no card) still opens after refresh (837ms)
+  ✓  27 e2e/career-card.spec.ts:258:1 › mobile PNG export downloads a complete 1080×1350 image (1.7s)
+  ✓  28 e2e/career-card.spec.ts:272:1 › S2-F damaged team colour in an archived career: the Career Card still opens (1.7s)
+(node:21868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+wrote Ritiro Test retire
+  ✓  25 e2e/demo-readiness.spec.ts:20:1 › the boot page is a static fallback and the home mark can sweep (5.6s)
+wrote archive 8 oldest Archivio 1
+BOOT_FRAMES {"widths":[281,420,420],"worstMs":17}
+  ✓  30 e2e/demo-readiness.spec.ts:50:1 › the boot mark lights the real logo once and stays still when motion is reduced (946ms)
+  ✓  31 e2e/demo-readiness.spec.ts:104:1 › the home premiere can be skipped and does not block the start button (293ms)
+  ✓  29 e2e/demo-readiness.spec.ts:262:1 › a failed write shows the warning and a reload keeps the previous save (1.2s)
+  ✓  33 e2e/demo-readiness.spec.ts:286:1 › choosing to play at 36 leaves the retirement card (1.1s)
+  ✓  32 e2e/demo-readiness.spec.ts:155:1 › the intro curtain never blocks the start button and any key skips it (1.7s)
+  ✓  35 e2e/demo-readiness.spec.ts:176:1 › a returning visit gets the brief intro and Escape skips the premiere (2.0s)
+  ✓  36 e2e/demo-readiness.spec.ts:198:1 › reduced motion gets a fade-only intro with no rising copy and no premiere (744ms)
+  ✓  37 e2e/demo-readiness.spec.ts:217:1 › a failed boot script still shows the logo and the reload link (87ms)
+  ✓  34 e2e/demo-readiness.spec.ts:297:1 › the age-36 season is played once and the career then closes (7.5s)
+STARTUP {"interactiveMs":136,"cores":8,"reduced":false,"lean":false,"domContentLoaded":70,"load":70.40000000002328,"firstContentfulPaint":44}
+  ✓  38 e2e/demo-readiness.spec.ts:225:1 › the year sheet explains the main stats and hides the advanced ones (13.6s)
+  ✓  40 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save future engine (845ms)
+  ✓  41 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save future schema (834ms)
+  ✓  42 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-backup future engine (848ms)
+  ✓  43 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-backup future schema (868ms)
+  ✓  44 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-backup-prev future engine (828ms)
+  ✓  45 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-backup-prev future schema (826ms)
+  ✓  46 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-crashed future engine (853ms)
+  ✓  47 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves localStorage/pivot-v2-save-crashed future schema (841ms)
+  ✓  48 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save future engine (823ms)
+  ✓  49 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save future schema (817ms)
+  ✓  50 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-backup future engine (828ms)
+  ✓  51 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-backup future schema (825ms)
+  ✓  52 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-backup-prev future engine (834ms)
+  ✓  53 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-backup-prev future schema (830ms)
+MOTION [{"width":320,"reduced":"none","normal":"markSweep","lean":false},{"width":390,"reduced":"none","normal":"markSweep","lean":false},{"width":768,"reduced":"none","normal":"markSweep","lean":false},{"width":1440,"reduced":"none","normal":"markSweep","lean":false}]
+  ✓  39 e2e/demo-readiness.spec.ts:342:1 › welcome becomes clickable and the mark follows reduced motion on every viewport (21.9s)
+  ✓  54 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-crashed future engine (821ms)
+  ✓  56 e2e/future-save-protection.spec.ts:32:7 › boot/autosave/pagehide/reload preserves sessionStorage/pivot-v2-save-crashed future schema (828ms)
+  ✓  57 e2e/future-save-protection.spec.ts:99:1 › read-only export preserves raw UTF16 code units and failure leaves bytes intact (210ms)
+  ✓  58 e2e/future-save-protection.spec.ts:133:1 › same-career concurrent tab cannot autosave; future write wins over pending timer/pagehide (1.6s)
+  ✓  59 e2e/future-save-protection.spec.ts:178:5 › Web Locks missing: fails closed and preserves engine 2.24.0-beta (182ms)
+  ✓  60 e2e/future-save-protection.spec.ts:178:5 › Web Locks missing: fails closed and preserves engine 3.0.0 (177ms)
+  ✓  61 e2e/future-save-protection.spec.ts:178:5 › Web Locks getter: fails closed and preserves engine 2.24.0-beta (168ms)
+  ✓  62 e2e/future-save-protection.spec.ts:178:5 › Web Locks getter: fails closed and preserves engine 3.0.0 (168ms)
+  ✓  63 e2e/future-save-protection.spec.ts:178:5 › Web Locks rejects: fails closed and preserves engine 2.24.0-beta (184ms)
+  ✓  64 e2e/future-save-protection.spec.ts:178:5 › Web Locks rejects: fails closed and preserves engine 3.0.0 (187ms)
+  ✓  65 e2e/future-save-protection.spec.ts:223:3 › unknown engine undefined boots read-only, not a fresh career (731ms)
+  ✓  66 e2e/future-save-protection.spec.ts:223:3 › unknown engine null boots read-only, not a fresh career (746ms)
+  ✓  67 e2e/future-save-protection.spec.ts:223:3 › unknown engine 225 boots read-only, not a fresh career (734ms)
+  ✓  68 e2e/future-save-protection.spec.ts:223:3 › unknown engine  boots read-only, not a fresh career (724ms)
+  ✓  69 e2e/future-save-protection.spec.ts:223:3 › unknown engine garbage boots read-only, not a fresh career (724ms)
+  ✓  70 e2e/future-save-protection.spec.ts:248:1 › unreadable primary storage never mounts or falls back to a valid legacy session (835ms)
+  ✓  71 e2e/instagram-link.spec.ts:6:3 › instagram icon sits bottom-left on the Totem row at 375x667 (172ms)
+  ✓  72 e2e/instagram-link.spec.ts:6:3 › instagram icon sits bottom-left on the Totem row at 390x844 (178ms)
+  ✓  73 e2e/instagram-link.spec.ts:6:3 › instagram icon sits bottom-left on the Totem row at 768x1024 (181ms)
+  ✓  74 e2e/instagram-link.spec.ts:6:3 › instagram icon sits bottom-left on the Totem row at 1280x800 (179ms)
+  ✓  75 e2e/instagram-link.spec.ts:6:3 › instagram icon sits bottom-left on the Totem row at 1440x900 (180ms)
+  ✓  76 e2e/instagram-link.spec.ts:37:1 › instagram label follows the language (133ms)
+(node:23326) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+wrote Ritiro Test retire
+wrote archive 8 oldest Archivio 1
+  ✓  77 e2e/lifecycle-flush.spec.ts:48:1 › pagehide flushes the career still only in RAM (180ms)
+  ✓  78 e2e/lifecycle-flush.spec.ts:55:1 › visibility hidden flushes the career still only in RAM and marks the tab asleep (156ms)
+  ✓  79 e2e/lifecycle-flush.spec.ts:63:1 › returning visible does not invent a second career or clear the flush (172ms)
+  ✓  80 e2e/lifecycle-flush.spec.ts:77:1 › a second pagehide and a following visibility hidden stay idempotent (164ms)
+(node:23426) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+wrote Ritiro Test retire
+wrote archive 8 oldest Archivio 1
+  ✓  81 e2e/lifecycle-flush.spec.ts:91:1 › pagehide after the delayed save does not drop or rewrite the career (172ms)
+  ✓  82 e2e/lifecycle-flush.spec.ts:99:1 › pagehide and visibility hidden with no career do not create a save (122ms)
+  ✓  83 e2e/lifecycle-flush.spec.ts:112:1 › the ordinary delayed save still lands without a lifecycle event (1.0s)
+(node:23513) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+synthetic UI seed7107 2.24.0-beta 11 rows
+  ✓  84 e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity (1.9s)
+  ✓  85 e2e/ui-guard-integration.spec.ts:16:3 › 360px EN: synthetic retirement, responsive Legacy and theme integrity (1.9s)
+  ✓  86 e2e/ui-guard-integration.spec.ts:16:3 › 390px IT: synthetic retirement, responsive Legacy and theme integrity (1.7s)
+(node:23669) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+synthetic UI seed7107 2.24.0-beta 11 rows
+  ✓  87 e2e/ui-guard-integration.spec.ts:16:3 › 390px EN: synthetic retirement, responsive Legacy and theme integrity (1.8s)
+1280-it footer gap=7.6875
+  ✓  88 e2e/ui-guard-integration.spec.ts:16:3 › 1280px IT: synthetic retirement, responsive Legacy and theme integrity (1.6s)
+1280-en footer gap=8.234375
+  ✓  89 e2e/ui-guard-integration.spec.ts:16:3 › 1280px EN: synthetic retirement, responsive Legacy and theme integrity (1.7s)
+(node:23832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+native history return pageshow.persisted=false
+native history notRestoredReasons={"src":null,"id":null,"url":"http://127.0.0.1:4201/","name":null,"reasons":[{"reason":"masked"}],"children":[]}
+  ✓  90 e2e/native-lifecycle-protection.spec.ts:6:1 › native navigation flushes RAM-only draft mutation before releasing the writer (1.3s)
+CAREER_STEPS 38
+  ✓  55 e2e/demo-readiness.spec.ts:385:1 › a career started from the welcome can reach the archive (58.8s)
+  ✓  91 e2e/demo-readiness.spec.ts:431:1 › a four-core device still sees the home sweep, and Totem stays out of the career (5.6s)
+  ✓  92 e2e/demo-readiness.spec.ts:469:1 › desktop legacy: the card-theme selector clears the fixed footer (983ms)
+
+  2 skipped
+  90 passed (2.3m)

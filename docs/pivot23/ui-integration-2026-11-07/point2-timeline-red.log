@@ -1,0 +1,32 @@
+✖ timeline award labels follow the Legacy UI language (2.640347ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 189.148991
+
+✖ failing tests:
+
+test at src/lib/pivot/legacy-polish.test.ts:1:2083
+✖ timeline award labels follow the Legacy UI language (2.640347ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'Sixth Man'
+  - "Sesto uomo dell'anno"
+  
+      at TestContext.<anonymous> (/workspace/pivot23-ui-integration/apps/pivot23/src/lib/pivot/legacy-polish.test.ts:44:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Sixth Man',
+    expected: "Sesto uomo dell'anno",
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

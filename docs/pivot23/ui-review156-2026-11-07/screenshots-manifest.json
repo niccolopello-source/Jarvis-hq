@@ -1,0 +1,342 @@
+{
+  "runtime": "12bf6033e07580fee5f707879fd3c9f876af0b59",
+  "fixture": "7107, SG, synthetic retire, 11 rows; default 10 visible",
+  "images": {
+    "1280-en-card.png": {
+      "sha256": "454da09aeb95d3d4bd669bab0d030b4a46cc4740443b6c0341a9b35571bb1d56",
+      "dimensions": [
+        420,
+        444
+      ],
+      "bytes": 74566
+    },
+    "1280-en-grafite.png": {
+      "sha256": "2d8426d039f2ec076f03f6bf2b70531b2f98fb16028e9412084e7222549288c2",
+      "dimensions": [
+        1280,
+        900
+      ],
+      "bytes": 120736
+    },
+    "1280-en-last-row-footer.png": {
+      "sha256": "3ae889fdd0ac53875193be5a5f4c117183dbd3a9a0cc2d31ff6afe019bd551b2",
+      "dimensions": [
+        1280,
+        900
+      ],
+      "bytes": 109302
+    },
+    "1280-en-table-start.png": {
+      "sha256": "6c6f4e3822f41f5d663f37ef3243d0a415d0d1901447efe8dc874ab428987dce",
+      "dimensions": [
+        1280,
+        900
+      ],
+      "bytes": 104955
+    },
+    "1280-en-table.png": {
+      "sha256": "6c6f4e3822f41f5d663f37ef3243d0a415d0d1901447efe8dc874ab428987dce",
+      "dimensions": [
+        1280,
+        900
+      ],
+      "bytes": 104955
+    },
+    "1280-en-themes.png": {
+      "sha256": "3566e827efda046d29e8936931d4b8ad375a413d39f56b267cd2998a82d29705",
+      "dimensions": [
+        1280,
+        900
+      ],
+      "bytes": 127996
+    },
+    "1280-it-card.png": {
+      "sha256": "5c3484b0a5c320bc3e6f69b34db22f2f221edf184d56c668039f7d16a9979627",
+      "dimensions": [
+        420,
+        443
+      ],
+      "bytes": 74232
+    },
+    "1280-it-grafite.png": {
+      "sha256": "4bbbcce070979673f492654b4d0d89d04f076ef82e446e77b1b7d2f5df70cdac",
+      "dimensions": [
+        1280,
+        900
+      ],
+      "bytes": 120545
+    },
+    "1280-it-last-row-footer.png": {
+      "sha256": "de3afbc09dc1651b94cdb4b2bfe0b910b27d290e6b95d6f56ae77e04fef09102",
+      "dimensions": [
+        1280,
+        900
+      ],
+      "bytes": 112020
+    },
+    "1280-it-table-start.png": {
+      "sha256": "7ed9048adb60b6daf666907a6c12ca987d7224b76fb6f37e1e7a6a527343db72",
+      "dimensions": [
+        1280,
+        900
+      ],
+      "bytes": 108719
+    },
+    "1280-it-table.png": {
+      "sha256": "7ed9048adb60b6daf666907a6c12ca987d7224b76fb6f37e1e7a6a527343db72",
+      "dimensions": [
+        1280,
+        900
+      ],
+      "bytes": 108719
+    },
+    "1280-it-themes.png": {
+      "sha256": "64bb5290664b93252fa75a5d978032a063bfd9f190967a4af1814d00968e4b58",
+      "dimensions": [
+        1280,
+        900
+      ],
+      "bytes": 127442
+    },
+    "360-en-card.png": {
+      "sha256": "63500bcd19ea926e79a0a8edf5ed55acc9e023cad797a5e9b90222b40daa74cc",
+      "dimensions": [
+        320,
+        436
+      ],
+      "bytes": 65990
+    },
+    "360-en-export.png": {
+      "sha256": "9324d66d1fc0cf6415ad46707edb40d865125868c7299665a0cb9926419fd3ea",
+      "dimensions": [
+        1080,
+        1350
+      ],
+      "bytes": 731067
+    },
+    "360-en-grafite.png": {
+      "sha256": "87da51dbf6173f726dfa610f168dd2f4eaac7fe7ee6941ce814c4afda35c92d1",
+      "dimensions": [
+        360,
+        900
+      ],
+      "bytes": 102224
+    },
+    "360-en-last-row-footer.png": {
+      "sha256": "7ec3b73e88a39296beb8743c4e97c875afb48457d425f6e5054111234c7936a5",
+      "dimensions": [
+        360,
+        900
+      ],
+      "bytes": 72332
+    },
+    "360-en-table-end.png": {
+      "sha256": "c76ec146a5d7b31f6526c3e74c37fabccdbb98fc1c72172a56947068869b0b68",
+      "dimensions": [
+        360,
+        900
+      ],
+      "bytes": 68970
+    },
+    "360-en-table-start.png": {
+      "sha256": "8d24dd512e82c36561c2bf8c1966ca72c644f0bac0c380c1cc3ccb3c70ba52ff",
+      "dimensions": [
+        360,
+        900
+      ],
+      "bytes": 62061
+    },
+    "360-en-table.png": {
+      "sha256": "c76ec146a5d7b31f6526c3e74c37fabccdbb98fc1c72172a56947068869b0b68",
+      "dimensions": [
+        360,
+        900
+      ],
+      "bytes": 68970
+    },
+    "360-en-themes.png": {
+      "sha256": "62b0edd209601656d342f41bf4423a4f80b0bc9145271d2a97f804b72f9d6bc0",
+      "dimensions": [
+        360,
+        900
+      ],
+      "bytes": 105040
+    },
+    "360-it-card.png": {
+      "sha256": "78ed2d5b2bab5ad3483fc13f19123012f90025801cfbaacf6255540e719ef9bc",
+      "dimensions": [
+        320,
+        456
+      ],
+      "bytes": 66110
+    },
+    "360-it-export.png": {
+      "sha256": "19d0e0682f00a5b932625467b04c07976f5b2548ee9ca75f7e90ddc1295612a4",
+      "dimensions": [
+        1080,
+        1350
+      ],
+      "bytes": 727258
+    },
+    "360-it-grafite.png": {
+      "sha256": "078d140efdac2ffb8c98e32a7fe3a99a74922f19bdf6234d975198e1c4de33c3",
+      "dimensions": [
+        360,
+        900
+      ],
+      "bytes": 101116
+    },
+    "360-it-last-row-footer.png": {
+      "sha256": "a63c4cc3f30dab7b434495b59793d50219d6000410fc34e6ffe462726e2fc097",
+      "dimensions": [
+        360,
+        900
+      ],
+      "bytes": 71360
+    },
+    "360-it-table-end.png": {
+      "sha256": "892d24746b962a9016902bebb654b05acc95651bfcbb8e8b78d97c810c52fcdf",
+      "dimensions": [
+        360,
+        900
+      ],
+      "bytes": 69956
+    },
+    "360-it-table-start.png": {
+      "sha256": "58a31d591ef0f66b3675d6f5ff33ac54f5a8debb39e84a516909c4e7c7319e81",
+      "dimensions": [
+        360,
+        900
+      ],
+      "bytes": 60261
+    },
+    "360-it-table.png": {
+      "sha256": "892d24746b962a9016902bebb654b05acc95651bfcbb8e8b78d97c810c52fcdf",
+      "dimensions": [
+        360,
+        900
+      ],
+      "bytes": 69956
+    },
+    "360-it-themes.png": {
+      "sha256": "3024a3050b5fd0ed46a3227fb15fbd5f6cf327a455bc2a44dfe304bc0c8dff8b",
+      "dimensions": [
+        360,
+        900
+      ],
+      "bytes": 103410
+    },
+    "390-en-card.png": {
+      "sha256": "57355ef6b418431f4642541ed57f5be5f5b92da1f43ad2b5f062dc71ba704e79",
+      "dimensions": [
+        350,
+        438
+      ],
+      "bytes": 69132
+    },
+    "390-en-grafite.png": {
+      "sha256": "2472276ac362da9161e18d663c8e88dd09078126775203de25f5a55d603bd3bb",
+      "dimensions": [
+        390,
+        900
+      ],
+      "bytes": 105382
+    },
+    "390-en-last-row-footer.png": {
+      "sha256": "a9fefc4318200e9b599467285909fd16b3799fb0b8937896f81beaed9bb5a0c6",
+      "dimensions": [
+        390,
+        900
+      ],
+      "bytes": 82393
+    },
+    "390-en-table-end.png": {
+      "sha256": "27f3e77d3e3d2255daeccf3ede9b0f03f1c59402b26a8e1c5c871b2e89a39a0d",
+      "dimensions": [
+        390,
+        900
+      ],
+      "bytes": 78448
+    },
+    "390-en-table-start.png": {
+      "sha256": "89d21b8baf1a4014f63cdaaf9a2931318b983aebe627abe2a9717f3652bcb2d0",
+      "dimensions": [
+        390,
+        900
+      ],
+      "bytes": 73154
+    },
+    "390-en-table.png": {
+      "sha256": "27f3e77d3e3d2255daeccf3ede9b0f03f1c59402b26a8e1c5c871b2e89a39a0d",
+      "dimensions": [
+        390,
+        900
+      ],
+      "bytes": 78448
+    },
+    "390-en-themes.png": {
+      "sha256": "de696cf79322f6e192b74010ef1e08d05e72c93fa0d15008edd2d94eccc56a39",
+      "dimensions": [
+        390,
+        900
+      ],
+      "bytes": 107842
+    },
+    "390-it-card.png": {
+      "sha256": "d869085a7c7d7c0d1f494ad37e4ac3301645d7502e5d6fa986d7f86295c593be",
+      "dimensions": [
+        350,
+        439
+      ],
+      "bytes": 68754
+    },
+    "390-it-grafite.png": {
+      "sha256": "8d618eaac39f1381950380df74149269b164bdc8d1d5727410da2c34b317bb21",
+      "dimensions": [
+        390,
+        900
+      ],
+      "bytes": 105646
+    },
+    "390-it-last-row-footer.png": {
+      "sha256": "82a31cc573b502b32c7c952950de44df223faeeccbcdb3f96038d6aa10ddf47c",
+      "dimensions": [
+        390,
+        900
+      ],
+      "bytes": 79392
+    },
+    "390-it-table-end.png": {
+      "sha256": "003371212a94859bd5d57444bc7276941f85f517cddb0b9970d141b4707c782e",
+      "dimensions": [
+        390,
+        900
+      ],
+      "bytes": 75954
+    },
+    "390-it-table-start.png": {
+      "sha256": "557725f3229207db24cf45cef90b45a1c8dfee00ab52d03d6434236217869dcf",
+      "dimensions": [
+        390,
+        900
+      ],
+      "bytes": 67752
+    },
+    "390-it-table.png": {
+      "sha256": "003371212a94859bd5d57444bc7276941f85f517cddb0b9970d141b4707c782e",
+      "dimensions": [
+        390,
+        900
+      ],
+      "bytes": 75954
+    },
+    "390-it-themes.png": {
+      "sha256": "c495e3c396ad016eab8c772e57d1899f2c601a6bee6b87c887a05cb2f83f645f",
+      "dimensions": [
+        390,
+        900
+      ],
+      "bytes": 107423
+    }
+  }
+}

@@ -1,0 +1,4 @@
+
+> pivot23-demo@0.1.0 typecheck /workspace/pivot23-ui-integration/apps/pivot23
+> tsc --noEmit
+

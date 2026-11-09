@@ -1,0 +1,31 @@
+
+Running 1 test using 1 worker
+
+(node:176440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/native-lifecycle-protection.spec.ts:6:1 › native navigation flushes RAM-only draft mutation before releasing the writer (30.0s)
+
+
+  1) e2e/native-lifecycle-protection.spec.ts:6:1 › native navigation flushes RAM-only draft mutation before releasing the writer 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goBack: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for navigation until "load"
+        - navigated to "http://127.0.0.1:4198/"
+
+
+      62 |     ),
+      63 |   ).toBe(0);
+    > 64 |   await page.goBack();
+         |              ^
+      65 |   await expect(page.locator(".draft-card").first()).toBeVisible();
+      66 |   await expect(page.getByTestId("live-protection")).toHaveCount(0);
+      67 |   expect(
+        at /workspace/pivot23-future-guard/apps/pivot23/e2e/native-lifecycle-protection.spec.ts:64:14
+
+    Error Context: ../../../review155-bfcache-results/native-lifecycle-protectio-b8cfe-before-releasing-the-writer/error-context.md
+
+  1 failed
+    e2e/native-lifecycle-protection.spec.ts:6:1 › native navigation flushes RAM-only draft mutation before releasing the writer 

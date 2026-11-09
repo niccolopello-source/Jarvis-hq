@@ -20,6 +20,7 @@ const ROLE_EN: Record<Role, string> = {
 export function roleLabel(role: Role | string, lang: UiLang): string {
   const r = role as Role;
   if (lang === "en") return ROLE_EN[r] ?? String(role);
+  if (r === "SG") return "Guardia tiratrice";
   return ROLES[r]?.label ?? String(role);
 }
 
@@ -129,6 +130,17 @@ const ROUND_EN: Record<string, string> = {
   Playoff: "Playoffs",
 };
 
+const IT_OUT_ROUND: Readonly<Record<string, string>> = {
+  "Primo turno": "al primo turno",
+  "Semifinali Est/Ovest": "in semifinale di conference",
+  "Finali Est/Ovest": "in finale di conference",
+  "Finali NBA": "nelle Finali NBA",
+  "Quarti di finale": "ai quarti di finale",
+  "Semifinale Final Four": "in semifinale di Final Four",
+  "Finale Eurolega": "in finale di Eurolega",
+  Playoff: "ai playoff",
+};
+
 /** Playoff round label (engine strings are Italian ids). */
 export function roundLabel(label: string, lang: UiLang): string {
   return lang === "en" ? ROUND_EN[label] ?? label : label;
@@ -140,7 +152,14 @@ export function roundLabel(label: string, lang: UiLang): string {
  */
 export function playoffResultLabel(raw: string | undefined | null, lang: UiLang): string {
   const value = String(raw ?? "");
-  if (lang !== "en" || !value) return value;
+  if (!value) return value;
+  if (lang !== "en") {
+    // "Elim. Finali Est/Ovest 2-4" -> "Eliminato in finale di conference (2-4)". Stored text unchanged.
+    const it = /^Elim\. (.+?) (\d+-\d+)$/.exec(value);
+    if (!it) return value;
+    const round = IT_OUT_ROUND[it[1]!];
+    return round ? `Eliminato ${round} (${it[2]})` : value;
+  }
   if (value === "Fuori") return "Missed playoffs";
   if (value === "Campione") return "Champion";
   const m = /^Elim\. (.+?) (\d+-\d+)$/.exec(value);

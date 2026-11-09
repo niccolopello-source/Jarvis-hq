@@ -456,11 +456,27 @@ test("a four-core device still sees the home sweep, and Totem stays out of the c
   expect(rails).toHaveLength(2);
   for (const rail of rails) {
     expect(rail.width).toBeGreaterThanOrEqual(72);
-    expect(rail.text).toContain("Riservato");
+    // ads OFF: the rail keeps its column but shows nothing (no "Riservato" placeholder)
+    expect(rail.text?.trim() ?? "").toBe("");
   }
 
   await page.getByRole("button", { name: "Inizia", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Chi sei sul parquet" })).toBeVisible();
   await expect(page.locator(".totem-home")).toHaveCount(0);
   await expect(page.locator(".ad-foot")).toContainText("Powered by Totem");
+});
+
+test("desktop legacy: the card-theme selector clears the fixed footer", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Inizia", exact: true }).click();
+  await page.getByLabel("Nome").fill("Footer Check");
+  await page.getByRole("button", { name: /Simula la carriera/ }).click();
+  await expect(page.getByRole("region", { name: "Career Card" })).toBeVisible({ timeout: 30_000 });
+  const themes = page.locator(".lc-themes");
+  await themes.evaluate((el) => el.scrollIntoView({ block: "end" }));
+  await page.waitForTimeout(200);
+  const t = (await themes.boundingBox())!;
+  const f = (await page.locator(".ad-foot").boundingBox())!;
+  expect(t.y + t.height).toBeLessThanOrEqual(f.y);
 });

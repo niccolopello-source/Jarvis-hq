@@ -1,0 +1,28 @@
+{
+  "runtime": "36d67df0f82be6b6f4ab5e84e68bb490ee4de7a5",
+  "publishedHead": "2840aba327da20c746595524851d422129354119",
+  "repoUnchanged": true,
+  "diagnosticLocation": "outside checkout; not a committed CI test",
+  "firstFullChromiumAttempt": "FAIL waiting for load on page.goBack (30s); application already restored Round2 in snapshot, not asserted BFCache",
+  "correctedWait": "page.goBack({waitUntil:\"commit\"}), all existing raw/UI/lease assertions retained; extra expect(persisted).toBe(\"true\")",
+  "result": "PASS1, pageshow.persisted=true, notRestoredReasons=null",
+  "command": "E2E_PREVIEW=1 E2E_PORT=4198 pnpm exec playwright test --config=/workspace/review155-bfcache.config.ts native-bfcache.spec.ts --workers=1",
+  "files": {
+    "/workspace/review155-bfcache.config.ts": {
+      "sha256": "d951423f55e909b8b8000ae08617cf133dd9f3ba6f42e1ffdebc17145626756b",
+      "bytes": 346
+    },
+    "/workspace/review155-bfcache-tests/native-bfcache.spec.ts": {
+      "sha256": "b0f510ab88202b914ad2f1ab5c6f1eab1e5cfa14cc56d311cd076e59a6487655",
+      "bytes": 3700
+    },
+    "/workspace/review155-bfcache-full-chromium.log": {
+      "sha256": "8b446dfba8b18b604576e8a84688fb48d7ff3676fe552e87cf25f82d58d72420",
+      "bytes": 1338
+    },
+    "/workspace/review155-bfcache-full-chromium-commit.log": {
+      "sha256": "1a2130ed904e4a1f5d41f0bfd674ee8c1a5dbd0444a813642b36ee2540b1e29a",
+      "bytes": 459
+    }
+  }
+}

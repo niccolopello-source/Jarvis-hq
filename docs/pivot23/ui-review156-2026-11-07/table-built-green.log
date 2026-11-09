@@ -1,0 +1,116 @@
+
+Running 6 tests using 2 workers
+
+(node:32175) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32176) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32202) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+synthetic UI seed7107 2.24.0-beta 11 rows
+synthetic UI seed7107 2.24.0-beta 11 rows
+  ✘  2 e2e/ui-guard-integration.spec.ts:16:3 › 390px EN: synthetic retirement, responsive Legacy and theme integrity (1.4s)
+  ✘  1 e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity (1.4s)
+(node:32373) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32380) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32399) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32405) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+synthetic UI seed7107 2.24.0-beta 11 rows
+synthetic UI seed7107 2.24.0-beta 11 rows
+1280-it footer gap=7.6875
+  ✘  4 e2e/ui-guard-integration.spec.ts:16:3 › 360px EN: synthetic retirement, responsive Legacy and theme integrity (1.4s)
+(node:32579) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+synthetic UI seed7107 2.24.0-beta 11 rows
+  ✓  3 e2e/ui-guard-integration.spec.ts:16:3 › 1280px IT: synthetic retirement, responsive Legacy and theme integrity (2.4s)
+  ✘  5 e2e/ui-guard-integration.spec.ts:16:3 › 390px IT: synthetic retirement, responsive Legacy and theme integrity (1.3s)
+1280-en footer gap=8.234375
+  ✓  6 e2e/ui-guard-integration.spec.ts:16:3 › 1280px EN: synthetic retirement, responsive Legacy and theme integrity (2.3s)
+
+
+  1) e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 109.546875
+    Received:    96
+
+      93 |       const seasonBox = (await first.boundingBox())!;
+      94 |       const teamBox = (await teamCells.first().boundingBox())!;
+    > 95 |       expect(teamBox.x).toBeGreaterThanOrEqual(seasonBox.x + seasonBox.width - 1);
+         |                         ^
+      96 |       expect(await teamCells.first().evaluate(el => { const r=el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)); })).toBe(true);
+      97 |       const last = table.locator("tbody tr").first().locator("td").last();
+      98 |       const lastBox = (await last.boundingBox())!; const wrapBox = (await table.boundingBox())!;
+        at /workspace/pivot23-ui-integration/apps/pivot23/e2e/ui-guard-integration.spec.ts:95:25
+
+    Error Context: test-results/ui-guard-integration-360px-99efb--Legacy-and-theme-integrity/error-context.md
+
+  2) e2e/ui-guard-integration.spec.ts:16:3 › 360px EN: synthetic retirement, responsive Legacy and theme integrity 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 109.546875
+    Received:    96
+
+      93 |       const seasonBox = (await first.boundingBox())!;
+      94 |       const teamBox = (await teamCells.first().boundingBox())!;
+    > 95 |       expect(teamBox.x).toBeGreaterThanOrEqual(seasonBox.x + seasonBox.width - 1);
+         |                         ^
+      96 |       expect(await teamCells.first().evaluate(el => { const r=el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)); })).toBe(true);
+      97 |       const last = table.locator("tbody tr").first().locator("td").last();
+      98 |       const lastBox = (await last.boundingBox())!; const wrapBox = (await table.boundingBox())!;
+        at /workspace/pivot23-ui-integration/apps/pivot23/e2e/ui-guard-integration.spec.ts:95:25
+
+    Error Context: test-results/ui-guard-integration-360px-7b6d8--Legacy-and-theme-integrity/error-context.md
+
+  3) e2e/ui-guard-integration.spec.ts:16:3 › 390px IT: synthetic retirement, responsive Legacy and theme integrity 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 109.546875
+    Received:    96
+
+      93 |       const seasonBox = (await first.boundingBox())!;
+      94 |       const teamBox = (await teamCells.first().boundingBox())!;
+    > 95 |       expect(teamBox.x).toBeGreaterThanOrEqual(seasonBox.x + seasonBox.width - 1);
+         |                         ^
+      96 |       expect(await teamCells.first().evaluate(el => { const r=el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)); })).toBe(true);
+      97 |       const last = table.locator("tbody tr").first().locator("td").last();
+      98 |       const lastBox = (await last.boundingBox())!; const wrapBox = (await table.boundingBox())!;
+        at /workspace/pivot23-ui-integration/apps/pivot23/e2e/ui-guard-integration.spec.ts:95:25
+
+    Error Context: test-results/ui-guard-integration-390px-4a921--Legacy-and-theme-integrity/error-context.md
+
+  4) e2e/ui-guard-integration.spec.ts:16:3 › 390px EN: synthetic retirement, responsive Legacy and theme integrity 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 109.546875
+    Received:    96
+
+      93 |       const seasonBox = (await first.boundingBox())!;
+      94 |       const teamBox = (await teamCells.first().boundingBox())!;
+    > 95 |       expect(teamBox.x).toBeGreaterThanOrEqual(seasonBox.x + seasonBox.width - 1);
+         |                         ^
+      96 |       expect(await teamCells.first().evaluate(el => { const r=el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)); })).toBe(true);
+      97 |       const last = table.locator("tbody tr").first().locator("td").last();
+      98 |       const lastBox = (await last.boundingBox())!; const wrapBox = (await table.boundingBox())!;
+        at /workspace/pivot23-ui-integration/apps/pivot23/e2e/ui-guard-integration.spec.ts:95:25
+
+    Error Context: test-results/ui-guard-integration-390px-4fc9e--Legacy-and-theme-integrity/error-context.md
+
+  4 failed
+    e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity 
+    e2e/ui-guard-integration.spec.ts:16:3 › 360px EN: synthetic retirement, responsive Legacy and theme integrity 
+    e2e/ui-guard-integration.spec.ts:16:3 › 390px IT: synthetic retirement, responsive Legacy and theme integrity 
+    e2e/ui-guard-integration.spec.ts:16:3 › 390px EN: synthetic retirement, responsive Legacy and theme integrity 
+  2 passed (14.8s)

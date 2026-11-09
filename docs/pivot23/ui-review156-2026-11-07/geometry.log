@@ -1,0 +1,32 @@
+
+Running 1 test using 1 worker
+
+(node:31669) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31682) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+synthetic UI seed7107 2.24.0-beta 11 rows
+COLUMN_GEOMETRY {"table":"","width":622,"layout":"fixed","min":"622px","cols":[{"w":90.546875,"css":"90.5469px","box":"border-box"},{"w":76.25,"css":"76.25px","box":"border-box"},{"w":40.5,"css":"40.5px","box":"border-box"},{"w":54.796875,"css":"54.7969px","box":"border-box"},{"w":54.796875,"css":"54.7969px","box":"border-box"},{"w":54.796875,"css":"54.7969px","box":"border-box"},{"w":59.578125,"css":"59.5781px","box":"border-box"},{"w":190.734375,"css":"190.734px","box":"border-box"}]}
+  ✘  1 e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity (1.2s)
+
+
+  1) e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 109.546875
+    Received:    96
+
+      94 |       const seasonBox = (await first.boundingBox())!;
+      95 |       const teamBox = (await teamCells.first().boundingBox())!;
+    > 96 |       expect(teamBox.x).toBeGreaterThanOrEqual(seasonBox.x + seasonBox.width - 1);
+         |                         ^
+      97 |       expect(await teamCells.first().evaluate(el => { const r=el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)); })).toBe(true);
+      98 |       const last = table.locator("tbody tr").first().locator("td").last();
+      99 |       const lastBox = (await last.boundingBox())!; const wrapBox = (await table.boundingBox())!;
+        at /workspace/pivot23-ui-integration/apps/pivot23/e2e/ui-guard-integration.spec.ts:96:25
+
+    Error Context: test-results/ui-guard-integration-360px-99efb--Legacy-and-theme-integrity/error-context.md
+
+  1 failed
+    e2e/ui-guard-integration.spec.ts:16:3 › 360px IT: synthetic retirement, responsive Legacy and theme integrity 

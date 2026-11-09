@@ -19,8 +19,8 @@ const IT = {
   nation: "Nazionalità",
   origin: "Percorso",
   draft: "Draft",
-  draftValue: "{pick}ª scelta · {team}",
-  draftValueNoTeam: "{pick}ª scelta",
+  draftValue: "{pick} scelta · {team}",
+  draftValueNoTeam: "{pick} scelta",
   career: "Carriera",
   years: "Anni",
   age: "Età",
@@ -48,6 +48,7 @@ const IT = {
   recordsNote: "Massimi stagionali raggiunti in carriera.",
   timeline: "Le tappe",
   seasonsTable: "Stagione per stagione",
+  tableScrollHint: "Scorri in orizzontale per tutte le statistiche. Stagione e squadra restano visibili.",
   colSeason: "Stagione",
   colTeam: "Squadra",
   colGp: "PG",
@@ -126,6 +127,7 @@ const EN: Record<Key, string> = {
   recordsNote: "Best single-season marks of the career.",
   timeline: "Milestones",
   seasonsTable: "Season by season",
+  tableScrollHint: "Scroll horizontally for all statistics. Season and team stay visible.",
   colSeason: "Season",
   colTeam: "Team",
   colGp: "GP",
@@ -190,8 +192,33 @@ export function seasonsLabel(n: number, lang: Lang): string {
   return n === 1 ? lt("seasonsOne", lang) : lt("seasonsMany", lang, { n });
 }
 
-const fmt1 = (n: number, lang: Lang) => n.toLocaleString(lang === "en" ? "en-US" : "it-IT", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-export const fmtInt = (n: number, lang: Lang) => n.toLocaleString(lang === "en" ? "en-US" : "it-IT");
+// it-IT leaves 4-digit numbers ungrouped ("2649" next to "15.473"): always group, in both languages.
+const GROUP = { useGrouping: "always" } as unknown as Intl.NumberFormatOptions;
+const fmt1 = (n: number, lang: Lang) => n.toLocaleString(lang === "en" ? "en-US" : "it-IT", { ...GROUP, minimumFractionDigits: 1, maximumFractionDigits: 1 });
+export const fmtInt = (n: number, lang: Lang) => n.toLocaleString(lang === "en" ? "en-US" : "it-IT", GROUP);
+
+/** Award names on the Legacy screen: one name per award, Italian names in Italian. Display only. */
+const AWARD_IT: Readonly<Record<string, string>> = {
+  "Most Improved Player": "Giocatore più migliorato",
+  MIP: "Giocatore più migliorato",
+  "Sixth Man": "Sesto uomo dell'anno",
+  "Sixth Man of the Year": "Sesto uomo dell'anno",
+  "6MOY": "Sesto uomo dell'anno",
+  "Rookie of the Year": "Rookie dell'anno",
+  ROY: "Rookie dell'anno",
+  "Defensive Player of the Year": "Difensore dell'anno",
+  DPOY: "Difensore dell'anno",
+};
+const AWARD_EN: Readonly<Record<string, string>> = {
+  "Sixth Man": "Sixth Man of the Year",
+  "6MOY": "Sixth Man of the Year",
+  MIP: "Most Improved Player",
+  ROY: "Rookie of the Year",
+  DPOY: "Defensive Player of the Year",
+};
+export function legacyAwardLabel(id: string, lang: Lang): string {
+  return (lang === "en" ? AWARD_EN[id] : AWARD_IT[id]) ?? id;
+}
 export const fmtDec = fmt1;
 
 export function recordLabel(r: RecordLine, lang: Lang): string {
@@ -215,7 +242,7 @@ export function timelineLine(item: TimelineItem, lang: Lang): string {
     case "move":
       return lt("tlMove", lang, { team: lang === "en" ? theTeam(item.subject, lang) : `${/^[AEIOUaeiou]/.test(item.subject) ? "ad" : "a"} ${item.subject}` });
     case "award":
-      return lt((item.value ?? 1) > 1 ? "tlAward" : "tlAwardOnce", lang, { award: item.subject });
+      return lt((item.value ?? 1) > 1 ? "tlAward" : "tlAwardOnce", lang, { award: legacyAwardLabel(item.subject, lang) });
     case "title":
       return lt("tlTitle", lang, { team: theTeam(item.subject, lang) });
     case "finals":
@@ -234,8 +261,9 @@ function listJoin(items: string[], lang: Lang): string {
 }
 
 function countedAward(id: string, n: number, lang: Lang): string {
-  if (n === 1) return id;
-  return lang === "en" ? `${n}× ${id}` : `${n} volte ${id}`;
+  const name = legacyAwardLabel(id, lang);
+  if (n === 1) return name;
+  return lang === "en" ? `${n}× ${name}` : `${n} volte ${name}`;
 }
 
 /** Final narrative. Each sentence states only recorded facts; a missing fact drops its sentence. */
