@@ -8,6 +8,9 @@ node --import=tsx scripts/point4/causal-audit.mjs . /workspace/repro-point4-b
 python3 scripts/point4/analyze.py /workspace/repro-point4-a
 # solo i 4 profili policy dopo la correzione preview (9nov): stessi 120 seed
 node --import=tsx scripts/point4/causal-audit.mjs . /workspace/repro-point4-policies --policies-only
+# suite stats choices-depth-225 rimisurata fuori src (legacy riproduce 1,99/0,74; clean = previewChoice)
+node --import=tsx scripts/point4/legacy-stats-clean.mjs . /workspace/repro-legacy-stats legacy
+node --import=tsx scripts/point4/legacy-stats-clean.mjs . /workspace/repro-legacy-stats clean
 cmp /workspace/repro-point4-a/careers.json /workspace/repro-point4-b/careers.json
 cmp /workspace/repro-point4-a/sensitivity.json /workspace/repro-point4-b/sensitivity.json
 pnpm test

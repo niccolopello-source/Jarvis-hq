@@ -1,0 +1,41 @@
+{
+  "mode": "clean",
+  "N": 240,
+  "seeds": "910000+i",
+  "difficulty": "pro",
+  "engineVersion": "2.25.0",
+  "bestWorst": {
+    "gap": 2.5250000000000057,
+    "ci95paired": [
+      2.2335201792147377,
+      2.816479820785262
+    ],
+    "threshold": [
+      1.2,
+      3.5
+    ],
+    "withinThreshold": true,
+    "meanUp": 75.02916666666667,
+    "meanDown": 72.50416666666666,
+    "pos": 197,
+    "zero": 34,
+    "neg": 9
+  },
+  "moraleUpDown": {
+    "gap": 0.7374999999999972,
+    "ci95paired": [
+      0.5870773190678978,
+      0.8879226809321022
+    ],
+    "threshold": [
+      0.5,
+      2.5
+    ],
+    "withinThreshold": true,
+    "meanUp": 74.40416666666667,
+    "meanDown": 73.66666666666667,
+    "pos": 99,
+    "zero": 138,
+    "neg": 3
+  }
+}

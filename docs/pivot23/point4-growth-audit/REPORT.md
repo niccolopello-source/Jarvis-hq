@@ -1,7 +1,7 @@
 # Punto 4 — audit causale crescita/scelte/morale/archetipi
 
 ## Decisione: nessuna modifica di tuning giustificata nel campione
-Osservazioni e hash: manifest.json, Europe/Rome,8novembre2026. CI della nuova draft (anche dopo la correzione 9nov) non osservata al momento di questo commit; vedere il riscontro finale/PR, non confonderla con il gate157.
+Osservazioni e hash: manifest.json, Europe/Rome,8novembre2026. CI verificata VERDE (PASS) su e627f744605d4577f82ddb173b84aebde095a179 (correzione 9nov): run 42577485761 e 42577490618 “PIVOT 23 beta” e 42577490555 “docs-only PRs”, tutti con job lint/types/unit/build/e2e e statistical engine checks SUCCESS, attesi con `gh run watch --exit-status` (exit0). Il gate157 resta separato. Commit docs successivi: vedere la CI della PR sulla HEAD finale.
 Base PR157 dc5878a228ab949e5f22573664a97cc27d2be43d. La campagna è partita dopo tre workflow applicativi SUCCESS sulla stessa SHA, attesi con `gh run watch --exit-status` (42427566051,42427565917,42427562996). Il run docs-only non è una nuova esecuzione E2E: le suite locali riportate sotto sono nuove. Tutto `apps/pivot23/src` resta byte-identico alla base: nessun cambio motore, UI, salvataggi, guard, RNG o versioni. 2.25 resta INATTIVA; ENGINE_VERSION2.24.0-beta; max36.
 
 Il punto4 produce strumenti riproducibili e misure, non un aumento artificiale dei coefficienti. I criteri e la mappa causale sono in CRITERIA.md, scritti prima della misura. Non è emerso un difetto riproducibile nel flusso ordinario che giustifichi un ritocco; non si certifica l’assenza universale di bug. Una prova red→green di una patch runtime è NOT APPLICABLE (non esiste una patch runtime), non un PASS inventato.
@@ -36,6 +36,23 @@ Best−worst nuovo per difficoltà esordio+2,067/pro+2,500/allstar+1,167/leggend
 Conclusione tuning (HYPOTHESIS valutativa, non PASS statistico): la contaminazione spostava le medie di +0,18 (best−worst) e +0,08 (morale policy), entrambe verso l'alto con RNG isolato; nessuna inversione di segno, best−worst resta positivo in tutte le difficoltà/percorsi. Il gap morale-policy +0,742 resta sotto la proposta storica 1–2, ma la policy morale tocca solo scelte story e altri Fx: non è l'effetto causale del morale e non è un requisito approvato. Con 2 repliche/cella NON emerge un difetto riproducibile che giustifichi un ritocco di coefficienti: tuning NON giustificato dal campione; resta decisione di prodotto per punto5. Limite: `src/lib/pivot/choices-depth-225.stats.test.ts:16` usa lo stesso pattern di preview sull'RNG attivo (gap 1,99/0,74 della suite stats); non corretto perché src è congelato — da valutare in review, NON in questo worker.
 
 I numeri sotto “Nuove misure” e `summary.json`/`careers.json.gz` in radice sono la campagna originale 8 novembre: per i 4 profili policy sono SUPERATI da policy-preview-fix/summary.json e careers-policies.json.gz.
+
+## Gap legacy della suite stats: evidenza NON causale (9 novembre 2026)
+`src/lib/pivot/choices-depth-225.stats.test.ts:16` valuta le alternative con `c.fx(structuredClone(s))` dentro l'RNG del job (la policy è chiamata da `advanceCareerSim`, righe27–28 aprono/avanzano il job): stesso doppio canale RNG + heardLines corretto qui. I suoi gap 1,99 (best−worst) e 0,74 (morale) sono quindi evidenza LEGACY, non causale. Il test NON è stato modificato: correggerlo in src richiede approvazione separata di Pello.
+
+Misura solo harness `scripts/point4/legacy-stats-clean.mjs` (stessi parametri: N240, seed910000+i, ruoli i%5, percorsi i%3, pro, draft random, 2.25.0, stessi score; cambia solo la preview):
+|Gap|legacy (riprodotto)|pulito (previewChoice)|IC95 paired pulito|soglia test|esito pulito|
+|---|---:|---:|---:|---:|---|
+|best−worst|1,988|2,525|2,23–2,82|1,2–3,5|PASS (entro soglia)|
+|morale up−down|0,742|0,738|0,59–0,89|0,5–2,5|PASS (entro soglia)|
+Paired pulito best−worst 197 positive/34 pari/9 negative; morale 99/138/3. Il riprodotto legacy coincide con il log CI (1,99/0,74): PASS di fedeltà dell'harness. JSON in policy-preview-fix/legacy-stats-*.json. Anche puliti, i gap restano dentro le soglie esistenti: nessuna soglia cambiata.
+
+IC95 (normale, paired, n120) campagna punto4 pulita: best−worst +1,933 (1,55–2,31); morale-up−down +0,742 (0,54–0,95).
+
+## Limiti del fix preview (review Dallak, HYPOTHESIS)
+- `restoreLive` ripristina in place solo il contenitore top-level (array/oggetto); i valori annidati mutati tornano come CLONI: un alias annidato catturato da una closure può staccarsi dallo stato live. Non copre Map/Set, prototype, getter/setter, Fx asincrone né stato di modulo (WeakMap BUILT_AT/experiments, cache voice). Il contratto full-career (3seed×4profili) non ha mostrato divergenze, ma non è prova universale.
+- Provenienza red→green parziale: il codice della preview ingenua (equivalente all'inline di 4ff3afd, sostituito localmente) e della bozza RNG-only delle 01:32 NON è committato; sono committati solo i log rossi e lo SHA della bozza (manifest clean-policy 6efaaee4…71af, solo box).
+- 2 repliche per cella: valide per l'aggregato, non per la singola cella. 8/60 celle ruolo×percorso×difficoltà hanno best−worst medio ≤0 (morale: 22/60 ≤0).
 
 ## Nuove misure
 120 seed-profile =5 ruoli ×3 percorsi ×4 difficoltà ×2 repliche; seed940000+indice*97. Nove profili,1080 carriere225 e360 controlli singola-stagione. Seconda esecuzione sugli stessi input:1080 carriere+360 controlli, non1080 nuove osservazioni indipendenti. File careers/sensitivity byte-identici tra esecuzioni. Nessuna lettura/scrittura di save utente.
