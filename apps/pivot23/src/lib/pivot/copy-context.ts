@@ -18,7 +18,7 @@ export function contextualText(text: string, lang: Lang, ctx: {rivalName?:string
   ];
   for (const line of ageLines) out=out.replaceAll(nx(line,lang),t('copyEveryAge',lang));
   const phase=t('copyAgePhase',lang);
-  out=out.replace(/a quest'età|at this age/gi,match=>match[0]===match[0].toUpperCase()?phase:phase[0].toLowerCase()+phase.slice(1));
+  out=out.replace(/a quest'età|at this age|a esta edad|在这个年纪/gi,match=>match[0]===match[0].toUpperCase()?phase:phase[0].toLowerCase()+phase.slice(1));
  }
  return out;
 }

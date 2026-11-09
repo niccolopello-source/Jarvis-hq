@@ -14,7 +14,7 @@ export type ThemeAvailability = "free" | "prototype";
 
 export interface CardTheme {
   id: string;
-  name: { it: string; en: string };
+  name: { it: string; en: string; es: string; zh: string };
   availability: ThemeAvailability;
   /** CSS custom properties applied to the card. Also used by the PNG export. */
   palette: {
@@ -30,25 +30,25 @@ export interface CardTheme {
 export const CARD_THEMES: readonly CardTheme[] = [
   {
     id: "standard",
-    name: { it: "Grafite", en: "Graphite" },
+    name: { it: "Grafite", en: "Graphite", es: "Grafito", zh: "石墨" },
     availability: "free",
     palette: { bg1: "#2a2a2d", bg2: "#111113", ink: "#f5f5f7", muted: "#c7c7cc", accent: "#c9a46a", frame: "#8a6d43" },
   },
   {
     id: "obsidian",
-    name: { it: "Ossidiana", en: "Obsidian" },
+    name: { it: "Ossidiana", en: "Obsidian", es: "Obsidiana", zh: "黑曜石" },
     availability: "free",
     palette: { bg1: "#16161a", bg2: "#050506", ink: "#f2f2f4", muted: "#b9b9c0", accent: "#d4b07a", frame: "#5c4a33" },
   },
   {
     id: "bronze-frame",
-    name: { it: "Cornice bronzo", en: "Bronze frame" },
+    name: { it: "Cornice bronzo", en: "Bronze frame", es: "Marco de bronce", zh: "青铜边框" },
     availability: "prototype",
     palette: { bg1: "#2b2420", bg2: "#120e0b", ink: "#f7f1ea", muted: "#d6c8b8", accent: "#e0b77c", frame: "#b0844c" },
   },
   {
     id: "parquet",
-    name: { it: "Parquet notturno", en: "Night hardwood" },
+    name: { it: "Parquet notturno", en: "Night hardwood", es: "Parqué nocturno", zh: "夜色地板" },
     availability: "prototype",
     palette: { bg1: "#33261b", bg2: "#140f0a", ink: "#fbf6ef", muted: "#dccdbd", accent: "#d9a35c", frame: "#7a5632" },
   },

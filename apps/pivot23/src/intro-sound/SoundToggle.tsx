@@ -6,10 +6,13 @@ import { setSoundOn, useSoundOn } from "./controller";
 const COPY = {
   it: { text: "Suoni", label: "Suoni dell’intro", on: "Suoni attivi: tocca per disattivarli", off: "Suoni disattivati: tocca per attivarli" },
   en: { text: "Sounds", label: "Sounds of the intro", on: "Sounds on: tap to turn them off", off: "Sounds off: tap to turn them on" },
+  es: { text: "Sonidos", label: "Sonidos de la intro", on: "Sonidos activados: toca para desactivarlos", off: "Sonidos desactivados: toca para activarlos" },
+  zh: { text: "音效", label: "开场音效", on: "音效已开启：点击关闭", off: "音效已关闭：点击开启" },
 } as const;
 
 export function soundCopy(lang: string) {
-  return lang === "it" ? COPY.it : COPY.en;
+  if (lang === "it" || lang === "es" || lang === "zh") return COPY[lang];
+  return COPY.en;
 }
 
 /** Home chip that switches the intro sounds on and off; the choice is kept in localStorage. */

@@ -466,7 +466,7 @@ export interface PlayerState {
   championLog: TitleEntry[];
   difficulty: DifficultyId;
   /** Lingua scelta in home. Le scene generate la rispettano. */
-  lang?: "it" | "en" | "es";
+  lang?: "it" | "en" | "es" | "zh";
   simulated: boolean;
   /** Storage identity. Not an RNG input and not derived from `seed`. */
   careerId: string;

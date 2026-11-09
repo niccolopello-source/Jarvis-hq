@@ -109,7 +109,7 @@ function ThemePicker({ themeId, previewId, onPick }: { themeId: string; previewI
             onClick={() => onPick(t.id)}
           >
             <span className="lc-swatch" style={themeStyle(t)} aria-hidden />
-            <span className="lc-theme-name">{t.name[lang === "en" ? "en" : "it"]}</span>
+            <span className="lc-theme-name">{t.name[lang] ?? t.name.en}</span>
             {t.availability !== "free" && <span className="lc-theme-tag">{lt("themePrototype", lang)}</span>}
           </button>
         ))}
