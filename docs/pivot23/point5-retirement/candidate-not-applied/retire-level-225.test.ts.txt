@@ -1,0 +1,49 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { openCareerSim } from "./engine";
+import { careerEndingSignal, isCareerOver } from "./peak";
+import { createRng, runWithRng } from "./rng";
+import type { PlayerState } from "./types";
+
+// Point 5 (2.25 only, inactive): level-aware exits from 34. 2.24 reads none of it; no RNG is drawn.
+function at(version: string, seed: number, age: number, overall: number, peak = overall): PlayerState {
+  const s = openCareerSim({ name: "R", role: "SF", nationality: "ITA", number: 23, path: "NCAA", seed, engineVersion: version, difficulty: "pro", draft: "random" }).s;
+  s.age = age;
+  s.overall = overall;
+  s.peakOverall = peak;
+  s.injuryDrag = 0;
+  const row = { ...s.seasonHistory.at(-1)!, age: age - 1, min: 30, overall } as never;
+  s.seasonHistory = [row];
+  return s;
+}
+
+test("2.25 weak 34-35 careers exit more often than 2.24; 2.24 healthy weak careers keep playing", () => {
+  let exits225 = 0;
+  let exits224 = 0;
+  for (let i = 0; i < 200; i++) {
+    if (careerEndingSignal(at("2.25.0", 610000 + i, 34, 45)) !== null) exits225++;
+    if (careerEndingSignal(at("2.24.0-beta", 610000 + i, 34, 45)) !== null) exits224++;
+  }
+  assert.ok(exits225 >= exits224 + 100, `2.25 ${exits225} vs 2.24 ${exits224}`);
+});
+
+test("2.25 star level keeps 35-year-old stars longer; 36 stays the maximum", () => {
+  let stay225 = 0;
+  let stay224 = 0;
+  for (let i = 0; i < 200; i++) {
+    if (careerEndingSignal(at("2.25.0", 620000 + i, 35, 82, 88)) === null) stay225++;
+    if (careerEndingSignal(at("2.24.0-beta", 620000 + i, 35, 82, 88)) === null) stay224++;
+  }
+  assert.ok(stay225 > stay224, `2.25 ${stay225} vs 2.24 ${stay224}`);
+  for (let i = 0; i < 50; i++) assert.equal(isCareerOver(at("2.25.0", 630000 + i, 37, 90)), true);
+});
+
+test("level-aware exit draws no RNG", () => {
+  const states = Array.from({ length: 100 }, (_, i) => at("2.25.0", 640000 + i, 34 + (i % 2), 40 + (i % 50)));
+  const rng = createRng(4242);
+  const before = rng.getState();
+  runWithRng(rng, () => {
+    for (const s of states) careerEndingSignal(s);
+  });
+  assert.equal(rng.getState(), before);
+});

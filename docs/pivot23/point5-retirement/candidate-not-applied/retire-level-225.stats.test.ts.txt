@@ -1,0 +1,33 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { advanceCareerSim, openCareerSim } from "./engine";
+import { careerEndAge, displayOverall } from "./peak";
+
+// Point 5 (2.25 only, inactive): docs/pivot23/point5-retirement/CRITERIA.md A1-A2 on a held-out seed set.
+const roles = ["PG", "SG", "SF", "PF", "C"] as const;
+const rows: { end: number; peak: number; last: number }[] = [];
+for (const path of ["NCAA", "Europa", "G-League"] as const) {
+  for (const difficulty of ["esordio", "pro", "allstar", "leggenda"] as const) {
+    for (let i = 0; i < 50; i++) {
+      const job = openCareerSim({ name: "R", role: roles[i % 5], nationality: "ITA", number: 23, path, seed: 760000 + i * 101, engineVersion: "2.25.0", difficulty, draft: "random" });
+      for (let k = 0; k < 5000 && !advanceCareerSim(job); k++);
+      const h = job.s.seasonHistory;
+      rows.push({ end: careerEndAge(job.s), peak: Math.max(...h.map((r) => displayOverall(r.overall))), last: displayOverall(h.at(-1)!.overall) });
+    }
+  }
+}
+const share = (xs: typeof rows) => xs.filter((r) => r.end >= 35).length / Math.max(1, xs.length);
+
+test("2.25 few careers play 35+ well below NBA level (A1 <= 10%)", () => {
+  const weakLate = rows.filter((r) => r.end >= 35 && r.last < 60).length / rows.length;
+  console.log("2.25 35+ with final OVR<60", weakLate.toFixed(3));
+  assert.ok(weakLate <= 0.1, `weak late ${weakLate}`);
+});
+
+test("2.25 longevity follows level (A2: 85+ minus <=65 reach-35 gap >= 15pp)", () => {
+  const low = share(rows.filter((r) => r.peak <= 65));
+  const star = share(rows.filter((r) => r.peak >= 85));
+  console.log("2.25 reach-35 by peak <=65 / 85+", low.toFixed(3), star.toFixed(3));
+  assert.ok(star - low >= 0.15, `gap ${star - low}`);
+  assert.ok(Math.max(...rows.map((r) => r.end)) <= 36);
+});
