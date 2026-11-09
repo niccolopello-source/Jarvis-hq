@@ -1,0 +1,40 @@
+diff --git a/apps/pivot23/src/lib/pivot/peak.ts b/apps/pivot23/src/lib/pivot/peak.ts
+index 4068a64..e474e83 100644
+--- a/apps/pivot23/src/lib/pivot/peak.ts
++++ b/apps/pivot23/src/lib/pivot/peak.ts
+@@ -61,9 +61,16 @@ export function careerEndingSignal(s: PlayerState): "minutes" | "injury" | null
+     const c = ovrCurveOf(s);
+     const drop = Math.max(0, finite(s.peakOverall, s.overall) - finite(s.overall, 0));
+     // The bonus only counts once that age's season is played (the same summer is read again after the birthday).
+-    const lean = drop * c.exitDeclineW + (s.age - 32) * c.exitAgeW + (s.seasonHistory.at(-1)?.age === s.age ? (c.exitAgeBonus[s.age] ?? 0) : 0);
++    let lean = drop * c.exitDeclineW + (s.age - 32) * c.exitAgeW + (s.seasonHistory.at(-1)?.age === s.age ? (c.exitAgeBonus[s.age] ?? 0) : 0);
++    // 2.25 (point 5): a player still at star level keeps a longer tail; older careers never read this.
++    if (usesOvrCurve225(s)) lean -= Math.max(0, finite(s.overall, 0) - TUNING.ovrCurve225.starOvr) * TUNING.ovrCurve225.starW;
+     if (lean > seedUnit(s.seed, 24000 + s.age)) return "minutes";
+   }
++  // 2.25 (point 5): from 33 a player well below NBA level stops being signed (deterministic, no RNG).
++  if (usesOvrCurve225(s) && s.age >= TUNING.ovrCurve225.levelExitFrom && s.age < MAX_AGE) {
++    const weak = (TUNING.ovrCurve225.weakOvr - finite(s.overall, 0)) * TUNING.ovrCurve225.weakW;
++    if (weak > 0 && weak > seedUnit(s.seed, 25000 + s.age)) return "minutes";
++  }
+   // From 33 the shipped bar is 2.5. Only 2.19.0+ bars (per difficulty) may set their own value here.
+   const lateBar = usesRetireSpread(s) ? injuryRetireBarsOf(s)[s.age] : undefined;
+   // 2.23: the 33 bar is scaled too, or the exit only moves from the 32 summer to the 33 one (last season still 32).
+diff --git a/apps/pivot23/src/lib/pivot/tuning.ts b/apps/pivot23/src/lib/pivot/tuning.ts
+index df33b88..420001e 100644
+--- a/apps/pivot23/src/lib/pivot/tuning.ts
++++ b/apps/pivot23/src/lib/pivot/tuning.ts
+@@ -149,6 +149,13 @@ export const TUNING = {
+     lateBarScale: 1.25,
+     /** Late minutes-retirement bar by summer age (2.24 and older: 11.5 at every age from 33). */
+     lateMinutesBar: { 33: 8.5, 34: 10 } as Record<number, number>,
++    /** Point 5: level-aware exits from 34 (deterministic seedUnit, no RNG). Below weakOvr the exit lean grows by weakW per
++     *  OVR point; above starOvr the 34-35 decline/age lean shrinks by starW per point. Age 36 stays the hard maximum. */
++    levelExitFrom: 34,
++    weakOvr: 60,
++    weakW: 0.06,
++    starOvr: 65,
++    starW: 0.05,
+     /** Soft potential ceiling for low-potential careers: pot+1.4 - floorDrop ± floorJitter (seed), fading out by floorUntilPot. */
+     floorDrop: 2.5,
+     floorJitter: 3,

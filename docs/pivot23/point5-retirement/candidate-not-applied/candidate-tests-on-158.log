@@ -1,0 +1,67 @@
+2.25 35+ with final OVR<60 0.158
+2.25 reach-35 by peak <=65 / 85+ 0.277 0.254
+✖ 2.25 few careers play 35+ well below NBA level (A1 <= 10%) (2.509563ms)
+✖ 2.25 longevity follows level (A2: 85+ minus <=65 reach-35 gap >= 15pp) (0.519654ms)
+✖ 2.25 weak 34-35 careers exit more often than 2.24; 2.24 healthy weak careers keep playing (395.405392ms)
+✔ 2.25 star level keeps 35-year-old stars longer; 36 stays the maximum (367.990529ms)
+✔ level-aware exit draws no RNG (98.467258ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 2
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9648.67662
+
+✖ failing tests:
+
+test at src/lib/pivot/retire-level-225.stats.test.ts:1:908
+✖ 2.25 few careers play 35+ well below NBA level (A1 <= 10%) (2.509563ms)
+  AssertionError [ERR_ASSERTION]: weak late 0.15833333333333333
+      at TestContext.<anonymous> (REPO/apps/pivot23/src/lib/pivot/retire-level-225.stats.test.ts:24:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/pivot/retire-level-225.stats.test.ts:1:1162
+✖ 2.25 longevity follows level (A2: 85+ minus <=65 reach-35 gap >= 15pp) (0.519654ms)
+  AssertionError [ERR_ASSERTION]: gap -0.023505900266463653
+      at TestContext.<anonymous> (REPO/apps/pivot23/src/lib/pivot/retire-level-225.stats.test.ts:31:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/pivot/retire-level-225.test.ts:1:678
+✖ 2.25 weak 34-35 careers exit more often than 2.24; 2.24 healthy weak careers keep playing (395.405392ms)
+  AssertionError [ERR_ASSERTION]: 2.25 14 vs 2.24 18
+      at TestContext.<anonymous> (REPO/apps/pivot23/src/lib/pivot/retire-level-225.test.ts:27:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
