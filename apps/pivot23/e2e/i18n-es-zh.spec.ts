@@ -35,6 +35,8 @@ async function scan(page: Page, lang: L2, where: string, found: Found) {
     const line = raw.trim();
     if (!line || line === BOOT_FALLBACK) continue;
     if ((lang === "es" ? IT_ONLY : IT_PROSE).test(line)) found.it.add(`${where}: ${line.slice(0, 160)}`);
+    // Chinese word order: the conference comes before the seed ("西部第5", not "第5 西部").
+    if (lang === "zh" && /第\d+\s*(东部|西部)/.test(line)) found.it.add(`${where} (zh order): ${line.slice(0, 160)}`);
     else if (EN_PROSE.test(line)) found.en.add(line.slice(0, 160));
   }
   if (sw > vw + 1) found.overflow.add(`${where}: scrollWidth ${sw} > ${vw}`);

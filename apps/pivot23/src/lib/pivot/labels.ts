@@ -175,6 +175,18 @@ export function seedLabel(n: number | string, lang: UiLang): string {
   return byLang(lang, { it: `${n}°`, en: `#${n}`, es: `${n}.º`, zh: `第${n}` });
 }
 
+/**
+ * Seed plus conference, in the language's word order: "5° Ovest", "#5 West", "5.º del Oeste",
+ * "西部第5" (Chinese puts the conference first).
+ */
+export function seedConfLabel(n: number | string, c: string | undefined, lang: UiLang): string {
+  const conf = confLabel(c, lang);
+  if (!conf) return seedLabel(n, lang);
+  if (lang === "zh") return `${conf}第${n}`;
+  if (lang === "es") return `${seedLabel(n, lang)} ${c === "Euro" ? "de la" : "del"} ${conf}`;
+  return `${seedLabel(n, lang)} ${conf}`;
+}
+
 export function confLabel(c: string | undefined, lang: UiLang): string {
   if (c === "East") return byLang(lang, { it: "Est", en: "East", es: "Este", zh: "东部" });
   if (c === "West") return byLang(lang, { it: "Ovest", en: "West", es: "Oeste", zh: "西部" });
@@ -342,4 +354,9 @@ export function seasonsPlayedLabel(n: number, lang: "es" | "zh"): string {
 /** "N seasons" in Chinese (no space, measure word 个). */
 export function seasonCountZh(n: number): string {
   return `${n}个赛季`;
+}
+
+/** "3 titoli" / "3 títulos" / "3个冠军": Chinese measure words attach to the number, no space. */
+export function countWord(n: number, word: string, lang: UiLang): string {
+  return lang === "zh" ? `${n}${word}` : `${n} ${word}`;
 }

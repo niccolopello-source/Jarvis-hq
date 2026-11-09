@@ -86,7 +86,7 @@ import { choiceShowsVoidedExtraYear } from "@/lib/pivot/career-coherence";
 import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
 import { ModalDialog } from "@/components/pivot/Dialog";
 import { LazyChunk } from "@/components/pivot/ChunkBoundary";
-import { attrLabel, chipLabel, confLabel, seedLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel, seasonsPlayedLabel } from "@/lib/pivot/labels";
+import { attrLabel, chipLabel, confLabel, seedLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel, seasonsPlayedLabel, seedConfLabel, countWord } from "@/lib/pivot/labels";
 import { fmtDec, legacyAwardLabel } from "@/lib/pivot/legacy-i18n";
 import { contextualText, developmentText, archivedRival } from "@/lib/pivot/copy-context";
 import { loadNarrativeEn, loadNarrativeEs, loadNarrativeZh, nx } from "@/lib/pivot/narrative";
@@ -1611,7 +1611,7 @@ function CareerView(props: {
                 {player.contract.yearsRemaining === 1 ? t("contractYear", lang) : tf("contractYears", { n: player.contract.yearsRemaining }, lang)} × ${player.contract.annualM}M
                 {last ? (() => {
                   const rec = teamRecord(last);
-                  return rec.seed ? ` · ${seedLabel(rec.seed, lang)} ${confLabel(rec.conf, lang)}` : "";
+                  return rec.seed ? ` · ${seedConfLabel(rec.seed, rec.conf, lang)}` : "";
                 })() : ""}
               </div>
             </div>
@@ -2039,7 +2039,7 @@ function RecapCard({
         {" "}
         <span>
           {tf("ageYears", { n: row.age }, lang)} · {row.team} · {rec.w}-{rec.l}
-          {rec.seed ? ` · ${seedLabel(rec.seed, lang)} ${confLabel(rec.conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
+          {rec.seed ? ` · ${seedConfLabel(rec.seed, rec.conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
         </span>
       </p>
       <div className="totals-strip mb-3">
@@ -2123,7 +2123,7 @@ function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
         {" "}
         <span>
           {tf("ageYears", { n: row.age }, lang)} · {row.team} · {teamRecord(row).w}-{teamRecord(row).l}
-          {teamRecord(row).seed ? ` · ${seedLabel(teamRecord(row).seed!, lang)} ${confLabel(teamRecord(row).conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
+          {teamRecord(row).seed ? ` · ${seedConfLabel(teamRecord(row).seed!, teamRecord(row).conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
         </span>
       </p>
       <div className="font-display text-[17px] mb-1 tabular">
@@ -2188,7 +2188,7 @@ function SeasonSheet({ player }: { player: PlayerState }) {
           <h3 className="font-display text-[22px]">{getSeasonDisplayLabel(row.season)}</h3>
           <p className="text-[13px] text-muted">
             {row.team} · {rec.w}-{rec.l}
-            {rec.seed ? ` · ${seedLabel(rec.seed, lang)} ${confLabel(rec.conf, lang)}` : ` · ${t("outOfPlayoffs", lang)}`} · OVR {displayOverall(row.overall)}
+            {rec.seed ? ` · ${seedConfLabel(rec.seed, rec.conf, lang)}` : ` · ${t("outOfPlayoffs", lang)}`} · OVR {displayOverall(row.overall)}
           </p>
         </div>
       </div>
@@ -2542,7 +2542,7 @@ function ArchiveView({
         <h2 className="page-title">{viewing.name}</h2>
         <p className="text-muted text-[13px] mb-4">
           {roleLabel(viewing.role, lang)} · {nx(viewing.verdict, lang)} · {t("peak", lang)} {displayedPeak(viewing.history, viewing.peak)}
-          {viewing.apexAge ? tf("atAge", { n: viewing.apexAge }, lang) : ""} · {viewing.titles} {t(viewing.titles === 1 ? "titleOne" : "titleMany", lang)}
+          {viewing.apexAge ? tf("atAge", { n: viewing.apexAge }, lang) : ""} · {countWord(viewing.titles, t(viewing.titles === 1 ? "titleOne" : "titleMany", lang), lang)}
           {viewing.difficulty ? ` · ${difficultyFace(viewing.difficulty, lang).label}` : ""}
         </p>
         {archiveIssues(viewing).map((issue) => (

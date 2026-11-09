@@ -4,7 +4,7 @@ import { advanceCareerSim, openCareerSim } from "./engine.ts";
 import { awardDisplay, awardLabel, chromeFallbacks, DEMO_LANGS, demoLang, difficultyFace, getLang, LANG_NAMES, LANG_TAG, msgKeys, setLang, t, type Lang } from "./i18n.ts";
 import { ES_CHROME } from "./i18n-es.ts";
 import { ZH_CHROME } from "./i18n-zh.ts";
-import { confLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel } from "./labels.ts";
+import { confLabel, countWord, seedConfLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel } from "./labels.ts";
 import { legacyKeys, lt, pickLabel } from "./legacy-i18n.ts";
 import { NARRATIVE_ES } from "./narrative/catalog-es.ts";
 import { NARRATIVE_ZH } from "./narrative/catalog-zh.ts";
@@ -163,4 +163,16 @@ test("determinism: it/en/es/zh and a mid-career language switch give the same ca
   } finally {
     setLang(before);
   }
+});
+
+test("word order: seed + conference and counted words follow each language", () => {
+  assert.equal(seedConfLabel(5, "West", "it"), "5° Ovest");
+  assert.equal(seedConfLabel(5, "West", "en"), "#5 West");
+  assert.equal(seedConfLabel(5, "West", "es"), "5.º del Oeste");
+  assert.equal(seedConfLabel(2, "Euro", "es"), "2.º de la EuroLeague");
+  assert.equal(seedConfLabel(5, "West", "zh"), "西部第5");
+  assert.equal(seedConfLabel(3, "East", "zh"), "东部第3");
+  assert.equal(seedConfLabel(3, undefined, "zh"), "第3");
+  assert.equal(countWord(3, t("titleMany", "zh"), "zh"), "3个冠军");
+  assert.equal(countWord(3, t("titleMany", "es"), "es"), "3 títulos");
 });
