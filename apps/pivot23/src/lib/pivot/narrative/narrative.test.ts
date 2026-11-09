@@ -24,7 +24,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const lib = join(here, "..");
 const comp = join(here, "..", "..", "..", "components", "pivot");
 /** Files that already carry both languages side by side (chrome dictionaries), not narrative. */
-const BILINGUAL_DICTS = new Set(["i18n.ts", "labels.ts", "legacy-i18n.ts", "cosmetics.ts"]);
+const BILINGUAL_DICTS = new Set(["i18n.ts", "labels.ts", "legacy-i18n.ts", "cosmetics.ts", "i18n-es.ts", "i18n-zh.ts"]);
 const SOURCES = [
   ...readdirSync(lib).filter((f) => f.endsWith(".ts") && !f.includes(".test.") && !f.includes(".stats.") && !BILINGUAL_DICTS.has(f)).map((f) => join(lib, f)),
   ...readdirSync(comp).filter((f) => /\.tsx?$/.test(f) && !f.includes(".test.")).map((f) => join(comp, f)),

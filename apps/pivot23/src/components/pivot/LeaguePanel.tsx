@@ -4,7 +4,7 @@ import { TeamCrest, TeamLabel, TeamMark } from "@/components/pivot/TeamMark";
 import { awardNoteLabel, dossierPlace, seedLabel } from "@/lib/pivot/labels";
 import { nx } from "@/lib/pivot/narrative";
 import { cpuPer, mvpRaceScore, personalAwardBrief, quintetRaceScore } from "@/lib/pivot/awards-helpers";
-import { awardLabel, t, tf, useLang, type Lang as UiLang, type Msg } from "@/lib/pivot/i18n";
+import { awardDisplay, t, tf, useLang, type Lang as UiLang, type Msg } from "@/lib/pivot/i18n";
 import type { DpoyCandidate, LeagueSnapshot, PlayerState, RoyCandidate, SeasonRow, StandingRow, TeamAmbition, TeamIdentity } from "@/lib/pivot/types";
 
 const SYSTEM_KEY = {
@@ -280,7 +280,7 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
               const club = all.find((r) => r.abbr === a.teamAbbr);
               return (
                 <li key={a.title} className={a.isPlayer ? "yours" : ""}>
-                  <span className="award-title">{awardLabel(a.title, lang)}</span>
+                  <span className="award-title">{awardDisplay(a.title, lang)}</span>
                   <span className="award-who">
                     {club ? <TeamCrest team={club} size={18} /> : null}
                     {a.name} · {a.teamAbbr}
@@ -366,7 +366,7 @@ export function PersonalAwards({
     r.awards.map((a) => ({
       key: `${r.season}-${a}`,
       year: r.yearLabel,
-      title: awardLabel(a, lang),
+      title: awardDisplay(a, lang),
       brief: personalAwardBrief(r, a),
     })),
   );
@@ -572,7 +572,7 @@ export function RoyBoard({
   return (
     <div className="roy-board">
       <h4 className="stats-heading" style={{ marginTop: 0 }}>
-        Rookie of the Year
+        {awardDisplay("Rookie of the Year", lang)}
       </h4>
       <p className="chart-cap">{t("royCap", lang)}</p>
       <div className="roy-head">
@@ -607,7 +607,7 @@ export function DpoyBoard({ race }: { race?: DpoyCandidate[] }) {
   return (
     <div className="roy-board">
       <h4 className="stats-heading" style={{ marginTop: 0 }}>
-        Defensive Player of the Year
+        {awardDisplay("Defensive Player of the Year", lang)}
       </h4>
       <p className="chart-cap">{t("dpoyCap", lang)}</p>
       <div className="roy-head">

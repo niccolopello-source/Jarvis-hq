@@ -1,0 +1,23 @@
+/* Simplified Chinese (zh-CN) narrative for draft-character. Key: Italian source text (see ../key.ts). NOT reviewed by a native speaker (2026-11-09). Missing keys fall back to English. */
+export const ZH_DRAFT_CHARACTER: Readonly<Record<string, string>> = {
+  "L'Etica": "职业态度",
+  "Arrivi prima, resti dopo. Il talento viene dopo il lavoro.": "最早到，最晚走。天赋排在努力之后。",
+  "Il Clutch": "关键先生",
+  "Gli ultimi tre minuti ti appartengono. Il resto, lo sopporti.": "最后三分钟属于你。其余时间，你只是忍耐。",
+  "Il Media": "媒体宠儿",
+  "Sai parlare. La città ti riconosce prima del tabellone.": "你很会说话。城市在记分牌之前就认出了你。",
+  "Il Motore": "永动机",
+  "Non spegni. Secondo salto, terzo possesso, ancora fiato.": "你从不熄火。第二次起跳，第三个回合，依然有气力。",
+  "L'Orgoglio": "骄傲",
+  "Vuoi la palla e la responsabilità. Qualcuno lo chiamerà ego.": "你想要球，也想要责任。有人会称之为自我。",
+  "La Costanza": "稳定",
+  "Niente notti da 40 e crolli da 6. Una linea, tutta l'inverno.": "没有40分之夜后的6分崩盘。一条平稳的线，贯穿整个冬天。",
+  "Il Collante": "粘合剂",
+  "Tieni insieme i silenzi. I compagni ti cercano senza dirtelo.": "你维系着沉默中的团结。队友们会来找你，却不说出口。",
+  "Il Corpo": "身板",
+  "Tieni il contatto. La stagione lunga non ti piega al primo colpo.": "你扛得住对抗。漫长的赛季不会在第一次冲击时就压垮你。",
+  "Carattere": "性格",
+  "Chi sei quando nessuno tiene il conto?": "没人计分的时候，你是谁？",
+  "Voce": "声音",
+  "Cosa lasci nello spogliatoio?": "你在更衣室里留下了什么？",
+};

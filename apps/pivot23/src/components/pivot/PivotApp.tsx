@@ -81,15 +81,15 @@ import {
   verdictOf,
   withPlayer,
 } from "@/lib/pivot/engine";
-import { initLang, registerLangLoader, setLang, t, tf, useLang, awardLabel, DEMO_LANGS, difficultyFace } from "@/lib/pivot/i18n";
+import { initLang, registerLangLoader, setLang, t, tf, useLang, awardDisplay, DEMO_LANGS, LANG_NAMES, LANG_TAG, difficultyFace } from "@/lib/pivot/i18n";
 import { choiceShowsVoidedExtraYear } from "@/lib/pivot/career-coherence";
 import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
 import { ModalDialog } from "@/components/pivot/Dialog";
 import { LazyChunk } from "@/components/pivot/ChunkBoundary";
-import { attrLabel, chipLabel, confLabel, seedLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel } from "@/lib/pivot/labels";
+import { attrLabel, chipLabel, seedLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel, seasonsPlayedLabel, seedConfLabel, countWord } from "@/lib/pivot/labels";
 import { fmtDec, legacyAwardLabel } from "@/lib/pivot/legacy-i18n";
 import { contextualText, developmentText, archivedRival } from "@/lib/pivot/copy-context";
-import { loadNarrativeEn, nx } from "@/lib/pivot/narrative";
+import { loadNarrativeEn, loadNarrativeEs, loadNarrativeZh, nx } from "@/lib/pivot/narrative";
 import { withLegacyFacts } from "@/lib/pivot/legacy-report";
 
 const loadCareerChart = () => import("@/components/pivot/CareerChart");
@@ -101,6 +101,8 @@ import { EURO_TEAMS, NBA_TEAMS } from "@/lib/pivot/teams";
 
 // English story text arrives as a lazy chunk; switching to EN waits for it (see setLang).
 registerLangLoader("en", loadNarrativeEn);
+registerLangLoader("es", loadNarrativeEs);
+registerLangLoader("zh", loadNarrativeZh);
 
 function SaveGlyph() {
   return (
@@ -1214,10 +1216,10 @@ export function PivotApp() {
                 type="button"
                 className={`lang-btn ${lang === id ? "on" : ""}`}
                 aria-pressed={lang === id}
-                lang={id}
+                lang={LANG_TAG[id]}
                 onClick={() => setLang(id)}
               >
-                {id === "it" ? "Italiano" : "English"}
+                {LANG_NAMES[id]}
               </button>
             ))}
           </div>
@@ -1427,6 +1429,7 @@ export function PivotApp() {
 
 function seasonsText(n: number, lang: string) {
   if (lang === "en") return n === 1 ? "1 season played" : `${n} seasons played`;
+  if (lang === "es" || lang === "zh") return seasonsPlayedLabel(n, lang);
   return n === 1 ? "1 stagione giocata" : `${n} stagioni giocate`;
 }
 
@@ -1608,7 +1611,7 @@ function CareerView(props: {
                 {player.contract.yearsRemaining === 1 ? t("contractYear", lang) : tf("contractYears", { n: player.contract.yearsRemaining }, lang)} × ${player.contract.annualM}M
                 {last ? (() => {
                   const rec = teamRecord(last);
-                  return rec.seed ? ` · ${seedLabel(rec.seed, lang)} ${confLabel(rec.conf, lang)}` : "";
+                  return rec.seed ? ` · ${seedConfLabel(rec.seed, rec.conf, lang)}` : "";
                 })() : ""}
               </div>
             </div>
@@ -2036,7 +2039,7 @@ function RecapCard({
         {" "}
         <span>
           {tf("ageYears", { n: row.age }, lang)} · {row.team} · {rec.w}-{rec.l}
-          {rec.seed ? ` · ${seedLabel(rec.seed, lang)} ${confLabel(rec.conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
+          {rec.seed ? ` · ${seedConfLabel(rec.seed, rec.conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
         </span>
       </p>
       <div className="totals-strip mb-3">
@@ -2081,7 +2084,7 @@ function RecapCard({
       {row.awards.length ? (
         <div className="league-awards-mini">
           {row.awards.map((a, i) => (
-            <span key={`${i}-${a}`} className="yours">{awardLabel(a, lang)}</span>
+            <span key={`${i}-${a}`} className="yours">{awardDisplay(a, lang)}</span>
           ))}
         </div>
       ) : (
@@ -2091,7 +2094,7 @@ function RecapCard({
         <div className="league-awards-mini">
           {row.league.awards.map((a) => (
             <span key={a.title} className={a.isPlayer ? "yours" : ""}>
-              {awardLabel(a.title, lang)} · {a.name}
+              {awardDisplay(a.title, lang)} · {a.name}
             </span>
           ))}
         </div>
@@ -2120,7 +2123,7 @@ function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
         {" "}
         <span>
           {tf("ageYears", { n: row.age }, lang)} · {row.team} · {teamRecord(row).w}-{teamRecord(row).l}
-          {teamRecord(row).seed ? ` · ${seedLabel(teamRecord(row).seed!, lang)} ${confLabel(teamRecord(row).conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
+          {teamRecord(row).seed ? ` · ${seedConfLabel(teamRecord(row).seed!, teamRecord(row).conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
         </span>
       </p>
       <div className="font-display text-[17px] mb-1 tabular">
@@ -2128,7 +2131,7 @@ function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
         <span className="text-muted text-[13px] font-sans"> · {row.gp} GP · PER {fmtDec(row.per, lang)}</span>
       </div>
       {row.awards.length > 0 && (
-        <p className="text-[13px] text-wood mb-1">{row.awards.map((a) => awardLabel(a, lang)).join(" · ")}</p>
+        <p className="text-[13px] text-wood mb-1">{row.awards.map((a) => awardDisplay(a, lang)).join(" · ")}</p>
       )}
       {row.mood && <p className="feel-line">{contextualText(row.mood, lang, {age: row.age})}</p>}
       {result && <p className="text-[13px] text-muted italic">{nx(result, lang)}</p>}
@@ -2185,7 +2188,7 @@ function SeasonSheet({ player }: { player: PlayerState }) {
           <h3 className="font-display text-[22px]">{getSeasonDisplayLabel(row.season)}</h3>
           <p className="text-[13px] text-muted">
             {row.team} · {rec.w}-{rec.l}
-            {rec.seed ? ` · ${seedLabel(rec.seed, lang)} ${confLabel(rec.conf, lang)}` : ` · ${t("outOfPlayoffs", lang)}`} · OVR {displayOverall(row.overall)}
+            {rec.seed ? ` · ${seedConfLabel(rec.seed, rec.conf, lang)}` : ` · ${t("outOfPlayoffs", lang)}`} · OVR {displayOverall(row.overall)}
           </p>
         </div>
       </div>
@@ -2539,7 +2542,7 @@ function ArchiveView({
         <h2 className="page-title">{viewing.name}</h2>
         <p className="text-muted text-[13px] mb-4">
           {roleLabel(viewing.role, lang)} · {nx(viewing.verdict, lang)} · {t("peak", lang)} {displayedPeak(viewing.history, viewing.peak)}
-          {viewing.apexAge ? tf("atAge", { n: viewing.apexAge }, lang) : ""} · {viewing.titles} {t(viewing.titles === 1 ? "titleOne" : "titleMany", lang)}
+          {viewing.apexAge ? tf("atAge", { n: viewing.apexAge }, lang) : ""} · {countWord(viewing.titles, t(viewing.titles === 1 ? "titleOne" : "titleMany", lang), lang)}
           {viewing.difficulty ? ` · ${difficultyFace(viewing.difficulty, lang).label}` : ""}
         </p>
         {archiveIssues(viewing).map((issue) => (

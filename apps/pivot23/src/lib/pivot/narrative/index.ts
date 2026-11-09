@@ -9,7 +9,7 @@
  */
 import { italianTeamPreposition } from "../labels";
 import { NBA_TEAMS, EURO_TEAMS } from "../teams";
-import { chromePairs, type Lang } from "../i18n";
+import { chromePairs, chromePairsFor, type Lang } from "../i18n";
 import { LEGACY_EN_IT } from "./legacy-it";
 import { EN_PROSE, IT_PROSE } from "./markers";
 import { agreeTeamsEn } from "./agreement";
@@ -29,6 +29,84 @@ export function loadNarrativeEn(): Promise<void> {
   return enLoad;
 }
 let toIt: Catalog | null = null;
+
+/*
+ * Spanish and Chinese (2026-11-09). Same keys as English (the Italian source). Each catalog is a
+ * lazy chunk layered over English: a fragment with no Spanish/Chinese entry renders in English,
+ * never in Italian. Translations are NOT reviewed by native speakers yet.
+ */
+type Extra = "es" | "zh";
+const narrativeExtra: Record<Extra, Readonly<Record<string, string>>> = { es: {}, zh: {} };
+const extraLoad: Partial<Record<Extra, Promise<void>>> = {};
+const toExtra: Partial<Record<Extra, Catalog>> = {};
+const ownExtra: Partial<Record<Extra, Catalog>> = {};
+
+/** Loads the Spanish narrative catalog (and the English one it falls back to). */
+export function loadNarrativeEs(): Promise<void> {
+  extraLoad.es ??= Promise.all([loadNarrativeEn(), import("./catalog-es")]).then(([, m]) => {
+    narrativeExtra.es = m.NARRATIVE_ES;
+    delete toExtra.es;
+    delete ownExtra.es;
+  });
+  return extraLoad.es;
+}
+
+/** Loads the Chinese narrative catalog (and the English one it falls back to). */
+export function loadNarrativeZh(): Promise<void> {
+  extraLoad.zh ??= Promise.all([loadNarrativeEn(), import("./catalog-zh")]).then(([, m]) => {
+    narrativeExtra.zh = m.NARRATIVE_ZH;
+    delete toExtra.zh;
+    delete ownExtra.zh;
+  });
+  return extraLoad.zh;
+}
+
+/** English pairs, then the language's chrome, then the language's narrative: last one wins. */
+function extraCatalog(lang: Extra): Catalog {
+  const hit = toExtra[lang];
+  if (hit) return hit;
+  const pairs: Record<string, string> = { ...narrativeEn };
+  for (const [it, en] of chromePairs()) if (!(it in pairs)) pairs[it] = en;
+  for (const [it, out] of chromePairsFor(lang)) pairs[it] = out;
+  Object.assign(pairs, narrativeExtra[lang]);
+  return (toExtra[lang] = buildCatalog(pairs));
+}
+
+/** Only the language's own text (plus proper names kept as-is): used to measure coverage. */
+function ownCatalog(lang: Extra): Catalog {
+  const hit = ownExtra[lang];
+  if (hit) return hit;
+  const pairs: Record<string, string> = {};
+  for (const [it, en] of Object.entries(narrativeEn)) if (normKey(it) === en) pairs[it] = en;
+  for (const [it, out] of chromePairsFor(lang)) pairs[it] = out;
+  Object.assign(pairs, narrativeExtra[lang]);
+  return (ownExtra[lang] = buildCatalog(pairs));
+}
+
+const normKey = (s: string) => s.replace(/\s+/g, " ").trim();
+
+const CJK = "\u3400-\u9fff\uf900-\ufaff";
+const CJK_PUNCT = "\u3000-\u303f\uff00-\uffef";
+/**
+ * Chinese typesetting for text assembled from fragments: no spaces around ideographs or
+ * full-width punctuation, Western separators between Chinese clauses become full-width.
+ */
+export function zhTidy(text: string): string {
+  return text
+    .replace(new RegExp(`([${CJK}])[,，]\\s*(?=[${CJK}])`, "gu"), "$1，")
+    .replace(new RegExp(`([${CJK}]):\\s+(?=[${CJK}])`, "gu"), "$1：")
+    .replace(new RegExp(`([${CJK}]);\\s+(?=[${CJK}])`, "gu"), "$1；")
+    .replace(new RegExp(`([${CJK}])\\.(?=\\s|$)`, "gu"), "$1。")
+    .replace(new RegExp(`([${CJK_PUNCT}])\\s+`, "gu"), "$1")
+    .replace(new RegExp(`\\s+([${CJK_PUNCT}])`, "gu"), "$1")
+    .replace(new RegExp(`([${CJK}])\\s+(?=[${CJK}])`, "gu"), "$1");
+}
+
+function extraNx(text: string, lang: Extra): string {
+  const r = translateWith(extraCatalog(lang), text, IT_PROSE);
+  if (!r.ok) return nx(text, "en");
+  return lang === "zh" ? zhTidy(r.text) : r.text;
+}
 
 function enCatalog(): Catalog {
   if (!toEn) {
@@ -123,6 +201,7 @@ export function itDisplay(text: string): string {
 /** Stored narrative text -> text in `lang`. Unknown text comes back exactly as stored. */
 export function nx(text: string | null | undefined, lang: Lang): string {
   if (!text) return text ?? "";
+  if (lang === "es" || lang === "zh") return extraNx(text, lang);
   if (lang === "en") {
     const r = translateWith(enCatalog(), text, IT_PROSE);
     return r.ok ? agreeTeamsEn(r.text) : text;
@@ -138,9 +217,22 @@ export function nx(text: string | null | undefined, lang: Lang): string {
 
 /** Same as nx(), also telling whether every piece was resolved. Used by the coverage tests. */
 export function nxCheck(text: string, lang: Lang): { text: string; ok: boolean } {
+  if (lang === "es" || lang === "zh") {
+    const r = translateWith(extraCatalog(lang), text, IT_PROSE);
+    return lang === "zh" ? { ...r, text: zhTidy(r.text) } : r;
+  }
   if (lang === "en") {
     const r = translateWith(enCatalog(), text, IT_PROSE);
     return { ...r, text: agreeTeamsEn(r.text) };
   }
   return translateWith(itCatalog(), text, EN_PROSE);
+}
+
+/**
+ * Coverage of the language's own catalog (no English fallback). `ok` is true only when every
+ * fragment of the text has a Spanish/Chinese entry (or is a proper name). Used by the tests.
+ */
+export function nxOwn(text: string, lang: Extra): { text: string; ok: boolean } {
+  const r = translateWith(ownCatalog(lang), text, IT_PROSE);
+  return lang === "zh" ? { ...r, text: zhTidy(r.text) } : r;
 }

@@ -1,5 +1,6 @@
 import { EURO_ROUNDS, NBA_ROUNDS } from "../../lib/pivot/data";
 import type { Lang } from "../../lib/pivot/i18n";
+import { seasonCountZh } from "../../lib/pivot/labels";
 import type { AttrKey, Fx, PlayerState } from "../../lib/pivot/types";
 
 /** First simulated season is shown as this calendar year. Display only. */
@@ -13,6 +14,7 @@ const LOCALES: Record<Lang, string> = {
   it: "it-IT",
   en: "en-US",
   es: "es-ES",
+  zh: "zh-CN",
 };
 
 /**
@@ -59,6 +61,7 @@ function mentionsMvp(value: string) {
 
 export function seasonCountLabel(count: number, lang: Lang = "it"): string {
   const n = Math.max(0, Math.round(count));
+  if (lang === "zh") return seasonCountZh(n);
   const word = lang === "en"
     ? (n === 1 ? "season" : "seasons")
     : lang === "es"
@@ -72,7 +75,7 @@ export function formatCareerTotal(value: number, lang: Lang): string {
   const rounded = Math.round(value);
   const format = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
   if (format.format(1000) !== "1000") return format.format(rounded);
-  const separator = lang === "en" ? "," : ".";
+  const separator = lang === "en" || lang === "zh" ? "," : ".";
   const sign = rounded < 0 ? "-" : "";
   const digits = String(Math.abs(rounded));
   return sign + digits.replace(/\B(?=(\d{3})+(?!\d))/g, separator);

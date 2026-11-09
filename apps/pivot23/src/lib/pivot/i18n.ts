@@ -1,13 +1,36 @@
 
 import { useSyncExternalStore } from "react";
 
-export type Lang = "it" | "en" | "es";
+import { ES_CHROME } from "./i18n-es";
+import { ZH_CHROME } from "./i18n-zh";
 
-/** Languages offered in the demo. Spanish stays in the dictionary for a later phase. */
-export const DEMO_LANGS = ["it", "en"] as const;
+export type Lang = "it" | "en" | "es" | "zh";
 
-export function demoLang(stored: string | null | undefined): "it" | "en" {
-  return stored === "en" ? "en" : "it";
+/**
+ * Languages offered on the home screen. Spanish and Simplified Chinese (zh-CN, mainland China)
+ * were added on 2026-11-09 (owner request); their text is machine-free but NOT yet reviewed by
+ * native speakers (docs/pivot23/i18n-es-zh/).
+ */
+export const DEMO_LANGS = ["it", "en", "es", "zh"] as const;
+
+/** Native names for the language picker. They never change with the active language. */
+export const LANG_NAMES: Record<Lang, string> = { it: "Italiano", en: "English", es: "Español", zh: "中文" };
+
+/** BCP 47 tag for <html lang>, Intl and the language buttons. */
+export const LANG_TAG: Record<Lang, string> = { it: "it", en: "en", es: "es", zh: "zh-CN" };
+
+/** Number locale per language. */
+export const NUMBER_LOCALE: Record<Lang, string> = { it: "it-IT", en: "en-US", es: "es-ES", zh: "zh-CN" };
+
+export function demoLang(stored: string | null | undefined): Lang {
+  return stored === "en" || stored === "es" || stored === "zh" ? stored : "it";
+}
+
+/** Picks the text for `lang`; Spanish and Chinese fall back to English, never to Italian. */
+export function byLang<T>(lang: Lang, texts: { it: T; en: T; es?: T; zh?: T }): T {
+  if (lang === "it") return texts.it;
+  if (lang === "en") return texts.en;
+  return texts[lang] ?? texts.en;
 }
 
 const KEY = "pivot-lang";
@@ -593,74 +616,9 @@ const EN: Record<Msg, string> = {
 };
 
 /** Spanish is not offered in the demo (D-014). Missing keys fall back to Italian; see spanishGaps(). */
-const ES: Partial<Record<Msg, string>> = {
-    eyebrow: "Simulador de carrera",
-    lede: "Una vida. Un parqué. El resto lo escribes tú.",
-    start: "Empezar",
-    resume: "Reanudar la carrera",
-    newLife: "Nueva vida",
-    how: "Cómo se juega",
-    archive: "Archivo",
-    lang: "Idioma",
-    tabLog: "Historia",
-    tabYear: "Año",
-    tabLeague: "Liga",
-    tabLife: "Vida",
-    seasonOn: "Temporada en curso",
-    simSlow: "Pivot 23 está tardando más de lo previsto.",
-    simCancel: "Cancelar",
-    end: "Fin del camino",
-    mvp: "MVP",
-    allStar: "All-Star",
-    allNba: "All-NBA",
-    fmvp: "Finals MVP",
-    dpoy: "Defensive Player of the Year",
-    roy: "Rookie of the Year",
-    mip: "Most Improved Player",
-    sixth: "Sixth Man of the Year",
-    raceMvp: "Carrera al MVP",
-    raceMvpCap: "Puntos, victorias y PER. Mínimo de partidos jugados, y tienes que ser All-Star.",
-    raceNba: "Carrera al All-NBA",
-    raceNbaCap: "Puntos, PER y plus-minus. Hay tres niveles: primer, segundo y tercer quinteto All-NBA.",
-    raceMip: "Carrera al Most Improved Player",
-    raceMipCap: "El salto de puntos respecto al año anterior. No vale si ya eres una estrella.",
-    yours: "Tus premios, este año",
-    yearAwards: "Premios de este año",
-    lifeAwards: "Premios personales",
-    careerDone: "Carrera concluida",
-    hofIn: "En el Hall of Fame",
-    saveMiss: "Esta temporada no se ha guardado en el navegador. Si recargas, vuelves al último guardado que sí se escribió. Ese no se borra.",
-    statLegend: "PPG puntos, RPG rebotes, APG asistencias, por partido.",
-    advStats: "Estadísticas avanzadas",
-    skip: "Saltar",
-    setupTitle: "Quién eres en la cancha",
-    setupLede: "Nombre, posición, dorsal. Luego la dificultad, y el oficio.",
-    setupName: "Nombre",
-    setupRole: "Posición",
-    setupFrom: "Origen",
-    setupNumber: "Dorsal",
-    setupHint: "El número de la camiseta. Del 0 al 99.",
-    setupDiff: "Dificultad",
-    setupDraft: "Jugar el Draft",
-    setupSim: "Simular la carrera",
-    simulated: "simulada",
-    years: "años",
-    peak: "pico",
-    age: "Edad",
-    titles: "Títulos",
-    guide1Title: "Una vida",
-    guide1Body: "Entras al Draft. Diez rondas: en cada una eliges una carta entre tres. Luego eliges el camino: NCAA, Europa o G League. Ahí crece tu overall antes de tu primera camiseta profesional.",
-    guide2Title: "La llamada",
-    guide2Body: "Solo ves el número, del 1 al 60. El equipo te elige por plantilla, ciudad y proyecto. No por la dificultad que escogiste.",
-    guide3Title: "Los inviernos",
-    guide3Body: "Cada temporada deja una marca. Las puertas de los playoff cambian. El verano decide solo. En junio todavía puede decir que no.",
-    guide4Title: "El pico",
-    guide4Body: "Tu overall sube hasta los 25-27 años y luego baja poco a poco. Una vida cada vez. Si la cierras, vuelves a empezar desde la misma carta.",
-    guideDone: "Entendido",
-    guideNext: "Siguiente",
-};
-
-const DICT: Record<Lang, Partial<Record<Msg, string>>> = { it: IT, en: EN, es: ES };
+const ES: Partial<Record<Msg, string>> = ES_CHROME;
+const ZH: Partial<Record<Msg, string>> = ZH_CHROME;
+const DICT: Record<Lang, Partial<Record<Msg, string>>> = { it: IT, en: EN, es: ES, zh: ZH };
 
 let current: Lang = "it";
 const listeners = new Set<() => void>();
@@ -678,12 +636,14 @@ function readStored(): Lang {
 const DOC_TITLE: Partial<Record<Lang, string>> = {
   it: "PIVOT 23 — La tua carriera cestistica",
   en: "PIVOT 23 — Your basketball career",
+  es: "PIVOT 23 — Tu carrera en el baloncesto",
+  zh: "PIVOT 23 — 你的篮球生涯",
 };
 
 /** <html lang> and the tab title follow the reader; index.html ships the Italian defaults. */
 function syncDocument() {
   if (typeof document === "undefined") return;
-  document.documentElement.lang = current;
+  document.documentElement.lang = LANG_TAG[current];
   const title = DOC_TITLE[current];
   if (title) document.title = title;
 }
@@ -752,7 +712,10 @@ export function useLang(): Lang {
 }
 
 export function t(key: Msg, lang: Lang = current): string {
-  return DICT[lang][key] ?? IT[key];
+  const own = DICT[lang]?.[key];
+  if (typeof own === "string" && own.trim()) return own;
+  // Spanish and Chinese fall back to English (complete), Italian/English keep their own text.
+  return lang === "it" ? IT[key] : EN[key] ?? IT[key];
 }
 
 /** t() with {placeholders}: tf("archiveEvicted", { name: "Rossi" }). */
@@ -783,6 +746,32 @@ export function awardLabel(title: string, _lang: Lang = current): string {
   return OFFICIAL_AWARD[title] ?? title;
 }
 
+/**
+ * Chinese display names for the awards (descriptive terms used by Chinese basketball media,
+ * not licensed names). Display only: awardLabel() stays language-free because the engine
+ * stores its output (data.ts).
+ */
+const AWARD_ZH: Record<string, string> = {
+  "Rookie of the Year": "年度最佳新秀",
+  "Defensive Player of the Year": "年度最佳防守球员",
+  "Finals MVP": "总决赛MVP",
+  "Most Improved Player": "年度进步最快球员",
+  "Sixth Man of the Year": "年度最佳第六人",
+  "All-NBA First Team": "NBA最佳阵容一阵",
+  "All-NBA Second Team": "NBA最佳阵容二阵",
+  "All-NBA Third Team": "NBA最佳阵容三阵",
+  "NBA Champion": "NBA总冠军",
+  "EuroLeague Champion": "欧洲篮球联赛冠军",
+  MVP: "常规赛MVP",
+  "All-Star": "全明星",
+};
+
+/** Award name for the screen. Same as awardLabel() except in Chinese. */
+export function awardDisplay(title: string, lang: Lang = current): string {
+  const official = awardLabel(title, lang);
+  return lang === "zh" ? AWARD_ZH[official] ?? official : official;
+}
+
 /** Every chrome key, in dictionary order. Used by the coverage tests. */
 export function msgKeys(): Msg[] {
   return Object.keys(IT) as Msg[];
@@ -809,9 +798,19 @@ export function chromePairs(): [it: string, en: string][] {
   return (Object.keys(IT) as Msg[]).map((k) => [IT[k], EN[k]] as [string, string]).filter(([it, en]) => it && en && it !== en);
 }
 
+/** Italian/target chrome pairs for Spanish or Chinese (target falls back to English). */
+export function chromePairsFor(lang: "es" | "zh"): [it: string, out: string][] {
+  return (Object.keys(IT) as Msg[]).map((k) => [IT[k], t(k, lang)] as [string, string]).filter(([it, out]) => it && out && it !== out);
+}
+
+/** Chrome keys with no own text in `lang` (they render the English fallback). */
+export function chromeFallbacks(lang: Lang): Msg[] {
+  return (Object.keys(IT) as Msg[]).filter((k) => !(typeof DICT[lang]?.[k] === "string" && DICT[lang][k]!.trim()));
+}
+
 /** Spanish keys still missing: the size of the Spanish phase for the interface chrome. */
 export function spanishGaps(): Msg[] {
-  return (Object.keys(IT) as Msg[]).filter((k) => !ES[k]?.trim());
+  return chromeFallbacks("es");
 }
 
 const DIFF_FACE = {
@@ -828,17 +827,23 @@ const DIFF_FACE = {
     leggenda: { label: "Legend", tag: "Extreme", desc: "Injuries pile up and the playoffs are a war. Only the special ones survive." },
   },
   es: {
-    esordio: { label: "Debut", tag: "Fácil", desc: "Crecimiento generoso, lesiones raras, playoff más abiertos. Para aprender el oficio." },
-    pro: { label: "Pro", tag: "Normal", desc: "El equilibrio de la liga. Sin descuentos ni obstáculos de más." },
-    allstar: { label: "All-Star", tag: "Difícil", desc: "Crecimiento lento, plantillas hostiles. Los premios se ganan de verdad." },
-    leggenda: { label: "Leyenda", tag: "Extremo", desc: "Lesiones y unos playoff duros. Solo los fenómenos siguen en pie." },
+    esordio: { label: "Debut", tag: "Fácil", desc: "Crecimiento generoso, lesiones poco frecuentes, playoffs más abiertos. Para aprender el juego." },
+    pro: { label: "Pro", tag: "Normal", desc: "El equilibrio propio de la liga. Sin descuentos ni obstáculos de más." },
+    allstar: { label: "All-Star", tag: "Difícil", desc: "Crecimiento lento, plantillas hostiles. Los premios hay que ganárselos." },
+    leggenda: { label: "Leyenda", tag: "Extremo", desc: "Lesiones a menudo y unos playoffs que son una guerra. Solo los fenómenos siguen en pie." },
+  },
+  zh: {
+    esordio: { label: "新秀", tag: "简单", desc: "成长更快，伤病少见，季后赛更开放。适合熟悉玩法。" },
+    pro: { label: "职业", tag: "普通", desc: "联盟本来的平衡。没有优惠，也没有额外的阻碍。" },
+    allstar: { label: "全明星", tag: "困难", desc: "成长缓慢，阵容不利。奖项必须靠实力赢得。" },
+    leggenda: { label: "传奇", tag: "极难", desc: "伤病频繁，季后赛如同战争。只有真正的天才才能站到最后。" },
   },
 } as const;
 
 export type DifficultyFaceId = keyof (typeof DIFF_FACE)["it"];
 
 export function difficultyFace(id: string, lang: Lang = current) {
-  const table = DIFF_FACE[lang] ?? DIFF_FACE.it;
+  const table = DIFF_FACE[lang] ?? DIFF_FACE.en;
   if (id in table) return table[id as DifficultyFaceId];
   return table.pro;
 }
