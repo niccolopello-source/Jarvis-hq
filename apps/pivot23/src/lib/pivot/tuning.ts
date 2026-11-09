@@ -137,6 +137,23 @@ export const TUNING = {
     /** Per-difficulty override of statsOvr.retireBarScale (injury bar at 29-33) for 2.24 careers; the age split still applies. */
     retireBarScale: { leggenda: 1.3 } as Partial<Record<DifficultyId, number>>,
   },
+  /** 2.25.0+ only (OVR_CURVE_225_SINCE): overrides of ovrCurve plus new levers. Deterministic (seedHash), no RNG. */
+  ovrCurve225: {
+    softAge: 26,
+    softGap: 0.8,
+    softRoom: 7,
+    exitDeclineW: 0.02,
+    exitAgeW: 0.032,
+    exitAgeBonus: { 35: 0.35 } as Record<number, number>,
+    /** Injury/minutes bar multiplier at 31-33 (fewer early exits, smaller cliff at 33). */
+    lateBarScale: 1.25,
+    /** Late minutes-retirement bar by summer age (2.24 and older: 11.5 at every age from 33). */
+    lateMinutesBar: { 33: 8.5, 34: 10 } as Record<number, number>,
+    /** Soft potential ceiling for low-potential careers: pot+1.4 - floorDrop ± floorJitter (seed), fading out by floorUntilPot. */
+    floorDrop: 2.5,
+    floorJitter: 3,
+    floorUntilPot: 74,
+  },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",
 };
@@ -219,6 +236,19 @@ export const OVR_CURVE_SINCE = "2.24.0";
 
 export function usesOvrCurve(career: { engineVersion?: string }): boolean {
   return versionAtLeast(career.engineVersion, OVR_CURVE_SINCE);
+}
+
+/** 2.25 career shape (TUNING.ovrCurve225): later brake (26), smoother exits (median 34), soft weak-Pro floor.
+ *  NOT active: ENGINE_VERSION stays 2.24, so only careers opened with engineVersion >= 2.25.0 (tests/sims) read it. */
+export const OVR_CURVE_225_SINCE = "2.25.0";
+
+export function usesOvrCurve225(career: { engineVersion?: string }): boolean {
+  return versionAtLeast(career.engineVersion, OVR_CURVE_225_SINCE);
+}
+
+/** Effective OVR-curve levers for a career: 2.24 values, overridden by TUNING.ovrCurve225 on 2.25+ careers. */
+export function ovrCurveOf(career: { engineVersion?: string }): typeof TUNING.ovrCurve {
+  return usesOvrCurve225(career) ? { ...TUNING.ovrCurve, ...TUNING.ovrCurve225 } : TUNING.ovrCurve;
 }
 
 /** Deterministic 0..1 from the career seed (no RNG consumed). */
@@ -314,7 +344,8 @@ export function retireBarScaleOf(career: { engineVersion?: string; difficulty?: 
   // 2.24: the OVR curve keeps more Leggenda careers on a heavier load at 29-32, so its base scale can differ (OVR_CURVE_SINCE only).
   const scale = (usesOvrCurve(career) ? TUNING.ovrCurve.retireBarScale[career.difficulty ?? "pro"] : undefined)
     ?? TUNING.statsOvr.retireBarScale[career.difficulty ?? "pro"] ?? 1;
-  return typeof scale === "number" ? scale : (scale[age] ?? 1);
+  const late = usesOvrCurve225(career) && age >= 31 ? TUNING.ovrCurve225.lateBarScale : 1;
+  return (typeof scale === "number" ? scale : (scale[age] ?? 1)) * late;
 }
 
 /** Leggenda 2.20+: minutes bar for this summer age, or undefined when the career keeps the older rule. */
