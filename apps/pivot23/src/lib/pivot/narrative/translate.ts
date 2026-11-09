@@ -40,6 +40,13 @@ function escapeRe(s: string): string {
 const SENTENCE_BREAK = /(?<=[.!?…])\s+(?=[\p{Lu}{«"])/u;
 
 /**
+ * Chinese closes sentences with full-width marks and no space ("他们观察你。你出手。"), so the
+ * Latin break above never fires on a zh value. Split those after 。！？ (and a closing quote).
+ */
+const CJK_BREAK = /(?<=[。！？](?:[”」』])?)(?![”」』]|$)/u;
+const splitOut = (v: string): string[] => (/[。！？]/u.test(v) ? v.split(CJK_BREAK).map((x) => x.trim()).filter(Boolean) : v.split(SENTENCE_BREAK));
+
+/**
  * Multi-sentence entries also register each sentence on its own when source and translation
  * have the same number of sentences, so text the engine truncated or recombined still resolves.
  * Entries written explicitly always win.
@@ -50,7 +57,7 @@ function sentencePairs(pairs: Pairs): [string, string][] {
     if (typeof v !== "string") continue;
     const ks = normText(k).split(SENTENCE_BREAK);
     if (ks.length < 2) continue;
-    const vs = normText(v).split(SENTENCE_BREAK);
+    const vs = splitOut(normText(v));
     if (vs.length !== ks.length) continue;
     ks.forEach((ki, i) => {
       // Only sentences that open with literal text: they are indexed by head, so stay cheap.

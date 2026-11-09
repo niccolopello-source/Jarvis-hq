@@ -281,7 +281,7 @@ export const ZH_FEEL: Readonly<Record<string, string>> = {
   "Il quaderno degli schemi è un libro, non un volantino. Lo sfogli, o resti in panchina.": "战术手册是一本书，不是一张传单。要么好好研读，要么坐板凳。",
   "Il palazzetto è neutro, il rumore no. {OPP} aspetta il primo errore.": "球馆是中立的，噪音却不是。{OPP}在等你犯第一个错。",
   "Lo scambio è una frase, per ora. Una frase che pesa, e tu la tieni senza firmarla.": "交易暂时只是一句话。一句沉重的话，你扛着它，却不签字。",
-  "Qualcuno ha fatto il tuo nome. Tu hai fatto la valigia, poi l'hai disfatta. Per ora.": "有人放出了你的名字。你收拾好行李，又打开了。暂时如此。",
+  "Qualcuno ha fatto il tuo nome. Tu hai fatto la valigia, poi l'hai disfatta. Per ora.": "有人放出了你的名字。你收拾好行李，又拆开了。暂时如此。",
   "Niente apice": "没有巅峰",
   "Un vuoto nel calendario. Si riempie, o si subisce.": "赛程中的一段空白。要么填满它，要么忍受它。",
   "Una settimana senza tesi. Si tiene, o si spreca. Tocca a te.": "没有主题的一周。利用它还是浪费它，由你决定。",

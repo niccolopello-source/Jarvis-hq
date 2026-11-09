@@ -110,8 +110,8 @@ test("runtime: harness careers in es/zh never show Italian prose (own text or En
   }
   for (const l of EXTRA) console.log(`[i18n] ${l} own-catalog line coverage: ${own[l][0]}/${own[l][1]} (${((100 * own[l][0]) / own[l][1]).toFixed(1)}%)`);
   assert.deepEqual([...new Set(leaks)].slice(0, 40), []);
-  // Floor measured on 2026-11-09 (>= 96% on these seeds); raise it as the catalogs grow, never lower it.
-  for (const l of EXTRA) assert.ok(own[l][0] / own[l][1] >= 0.95, `${l} own coverage ${own[l][0]}/${own[l][1]}`);
+  // Floor raised on 2026-11-09 after the full ES/ZH narrative pass (100% on these seeds); raise it as the catalogs grow, never lower it.
+  for (const l of EXTRA) assert.ok(own[l][0] / own[l][1] >= 0.99, `${l} own coverage ${own[l][0]}/${own[l][1]}`);
 });
 
 test("zh output is tidy: no ASCII space between two ideographs, no Italian ordinal marker", () => {
@@ -175,4 +175,14 @@ test("word order: seed + conference and counted words follow each language", () 
   assert.equal(seedConfLabel(3, undefined, "zh"), "第3");
   assert.equal(countWord(3, t("titleMany", "zh"), "zh"), "3个冠军");
   assert.equal(countWord(3, t("titleMany", "es"), "es"), "3 títulos");
+});
+
+test("zh multi-sentence entries also resolve sentence by sentence (full-width stops)", () => {
+  // The engine recombines sentences of one entry with others; zh values have no space after 。.
+  const r = nxOwn("Ti hanno guardato. Tu hai tirato. Sudore, ripetizioni, la stessa voce nello specchio.", "zh");
+  assert.ok(r.ok, r.text);
+  assert.match(r.text, /汗水、重复训练/);
+  const q = nxOwn("Qualcuno ha scritto Houston (HOU) sul foglio. Tu hai fatto la valigia, poi l'hai disfatta. Cleveland (CLE) è nel foglio.", "zh");
+  assert.ok(q.ok, q.text);
+  assert.doesNotMatch(q.text, /Qualcuno|valigia/);
 });
