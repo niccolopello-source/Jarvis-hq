@@ -1,0 +1,12 @@
+✔ attribute-only Fx has no duplicate statsPulse, both 2.24 and dormant 2.25 (16.390866ms)
+✔ no discrete training or contextual-pulse age gate between 25 and 26 (4.325864ms)
+✔ experience saturates at the existing symmetric cap and choices draw no extra RNG (15.915066ms)
+✔ representative same seed/actions replay includes full PlayerState and active RNG (45.358733ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 232.710861

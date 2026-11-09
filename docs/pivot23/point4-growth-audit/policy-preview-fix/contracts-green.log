@@ -1,0 +1,17 @@
+✔ attribute-only Fx has no duplicate statsPulse, both 2.24 and dormant 2.25 (14.239794ms)
+✔ no discrete training or contextual-pulse age gate between 25 and 26 (3.374986ms)
+✔ experience saturates at the existing symmetric cap and choices draw no extra RNG (11.104572ms)
+✔ representative same seed/actions replay includes full PlayerState and active RNG (37.171082ms)
+✔ REAL an5 policy previews preserve job cursor and full input player (12.683265ms)
+✔ REAL an5 alternatives preview actual next coach; real choice spends exactly one draw (3.887907ms)
+✔ REAL an5 throwing preview restores nested RNG context and leaves job untouched (2.546971ms)
+✔ REAL an5 preview supports exact zero cursor despite setState zero sentinel (2.039164ms)
+✔ full policy careers equal preview-free replay of the same picks (state + active RNG) (1169.484319ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1393.69884

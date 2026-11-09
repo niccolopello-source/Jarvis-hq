@@ -1,0 +1,158 @@
+{
+  "unit": {
+    "status": "PASS",
+    "exit": 0,
+    "log": "/workspace/point4-growth-audit/unit.log",
+    "sha256": "920d9f52ceb3f263e728cbd2c9c037ff71655853dc51aab76529ea43c8e0e1a8",
+    "summary": [
+      "\u2139 tests 483",
+      "\u2139 suites 1",
+      "\u2139 pass 483",
+      "\u2139 fail 0",
+      "\u2139 cancelled 0",
+      "\u2139 skipped 0",
+      "\u2139 todo 0",
+      "\u2139 duration_ms 39180.104029",
+      "\u2139 tests 4",
+      "\u2139 suites 0",
+      "\u2139 pass 4",
+      "\u2139 fail 0",
+      "\u2139 cancelled 0",
+      "\u2139 skipped 0",
+      "\u2139 todo 0",
+      "\u2139 duration_ms 243.185731"
+    ]
+  },
+  "stats": {
+    "status": "PASS",
+    "exit": 0,
+    "log": "/workspace/point4-growth-audit/stats.log",
+    "sha256": "4d3751a361b990d0502862bdc2a5ad7d759bb8b3bd751330eae55f5cd0730435",
+    "summary": [
+      "2.25 best-worst peak gap 1.99",
+      "2.25 morale up-down peak gap 0.74",
+      "\u2714 2.25 best vs worst choices: measurable, plausible peak gap (30812.448569ms)",
+      "\u2714 2.25 high vs low morale choices: measurable, plausible peak gap (18581.346892ms)",
+      "\u2139 tests 49",
+      "\u2139 suites 0",
+      "\u2139 pass 49",
+      "\u2139 fail 0",
+      "\u2139 cancelled 0",
+      "\u2139 skipped 0",
+      "\u2139 todo 0",
+      "\u2139 duration_ms 317418.35941"
+    ]
+  },
+  "contracts": {
+    "status": "PASS",
+    "exit": 0,
+    "log": "/workspace/point4-growth-audit/contracts.log",
+    "sha256": "eeddef437c757fab016ccca135d66da805e4da25e515ec99712417d4fe436914",
+    "summary": [
+      "\u2139 tests 4",
+      "\u2139 suites 0",
+      "\u2139 pass 4",
+      "\u2139 fail 0",
+      "\u2139 cancelled 0",
+      "\u2139 skipped 0",
+      "\u2139 todo 0",
+      "\u2139 duration_ms 232.710861"
+    ]
+  },
+  "typecheck": {
+    "status": "PASS",
+    "exit": 0,
+    "log": "/workspace/point4-growth-audit/typecheck.log",
+    "sha256": "ad6b35f64d2f7b4e07762bd10331f2e64e6df0ae894a9e117627ef77e769a0af",
+    "summary": []
+  },
+  "lint": {
+    "status": "PASS",
+    "exit": 0,
+    "log": "/workspace/point4-growth-audit/lint.log",
+    "sha256": "068c0d3050765efee3008bdc0e657b5cd551a30df4386017bfac49af6c3df483",
+    "summary": []
+  },
+  "build": {
+    "status": "PASS",
+    "exit": 0,
+    "log": "/workspace/point4-growth-audit/build.log",
+    "sha256": "e2c417a7b9d061b337e4f450cfcd54dcf3e6d1ad4f8a723a6da259a21a04479e",
+    "summary": [
+      "\u2713 built in 443ms"
+    ]
+  },
+  "journeys": {
+    "status": "PASS",
+    "exit": 0,
+    "log": "/workspace/point4-growth-audit/journeys.log",
+    "sha256": "dc062d8eade090d7d7797d9a9f8c750a53ca8584f1a45c70499142dd8d295db9",
+    "summary": [
+      "  32 passed (1.5m)"
+    ]
+  },
+  "policyPreviewFix_2026-11-09": {
+    "typecheck": {
+      "status": "PASS",
+      "log": "/workspace/point4-growth-audit/rerun-20261109/typecheck.log",
+      "sha256": "b84c009cf482817a780171b2e983d686f1019fdb2c8eb9ced5e9bf2daa222cd8",
+      "summary": [
+        "exit 0"
+      ]
+    },
+    "lint": {
+      "status": "PASS",
+      "log": "/workspace/point4-growth-audit/rerun-20261109/lint.log",
+      "sha256": "b447228a6bc2258075e6229cb5c42db412c54a6c8a4068193dba918fea83bd9b",
+      "summary": [
+        "exit 0"
+      ]
+    },
+    "unit": {
+      "status": "PASS",
+      "log": "/workspace/point4-growth-audit/rerun-20261109/unit.log",
+      "sha256": "cbb2506ff6f74399ad229d969c7ecde48eae23ca569e275c85dbac4a92beb0de",
+      "summary": [
+        "\u2139 tests 483",
+        "\u2139 pass 483",
+        "\u2139 fail 0",
+        "\u2139 skipped 0",
+        "\u2139 tests 9",
+        "\u2139 pass 9",
+        "\u2139 fail 0",
+        "\u2139 skipped 0",
+        "exit 0"
+      ]
+    },
+    "build": {
+      "status": "PASS",
+      "log": "/workspace/point4-growth-audit/rerun-20261109/build.log",
+      "sha256": "603f0b1d19073f2758560793557e0931c8eddf49a83302339cb02525de74e04d",
+      "summary": [
+        "exit 0"
+      ]
+    },
+    "point4": {
+      "status": "PASS",
+      "log": "/workspace/point4-growth-audit/rerun-20261109/point4.log",
+      "sha256": "7179919af04ff5696285434d6874080aeb3db4d5804ecf41deb5caa5bea4727b",
+      "summary": [
+        "\u2139 tests 9",
+        "\u2139 pass 9",
+        "\u2139 fail 0",
+        "\u2139 skipped 0",
+        "exit 0"
+      ]
+    },
+    "redGreen": {
+      "naivePreview_4ff3afd": "FAIL atteso 5/9 (contracts-red.log)",
+      "isolatedRngOnly_uncommitted0132": "FAIL atteso 1/9 heardLines (contracts-red-rng-only.log)",
+      "final": "PASS 9/9 (contracts-green.log)"
+    },
+    "policiesRerun": {
+      "careersSha256": "efe8ac5628ab373f54292d28243aec6074f40f6bcf5e18a9620220e9ab06ae84",
+      "replayByteIdentical": true,
+      "careers": 480
+    }
+  }
+}
