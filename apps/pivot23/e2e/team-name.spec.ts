@@ -79,9 +79,10 @@ test("a long franchise name stays readable on a phone Finals card", async ({ pag
   }
 });
 
-test("the home screen offers Italian and English only", async ({ page }) => {
+// Owner decision 2026-11-09 (PIVOT 23 in China): the home offers Italian, English, Spanish and Chinese.
+// This test previously asserted that "Español" was absent; the expectation is updated, not removed.
+test("the home screen offers Italian, English, Spanish and Chinese, and nothing else", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("button", { name: "Italiano" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "English" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Español" })).toHaveCount(0);
+  for (const name of ["Italiano", "English", "Español", "中文"]) await expect(page.getByRole("button", { name, exact: true })).toBeVisible();
+  await expect(page.locator(".lang-row .lang-btn")).toHaveCount(4);
 });
