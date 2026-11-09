@@ -3,6 +3,7 @@ import { rand } from "./rng";
 import { say } from "./voice";
 import { quietYearEventBits } from "./feel";
 import type { PlayerState, StoryEvent } from "./types";
+import { usesOvrCurve225 } from "./tuning";
 
 /** Eventi di atmosfera: corpo, strada, casa, silenzi. Tre scelte, italiano curato. */
 export const FEEL_STORY: StoryEvent[] = [
@@ -1022,8 +1023,10 @@ export const FEEL_STORY: StoryEvent[] = [
       {
         label: "Guardi il vetro, nient'altro",
         detail: "Il rumore tiene. Tu no.",
-        fx: () => ({
-          form: 0.35,
+        // 2.25: a real recovery (form + steadiness); older careers keep form 0.35.
+        fx: (s: PlayerState) => ({
+          form: usesOvrCurve225(s) ? 1 : 0.35,
+          ...(usesOvrCurve225(s) ? { hidden: { consistency: 2 } } : {}),
           flavor: "I lampioni passano. Arrivi più vuoto, e più a posto.",
         }),
       },
@@ -1038,8 +1041,8 @@ export const FEEL_STORY: StoryEvent[] = [
       {
         label: "Segni un possesso sul quaderno",
         detail: "Una riga, nel buio. Poi la tieni.",
-        fx: () => ({
-          attrs: { iq: 0.4, defense: 0.15 },
+        fx: (s: PlayerState) => ({
+          attrs: usesOvrCurve225(s) ? { iq: 0.8, defense: 0.35 } : { iq: 0.4, defense: 0.15 },
           flavor: "Una lettura, corretta, tra un lampione e l'altro. Basta.",
         }),
       },
@@ -1062,8 +1065,9 @@ export const FEEL_STORY: StoryEvent[] = [
       {
         label: "Ti siedi un minuto, e basta",
         detail: "Il corpo chiede poco. Glielo dai.",
-        fx: () => ({
-          form: 0.4,
+        fx: (s: PlayerState) => ({
+          form: usesOvrCurve225(s) ? 1 : 0.4,
+          ...(usesOvrCurve225(s) ? { injuryRisk: -2 } : {}),
           flavor: "Un minuto fermo. Il ginocchio ringrazia senza fare rumore.",
         }),
       },
@@ -1094,8 +1098,8 @@ export const FEEL_STORY: StoryEvent[] = [
       {
         label: "Un altro giro di liberi",
         detail: "Le luci basse non giudicano. Il ferro sì.",
-        fx: () => ({
-          attrs: { shooting: 0.35, handle: 0.15 },
+        fx: (s: PlayerState) => ({
+          attrs: usesOvrCurve225(s) ? { shooting: 0.75, handle: 0.3 } : { shooting: 0.35, handle: 0.15 },
           flavor: "I custodi aspettano. Tu finisci i dieci. Poi spegni.",
         }),
       },
