@@ -62,7 +62,7 @@ for (const version of versions) {
     assert.notEqual(a.s,b.s); assert.notEqual(a.rng,b.rng);
     for (let step=0;step<24;step++) {
       rngState(a.s,a.rng); rngState(b.s,b.rng);
-      const snap = (job: CareerSimJob) => ({n:job.n,rng:job.rng.getState(),player:job.s,envelope:envelope(job.s)});
+      const snap = (job: CareerSimJob) => ({n:job.n,opts:job.opts,rng:job.rng.getState(),player:job.s,envelope:envelope(job.s)});
       await emit(`${id}/step=${step}`,{uninterrupted:snap(a),resumed:snap(b)});
       const doneA = E.advanceCareerSim(a), doneB = E.advanceCareerSim(b);
       assert.equal(doneA,doneB,"resume must finish on same step (not full equality claim)");

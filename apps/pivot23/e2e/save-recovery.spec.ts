@@ -11,10 +11,11 @@ function watchErrors(page: Page) {
 
 const FUTURE = JSON.stringify({ v: 9, screen: "career", tab: "log", player: { name: "SR Futuro" }, pending: null, log: [], c: "x" });
 
-test("SR-02 future save, no room for its backup: the home says it is kept, a new career does not overwrite it", async ({ page }) => {
+test("SR-02 future save stays read-only even after quota recovers; no fallback career or rotation", async ({ page }) => {
   const errors = watchErrors(page);
   await page.addInitScript((saved) => {
     const original = Storage.prototype.setItem;
+    Object.defineProperty(window,"__restoreSyntheticQuota",{value:()=>{Storage.prototype.setItem=original;}});
     Storage.prototype.setItem = function (key: string, value: string) {
       if (key === "pivot-v2-save-backup" && this === localStorage) throw new DOMException("full", "QuotaExceededError");
       return original.call(this, key, value);
@@ -25,18 +26,25 @@ test("SR-02 future save, no room for its backup: the home says it is kept, a new
     }
   }, FUTURE);
   await page.goto("/");
-  await expect(page.getByText("versione più recente")).toBeVisible();
-  await expect(page.getByText("una nuova vita non lo sovrascrive")).toBeVisible();
-  await page.getByRole("button", { name: "Inizia", exact: true }).click();
-  await page.getByPlaceholder("Es. Marco Ferrara").fill("SR Nuova");
-  await page.getByRole("button", { name: "Gioca il Draft" }).click();
-  await page.locator(".draft-card").first().click();
+  const protection=page.getByTestId("live-protection");
+  await expect(protection).toHaveAttribute("data-reason","data");
+  await expect(protection).toHaveAttribute("data-ready","true");
+  await expect(page.getByRole("button",{name:"Inizia",exact:true})).toHaveCount(0);
+  await expect(page.getByRole("button",{name:"Esporta localStorage/pivot-v2-save",exact:true})).toBeVisible();
+  const snapshot=()=>page.evaluate(()=>[localStorage.getItem("pivot-v2-save"),sessionStorage.getItem("pivot-v2-save"),localStorage.getItem("pivot-v2-save-backup"),sessionStorage.getItem("pivot-v2-save-backup")]);
+  expect(await snapshot()).toEqual([FUTURE,null,null,null]);
+  await page.evaluate(()=>(window as unknown as {__restoreSyntheticQuota():void}).__restoreSyntheticQuota());
+  await page.getByRole("button",{name:"Riprova",exact:true}).click();
+  await expect(protection).toHaveAttribute("data-reason","data");
   await page.waitForTimeout(800);
-  expect(await page.evaluate(() => localStorage.getItem("pivot-v2-save"))).toBe(FUTURE);
-  expect(await page.evaluate(() => sessionStorage.getItem("pivot-v2-save"))).toContain("SR Nuova");
-  await expect(page.locator(".app-notice").filter({ hasText: /salv/i }).first()).toBeVisible();
+  expect(await snapshot()).toEqual([FUTURE,null,null,null]);
+  await page.goto("/robots.txt");
+  expect(await snapshot()).toEqual([FUTURE,null,null,null]);
+  await page.goBack();
+  await expect(protection).toHaveAttribute("data-reason","data");
   await page.reload();
-  expect(await page.evaluate(() => localStorage.getItem("pivot-v2-save"))).toBe(FUTURE);
+  await expect(protection).toHaveAttribute("data-ready","true");
+  expect(await snapshot()).toEqual([FUTURE,null,null,null]);
   expect(errors).toEqual([]);
 });
 

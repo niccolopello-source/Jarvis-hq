@@ -60,4 +60,24 @@ Future container schema (`v=3`) is distinct from future `player.engineVersion` i
 
 ## Product-policy boundary
 
-No automatic rejection, migration, restamping, backup restoration, quarantine or UI reset has been introduced. A future protection must distinguish schema from engine versions, preserve every raw copy, prevent autosave/clear/fallback from erasing or silently replacing a future career, and retain explicit recovery and internal laboratory use. Changing that behavior requires an agreed policy and boot/UI tests; a new upper bound in the existing loader alone is insufficient.
+No automatic rejection, migration, restamping, backup restoration, quarantine or UI reset has been introduced. A future protection must distinguish schema from engine versions, preserve every raw copy, prevent autosave/clear/fallback from erasing or silently replacing a future career, and retain explicit recovery and internal laboratory use. The subsequent `grokbot/future-save-protection` branch implements a conservative, non-destructive boundary in draft only; see the dated FUTURE-SAVE-PROTECTION report. Historical audit results remain historical; a new upper bound in the loader alone is insufficient.
+
+## New protection campaign: explicit diagnostic separation and provenance
+
+```sh
+pnpm run test:compat /absolute/pinned-main/apps/pivot23 /absolute/new-output --allow-diagnostic-changes
+```
+
+The default remains strict for **all** cross-revision rows. The explicit flag allows intentional diagnostic policy differences only (`engine-version/`, `recovery/`, `missing-rng`); every such row still retains PASS/FAIL, both full hashes and first mismatch, and `fullCrossRevision` still reports its failures. `supportedCrossRevision` must always pass, with no excluded gameplay field. Comparator regression tests ensure the flag never accepts a supported-state mismatch. Full-memory resume failures remain failures, separately from the persistible-equivalent baseline. New natural snapshots also include JSON-serializable `job.opts` alongside `n`; choice callback behavior is the explicit first/last policy in the id, not a serializable function.
+
+The manifest records committed SHA/tree **and** per-file source hashes (including untracked source), aggregate source hash, runtime/tool versions, harness hashes, each command's real exit/signal/log, raw gzip byte lengths/SHA-256 and comparison output hashes. A dirty working tree is not described as the committed source. Targets run in isolated processes; raw evidence contains synthetic fixtures only.
+
+## Conditional downstream compaction diagnostic
+
+The runner now also emits two full snapshots per target (`*-compaction.jsonl.gz`), using actual save/load on a deliberately forced 2.24 synthetic world: seed 89081, empty CPU-star roster, three matching NBA champion entries and a dynasty event at index 10. This is not a natural career or a frequency estimate. It tests whether dropping an event can affect the next `tickWorld`, not only display history. Cross-revision comparison must remain exact; uninterrupted vs resumed RNG/persistible differences are reported as FAIL, never normalized or silently fixed. The old 312-career campaign and this forced counterexample are separate result sets.
+
+```sh
+node --import=tsx scripts/compatibility/world-compaction-probe.mjs /absolute/target/apps/pivot23 /absolute/probe.jsonl.gz
+```
+
+Exit zero means the diagnostic completed, not that save/resume parity passed. Inspect its printed `persistibleMismatch`/`rngEqual` and comparator resume rows. The pre-existing compaction policy is intentionally unchanged.

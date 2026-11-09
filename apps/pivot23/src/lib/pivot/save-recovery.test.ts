@@ -1,3 +1,4 @@
+import { inspectLiveProtection } from "./live-protection.ts";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
@@ -7,7 +8,7 @@ import {
 } from "./engine.ts";
 import { newLifeAsk } from "./new-life.ts";
 import {
-  BACKUP_KEY, BACKUP_PREV_KEY, SAVE_KEY, buildLiveSave, clearLive, hasLiveSave, lastLoadReport, liveSaveUnprotected,
+  BACKUP_KEY, BACKUP_PREV_KEY, SAVE_KEY, buildLiveSave, clearLive, hasLiveSave, lastLoadReport,
   loadLive, readLiveBackup, restoreLiveBackup, saveLive,
 } from "./save.ts";
 import type { PlayerState } from "./types.ts";
@@ -134,7 +135,7 @@ test("SR-C2 missing player, missing required fields, wrong types and a stale che
 /* 3 ---------------- future / incompatible version ---------------- */
 test("SR-C3 future, older-unknown and non-integer versions are refused with their own state and kept", run((st) => {
   const raw = validRaw();
-  const cases: [unknown, string][] = [[3, "future"], [99, "future"], [1, "incompatible"], [0, "incompatible"], ["2", "corrupt"], [2.5, "corrupt"]];
+  const cases: [unknown, string][] = [[3, "future"], [99, "future"], [1, "incompatible"], [0, "incompatible"], ["2", "incompatible"], [2.5, "incompatible"]];
   for (const [v, state] of cases) {
     const bad = withV(raw, v);
     st.l.values.clear();
@@ -142,7 +143,8 @@ test("SR-C3 future, older-unknown and non-integer versions are refused with thei
     assert.equal(loadLive(), null, String(v));
     assert.equal(lastLoadReport().state, state, String(v));
     assert.equal(st.l.getItem(SAVE_KEY), bad);
-    assert.equal(readLiveBackup()?.raw, bad);
+    if (inspectLiveProtection().blocked) assert.equal(readLiveBackup(), null, "unknown/future metadata stays in place");
+    else assert.equal(readLiveBackup()?.raw, bad);
   }
 }));
 
@@ -163,12 +165,12 @@ test("SR-C4 a save written by the c3c4fa5 production build (v2) still opens unch
 
 /* 5 ---------------- localStorage missing / SecurityError ---------------- */
 for (const mode of ["missing", "throws"] as const) {
-  test(`SR-C5 localStorage ${mode}: saving never throws, is not reported as persistent, the tab copy reopens`, run((st) => {
+  test(`SR-C5 localStorage ${mode}: saving never throws, is not reported as persistent, unreadable locks; absent synthetic store permits tab memory`, run((st) => {
     const p = midCareer();
     assert.doesNotThrow(() => saveLive(data(p)));
     assert.equal(saveLive(data(p)), false, "not persistent");
-    assert.ok(st.s.getItem(SAVE_KEY));
-    assert.equal(loadLive()?.player.seed, p.seed);
+    if (mode === "throws") { assert.equal(st.s.getItem(SAVE_KEY), null); assert.equal(loadLive(), null); }
+    else { assert.ok(st.s.getItem(SAVE_KEY)); assert.equal(loadLive()?.player.seed, p.seed); }
     assert.doesNotThrow(() => loadArchive());
     assert.doesNotThrow(() => saveArchive(toArchive(playCareerSim({ seed: 7150, difficulty: "pro" }))));
     assert.equal(lastArchiveWrite().persisted, true, "session copy written (isArchivePersisted decides)");
@@ -266,34 +268,35 @@ test("SR-02 a future save with no room for its backup is not deleted by a new li
   st.l.setItem(SAVE_KEY, raw);
   st.l.quotaKeys.add(BACKUP_KEY);
   assert.equal(loadLive(), null);
-  assert.deepEqual(lastLoadReport(), { state: "future", version: 3, backedUp: false });
-  assert.equal(liveSaveUnprotected(), true);
-  // The home sees no live career, so "Inizia" does not ask: clearLive() must still keep it.
+  assert.deepEqual(lastLoadReport(), { state: "future", version: undefined, backedUp: false });
+  assert.equal(inspectLiveProtection().blocked, true);
+  // The old pure helper cannot see protection; the new boundary never mounts this home. clearLive also refuses.
   assert.equal(newLifeAsk({ hasLive: hasLiveSave(), finished: false, archived: false }), "none");
   assert.equal(clearLive(), false);
   assert.equal(st.l.getItem(SAVE_KEY), raw);
   const p = midCareer(7401);
   assert.equal(saveLive(data(p)), false, "the new career is not promised as persistent");
   assert.equal(st.l.getItem(SAVE_KEY), raw, "future save still there");
-  assert.ok(st.s.getItem(SAVE_KEY), "new career kept in the tab");
-  // Room comes back: the backup is taken first, then the new career is written.
+  assert.equal(st.s.getItem(SAVE_KEY), null, "no substitute new career in session while locked");
+  // Room comes back: a future slot still stays locked, never rotated or replaced.
   st.l.quotaKeys.delete(BACKUP_KEY);
-  assert.equal(saveLive(data(p, 3)), true);
-  assert.equal(readLiveBackup()?.raw, raw);
-  assert.equal(liveSaveUnprotected(), false);
+  assert.equal(saveLive(data(p, 3)), false);
+  assert.equal(readLiveBackup(), null);
+  assert.equal(inspectLiveProtection().blocked, true);
+  assert.equal(st.l.getItem(SAVE_KEY), raw);
 }));
 
 test("SR-03 a second damaged save never overwrites an earlier backup: the earlier one moves to the previous slot", run((st) => {
-  const future = futureRaw();
-  st.l.setItem(SAVE_KEY, future);
+  const earlierCorrupt = '{"v":2,"truncated":1}'; // Ordinary corruption still uses the existing reversible backup rotation.
+  st.l.setItem(SAVE_KEY, earlierCorrupt);
   loadLive();
-  assert.equal(readLiveBackup()?.raw, future);
+  assert.equal(readLiveBackup()?.raw, earlierCorrupt);
   assert.equal(clearLive(), true);
   const bad = "{\"v\":2,\"trunc";
   st.l.setItem(SAVE_KEY, bad);
   loadLive();
   assert.equal(readLiveBackup()?.raw, bad);
-  assert.equal((JSON.parse(st.l.getItem(BACKUP_PREV_KEY)!) as { raw: string }).raw, future);
+  assert.equal((JSON.parse(st.l.getItem(BACKUP_PREV_KEY)!) as { raw: string }).raw, earlierCorrupt);
   // No room to move the earlier copy: the earlier backup stays and nothing is overwritten.
   clearLive();
   st.l.quotaKeys.add(BACKUP_PREV_KEY);

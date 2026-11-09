@@ -1,0 +1,28 @@
+
+Running 1 test using 1 worker
+
+(node:162256) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/native-lifecycle-protection.spec.ts:2:1 › native navigation flushes RAM-only draft mutation before releasing the writer (1.2s)
+
+
+  1) e2e/native-lifecycle-protection.spec.ts:2:1 › native navigation flushes RAM-only draft mutation before releasing the writer 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: 0
+
+       7 |  await page.evaluate(()=>{const original=window.setTimeout;window.setTimeout=((fn:TimerHandler,ms?:number,...args:unknown[])=>original(fn,ms===360?60000:ms,...args)) as typeof window.setTimeout;});
+       8 |  await page.locator(".draft-card").first().click();await expect(page.getByText("Round 2 di",{exact:false})).toBeVisible();expect(await page.evaluate(()=>JSON.parse(localStorage.getItem("pivot-v2-save")!).player.round)).toBe(0);
+    >  9 |  await page.goto("/lifecycle-destination");expect(await page.evaluate(()=>sessionStorage.getItem("native-hide-trusted"))).toBe("true");expect(await page.evaluate(()=>JSON.parse(localStorage.getItem("pivot-v2-save")!).player.round)).toBe(1);
+         |                                                                                                                                                                                                                                         ^
+      10 |  expect(await page.evaluate(async()=> (await navigator.locks.query()).held?.filter(l=>l.name==="pivot23-live-persistence-v1").length)).toBe(0);
+      11 |  await page.goBack();await expect(page.locator(".draft-card").first()).toBeVisible();await expect(page.getByTestId("live-protection")).toHaveCount(0);expect(await page.evaluate(()=>JSON.parse(localStorage.getItem("pivot-v2-save")!).player.round)).toBe(1);
+      12 |  const bfcache=await page.evaluate(()=>sessionStorage.getItem("native-show-persisted"));console.log("native history return pageshow.persisted="+bfcache);
+        at /workspace/pivot23-future-guard/apps/pivot23/e2e/native-lifecycle-protection.spec.ts:9:233
+
+    Error Context: test-results/native-lifecycle-protectio-b8cfe-before-releasing-the-writer/error-context.md
+
+  1 failed
+    e2e/native-lifecycle-protection.spec.ts:2:1 › native navigation flushes RAM-only draft mutation before releasing the writer 

@@ -1,0 +1,63 @@
+{
+  "quality": {
+    "path": "/workspace/future-guard-quality-final.log",
+    "sha256": "efb80aca2863df386ce738cf26edab5c71752571a4fd58462b04622c23ec3e4c",
+    "bytes": 46685,
+    "exitCode": 0,
+    "meaning": "completed observed run"
+  },
+  "stats": {
+    "path": "/workspace/future-guard-stats-final.log",
+    "sha256": "912f5fc74ff4e3b515b53f3e98c46b901711cad08ccb41cd4a85fa055bdc6214",
+    "bytes": 6976,
+    "exitCode": 0,
+    "meaning": "completed observed run"
+  },
+  "e2e52": {
+    "path": "/workspace/future-guard-e2e-final.log",
+    "sha256": "9f18f57ea57013b21609246c1abbab3be59b3bb229d9acd450fd346c43b0e02f",
+    "bytes": 7781,
+    "exitCode": 0,
+    "meaning": "completed observed run"
+  },
+  "e2eProtection30": {
+    "path": "/workspace/future-guard-e2e-protection-last.log",
+    "sha256": "f0fbed349257269021a1a6e35c35bab0046ef08b2c9dbc569b19f26523628d05",
+    "bytes": 4415,
+    "exitCode": 0,
+    "meaning": "completed observed run"
+  },
+  "build": {
+    "path": "/workspace/future-guard-build-last.log",
+    "sha256": "fed1df02d6c895c76c43ea688a9bdecd7e8ae1085e6789a3a2a3faed2cdd6137",
+    "bytes": 1073,
+    "exitCode": 0,
+    "meaning": "completed observed run"
+  },
+  "campaign": {
+    "path": "/workspace/future-guard-campaign-final.log",
+    "sha256": "e7b3deae5f08d71c18c0c85d231a2c4347c3c46bac8615f3e0f1383675e6e909",
+    "bytes": 445,
+    "exitCode": 0,
+    "meaning": "completed observed run"
+  },
+  "apiRed": {
+    "path": "/workspace/future-guard-api-red.log",
+    "sha256": "6f3b43bef9f84b4fcbdf0341de725304b2102bd31e0b8e6fa094d43ca0e93261",
+    "bytes": 1183,
+    "exitCode": 1,
+    "meaning": "expected RED against old guard 0845126"
+  },
+  "e2eSources": {
+    "batch52": {
+      "revision": "6cef874ed4919890340bed4834fc226aa2da4126",
+      "futureSpecSha256": "ad25eff922deeb38f850ac55b3bfa981621ce422f2c247ffc8068b195f1ab623"
+    },
+    "protection30": {
+      "futureSpecSha256": "3944cccfd0e0d0de8db4d977fc30a233cd568cf4235de807c223790af61a709d",
+      "note": "one additional unreadable-storage boot test only; runtime unchanged from 6cef874"
+    },
+    "uniqueTests": 53,
+    "breakdown": "30 protection + 23 legacy; batch 52 then protection rerun30 (29 overlap)"
+  }
+}

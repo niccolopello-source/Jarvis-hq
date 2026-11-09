@@ -1,0 +1,114 @@
+import { test, expect } from "@playwright/test";
+test.use({
+  launchOptions: { ignoreDefaultArgs: ["--disable-back-forward-cache"] },
+});
+
+test("native navigation flushes RAM-only draft mutation before releasing the writer", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    window.addEventListener("pagehide", (e) => {
+      sessionStorage.setItem("native-hide-trusted", String(e.isTrusted));
+    });
+    window.addEventListener("pageshow", (e) => {
+      sessionStorage.setItem("native-show-persisted", String(e.persisted));
+    });
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Inizia", exact: true }).click();
+  await page.getByPlaceholder("Es. Marco Ferrara").fill("Synthetic Native");
+  await page.getByRole("button", { name: "Gioca il Draft" }).click();
+  await expect(page.locator(".draft-card").first()).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          JSON.parse(localStorage.getItem("pivot-v2-save") ?? "null")?.player
+            .round,
+      ),
+    )
+    .toBe(0);
+  await page.evaluate(() => {
+    const original = window.setTimeout;
+    window.setTimeout = ((fn: TimerHandler, ms?: number, ...args: unknown[]) =>
+      original(
+        fn,
+        ms === 360 ? 60000 : ms,
+        ...args,
+      )) as typeof window.setTimeout;
+  });
+  await page.locator(".draft-card").first().click();
+  await expect(page.getByText("Round 2 di", { exact: false })).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => JSON.parse(localStorage.getItem("pivot-v2-save")!).player.round,
+    ),
+  ).toBe(0);
+  await page.goto("/robots.txt");
+  expect(
+    await page.evaluate(() => sessionStorage.getItem("native-hide-trusted")),
+  ).toBe("true");
+  expect(
+    await page.evaluate(
+      () => JSON.parse(localStorage.getItem("pivot-v2-save")!).player.round,
+    ),
+  ).toBe(1);
+  expect(
+    await page.evaluate(
+      async () =>
+        (await navigator.locks.query()).held?.filter(
+          (l) => l.name === "pivot23-live-persistence-v1",
+        ).length,
+    ),
+  ).toBe(0);
+  await page.goBack();
+  await expect(page.locator(".draft-card").first()).toBeVisible();
+  await expect(page.getByTestId("live-protection")).toHaveCount(0);
+  expect(
+    await page.evaluate(
+      () => JSON.parse(localStorage.getItem("pivot-v2-save")!).player.round,
+    ),
+  ).toBe(1);
+  const bfcache = await page.evaluate(() =>
+    sessionStorage.getItem("native-show-persisted"),
+  );
+  console.log("native history return pageshow.persisted=" + bfcache);
+  console.log(
+    "native history notRestoredReasons=" +
+      JSON.stringify(
+        await page.evaluate(() => {
+          const nav = performance.getEntriesByType(
+            "navigation",
+          )[0] as PerformanceNavigationTiming & {
+            notRestoredReasons?: unknown;
+          };
+          return nav?.notRestoredReasons ?? null;
+        }),
+      ),
+  );
+  await expect
+    .poll(() =>
+      page.evaluate(
+        async () =>
+          (await navigator.locks.query()).held?.filter(
+            (l) => l.name === "pivot23-live-persistence-v1",
+          ).length,
+      ),
+    )
+    .toBe(1);
+  await page.reload();
+  await expect(page.locator(".draft-card").first()).toBeVisible();
+  expect(
+    await page.evaluate(
+      async () =>
+        (await navigator.locks.query()).held?.filter(
+          (l) => l.name === "pivot23-live-persistence-v1",
+        ).length,
+    ),
+  ).toBe(1);
+  expect(
+    await page.evaluate(
+      () => JSON.parse(localStorage.getItem("pivot-v2-save")!).player.round,
+    ),
+  ).toBe(1);
+});

@@ -1,0 +1,4 @@
+{"id":"2.24.0-beta/forced-compaction-dynasty/89081/before-tick","revision":"main","fullStatus":"FAIL","firstMismatch":"$.player.world.events.10","persistedStatus":"PASS","persistedMismatch":null,"rngStatus":"PASS"}
+{"id":"2.24.0-beta/forced-compaction-dynasty/89081/before-tick","revision":"draft","fullStatus":"FAIL","firstMismatch":"$.player.world.events.10","persistedStatus":"PASS","persistedMismatch":null,"rngStatus":"PASS"}
+{"id":"2.24.0-beta/forced-compaction-dynasty/89081/after-tick","revision":"main","fullStatus":"FAIL","firstMismatch":"$.player.rngState","persistedStatus":"FAIL","persistedMismatch":"$.player.rngState","rngStatus":"FAIL"}
+{"id":"2.24.0-beta/forced-compaction-dynasty/89081/after-tick","revision":"draft","fullStatus":"FAIL","firstMismatch":"$.player.rngState","persistedStatus":"FAIL","persistedMismatch":"$.player.rngState","rngStatus":"FAIL"}

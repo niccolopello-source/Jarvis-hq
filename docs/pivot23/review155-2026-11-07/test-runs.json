@@ -1,0 +1,111 @@
+{
+  "nativeRed": {
+    "path": "/workspace/review155-native-red.log",
+    "sha256": "f9c956a8eaf5ab165dade1c2fde559264439f718286d12be2d66cc8174a69086",
+    "bytes": 2461,
+    "exitCode": 1,
+    "meaning": "expected RED native exit on runtime 8d84ec7; route-fulfilled destination"
+  },
+  "wrapperRed": {
+    "path": "/workspace/review155-wrapper-red.log",
+    "sha256": "6c0987d3d31893ec6b7be56576e6687cd210b6f2d6b7942e10694832d7c09d5d",
+    "bytes": 1056,
+    "exitCode": 1,
+    "meaning": "expected RED malformed wrapper classification"
+  },
+  "quality": {
+    "path": "/workspace/review155-quality-final.log",
+    "sha256": "9f5e7f8df0b90c7ebb8a255390381ca59d42071ef0dbe99906faa6aaebfec195",
+    "bytes": 48237,
+    "exitCode": 0,
+    "meaning": "461 unit, types/lint/build, compat types and 7 tools"
+  },
+  "stats": {
+    "path": "/workspace/review155-stats.log",
+    "sha256": "5c92835aa70eabe02397f78bf5d2a762206245ebe2cde1231bf0ffe1ee6a3d8f",
+    "bytes": 6973,
+    "exitCode": 0,
+    "meaning": "49 stats, unchanged thresholds"
+  },
+  "browser47": {
+    "path": "/workspace/review155-browser-final.log",
+    "sha256": "43a16788420967192a802194c36c86cc85e631652d5f0282f04d70d45b7e3075",
+    "bytes": 7460,
+    "exitCode": 0,
+    "meaning": "47 distinct Chromium preview tests, static robots native destination"
+  },
+  "ciCases11": {
+    "path": "/workspace/review155-ci-cases-green.log",
+    "sha256": "64aaaca4b22ed236b22735cc44abe22a1f073d6c47f32019c17c9f2a167d0e63",
+    "bytes": 1829,
+    "exitCode": 0,
+    "meaning": "11 separate recovery/safety browser tests; 3 stronger policy assertions"
+  },
+  "nativeGreen38": {
+    "path": "/workspace/review155-native-green.log",
+    "sha256": "44f4a6371c1f1031c222c7196f8bf72662e6272c1beccacaf7da319e363cde17",
+    "bytes": 5987,
+    "exitCode": 0,
+    "meaning": "intermediate 38 tests with native route-fulfilled receiver"
+  },
+  "nativeStaticGreen": {
+    "path": "/workspace/review155-native-static-destination.log",
+    "sha256": "dc8252ff6c617cec89ceda6f88806a3dd19825d142edea2a807b77b813d375fc",
+    "bytes": 551,
+    "exitCode": 0,
+    "meaning": "1 native static receiver test, overlap with final47"
+  },
+  "campaign": {
+    "path": "/workspace/review155-campaign.log",
+    "sha256": "15e820b4d29093a0753166f7c0defd40924912ebcc9e011cf75a2c860999ac2a",
+    "bytes": 436,
+    "exitCode": 0,
+    "meaning": "9 commands exit0; policy gate, not full-memory all green"
+  },
+  "e2eSourceHashes": {
+    "apps/pivot23/e2e/future-save-protection.spec.ts": "3944cccfd0e0d0de8db4d977fc30a233cd568cf4235de807c223790af61a709d",
+    "apps/pivot23/e2e/a11y-i18n.spec.ts": "59e6697a7a77f9e459a5449c9ed53b73cfa50a17107d3e2757c26b649b5b1b13",
+    "apps/pivot23/e2e/g1-persistence.spec.ts": "aa9e8f61971bfdfae4926b155ac0f50704056d3697be451bcf6d6ca4057699e2",
+    "apps/pivot23/e2e/perf-probe.spec.ts": "77f865472783467c9cbae16e1b004d6554ad68a9853dc9c8339cd4f48a2b2f92",
+    "apps/pivot23/e2e/demo-gate.spec.ts": "37fa2bd18f273e7f6688ab0081465aa570d7b7d1a2c70b6a84f3880aef9e78a9",
+    "apps/pivot23/e2e/ads-desktop.spec.ts": "677b88a8a2200f09e8681d8e7d7e1abe8873fe48070831e9c1c4166b9c72d407",
+    "apps/pivot23/e2e/home-premiere.spec.ts": "5bba35d3426e91ccc8dea0d80467fef5fdb6575d663cfb8d2906c7a3cbfd646b",
+    "apps/pivot23/e2e/splash-recovery.spec.ts": "97f3b1252fdda8b707310bd2dcf02cb3715e05bd477f59e04023bf2ecec591df",
+    "apps/pivot23/e2e/offline-after-load.spec.ts": "807a1311195506f6c278e13e117e9b69fe507a3ff72ecc47114c9ec3e86b456e",
+    "apps/pivot23/e2e/engine-224-career.spec.ts": "7c2d6b0fe591a9ef9ac0f88a6b6e6c71407e3130034f33a3a8c48d7b64ddbaf3",
+    "apps/pivot23/e2e/chunk-failure.spec.ts": "f40ab012a37e31a18707cc86b4fb003f35aa7995fa0c9dc5328e557fc999de89",
+    "apps/pivot23/e2e/name-length.spec.ts": "c3a06d94b19cbb5a423a2c7905c206d2dfbc4c8aa5cfcff9c1f79db383bd76a4",
+    "apps/pivot23/e2e/save-safety.spec.ts": "1cc6ea1020214b1f8670b9895997110979c7c6920e7d67a9cde2ed7766f13cc5",
+    "apps/pivot23/e2e/native-lifecycle-protection.spec.ts": "283899f39c29c72e8f52092597509c7b9f5849778a1240ed1bd4235dba5b6dc7",
+    "apps/pivot23/e2e/team-name.spec.ts": "dada9e8b0117776956a6366dc09fb349033def162dff900c01bd7ac96b306728",
+    "apps/pivot23/e2e/narrative-lang.spec.ts": "b2fe4b03feb0627cae3bc9d8c2b897e20d82e36805797437a513661920dd2660",
+    "apps/pivot23/e2e/save-recovery.spec.ts": "ee6fad8ffc54ed88851d79b4caf03620193601722626ca00382dd51cdd9efc25",
+    "apps/pivot23/e2e/g5-smoke.spec.ts": "087dc6fd257c227e6c0d511a3138333ac65f2ae92de450d1637a7c27cc28e3db",
+    "apps/pivot23/e2e/paths.spec.ts": "6b109ba43c741069b00d0fbc0ad343eef9d2f7a027e97a0ed35b9340dbb0a937",
+    "apps/pivot23/e2e/resume-late-quiet.spec.ts": "22d0be227fb6dbe0e0926914f7ed5d89ea60ad357092b1754283dad181ce7986",
+    "apps/pivot23/e2e/lifecycle-flush.spec.ts": "6898c63e17bb04cba3a64589042811213cf962b696e298429f9c75e408503b96",
+    "apps/pivot23/e2e/readiness.spec.ts": "72d0716eb5a7060d1c3efc97cdab2387a4c268224adedf81c6e31297f6213a8c",
+    "apps/pivot23/e2e/g1-story-reload.spec.ts": "98d0d1e6faebdf3505af74aa16c103492a3ebc52df0015822d76e5700cedef35",
+    "apps/pivot23/e2e/instagram-link.spec.ts": "eee00dafcc8cf176991941bb523d22e9a6ccf2da971a7badd65289150fe44980",
+    "apps/pivot23/e2e/g6-onboarding.spec.ts": "e35a7ce1d023a51b627f8bbebd6b50361efcdd10ee5283ce4d75376c44a445c6",
+    "apps/pivot23/e2e/g3-idempotency.spec.ts": "22b7211a56c59d8856010ef01e365a15755cba52198fa1b09710bee6d422d940",
+    "apps/pivot23/e2e/intro-sound.spec.ts": "b28fd97868e29f386852cd38b86514172fd7e0083428878c0c855ad8211655e1",
+    "apps/pivot23/e2e/career-card.spec.ts": "a2ecc409210b413e77e211d0d91992783b81a2c94ee5c9d6228571e1e415a525",
+    "apps/pivot23/e2e/demo.spec.ts": "21334ac601ccc06b44f0e16b896bb77a1d7ab0f026936ec7c765c29b50792b32",
+    "apps/pivot23/e2e/s3-viewports.spec.ts": "92337e77bc78d3e080186ae662d9d1576944bfd34bb94f7840d86e96009780e4",
+    "apps/pivot23/e2e/input-lock.spec.ts": "14f7de8854f97c72ebe6fa28abd0b5e0cfc0b677929cd8c0a23d8105152ce571",
+    "apps/pivot23/e2e/init-failure.spec.ts": "d263d59aed64f2c89f60ff1c90f8253e465afda9aa10a3f35d77a39d3b85fe6b",
+    "apps/pivot23/e2e/demo-readiness.spec.ts": "826b8caa4a4f5630ce45bdc235058f569d6e1ef24c1d11be8c6258c374b43ee7",
+    "apps/pivot23/e2e/favicon.spec.ts": "58d2985a8181d240f4c2d5e89907d2aa75a2543f34809aa958fd1bd9e1c7d846"
+  },
+  "browserUniqueTests": 58,
+  "browserBreakdown": "47 final main batch +11 recovery/safety, disjoint; intermediate reruns not added",
+  "toolingCorrection": "test:types invoked once by mistake (unsupported script), exit1 after successful lint; supported typecheck + lint rerun exit0; not a product test failure",
+  "updatedSpecsQuality": {
+    "path": "/workspace/review155-e2e-types-lint.log",
+    "sha256": "d97beda192d5d29924cdd8791356b24b83448c3aea0f3ee6175ef4662cd455cb",
+    "bytes": 1836,
+    "exitCode": 0,
+    "meaning": "supported typecheck/lint and 11-test discovery after E2E assertion changes"
+  }
+}

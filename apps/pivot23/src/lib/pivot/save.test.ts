@@ -146,7 +146,8 @@ test("D-04 localStorage unavailable (missing or throwing): no false persistence"
     try {
       assert.equal(persistentStorageAvailable(), false, mode);
       assert.equal(saveLive(data(player())), false, mode);
-      assert.ok(loadLive(), `${mode}: in-memory copy for this tab`);
+      if (mode === "throws") assert.equal(loadLive(), null, "unreadable store must not fall back to MEM/session");
+      else assert.ok(loadLive(), `${mode}: in-memory copy for this synthetic Node tab`);
     } finally {
       st.restore();
     }
@@ -260,7 +261,7 @@ test("D-06 the only shipped version is 2: no migrations registered, v1 is incomp
   }
 });
 
-test("D-06 future version is not opened, not deleted, and backed up", () => {
+test("D-06 future version is not opened, deleted or rotated into backups", () => {
   const st = install();
   try {
     const raw = JSON.stringify({ ...buildLiveSave(player(), null, [], "career", "log", 1), v: 99 });
@@ -268,7 +269,7 @@ test("D-06 future version is not opened, not deleted, and backed up", () => {
     assert.equal(loadLive(), null);
     assert.equal(lastLoadReport().state, "future");
     assert.equal(st.local.getItem(SAVE_KEY), raw);
-    assert.equal(readLiveBackup()?.reason, "future");
+    assert.equal(readLiveBackup(), null, "future primary stays in place, no automatic rotation");
   } finally {
     st.restore();
   }
@@ -290,8 +291,8 @@ test("D-06 corrupted JSON, truncated data and bad checksum are reported as corru
     try {
       seeded(st, raw);
       assert.equal(loadLive(), null, label);
-      assert.equal(lastLoadReport().state, "corrupt", label);
-      assert.equal(lastLoadReport().backedUp, true, label);
+      assert.equal(lastLoadReport().state, label === "noVersion" ? "incompatible" : "corrupt", label);
+      assert.equal(lastLoadReport().backedUp, label !== "noVersion", label);
       assert.equal(st.local.getItem(SAVE_KEY), raw, `${label}: kept`);
     } finally {
       st.restore();
@@ -314,15 +315,15 @@ test("D-06 quota exceeded while backing up: report says no backup, original stil
   }
 });
 
-test("D-06 restore from backup puts the exact original back after a new career overwrote it", () => {
+test("D-06 future recovery stays read-only: no new career or substitute restore", () => {
   const st = install();
   try {
     const raw = JSON.stringify({ ...buildLiveSave(player("Futuro"), null, [], "career", "log", 1), v: 3 });
     seeded(st, raw);
     assert.equal(loadLive(), null);
-    assert.equal(saveLive(data(player("Nuovo"))), true);
-    assert.notEqual(st.local.getItem(SAVE_KEY), raw);
-    assert.equal(restoreLiveBackup(), true);
+    assert.equal(saveLive(data(player("Nuovo"))), false);
+    assert.equal(st.local.getItem(SAVE_KEY), raw);
+    assert.equal(restoreLiveBackup(), false);
     assert.equal(st.local.getItem(SAVE_KEY), raw);
     loadLive();
     assert.equal(lastLoadReport().state, "future");

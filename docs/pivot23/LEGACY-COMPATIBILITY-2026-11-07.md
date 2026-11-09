@@ -178,3 +178,8 @@ Tracce locali per la review indipendente:
 - Snapshot preliminari hanno nomi diversi e non sostituiscono quelli finali.
 
 `compatibility-2026-11-07/summary.json`, digest finali per scenario e hash degli strumenti consentono il riscontro senza committare grandi raw snapshot. Tutti i dati sono sintetici, nessuna credenziale o dato personale/fiscale/bancario.
+
+
+## Seguito punto 1 — protezione e limite aggiuntivo
+
+Vedi [FUTURE-SAVE-PROTECTION-2026-11-07.md](FUTURE-SAVE-PROTECTION-2026-11-07.md): nuova patch non distruttiva in bozza basata su questo audit. Il campione legacy supportato resta uguale a main; un nuovo controesempio sintetico forzato mostra che la compattazione preesistente può anche influire sul RNG al tick successivo. Non è una correzione gameplay, una misura di frequenza, chiusura del punto 1 o approvazione merge/deploy.
