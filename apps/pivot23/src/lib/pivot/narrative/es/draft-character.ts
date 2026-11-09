@@ -1,0 +1,23 @@
+/* Spanish narrative for draft-character. Key: Italian source text (see ../key.ts). NOT reviewed by a native speaker (2026-11-09). Missing keys fall back to English. */
+export const ES_DRAFT_CHARACTER: Readonly<Record<string, string>> = {
+  "L'Etica": "La Ética",
+  "Arrivi prima, resti dopo. Il talento viene dopo il lavoro.": "Llegas el primero, te vas el último. El talento viene después del trabajo.",
+  "Il Clutch": "El Clutch",
+  "Gli ultimi tre minuti ti appartengono. Il resto, lo sopporti.": "Los últimos tres minutos te pertenecen. El resto, lo aguantas.",
+  "Il Media": "El Mediático",
+  "Sai parlare. La città ti riconosce prima del tabellone.": "Sabes hablar. La ciudad te reconoce antes que el marcador.",
+  "Il Motore": "El Motor",
+  "Non spegni. Secondo salto, terzo possesso, ancora fiato.": "No te apagas nunca. Segundo salto, tercera posesión, todavía con aire.",
+  "L'Orgoglio": "El Orgullo",
+  "Vuoi la palla e la responsabilità. Qualcuno lo chiamerà ego.": "Quieres el balón y la responsabilidad. Alguien lo llamará ego.",
+  "La Costanza": "La Regularidad",
+  "Niente notti da 40 e crolli da 6. Una linea, tutta l'inverno.": "Nada de noches de 40 y desplomes de 6. Una línea constante, todo el invierno.",
+  "Il Collante": "El Pegamento",
+  "Tieni insieme i silenzi. I compagni ti cercano senza dirtelo.": "Mantienes unidos los silencios. Los compañeros te buscan sin decírtelo.",
+  "Il Corpo": "El Físico",
+  "Tieni il contatto. La stagione lunga non ti piega al primo colpo.": "Aguantas el contacto. La temporada larga no te dobla al primer golpe.",
+  "Carattere": "Carácter",
+  "Chi sei quando nessuno tiene il conto?": "¿Quién eres cuando nadie lleva la cuenta?",
+  "Voce": "Voz",
+  "Cosa lasci nello spogliatoio?": "¿Qué dejas en el vestuario?",
+};
