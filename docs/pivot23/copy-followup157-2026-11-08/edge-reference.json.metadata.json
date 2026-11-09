@@ -1,0 +1,119 @@
+{
+  "mode": "edge",
+  "seed": 777002,
+  "role": "SF",
+  "originPath": "NCAA",
+  "rivalName": "Elijah Voss",
+  "age": 35,
+  "overall": 59,
+  "history": [
+    {
+      "season": 1,
+      "age": 21,
+      "overall": 61
+    },
+    {
+      "season": 2,
+      "age": 22,
+      "overall": 62
+    },
+    {
+      "season": 3,
+      "age": 23,
+      "overall": 63
+    },
+    {
+      "season": 4,
+      "age": 24,
+      "overall": 65
+    },
+    {
+      "season": 5,
+      "age": 25,
+      "overall": 67
+    },
+    {
+      "season": 6,
+      "age": 26,
+      "overall": 67
+    },
+    {
+      "season": 7,
+      "age": 27,
+      "overall": 67
+    },
+    {
+      "season": 8,
+      "age": 28,
+      "overall": 67
+    },
+    {
+      "season": 9,
+      "age": 29,
+      "overall": 66
+    },
+    {
+      "season": 10,
+      "age": 30,
+      "overall": 66
+    },
+    {
+      "season": 11,
+      "age": 31,
+      "overall": 65
+    },
+    {
+      "season": 12,
+      "age": 32,
+      "overall": 64
+    },
+    {
+      "season": 13,
+      "age": 33,
+      "overall": 64
+    },
+    {
+      "season": 14,
+      "age": 34,
+      "overall": 61
+    }
+  ],
+  "development": [
+    {
+      "season": 1,
+      "label": "Estate di mobilità, già fatta",
+      "line": "Hai lavorato dove non si vede. A ottobre il passo è più lungo.",
+      "before": 62,
+      "after": 59
+    },
+    {
+      "season": 2,
+      "label": "Estate di mobilità, già fatta",
+      "line": "Hai lavorato dove non si vede. A ottobre il passo è più lungo.",
+      "before": 62,
+      "after": 62
+    },
+    {
+      "season": 3,
+      "label": "La tregua del corpo, tenuta per intero",
+      "line": "Arrivare a ottobre intero: a quest'età è l'unico orgoglio che conta.",
+      "before": 62,
+      "after": 63
+    }
+  ],
+  "milestones": [
+    {
+      "season": 1,
+      "label": "Rookie of the Year"
+    },
+    {
+      "season": 12,
+      "label": "NBA Champion"
+    },
+    {
+      "season": 12,
+      "label": "Finals MVP"
+    }
+  ],
+  "explanation": "FORCED independent presentation edges: devLog/choices/rival/country replaced, not coherent career trajectory. Repeated S1/S2 label intentional."
+}

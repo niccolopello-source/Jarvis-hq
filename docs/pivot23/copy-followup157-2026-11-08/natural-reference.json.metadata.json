@@ -1,0 +1,196 @@
+{
+  "mode": "natural",
+  "seed": 777002,
+  "role": "SF",
+  "originPath": "NCAA",
+  "rivalName": "Kalen Ibe",
+  "age": 35,
+  "overall": 59,
+  "history": [
+    {
+      "season": 1,
+      "age": 21,
+      "overall": 61
+    },
+    {
+      "season": 2,
+      "age": 22,
+      "overall": 62
+    },
+    {
+      "season": 3,
+      "age": 23,
+      "overall": 63
+    },
+    {
+      "season": 4,
+      "age": 24,
+      "overall": 65
+    },
+    {
+      "season": 5,
+      "age": 25,
+      "overall": 67
+    },
+    {
+      "season": 6,
+      "age": 26,
+      "overall": 67
+    },
+    {
+      "season": 7,
+      "age": 27,
+      "overall": 67
+    },
+    {
+      "season": 8,
+      "age": 28,
+      "overall": 67
+    },
+    {
+      "season": 9,
+      "age": 29,
+      "overall": 66
+    },
+    {
+      "season": 10,
+      "age": 30,
+      "overall": 66
+    },
+    {
+      "season": 11,
+      "age": 31,
+      "overall": 65
+    },
+    {
+      "season": 12,
+      "age": 32,
+      "overall": 64
+    },
+    {
+      "season": 13,
+      "age": 33,
+      "overall": 64
+    },
+    {
+      "season": 14,
+      "age": 34,
+      "overall": 61
+    }
+  ],
+  "development": [
+    {
+      "season": 1,
+      "label": "Luglio sui filmati, senza pubblico",
+      "line": "Hai riletto una serie. Hai trovato un possesso che non avevi visto. Lo tieni per l'inverno.",
+      "before": 61,
+      "after": 61
+    },
+    {
+      "season": 2,
+      "label": "Palestra vuota, mille uscite, estate così",
+      "line": "Hai ripetuto finché il polso ha smesso di essere una domanda.",
+      "before": 62,
+      "after": 63
+    },
+    {
+      "season": 3,
+      "label": "Sei tornato dove il mestiere non entra",
+      "line": "Due settimane lontano. Il corpo ha ringraziato, e il tiro, a settembre, è uscito più pulito.",
+      "before": 63,
+      "after": 65
+    },
+    {
+      "season": 4,
+      "label": "Un laboratorio senza pubblico, già chiuso",
+      "line": "Agosto è stato una stanza senza pubblico. Meglio: si lavorava sul vero.",
+      "before": 65,
+      "after": 66
+    },
+    {
+      "season": 5,
+      "label": "I possessi degli altri, a volume basso, per settimane",
+      "line": "Lo staff, a settembre, trova gli appunti già fatti. Non è gloria. È mestiere.",
+      "before": 67,
+      "after": 67
+    },
+    {
+      "season": 6,
+      "label": "Bilancia, sonno, estate già spesa",
+      "line": "Niente copertina. Solo chili, sonno, un contatto che a ottobre è tuo.",
+      "before": 67,
+      "after": 67
+    },
+    {
+      "season": 7,
+      "label": "La maglia che non paga i minuti, indossata",
+      "line": "Un aereo, tre gare, un'altra maglia. Il club, a settembre, fa due conti.",
+      "before": 67,
+      "after": 67
+    },
+    {
+      "season": 8,
+      "label": "Parlato poco, luglio già chiuso",
+      "line": "Qualche credito in più, in conferenza. In palestra, lo stesso sudore.",
+      "before": 67,
+      "after": 66
+    },
+    {
+      "season": 9,
+      "label": "Un grado sul gesto, tenuto",
+      "line": "Sei tornato con una uscita nuova. Lo staff la vede al primo allenamento.",
+      "before": 66,
+      "after": 66
+    },
+    {
+      "season": 10,
+      "label": "Il corpo ha chiesto tregua. Gliel'hai data",
+      "line": "Le articolazioni hanno avuto un luglio. A settembre non presentano il conto in anticipo.",
+      "before": 66,
+      "after": 65
+    },
+    {
+      "season": 11,
+      "label": "Estate sul ruolo, già chiusa, senza testimoni",
+      "line": "Niente copertina. Il ruolo, a ottobre, è più stretto e più tuo.",
+      "before": 65,
+      "after": 64
+    },
+    {
+      "season": 12,
+      "label": "La finestra azzurra, già giocata",
+      "line": "Tre sere per il paese. Il club, a settembre, conta le gambe, non i titoli.",
+      "before": 63,
+      "after": 64
+    },
+    {
+      "season": 13,
+      "label": "Lavoro sul ruolo, luglio già chiuso",
+      "line": "L'estate, nuda: gli stessi tiri, lo stesso specchio, un polso che a settembre non è più una domanda.",
+      "before": 64,
+      "after": 61
+    },
+    {
+      "season": 14,
+      "label": "La voce da tutore, già spesa",
+      "line": "Sei tornato con le mani meno dure e la testa più chiara. Il ruolo, adesso, include questo.",
+      "before": 61,
+      "after": 59
+    }
+  ],
+  "milestones": [
+    {
+      "season": 1,
+      "label": "Rookie of the Year"
+    },
+    {
+      "season": 12,
+      "label": "NBA Champion"
+    },
+    {
+      "season": 12,
+      "label": "Finals MVP"
+    }
+  ],
+  "explanation": "Natural complete playCareerSim output; no gameplay, logs or outcomes replaced. Synthetic careerId only."
+}

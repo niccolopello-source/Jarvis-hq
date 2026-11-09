@@ -31,7 +31,7 @@ export const EN_LEGACY: Readonly<Record<string, string>> = {
   "Fuori dalla Hall. Un picco alto non è un passaporto, e lo sai.": "Outside the Hall. A high peak isn't a passport, and you know it.",
   "{0} è restato nel discorso. Non sul referto di ogni sera: nella testa, dove le rivalità durano.": "{0} stayed in the conversation. Not on every night's box score: in your head, where rivalries last.",
   "Una svolta di mercato: {0}. Da lì la vita ha preso un'altra strada.": "A market turning point: {0}. From there, your life took another road.",
-  "Sei arrivato dall'Europa. Si sente ancora, nel modo in cui leggi il campo.": "You came from Europe. It still shows, in the way you read the floor.",
-  "Hai bruciato le tappe. Il grezzo, all'inizio, era il punto di forza e il rischio.": "You skipped steps. Rawness, at the start, was both your strength and your risk.",
+  "Sei arrivato dall'Europa. Si sente ancora, nel modo in cui leggi il campo.": "Your pre-draft path was European. The seasons tell the rest.",
+  "Hai bruciato le tappe. Il grezzo, all'inizio, era il punto di forza e il rischio.": "Your pre-draft path was the G League. Your career took shape one season at a time.",
   "Una carriera senza proclami. I giorni, fatti fino in fondo, e basta.": "A career without proclamations. The days, lived all the way through, and that's it."
 };

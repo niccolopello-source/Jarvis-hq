@@ -1,0 +1,5 @@
+import test from'node:test';import assert from'node:assert/strict';import{compareCopies}from'./copy-isolation-compare.mjs';
+const base=()=>({cases:[{}],rows:[{id:'case',stage:'input',fullCanonicalSha256:'x',canonical:{player:{choiceLog:[{title:'__RIVAL__',pick:'raw unchanged'}]},envelope:{checksum:'raw'},activeRng:123}}]});
+test('persisted title and PICK strings are compared without normalization',()=>{const a=base(),b=base();b.rows[0].canonical.player.choiceLog[0].pick='different';assert.equal(compareCopies(a,b).fail,1);assert.equal(compareCopies(a,b).failures[0].mismatch,'$.player.choiceLog.0.pick');});
+test('active RNG is compared, not only saved rngState',()=>{const a=base(),b=base();b.rows[0].canonical.activeRng=124;assert.equal(compareCopies(a,b).failures[0].mismatch,'$.activeRng');});
+test('missing rows or order are not accepted',()=>{const a=base(),b=base();b.rows=[];assert.ok(compareCopies(a,b).fail);const c=base();c.rows[0].stage='later';assert.equal(compareCopies(a,c).failures[0].mismatch,'$.stage');});

@@ -400,7 +400,7 @@ export const EN_ENGINE: Readonly<Record<string, string>> = {
   "Il compagno che ogni squadra da titolo vorrebbe avere accanto.": "The teammate every title team would want by its side.",
   "Giocatore di rotazione": "Rotation player",
   "Una carriera onesta, fatta di minuti guadagnati, non regalati.": "An honest career, made of minutes earned, not handed out.",
-  "Tutto è partito da un campus universitario.": "It all started on a college campus.",
-  "Il ragazzo cresciuto in Europa è arrivato più lontano di quanto molti immaginassero.": "The kid who grew up in Europe went further than many imagined.",
-  "Chi ha bruciato le tappe non ha mai smesso di correre.": "The one who skipped steps never stopped running."
+  "Tutto è partito da un campus universitario.": "Your pre-draft preparation was the NCAA path.",
+  "Il ragazzo cresciuto in Europa è arrivato più lontano di quanto molti immaginassero.": "Your pre-draft preparation was a European academy.",
+  "Chi ha bruciato le tappe non ha mai smesso di correre.": "Your pre-draft preparation was the G League."
 };

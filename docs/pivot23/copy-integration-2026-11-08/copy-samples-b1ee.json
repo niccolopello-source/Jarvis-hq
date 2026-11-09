@@ -1,0 +1,2638 @@
+{
+  "purpose": "Synthetic semantic review sample, not population statistics or cross-revision equivalence proof",
+  "corpus": [
+    {
+      "seed": 777001,
+      "role": "PG",
+      "path": "NCAA",
+      "nationality": "Italia",
+      "engineVersion": "2.24.0-beta",
+      "rivalName": "Elijah Voss",
+      "fullStateBefore": "6429eb4e46a2952e64338e58eec2bc0daf9f5b4c2c4006ca26c68eb5bb54a1e6",
+      "fullStateAfter": "6429eb4e46a2952e64338e58eec2bc0daf9f5b4c2c4006ca26c68eb5bb54a1e6",
+      "unchanged": true,
+      "display": {
+        "choices": [
+          {
+            "season": 0,
+            "title": "Percorso",
+            "pick": "NCAA",
+            "it": "Percorso",
+            "en": "Path"
+          },
+          {
+            "season": 0,
+            "title": "Chiamata",
+            "pick": "29ª · San Antonio Spurs",
+            "it": "Chiamata",
+            "en": "The call"
+          },
+          {
+            "season": 1,
+            "title": "Rookie of the Year",
+            "pick": "Impara il sistema",
+            "it": "Rookie of the Year",
+            "en": "Rookie of the Year"
+          },
+          {
+            "season": 2,
+            "title": "Distorsione alta alla caviglia",
+            "pick": "Percorso prudente",
+            "it": "Distorsione alta alla caviglia",
+            "en": "High ankle sprain"
+          },
+          {
+            "season": 3,
+            "title": "La città vota una tassa per il nuovo palazzetto",
+            "pick": "Parli solo di parquet",
+            "it": "La città vota una tassa per il nuovo palazzetto",
+            "en": "The city votes on a tax for the new arena"
+          },
+          {
+            "season": 3,
+            "title": "Primo turno",
+            "pick": "La palla deve uscire",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 3,
+            "title": "Agenzia libera",
+            "pick": "Atlanta Hawks · 2×$14.2M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 4,
+            "title": "Una vecchia intervista del rivale riemerge",
+            "pick": "La usi come motivazione",
+            "it": "Una vecchia intervista del rivale riemerge",
+            "en": "An old interview of your rival resurfaces"
+          },
+          {
+            "season": 5,
+            "title": "Dolore cronico al ginocchio",
+            "pick": "Giochi ogni partita",
+            "it": "Dolore cronico al ginocchio",
+            "en": "Chronic knee pain"
+          },
+          {
+            "season": 5,
+            "title": "Primo turno",
+            "pick": "Gioca pulito, anche se trema",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 5,
+            "title": "Agenzia libera",
+            "pick": "Atlanta Hawks · 3×$19.3M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 6,
+            "title": "Lo scontro con Elijah Voss",
+            "pick": "Botta e risposta mediatico",
+            "it": "Lo scontro con Elijah Voss",
+            "en": "The showdown with Elijah Voss"
+          },
+          {
+            "season": 7,
+            "title": "A 27 anni la regia è tua",
+            "pick": "Alzi il ritmo",
+            "it": "A 27 anni la regia è tua",
+            "en": "At 27, the offense is yours to run"
+          },
+          {
+            "season": 8,
+            "title": "A 28 anni scade il contratto",
+            "pick": "Sta' zitto e produci",
+            "it": "A 28 anni scade il contratto",
+            "en": "At 28, the contract is running out"
+          },
+          {
+            "season": 8,
+            "title": "Primo turno",
+            "pick": "Gioca pulito, anche se trema",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 8,
+            "title": "Agenzia libera",
+            "pick": "Philadelphia 76ers · 5×$22.5M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 9,
+            "title": "Scambio",
+            "pick": "Milwaukee Bucks",
+            "it": "Scambio",
+            "en": "Trade"
+          },
+          {
+            "season": 9,
+            "title": "A 29 anni la regia è tua",
+            "pick": "Una sera da gregario",
+            "it": "A 29 anni la regia è tua",
+            "en": "At 29, the offense is yours to run"
+          },
+          {
+            "season": 9,
+            "title": "Primo turno",
+            "pick": "Gioco fisico, ogni possesso",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 10,
+            "title": "Convocazione internazionale",
+            "pick": "Accetti e guidi la squadra",
+            "it": "Convocazione internazionale",
+            "en": "International call-up"
+          },
+          {
+            "season": 10,
+            "title": "Primo turno",
+            "pick": "Il passaggio in più verso l'angolo",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 11,
+            "title": "La conferenza che non chiede",
+            "pick": "Lasci una riga vera, e basta",
+            "it": "La conferenza che non chiede",
+            "en": "The press conference that asks nothing"
+          },
+          {
+            "season": 11,
+            "title": "Primo turno",
+            "pick": "Spacca la linea, ogni uscita",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 11,
+            "title": "Agenzia libera",
+            "pick": "Phoenix Suns · 4×$13.4M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 12,
+            "title": "Una porta, socchiusa, in un'altra lingua",
+            "pick": "La tieni come chiusura possibile",
+            "it": "Una porta, socchiusa, in un'altra lingua",
+            "en": "A door, ajar, in another language"
+          },
+          {
+            "season": 13,
+            "title": "Le articolazioni hanno un'agenda",
+            "pick": "Il carico, tagliato",
+            "it": "Le articolazioni hanno un'agenda",
+            "en": "Your joints keep a schedule"
+          }
+        ],
+        "development": [
+          {
+            "season": 1,
+            "label": "Estate in una stanza buia, già chiusa",
+            "line": "Tre settimane di filmati. Lo staff, a settembre, trova gli appunti già fatti.",
+            "before": 62,
+            "after": 64,
+            "age": 21,
+            "it": "Tre settimane di filmati. Lo staff, a settembre, trova gli appunti già fatti.",
+            "en": "Three weeks of film. In September, the staff finds the notes already done."
+          },
+          {
+            "season": 2,
+            "label": "Senza pubblico, tre settimane sul gesto",
+            "line": "Niente copertina. Il ruolo, a ottobre, è più stretto e più tuo.",
+            "before": 64,
+            "after": 67,
+            "age": 22,
+            "it": "Niente copertina. Il ruolo, a ottobre, è più stretto e più tuo.",
+            "en": "No cover. In October, your role is narrower and more yours."
+          },
+          {
+            "season": 3,
+            "label": "Estate di bilancia e di sonno",
+            "line": "Tre settimane sul corpo. A ottobre il primo contatto è tuo.",
+            "before": 67,
+            "after": 69,
+            "age": 23,
+            "it": "Tre settimane sul corpo. A ottobre il primo contatto è tuo.",
+            "en": "Three weeks on your body. In October the first contact is yours."
+          },
+          {
+            "season": 4,
+            "label": "Una correzione, tenuta, un luglio",
+            "line": "Due settimane da uno specialista. Una correzione, tenuta, e il resto è rumore.",
+            "before": 70,
+            "after": 71,
+            "age": 24,
+            "it": "Due settimane da uno specialista. Una correzione, tenuta, e il resto è rumore.",
+            "en": "Two weeks with a specialist. One correction, kept, and the rest is noise."
+          },
+          {
+            "season": 5,
+            "label": "Sala video, matita, nient'altro",
+            "line": "Niente sudore da copertina. A ottobre le letture arriveranno un tempo prima.",
+            "before": 71,
+            "after": 71,
+            "age": 25,
+            "it": "Al termine dell'estate, l'overall è invariato.",
+            "en": "At summer's end, overall is unchanged."
+          },
+          {
+            "season": 6,
+            "label": "Il gesto, corretto di un grado",
+            "line": "Il tiro è cambiato di un grado. Le gare, a ottobre, no — e questo è il punto.",
+            "before": 71,
+            "after": 70,
+            "age": 26,
+            "it": "Il tiro è cambiato di un grado. Le gare, a ottobre, no — e questo è il punto.",
+            "en": "Your shot changed by one degree. The games, in October, didn't — and that's the point."
+          },
+          {
+            "season": 7,
+            "label": "Schemi, studio avversari, una matita: estate così",
+            "line": "Hai riletto una serie. Hai trovato un possesso che non avevi visto. Lo tieni per l'inverno.",
+            "before": 70,
+            "after": 69,
+            "age": 27,
+            "it": "Hai riletto una serie. Hai trovato un possesso che non avevi visto. Lo tieni per l'inverno.",
+            "en": "You reviewed a series. You found a possession you hadn't seen. You keep it for the winter."
+          },
+          {
+            "season": 8,
+            "label": "Hai insegnato, e il gesto è tornato",
+            "line": "Hai insegnato un'uscita. Per una settimana il tuo gesto è stato più pulito.",
+            "before": 68,
+            "after": 70,
+            "age": 28,
+            "it": "Hai insegnato un'uscita. Per una settimana il tuo gesto è stato più pulito.",
+            "en": "You taught a set. For a week your own motion was cleaner."
+          },
+          {
+            "season": 9,
+            "label": "Tre settimane sullo specchio, senza copertina",
+            "line": "Luglio è restato in palestra. Settembre legge il passo, non le interviste.",
+            "before": 70,
+            "after": 69,
+            "age": 29,
+            "it": "Luglio è restato in palestra. Settembre legge il passo, non le interviste.",
+            "en": "July stayed in the gym. September reads your stride, not the interviews."
+          },
+          {
+            "season": 10,
+            "label": "Casa, luglio, già fatti",
+            "line": "Due settimane a casa. Il mestiere, spento, ti ha restituito un pezzo di te.",
+            "before": 68,
+            "after": 66,
+            "age": 30,
+            "it": "Due settimane a casa. Il mestiere, spento, ti ha restituito un pezzo di te.",
+            "en": "Two weeks at home. Time away from the game gave you back a piece of yourself."
+          },
+          {
+            "season": 11,
+            "label": "Un luglio in un'altra maglia, tenuto",
+            "line": "La tua Nazionale non paga i minuti di club. Paga un altro debito, e tu lo sai.",
+            "before": 63,
+            "after": 64,
+            "age": 31,
+            "it": "La tua Nazionale non paga i minuti di club. Paga un altro debito, e tu lo sai.",
+            "en": "Your national team doesn't pay for club minutes. It pays another debt, and you know it."
+          },
+          {
+            "season": 12,
+            "label": "Europa, nominata, non firmata",
+            "line": "Una chiamata, nominata, non firmata. Il ruolo, qui, viene prima.",
+            "before": 64,
+            "after": 62,
+            "age": 32,
+            "it": "Una chiamata, nominata, non firmata. Il ruolo, qui, viene prima.",
+            "en": "A call, named, not signed. The role, here, comes first."
+          },
+          {
+            "season": 13,
+            "label": "Ghiaccio, sonno, pazienza: tre settimane così",
+            "line": "Estate corta. Pesi leggeri, sonno lungo, un fisioterapista che ormai conosce i tuoi silenzi, e non li traduce.",
+            "before": 62,
+            "after": 59,
+            "age": 33,
+            "it": "Estate corta. Pesi leggeri, sonno lungo, un fisioterapista che ormai conosce i tuoi silenzi, e non li traduce.",
+            "en": "A short summer. Light weights, long sleep, a physio who by now knows your silences, and doesn't translate them."
+          }
+        ],
+        "seasons": [
+          {
+            "season": 1,
+            "age": 21,
+            "overall": 62,
+            "raw": "Ricevi, leggi, dai. Il canestro è di chi arriva terzo, non di chi chiede per primo. A 21 anni il palazzetto è ancora una stanza nuova. Ogni sera impari un nome.",
+            "it": "Ricevi, leggi, dai. Il canestro è di chi arriva terzo, non di chi chiede per primo. A 21 anni il palazzetto è ancora una stanza nuova. Ogni sera impari un nome.",
+            "en": "Catch, read, give. The basket belongs to whoever arrives third, not to whoever asks first. At 21, the arena is still a new room. Every night you learn a name."
+          },
+          {
+            "season": 2,
+            "age": 22,
+            "overall": 64,
+            "raw": "Un anno storto. Lo senti nel modo in cui i compagni salutano, la sera. Due, tre anni qui. A San Antonio non devi più presentarti: entri, e lo schema ti riconosce.",
+            "it": "Un anno storto. Lo senti nel modo in cui i compagni salutano, la sera. Due, tre anni qui. A San Antonio non devi più presentarti: entri, e lo schema ti riconosce.",
+            "en": "A crooked year. You feel it in the way your teammates say goodnight. Two, three years here. In San Antonio you no longer need to introduce yourself: you walk in, and the system knows you."
+          },
+          {
+            "season": 3,
+            "age": 23,
+            "overall": 67,
+            "raw": "La piazza di San Antonio ha una voce. Quest'anno la senti anche quando il palazzetto è mezzo vuoto. Lo schema gira come un orologio. Chi ferma la lancetta si sente, e non in bene.",
+            "it": "La piazza di San Antonio ha una voce. Quest'anno la senti anche quando il palazzetto è mezzo vuoto. Lo schema gira come un orologio. Chi ferma la lancetta si sente, e non in bene.",
+            "en": "The San Antonio crowd has a voice. This year you hear it even when the arena is half empty. The system runs like clockwork. Whoever stops the hand gets noticed, and not in a good way."
+          },
+          {
+            "season": 4,
+            "age": 24,
+            "overall": 70,
+            "raw": "Nuova maglia, stessa testa. Atlanta Hawks è un'altra lingua da imparare. Sbagli, resti, riprovi. Tu consegni i possessi puliti, e lo staff annota.",
+            "it": "Nuova maglia, stessa testa. Atlanta Hawks è un'altra lingua da imparare. Sbagli, resti, riprovi. Tu consegni i possessi puliti, e lo staff annota.",
+            "en": "New jersey, same head. Atlanta Hawks are another language to learn. You miss, you stay, you try again. You hand in clean possessions, and the staff takes notes."
+          },
+          {
+            "season": 5,
+            "age": 25,
+            "overall": 71,
+            "raw": "La pazienza è il sistema. Chi la scambia per debolezza esce dal nastro. A Atlanta il gruppo si muove come se ti conoscesse da sempre.",
+            "it": "La pazienza è il sistema. Chi la scambia per debolezza esce dal nastro. Ad Atlanta il gruppo si muove come se ti conoscesse da sempre.",
+            "en": "Patience is the system. Whoever mistakes it for weakness drops out of the rotation. In Atlanta the group moves as if it had always known you."
+          },
+          {
+            "season": 6,
+            "age": 26,
+            "overall": 71,
+            "raw": "Le battute interne, a Atlanta, ti includono senza sforzo. Sei di casa. Qui si cresce in pubblico. Gli errori sono previsti, non perdonati in automatico.",
+            "it": "Le battute interne, ad Atlanta, ti includono senza sforzo. Sei di casa. Qui si cresce in pubblico. Gli errori sono previsti, non perdonati in automatico.",
+            "en": "The inside jokes in Atlanta include you without effort. You're at home. Here you grow up in public. Mistakes are expected, not forgiven automatically."
+          },
+          {
+            "season": 7,
+            "age": 27,
+            "overall": 70,
+            "raw": "Ogni settimana un ruolo un po' più largo. Mai abbastanza da sentirti arrivato. A Atlanta entri nello spogliatoio e il rumore non cambia. È il segno che sei dei loro.",
+            "it": "Ogni settimana un ruolo un po' più largo. Mai abbastanza da sentirti arrivato. Ad Atlanta entri nello spogliatoio e il rumore non cambia. È il segno che sei dei loro.",
+            "en": "Every week a slightly bigger role. Never enough to feel you've made it. In Atlanta you walk into the locker room and the noise doesn't change. It's the sign you're one of them."
+          },
+          {
+            "season": 8,
+            "age": 28,
+            "overall": 69,
+            "raw": "Sbagli, resti, riprovi. Lo staff annota più di quanto parli. Ottavi per un soffio. I playoff sono una porta socchiusa, non un diritto.",
+            "it": "Sbagli, resti, riprovi. Lo staff annota più di quanto parli. Ottavi per un soffio. I playoff sono una porta socchiusa, non un diritto.",
+            "en": "You miss, you stay, you try again. The staff takes more notes than it speaks. Eighth by a whisker. The playoffs are a door left ajar, not a right."
+          },
+          {
+            "season": 9,
+            "age": 29,
+            "overall": 70,
+            "raw": "Milwaukee Bucks è una maglia. Milwaukee è una stanza. Tu abiti tutte e due, con attenzione diversa. Ogni sera lo stesso esame: gambe ferme, polso sciolto, nessuna esitazione.",
+            "it": "Milwaukee Bucks è una maglia. Milwaukee è una stanza. Tu abiti tutte e due, con attenzione diversa. Ogni sera lo stesso esame: gambe ferme, polso sciolto, nessuna esitazione.",
+            "en": "Milwaukee Bucks are a jersey. Milwaukee is a room. You live in both, with different kinds of care. Every night the same exam: feet set, loose wrist, no hesitation."
+          },
+          {
+            "season": 10,
+            "age": 30,
+            "overall": 69,
+            "raw": "La primavera scorsa è restata sotto le unghie. Ogni possesso di ottobre ne porta un pezzo. Tutto gira intorno al perimetro. Tiro da tre: se non spacchi la linea, resti fuori dallo schema.",
+            "it": "La primavera scorsa è restata sotto le unghie. Ogni possesso di ottobre ne porta un pezzo. Tutto gira intorno al perimetro. Tiro da tre: se non spacchi la linea, resti fuori dallo schema.",
+            "en": "Last spring stayed under your fingernails. Every October possession carries a piece of it. Everything revolves around the perimeter. Three-point shooting: if you don't break the line, you're out of the system."
+          },
+          {
+            "season": 11,
+            "age": 31,
+            "overall": 66,
+            "raw": "L'eliminazione precedente non si è sciolta. Lavora in silenzio, a ottobre. Ottantadue sere, o quasi. Gli altri si fermano. Tu no.",
+            "it": "L'eliminazione precedente non si è sciolta. Lavora in silenzio, a ottobre. Ottantadue sere, o quasi. Gli altri si fermano. Tu no.",
+            "en": "The last elimination hasn't faded. It works in silence, in October. Eighty-two nights, or close. Others stop. You don't."
+          },
+          {
+            "season": 12,
+            "age": 32,
+            "overall": 64,
+            "raw": "A Phoenix, la piazza di Phoenix entra già caldo. Tu cerchi il possesso, che è più onesto del coro. A 32 anni non sei in ritardo: sei in orario, e Phoenix lo misura in minuti.",
+            "it": "A Phoenix, il pubblico è già caldo. Tu cerchi il possesso, che è più onesto del coro. A 32 anni non sei in ritardo: sei in orario, e Phoenix lo misura in minuti.",
+            "en": "In Phoenix, the Phoenix crowd shows up already fired up. You look for the possession, which is more honest than the chant. At 32 you're not late: you're on time, and Phoenix measures it in minutes."
+          },
+          {
+            "season": 13,
+            "age": 33,
+            "overall": 62,
+            "raw": "Due inverni, o più. A Phoenix il tuo posto a tavola non si discute più. A trentatré il mestiere è arrivare a maggio con le gambe tue, non con un alibi.",
+            "it": "Due inverni, o più. A Phoenix il tuo posto a tavola non si discute più. A trentatré il mestiere è arrivare a maggio con le gambe tue, non con un alibi.",
+            "en": "Two winters, or more. In Phoenix your seat at the table is no longer up for debate. At thirty-three the job is getting to May on your own legs, not with an alibi."
+          }
+        ],
+        "ending": {
+          "raw": "Non tutte le storie finiscono con un trofeo alzato, e va bene così. Tutto è partito da un campus universitario.",
+          "it": "Non tutte le storie finiscono con un trofeo alzato, e va bene così. La tua preparazione pre-draft era il percorso NCAA.",
+          "en": "Not every story ends with a trophy held high, and that's fine. Your pre-draft preparation was the NCAA path.",
+          "commentIt": "13 stagioni. Abbastanza per una biografia, non abbastanza per annoiarsi. Nessun titolo. Non tutte le carriere chiudono con i confetti. 4 maglie diverse. Il mestiere è stato un viaggio, non una casa.",
+          "commentEn": "13 seasons. Enough for a biography, not enough to get bored. No titles. Not every career ends with confetti. 4 different jerseys. Your career was a journey, not a home."
+        }
+      }
+    },
+    {
+      "seed": 777002,
+      "role": "SG",
+      "path": "Europa",
+      "nationality": "USA",
+      "engineVersion": "2.24.0-beta",
+      "rivalName": "Andre Kellerman",
+      "fullStateBefore": "3e6153a9ad1070078f7a8abc215bdce8900f4901444012eda648f9e4af3b8438",
+      "fullStateAfter": "3e6153a9ad1070078f7a8abc215bdce8900f4901444012eda648f9e4af3b8438",
+      "unchanged": true,
+      "display": {
+        "choices": [
+          {
+            "season": 0,
+            "title": "Percorso",
+            "pick": "Europa",
+            "it": "Percorso",
+            "en": "Path"
+          },
+          {
+            "season": 0,
+            "title": "Chiamata",
+            "pick": "41ª · Denver Nuggets",
+            "it": "Chiamata",
+            "en": "The call"
+          },
+          {
+            "season": 1,
+            "title": "Rookie of the Year",
+            "pick": "Uso aggressivo",
+            "it": "Rookie of the Year",
+            "en": "Rookie of the Year"
+          },
+          {
+            "season": 2,
+            "title": "La stampa ti etichetta già «il predestinato»",
+            "pick": "Accetti la pressione",
+            "it": "La stampa ti etichetta già «il predestinato»",
+            "en": "The press already labels you \"the chosen one\""
+          },
+          {
+            "season": 2,
+            "title": "Agenzia libera",
+            "pick": "Denver Nuggets · 4×$12M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 3,
+            "title": "Una domenica in cui vince la panchina",
+            "pick": "Chiedi il perché, a porte chiuse",
+            "it": "Una domenica in cui vince la panchina",
+            "en": "A Sunday when the bench wins"
+          },
+          {
+            "season": 4,
+            "title": "A 22 anni il lato debole è libero",
+            "pick": "Attacchi per primo",
+            "it": "A 22 anni il lato debole è libero",
+            "en": "At 22, the weak side is open"
+          },
+          {
+            "season": 4,
+            "title": "Primo turno",
+            "pick": "Chiedi il possesso, anche se trema",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 5,
+            "title": "Scambio",
+            "pick": "Detroit Pistons",
+            "it": "Scambio",
+            "en": "Trade"
+          },
+          {
+            "season": 5,
+            "title": "A 23 anni il lato debole è libero",
+            "pick": "Stai nello schema",
+            "it": "A 23 anni il lato debole è libero",
+            "en": "At 23, the weak side is open"
+          },
+          {
+            "season": 5,
+            "title": "Primo turno",
+            "pick": "Ogni rimbalzo, come se fosse l'ultimo",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 6,
+            "title": "Scambio",
+            "pick": "Milwaukee Bucks",
+            "it": "Scambio",
+            "en": "Trade"
+          },
+          {
+            "season": 6,
+            "title": "A 24 anni scade il contratto",
+            "pick": "Gioca per il rinnovo",
+            "it": "A 24 anni scade il contratto",
+            "en": "At 24, the contract is running out"
+          },
+          {
+            "season": 6,
+            "title": "Primo turno",
+            "pick": "Primo passo, niente set lunghi",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 6,
+            "title": "Agenzia libera",
+            "pick": "New York Knicks · 3×$15M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 7,
+            "title": "Lo scontro con Andre Kellerman",
+            "pick": "Rispondi a canestro",
+            "it": "Lo scontro con Andre Kellerman",
+            "en": "The showdown with Andre Kellerman"
+          },
+          {
+            "season": 7,
+            "title": "Primo turno",
+            "pick": "Ventiquattro secondi, il tiro giusto",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 8,
+            "title": "La conferenza che non chiede",
+            "pick": "Ringrazi, già in corridoio",
+            "it": "La conferenza che non chiede",
+            "en": "The press conference that asks nothing"
+          },
+          {
+            "season": 8,
+            "title": "Primo turno",
+            "pick": "Gioco fisico, ogni possesso",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 8,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Uno contro uno, sul possesso decisivo",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 8,
+            "title": "Finali Est/Ovest",
+            "pick": "Il ferro sporco, tutta la serie",
+            "it": "Finali Est/Ovest",
+            "en": "Conference finals"
+          },
+          {
+            "season": 9,
+            "title": "A 27 anni scade il contratto",
+            "pick": "Sta' zitto e produci",
+            "it": "A 27 anni scade il contratto",
+            "en": "At 27, the contract is running out"
+          },
+          {
+            "season": 9,
+            "title": "Primo turno",
+            "pick": "Alza il muro, ogni uscita",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 9,
+            "title": "Agenzia libera",
+            "pick": "Utah Jazz · 4×$23.9M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 10,
+            "title": "A 28 anni il lato debole è libero",
+            "pick": "Una sera da gregario",
+            "it": "A 28 anni il lato debole è libero",
+            "en": "At 28, the weak side is open"
+          },
+          {
+            "season": 11,
+            "title": "Convocazione internazionale",
+            "pick": "Accetti e guidi la squadra",
+            "it": "Convocazione internazionale",
+            "en": "International call-up"
+          },
+          {
+            "season": 11,
+            "title": "Agenzia libera",
+            "pick": "Utah Jazz · 4×$20.8M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 12,
+            "title": "Una notte in cui il corpo dice no",
+            "pick": "Dormi sul fianco e speri",
+            "it": "Una notte in cui il corpo dice no",
+            "en": "A night when your body says no"
+          },
+          {
+            "season": 12,
+            "title": "Primo turno",
+            "pick": "Uscita lunga, mano alta",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 13,
+            "title": "Il fisico non risponde più come una volta",
+            "pick": "Continui a spingere",
+            "it": "Il fisico non risponde più come una volta",
+            "en": "The body doesn't respond like it used to"
+          },
+          {
+            "season": 14,
+            "title": "Il pullman resta al buio per un'ora",
+            "pick": "Rivedi i possessi sul telefono",
+            "it": "Il pullman resta al buio per un'ora",
+            "en": "The bus sits in the dark for an hour"
+          },
+          {
+            "season": 15,
+            "title": "Scambio",
+            "pick": "Resto",
+            "it": "Scambio",
+            "en": "Trade"
+          },
+          {
+            "season": 15,
+            "title": "La stessa insegna, 5 inverni",
+            "pick": "Chiedi un ruolo più chiaro",
+            "it": "La stessa insegna, 5 inverni",
+            "en": "The same logo, 5 winters"
+          },
+          {
+            "season": 15,
+            "title": "Agenzia libera",
+            "pick": "San Antonio Spurs · 4×$13.7M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 16,
+            "title": "Il riscaldamento più lungo",
+            "pick": "Tiro e passaggio, solo quello",
+            "it": "Il riscaldamento più lungo",
+            "en": "The longer warm-up"
+          }
+        ],
+        "development": [
+          {
+            "season": 1,
+            "label": "Estate a tavola, senza schemi",
+            "line": "Niente schemi, solo volti. A settembre il mestiere è più tuo.",
+            "before": 61,
+            "after": 61,
+            "age": 19,
+            "it": "Niente schemi, solo volti. A settembre il mestiere è più tuo.",
+            "en": "No playbooks, just faces. By September the game is more yours."
+          },
+          {
+            "season": 2,
+            "label": "Fame da palazzetto piccolo, tenuta",
+            "line": "Asfalto, un pubblico che non ti doveva niente. Tu hai tirato lo stesso.",
+            "before": 62,
+            "after": 63,
+            "age": 20,
+            "it": "Asfalto, un pubblico che non ti doveva niente. Tu hai tirato lo stesso.",
+            "en": "Asphalt, a crowd that owed you nothing. You shot anyway."
+          },
+          {
+            "season": 3,
+            "label": "Un filmato in palestra ha fatto il giro",
+            "line": "La fame filmata, poi il silenzio. A ottobre il gesto è ancora tuo, o no.",
+            "before": 63,
+            "after": 65,
+            "age": 21,
+            "it": "La fame filmata, poi il silenzio. A ottobre il gesto è ancora tuo, o no.",
+            "en": "Hunger filmed, then silence. In October the motion is still yours, or it isn't."
+          },
+          {
+            "season": 4,
+            "label": "Un invito estivo, una gerarchia nuova",
+            "line": "Ti hanno guardato. Tu hai tirato. I minuti di ottobre si decidono anche così.",
+            "before": 65,
+            "after": 67,
+            "age": 22,
+            "it": "Ti hanno guardato. Tu hai tirato. I minuti di ottobre si decidono anche così.",
+            "en": "They watched you. You shot. October minutes get decided this way too."
+          },
+          {
+            "season": 5,
+            "label": "Tre settimane di mestiere, già fatte",
+            "line": "Ripetizioni, specchio, nient'altro. Il ruolo, a ottobre, parla da solo.",
+            "before": 67,
+            "after": 68,
+            "age": 23,
+            "it": "Ripetizioni, specchio, nient'altro. Il ruolo, a ottobre, parla da solo.",
+            "en": "Reps, mirror, nothing else. In October, your role speaks for itself."
+          },
+          {
+            "season": 6,
+            "label": "Meno chili sulla barra, più anni",
+            "line": "Non è stata pigrizia. È un calendario che arriva a maggio, se lo tratti da adulto.",
+            "before": 68,
+            "after": 70,
+            "age": 24,
+            "it": "Non è stata pigrizia. È un calendario che arriva a maggio, se lo tratti da adulto.",
+            "en": "It wasn't laziness. It's a calendar that lasts until May, if you handle it like a grown-up."
+          },
+          {
+            "season": 7,
+            "label": "Asfalto, un luglio già speso",
+            "line": "Sudore diverso. Ti ha ricordato perché hai cominciato, e quanto costa continuare.",
+            "before": 70,
+            "after": 70,
+            "age": 25,
+            "it": "Sudore diverso. Ti ha ricordato perché hai cominciato, e quanto costa continuare.",
+            "en": "A different kind of sweat. It reminded you why you started, and what it costs to keep going."
+          },
+          {
+            "season": 8,
+            "label": "Il gesto, nudo, ripetuto fino ad agosto",
+            "line": "Il laboratorio ha avuto un agosto. Lo staff, al primo allenamento, lo legge dal polso.",
+            "before": 70,
+            "after": 70,
+            "age": 26,
+            "it": "Il laboratorio ha avuto un agosto. Lo staff, al primo allenamento, lo legge dal polso.",
+            "en": "The lab had its August. At the first practice, the staff reads it in your wrist."
+          },
+          {
+            "season": 9,
+            "label": "Ripetizioni, specchio, nient'altro: è andata così",
+            "line": "L'estate, nuda: gli stessi tiri, lo stesso specchio, un polso che a settembre non è più una domanda.",
+            "before": 70,
+            "after": 68,
+            "age": 27,
+            "it": "L'estate, nuda: gli stessi tiri, lo stesso specchio, un polso che a settembre non è più una domanda.",
+            "en": "Summer, bare: the same shots, the same mirror, a wrist that by September is no longer a question."
+          },
+          {
+            "season": 10,
+            "label": "Laboratorio di tiro, tre settimane",
+            "line": "Hai ripetuto finché il polso ha smesso di essere una domanda.",
+            "before": 68,
+            "after": 68,
+            "age": 28,
+            "it": "Hai ripetuto finché il polso ha smesso di essere una domanda.",
+            "en": "You repeated it until your wrist stopped being a question."
+          },
+          {
+            "season": 11,
+            "label": "Il gesto, corretto di un grado",
+            "line": "Sei tornato con una uscita nuova. Lo staff la vede al primo allenamento.",
+            "before": 68,
+            "after": 68,
+            "age": 29,
+            "it": "Sei tornato con un'uscita nuova. Lo staff la vede al primo allenamento.",
+            "en": "You came back with a new set. The staff sees it at the first practice."
+          },
+          {
+            "season": 12,
+            "label": "Lo specchio, il gesto, nient'altro: tre settimane",
+            "line": "Niente amichevoli. Solo ripetizioni, e un ferro che a ottobre non chiede più il nome.",
+            "before": 68,
+            "after": 68,
+            "age": 30,
+            "it": "Niente amichevoli. Solo ripetizioni, e un ferro che a ottobre non chiede più il nome.",
+            "en": "No scrimmages. Just reps, and a rim that by October no longer asks your name."
+          },
+          {
+            "season": 13,
+            "label": "Estate sul ruolo, già chiusa, senza testimoni",
+            "line": "Hai chiuso luglio in palestra. Lo staff, a settembre, lo capisce dal passo.",
+            "before": 68,
+            "after": 67,
+            "age": 31,
+            "it": "Hai chiuso luglio in palestra. Lo staff, a settembre, lo capisce dal passo.",
+            "en": "You closed out July in the gym. The staff can tell in September from your stride."
+          },
+          {
+            "season": 14,
+            "label": "Estate da specialista, già chiusa",
+            "line": "Hai stretto il mestiere a una cosa. A ottobre quella cosa tiene.",
+            "before": 67,
+            "after": 67,
+            "age": 32,
+            "it": "Hai stretto il mestiere a una cosa. A ottobre quella cosa tiene.",
+            "en": "You narrowed your work to one thing. In October that thing holds."
+          },
+          {
+            "season": 15,
+            "label": "Il gesto, di nuovo, finché ha smesso di essere una decisione",
+            "line": "Niente copertina. Il ruolo, a ottobre, è più stretto e più tuo.",
+            "before": 67,
+            "after": 65,
+            "age": 33,
+            "it": "Al termine dell'estate, l'overall è diminuito.",
+            "en": "At summer's end, overall has decreased."
+          },
+          {
+            "season": 16,
+            "label": "Mille uscite, lo stesso specchio: estate chiusa così",
+            "line": "Pochi testimoni, molti tiri. Il miglioramento, se c'è, non ha fatto rumore.",
+            "before": 65,
+            "after": 63,
+            "age": 34,
+            "it": "Pochi testimoni, molti tiri. Il miglioramento, se c'è, non ha fatto rumore.",
+            "en": "Few witnesses, lots of shots. The improvement, if there is one, made no noise."
+          }
+        ],
+        "seasons": [
+          {
+            "season": 1,
+            "age": 19,
+            "overall": 61,
+            "raw": "Niente copertine. Solo ripetizioni, e un coach che non mentisce sulle valutazioni. Troppo giovane per i discorsi da veterano. A 19 anni basta arrivare in orario e leggere la difesa.",
+            "it": "Niente copertine. Solo ripetizioni, e un coach che non mentisce sulle valutazioni. Troppo giovane per i discorsi da veterano. A 19 anni basta arrivare in orario e leggere la difesa.",
+            "en": "No magazine covers. Just reps, and a coach who doesn't lie about evaluations. Too young for veteran speeches. At 19, it's enough to show up on time and read the defense."
+          },
+          {
+            "season": 2,
+            "age": 20,
+            "overall": 62,
+            "raw": "Un progetto, detto chiaro. I minuti sono una scuola, e la scuola interroga. A 20 anni il palazzetto è ancora una stanza nuova. Ogni sera impari un nome.",
+            "it": "Un progetto, detto chiaro. I minuti sono una scuola, e la scuola interroga. A 20 anni il palazzetto è ancora una stanza nuova. Ogni sera impari un nome.",
+            "en": "A project, stated clearly. Minutes are a school, and the school gives tests. At 20, the arena is still a new room. Every night you learn a name."
+          },
+          {
+            "season": 3,
+            "age": 21,
+            "overall": 63,
+            "raw": "Hai 21 anni e il mestiere ti guarda dall'alto. Tu rispondi coi possessi, non con le interviste. Denver Nuggets è una maglia. Denver è una stanza. Tu abiti tutte e due, con attenzione diversa.",
+            "it": "Hai 21 anni e il mestiere ti guarda dall'alto. Tu rispondi coi possessi, non con le interviste. Denver Nuggets è una maglia. Denver è una stanza. Tu abiti tutte e due, con attenzione diversa.",
+            "en": "You're 21 and the job looks down on you. You answer with possessions, not interviews. Denver Nuggets are a jersey. Denver is a room. You live in both, with different kinds of care."
+          },
+          {
+            "season": 4,
+            "age": 22,
+            "overall": 65,
+            "raw": "Ottavi. Nessuno vi teme, e questo, a volte, basta per entrare. Una presenza da colonna. I minuti si sommano senza chiedere permesso.",
+            "it": "Ottavi. Nessuno vi teme, e questo, a volte, basta per entrare. Una presenza da colonna. I minuti si sommano senza chiedere permesso.",
+            "en": "Eighth seed. Nobody fears you, and sometimes that's enough to get in. A pillar's attendance record. The minutes add up without asking permission."
+          },
+          {
+            "season": 5,
+            "age": 23,
+            "overall": 67,
+            "raw": "Prima settimana a Detroit Pistons: nomi, uscite, un armadietto che non è ancora tuo. A Detroit, la piazza di Detroit entra già caldo. Tu cerchi il possesso, che è più onesto del coro.",
+            "it": "Prima settimana ai Detroit Pistons: nomi, uscite, un armadietto che non è ancora tuo. A Detroit, il pubblico è già caldo. Tu cerchi il possesso, che è più onesto del coro.",
+            "en": "First week with Detroit Pistons: names, sets, a locker that isn't yours yet. In Detroit, the Detroit crowd shows up already fired up. You look for the possession, which is more honest than the chant."
+          },
+          {
+            "season": 6,
+            "age": 24,
+            "overall": 68,
+            "raw": "Al palazzetto di Milwaukee il rumore cambia quando tocchi palla. La piazza di Milwaukee non chiede numeri: chiede presenza. Il ritmo non si negozia. O lo tieni, o lo subisci da chi arriva prima.",
+            "it": "Al palazzetto di Milwaukee il rumore cambia quando tocchi palla. La piazza di Milwaukee non chiede numeri: chiede presenza. Il ritmo non si negozia. O lo tieni, o lo subisci da chi arriva prima.",
+            "en": "In the Milwaukee arena the noise changes when you touch the ball. The Milwaukee crowd doesn't ask for numbers: it asks for presence. The pace isn't negotiable. Either you set it, or you suffer it from whoever gets there first."
+          },
+          {
+            "season": 7,
+            "age": 25,
+            "overall": 70,
+            "raw": "Il quaderno degli schemi è un libro, non un volantino. Lo sfogli, o resti in panchina. La città di New York ti riconosce per strada. Non è fama: è abitudine, e pesa lo stesso.",
+            "it": "Il quaderno degli schemi è un libro, non un volantino. Lo sfogli, o resti in panchina. La città di New York ti riconosce per strada. Non è fama: è abitudine, e pesa lo stesso.",
+            "en": "The playbook is a book, not a flyer. You study it, or you sit on the bench. The city of New York recognizes you on the street. It isn't fame: it's habit, and it weighs just the same."
+          },
+          {
+            "season": 8,
+            "age": 26,
+            "overall": 70,
+            "raw": "La piazza di New York ha una voce. Quest'anno la senti anche quando il palazzetto è mezzo vuoto. Un possesso da adulti. Niente scorciatoie, niente scuse di ritmo.",
+            "it": "La piazza di New York ha una voce. Quest'anno la senti anche quando il palazzetto è mezzo vuoto. Un possesso da adulti. Niente scorciatoie, niente scuse di ritmo.",
+            "en": "The New York crowd has a voice. This year you hear it even when the arena is half empty. A grown-up possession. No shortcuts, no tempo excuses."
+          },
+          {
+            "season": 9,
+            "age": 27,
+            "overall": 70,
+            "raw": "Difese schierate, sempre. Vincere vuole dire smontarle, non superarle di corsa. Ottantadue sere, o quasi. Gli altri si fermano. Tu no.",
+            "it": "Difese schierate, sempre. Vincere vuole dire smontarle, non superarle di corsa. Ottantadue sere, o quasi. Gli altri si fermano. Tu no.",
+            "en": "Set defenses, always. Winning means taking them apart, not outrunning them. Eighty-two nights, or close. Others stop. You don't."
+          },
+          {
+            "season": 10,
+            "age": 28,
+            "overall": 68,
+            "raw": "Nuova maglia, stessa testa. Utah Jazz è un'altra lingua da imparare. Corrono. Tu stai nel loro respiro, o resti indietro.",
+            "it": "Nuova maglia, stessa testa. Utah Jazz è un'altra lingua da imparare. Corrono. Tu stai nel loro respiro, o resti indietro.",
+            "en": "New jersey, same head. Utah Jazz are another language to learn. They run. You stay in their breath, or you fall behind."
+          },
+          {
+            "season": 11,
+            "age": 29,
+            "overall": 68,
+            "raw": "Il calendario non ti ha piegato. Lo staff lo dice piano, come un complimento vero. Niente tempo morto per riprendere fiato. Il fiato è il lavoro, qui.",
+            "it": "Il calendario non ti ha piegato. Lo staff lo dice piano, come un complimento vero. Niente tempo morto per riprendere fiato. Il fiato è il lavoro, qui.",
+            "en": "The schedule didn't bend you. The staff says it quietly, like a real compliment. No timeout to catch your breath. Breath is the work, here."
+          },
+          {
+            "season": 12,
+            "age": 30,
+            "overall": 68,
+            "raw": "Niente set lunghi. La prima uscita è già un possesso vero. Trenta e oltre. A Salt Lake City il pubblico non ti chiede più di sorprendere: ti chiede di durare.",
+            "it": "Niente set lunghi. La prima uscita è già un possesso vero. Trenta e oltre. A Salt Lake City il pubblico non ti chiede più di sorprendere: ti chiede di durare.",
+            "en": "No long sets. The first action is already a real possession. Thirty and beyond. In Salt Lake City the crowd no longer asks you to surprise them: it asks you to last."
+          },
+          {
+            "season": 13,
+            "age": 31,
+            "overall": 68,
+            "raw": "Partono in quattro. Tu sei il quinto, o sei un ostacolo. Il calendario, a 31 anni, si legge col corpo. Tu lo leggi prima dello staff.",
+            "it": "Partono in quattro. Tu sei il quinto, o sei un ostacolo. Il calendario, a 31 anni, si legge col corpo. Tu lo leggi prima dello staff.",
+            "en": "Four of them take off. You're the fifth, or you're in the way. At 31, you read the calendar with your body. You read it before the staff does."
+          },
+          {
+            "season": 14,
+            "age": 32,
+            "overall": 67,
+            "raw": "Chi vuole costruire al mezzo campo resta a guardare il tabellone che corre. A 32 anni le ginocchia hanno un archivio. Lo sfogli al mattino, poi scendi in campo.",
+            "it": "Chi vuole costruire al mezzo campo resta a guardare il tabellone che corre. A 32 anni le ginocchia hanno un archivio. Lo sfogli al mattino, poi scendi in campo.",
+            "en": "Whoever wants to build in the half court ends up watching the scoreboard run. At 32, your knees keep an archive. You leaf through it in the morning, then take the floor."
+          },
+          {
+            "season": 15,
+            "age": 33,
+            "overall": 67,
+            "raw": "A 33 anni il primo passo è ancora una decisione. Il secondo, un negoziato. Trentatré anni. Lo specchio non mente, e tu non gli chiedi di mentire.",
+            "it": "A 33 anni il primo passo è ancora una decisione. Il secondo, un negoziato. Trentatré anni. Lo specchio non mente, e tu non gli chiedi di mentire.",
+            "en": "At 33, the first step is still a decision. The second, a negotiation. Thirty-three. The mirror doesn't lie, and you don't ask it to."
+          },
+          {
+            "season": 16,
+            "age": 34,
+            "overall": 65,
+            "raw": "A trentaquattro il mestiere è durare senza sparire. Hai lasciato Utah Jazz. Il corridoio nuovo puzza di vernice e di attesa.",
+            "it": "A trentaquattro il mestiere è durare senza sparire. Hai lasciato Utah Jazz. Il corridoio nuovo puzza di vernice e di attesa.",
+            "en": "At thirty-four the job is to last without disappearing. You left Utah Jazz. The new hallway smells of paint and of waiting."
+          }
+        ],
+        "ending": {
+          "raw": "Non tutte le storie finiscono con un trofeo alzato, e va bene così. Il ragazzo cresciuto in Europa è arrivato più lontano di quanto molti immaginassero.",
+          "it": "Non tutte le storie finiscono con un trofeo alzato, e va bene così. La tua preparazione pre-draft era l'accademia europea.",
+          "en": "Not every story ends with a trophy held high, and that's fine. Your pre-draft preparation was a European academy.",
+          "commentIt": "16 stagioni a referto. La longevità, qui, non è un incidente. Il Rookie of the Year c'è stato. Poi bisognava diventare altro. Nessun titolo. Non tutte le carriere chiudono con i confetti. 6 maglie diverse. Il mestiere è stato un viaggio, non una casa. Il tuo percorso pre-draft era europeo. Il resto lo raccontano le stagioni.",
+          "commentEn": "16 seasons in the box scores. Longevity, here, is no accident. Rookie of the Year happened. Then you had to become something else. No titles. Not every career ends with confetti. 6 different jerseys. Your career was a journey, not a home. Your pre-draft path was European. The seasons tell the rest."
+        }
+      }
+    },
+    {
+      "seed": 777003,
+      "role": "SF",
+      "path": "G-League",
+      "nationality": "Serbia",
+      "engineVersion": "2.24.0-beta",
+      "rivalName": "Andre Kellerman",
+      "fullStateBefore": "bfe523fd8c0e77d7de9c3047beeb18daa0a4ce68ae58ad3dd9c5d75a862d5c47",
+      "fullStateAfter": "bfe523fd8c0e77d7de9c3047beeb18daa0a4ce68ae58ad3dd9c5d75a862d5c47",
+      "unchanged": true,
+      "display": {
+        "choices": [
+          {
+            "season": 0,
+            "title": "Percorso",
+            "pick": "G-League",
+            "it": "Percorso",
+            "en": "Path"
+          },
+          {
+            "season": 0,
+            "title": "Chiamata",
+            "pick": "31ª · Houston Rockets",
+            "it": "Chiamata",
+            "en": "The call"
+          },
+          {
+            "season": 1,
+            "title": "Rookie of the Year",
+            "pick": "Uso aggressivo",
+            "it": "Rookie of the Year",
+            "en": "Rookie of the Year"
+          },
+          {
+            "season": 1,
+            "title": "Primo turno",
+            "pick": "Spacca la linea, ogni uscita",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 2,
+            "title": "Il primo scontro con un veterano",
+            "pick": "Ti fai valere subito",
+            "it": "Il primo scontro con un veterano",
+            "en": "The first clash with a veteran"
+          },
+          {
+            "season": 2,
+            "title": "Primo turno",
+            "pick": "Due liberi, come se fosse giugno",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 2,
+            "title": "Agenzia libera",
+            "pick": "Cleveland Cavaliers · 3×$8.6M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 3,
+            "title": "Il volo di notte",
+            "pick": "Studi i possessi dell'avversario",
+            "it": "Il volo di notte",
+            "en": "The red-eye"
+          },
+          {
+            "season": 4,
+            "title": "Una trasferta in cui il ferro è storto",
+            "pick": "Cerchi il contatto, non il tiro",
+            "it": "Una trasferta in cui il ferro è storto",
+            "en": "A road game where the rim is crooked"
+          },
+          {
+            "season": 4,
+            "title": "Primo turno",
+            "pick": "Gioca pulito, anche se trema",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 5,
+            "title": "A 23 anni scade il contratto",
+            "pick": "Sta' zitto e produci",
+            "it": "A 23 anni scade il contratto",
+            "en": "At 23, the contract is running out"
+          },
+          {
+            "season": 5,
+            "title": "Primo turno",
+            "pick": "Ascolta il tempo morto, poi esegui",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 5,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Gioca con la memoria della serie",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 5,
+            "title": "Agenzia libera",
+            "pick": "New Orleans Pelicans · 4×$26M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 6,
+            "title": "Lo scontro con Andre Kellerman",
+            "pick": "Gioco di squadra",
+            "it": "Lo scontro con Andre Kellerman",
+            "en": "The showdown with Andre Kellerman"
+          },
+          {
+            "season": 6,
+            "title": "Primo turno",
+            "pick": "Taglia senza palla, poi finisci",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 7,
+            "title": "La città vota una tassa per il nuovo palazzetto",
+            "pick": "Ti schieri con il quartiere",
+            "it": "La città vota una tassa per il nuovo palazzetto",
+            "en": "The city votes on a tax for the new arena"
+          },
+          {
+            "season": 7,
+            "title": "Primo turno",
+            "pick": "Leggi il loro tempo morto meglio di loro",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 8,
+            "title": "La lista di febbraio, e tu no",
+            "pick": "Una frase secca, poi basta",
+            "it": "La lista di febbraio, e tu no",
+            "en": "The February list, and you're not on it"
+          },
+          {
+            "season": 8,
+            "title": "Primo turno",
+            "pick": "Alza il muro, ogni uscita",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 8,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Chiama il blocco, a voce alta",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 8,
+            "title": "Finali Est/Ovest",
+            "pick": "Uscita lunga, mano alta",
+            "it": "Finali Est/Ovest",
+            "en": "Conference finals"
+          },
+          {
+            "season": 8,
+            "title": "Finali NBA",
+            "pick": "Il tiro che ti definirà",
+            "it": "Finali NBA",
+            "en": "NBA Finals"
+          },
+          {
+            "season": 9,
+            "title": "A 27 anni scade il contratto",
+            "pick": "Sta' zitto e produci",
+            "it": "A 27 anni scade il contratto",
+            "en": "At 27, the contract is running out"
+          },
+          {
+            "season": 9,
+            "title": "Primo turno",
+            "pick": "Chiama il blocco, a voce alta",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 9,
+            "title": "Agenzia libera",
+            "pick": "New Orleans Pelicans · 3×$35M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 10,
+            "title": "Convocazione internazionale",
+            "pick": "Ruolo ridotto",
+            "it": "Convocazione internazionale",
+            "en": "International call-up"
+          },
+          {
+            "season": 10,
+            "title": "Primo turno",
+            "pick": "Ventiquattro secondi, il tiro giusto",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 10,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Uno contro uno, sul possesso decisivo",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 11,
+            "title": "A 29 anni i numeri chiedono un ruolo",
+            "pick": "Resti nello schema",
+            "it": "A 29 anni i numeri chiedono un ruolo",
+            "en": "At 29, the numbers demand a role"
+          },
+          {
+            "season": 11,
+            "title": "Primo turno",
+            "pick": "Uno contro uno, sul possesso decisivo",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 11,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Alza il muro, ogni uscita",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 11,
+            "title": "Agenzia libera",
+            "pick": "New Orleans Pelicans · 3×$34.3M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 12,
+            "title": "Il menisco cede",
+            "pick": "Riabilitazione aggressiva",
+            "it": "Il menisco cede",
+            "en": "The meniscus gives way"
+          },
+          {
+            "season": 12,
+            "title": "Primo turno",
+            "pick": "Alza il muro, ogni uscita",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 13,
+            "title": "Fedeltà, o abitudine",
+            "pick": "Chiedi un ruolo più chiaro",
+            "it": "Fedeltà, o abitudine",
+            "en": "Loyalty, or habit"
+          },
+          {
+            "season": 13,
+            "title": "Primo turno",
+            "pick": "Set lunghi, letture lente",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 13,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Il passaggio corto, quello che tiene",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 14,
+            "title": "La pagina bianca",
+            "pick": "Stai col gruppo",
+            "it": "La pagina bianca",
+            "en": "The blank page"
+          },
+          {
+            "season": 14,
+            "title": "Primo turno",
+            "pick": "Copri i buchi, non i titoli",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 14,
+            "title": "Agenzia libera",
+            "pick": "Los Angeles Lakers · 4×$17.9M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 15,
+            "title": "L'ultimo atto, detto piano",
+            "pick": "Restare è già una scelta",
+            "it": "L'ultimo atto, detto piano",
+            "en": "The last act, said softly"
+          },
+          {
+            "season": 15,
+            "title": "Primo turno",
+            "pick": "Lo schema è un orologio. Non fermarlo",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 15,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Il tiro che hai guadagnato in dieci anni",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 16,
+            "title": "La linea dei trentaquattro",
+            "pick": "Il ruolo che ti resta",
+            "it": "La linea dei trentaquattro",
+            "en": "The thirty-four line"
+          },
+          {
+            "season": 16,
+            "title": "Primo turno",
+            "pick": "Il passaggio corto, quello che tiene",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 16,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Gioco fisico, ogni possesso",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          }
+        ],
+        "development": [
+          {
+            "season": 1,
+            "label": "Casa, luglio, già fatti",
+            "line": "Niente schemi. Solo volti che non votano i minuti. Sei tornato più intero.",
+            "before": 61,
+            "after": 62,
+            "age": 19,
+            "it": "Niente schemi. Solo volti che non votano i minuti. Sei tornato più intero.",
+            "en": "No playbooks. Just faces that don't vote on minutes. You came back more whole."
+          },
+          {
+            "season": 2,
+            "label": "Tre settimane sullo specchio, senza copertina",
+            "line": "Hai tenuto il mestiere quando nessuno guardava. A ottobre il passo lo dice, senza che tu debba dichiararlo.",
+            "before": 62,
+            "after": 64,
+            "age": 20,
+            "it": "Hai tenuto il mestiere quando nessuno guardava. A ottobre il passo lo dice, senza che tu debba dichiararlo.",
+            "en": "You kept working when nobody was watching. In October your stride says so, without you having to."
+          },
+          {
+            "season": 3,
+            "label": "Tregua del corpo, già firmata",
+            "line": "Luglio è stato una stanza chiusa: ghiaccio, camminate, la pazienza che a vent'anni non avevi.",
+            "before": 65,
+            "after": 67,
+            "age": 21,
+            "it": "Luglio è stato una stanza chiusa: ghiaccio, camminate, la pazienza che a vent'anni non avevi.",
+            "en": "July was a closed room: ice, walks, the patience you didn't have at twenty."
+          },
+          {
+            "season": 4,
+            "label": "Due settimane lontano dal mestiere",
+            "line": "Due settimane a casa. Il mestiere, spento, ti ha restituito un pezzo di te.",
+            "before": 67,
+            "after": 70,
+            "age": 22,
+            "it": "Due settimane a casa. Il mestiere, spento, ti ha restituito un pezzo di te.",
+            "en": "Two weeks at home. Time away from the game gave you back a piece of yourself."
+          },
+          {
+            "season": 5,
+            "label": "Senza pubblico, tre settimane sul gesto",
+            "line": "Tre settimane sporche. A ottobre si vedrà se sono bastate.",
+            "before": 70,
+            "after": 74,
+            "age": 23,
+            "it": "Tre settimane sporche. A ottobre si vedrà se sono bastate.",
+            "en": "Three dirty weeks. October will tell if they were enough."
+          },
+          {
+            "season": 6,
+            "label": "Due microfoni, poi il silenzio",
+            "line": "Microfoni d'estate, già spenti. In palestra, lo stesso sudore.",
+            "before": 74,
+            "after": 76,
+            "age": 24,
+            "it": "Microfoni d'estate, già spenti. In palestra, lo stesso sudore.",
+            "en": "Summer microphones, already switched off. In the gym, the same sweat."
+          },
+          {
+            "season": 7,
+            "label": "Lavoro sul ruolo, luglio già chiuso",
+            "line": "Ripetizioni, specchio, nient'altro. Il ruolo, a ottobre, parla da solo.",
+            "before": 76,
+            "after": 78,
+            "age": 25,
+            "it": "Ripetizioni, specchio, nient'altro. Il ruolo, a ottobre, parla da solo.",
+            "en": "Reps, mirror, nothing else. In October, your role speaks for itself."
+          },
+          {
+            "season": 8,
+            "label": "Il carico, misurato e già firmato",
+            "line": "Hai tenuto il volume. Ottobre, poi, non chiede una prova: chiede continuità.",
+            "before": 79,
+            "after": 81,
+            "age": 26,
+            "it": "Hai tenuto il volume. Ottobre, poi, non chiede una prova: chiede continuità.",
+            "en": "You kept the volume. October, then, doesn't ask for proof: it asks for consistency."
+          },
+          {
+            "season": 9,
+            "label": "Estate sul ruolo, già chiusa, senza testimoni",
+            "line": "Sudore senza testimoni. Il ruolo, a settembre, è un altro di un palmo.",
+            "before": 81,
+            "after": 80,
+            "age": 27,
+            "it": "Al termine dell'estate, l'overall è diminuito.",
+            "en": "At summer's end, overall has decreased."
+          },
+          {
+            "season": 10,
+            "label": "Anca, caviglia, nient'altro: tre settimane così",
+            "line": "Niente chili sulla barra. Solo gradi di movimento. A ottobre il primo passo è più lungo.",
+            "before": 79,
+            "after": 79,
+            "age": 28,
+            "it": "Al termine dell'estate, l'overall è invariato.",
+            "en": "At summer's end, overall is unchanged."
+          },
+          {
+            "season": 11,
+            "label": "Beneficenza, già giocata, un luglio",
+            "line": "Hai messo la maglia per qualcuno, non per te. Il gesto è rimasto tuo.",
+            "before": 79,
+            "after": 76,
+            "age": 29,
+            "it": "Hai messo la maglia per qualcuno, non per te. Il gesto è rimasto tuo.",
+            "en": "You wore the jersey for someone else, not for you. The motion stayed yours."
+          },
+          {
+            "season": 12,
+            "label": "Tre settimane di ghiaccio, già chiuse",
+            "line": "Manutenzione vera: camminate, sonno, niente teatro. Arrivi a ottobre in piedi.",
+            "before": 73,
+            "after": 73,
+            "age": 30,
+            "it": "Manutenzione vera: camminate, sonno, niente teatro. Arrivi a ottobre in piedi.",
+            "en": "Real maintenance: walks, sleep, no theater. You reach October on your feet."
+          },
+          {
+            "season": 13,
+            "label": "Mille uscite, lo stesso specchio: estate chiusa così",
+            "line": "Hai contato le uscite, non i filmati. A settembre il gesto è più corto e più vero.",
+            "before": 70,
+            "after": 72,
+            "age": 31,
+            "it": "Hai contato le uscite, non i filmati. A settembre il gesto è più corto e più vero.",
+            "en": "You counted curls, not clips. By September the motion is shorter and truer."
+          },
+          {
+            "season": 14,
+            "label": "Tre settimane di mestiere, già fatte",
+            "line": "Luglio è restato in palestra. Settembre legge il passo, non le interviste.",
+            "before": 71,
+            "after": 70,
+            "age": 32,
+            "it": "Luglio è restato in palestra. Settembre legge il passo, non le interviste.",
+            "en": "July stayed in the gym. September reads your stride, not the interviews."
+          },
+          {
+            "season": 15,
+            "label": "Estate di ghiaccio e pazienza, già spesa",
+            "line": "La tregua non è stata pigrizia. È la forma più adulta del lavoro, e l'hai tenuta.",
+            "before": 68,
+            "after": 69,
+            "age": 33,
+            "it": "La tregua non è stata pigrizia. È la forma più adulta del lavoro, e l'hai tenuta.",
+            "en": "The break wasn't laziness. It's the most grown-up form of work, and you stuck to it."
+          },
+          {
+            "season": 16,
+            "label": "Una porta europea, già nominata",
+            "line": "Una porta in un'altra lingua. Resta sul tavolo, e pesa.",
+            "before": 69,
+            "after": 68,
+            "age": 34,
+            "it": "Una porta in un'altra lingua. Resta sul tavolo, e pesa.",
+            "en": "A door in another language. It stays on the table, and it weighs."
+          }
+        ],
+        "seasons": [
+          {
+            "season": 1,
+            "age": 19,
+            "overall": 61,
+            "raw": "La città di Houston ti riconosce per strada. Non è fama: è abitudine, e pesa lo stesso. Settanta sere al primo giro. Pochi le fanno. Tutte lasciano un segno.",
+            "it": "La città di Houston ti riconosce per strada. Non è fama: è abitudine, e pesa lo stesso. Settanta sere al primo giro. Pochi le fanno. Tutte lasciano un segno.",
+            "en": "The city of Houston recognizes you on the street. It isn't fame: it's habit, and it weighs just the same. Seventy nights in your first go-round. Few manage it. All of them leave a mark."
+          },
+          {
+            "season": 2,
+            "age": 20,
+            "overall": 62,
+            "raw": "Un passaggio in più verso l'angolo. Qui è legge, non cortesia. Al palazzetto di Houston il rumore cambia quando tocchi palla. La piazza di Houston non chiede numeri: chiede presenza.",
+            "it": "Un passaggio in più verso l'angolo. Qui è legge, non cortesia. Al palazzetto di Houston il rumore cambia quando tocchi palla. La piazza di Houston non chiede numeri: chiede presenza.",
+            "en": "One more pass to the corner. Here it's law, not courtesy. In the Houston arena the noise changes when you touch the ball. The Houston crowd doesn't ask for numbers: it asks for presence."
+          },
+          {
+            "season": 3,
+            "age": 21,
+            "overall": 65,
+            "raw": "Troppo giovane per i discorsi da veterano. A 21 anni basta arrivare in orario e leggere la difesa. Nuova maglia, stessa testa. Cleveland Cavaliers è un'altra lingua da imparare.",
+            "it": "Troppo giovane per i discorsi da veterano. A 21 anni basta arrivare in orario e leggere la difesa. Nuova maglia, stessa testa. Cleveland Cavaliers è un'altra lingua da imparare.",
+            "en": "Too young for veteran speeches. At 21, it's enough to show up on time and read the defense. New jersey, same head. Cleveland Cavaliers are another language to learn."
+          },
+          {
+            "season": 4,
+            "age": 22,
+            "overall": 67,
+            "raw": "Ottavi per un soffio. I playoff sono una porta socchiusa, non un diritto. A 22 anni il palazzetto è ancora una stanza nuova. Ogni sera impari un nome.",
+            "it": "Ottavi per un soffio. I playoff sono una porta socchiusa, non un diritto. A 22 anni il palazzetto è ancora una stanza nuova. Ogni sera impari un nome.",
+            "en": "Eighth by a whisker. The playoffs are a door left ajar, not a right. At 22, the arena is still a new room. Every night you learn a name."
+          },
+          {
+            "season": 5,
+            "age": 23,
+            "overall": 70,
+            "raw": "I possessi arrivano a pezzi, come compiti. Devi consegnarli puliti. Cleveland Cavaliers è una maglia. Cleveland è una stanza. Tu abiti tutte e due, con attenzione diversa.",
+            "it": "I possessi arrivano a pezzi, come compiti. Devi consegnarli puliti. Cleveland Cavaliers è una maglia. Cleveland è una stanza. Tu abiti tutte e due, con attenzione diversa.",
+            "en": "Possessions come in pieces, like homework. You have to hand them in clean. Cleveland Cavaliers are a jersey. Cleveland is a room. You live in both, with different kinds of care."
+          },
+          {
+            "season": 6,
+            "age": 24,
+            "overall": 74,
+            "raw": "Prima settimana a New Orleans Pelicans: nomi, uscite, un armadietto che non è ancora tuo. A New Orleans, la piazza di New Orleans entra già caldo. Tu cerchi il possesso, che è più onesto del coro.",
+            "it": "Prima settimana ai New Orleans Pelicans: nomi, uscite, un armadietto che non è ancora tuo. A New Orleans, il pubblico è già caldo. Tu cerchi il possesso, che è più onesto del coro.",
+            "en": "First week with New Orleans Pelicans: names, sets, a locker that isn't yours yet. In New Orleans, the New Orleans crowd shows up already fired up. You look for the possession, which is more honest than the chant."
+          },
+          {
+            "season": 7,
+            "age": 25,
+            "overall": 76,
+            "raw": "Ottavi. Nessuno vi teme, e questo, a volte, basta per entrare. La piazza di New Orleans ha una voce. Quest'anno la senti anche quando il palazzetto è mezzo vuoto.",
+            "it": "Ottavi. Nessuno vi teme, e questo, a volte, basta per entrare. La piazza di New Orleans ha una voce. Quest'anno la senti anche quando il palazzetto è mezzo vuoto.",
+            "en": "Eighth seed. Nobody fears you, and sometimes that's enough to get in. The New Orleans crowd has a voice. This year you hear it even when the arena is half empty."
+          },
+          {
+            "season": 8,
+            "age": 26,
+            "overall": 78,
+            "raw": "Niente transizioni facili. Tutto si costruisce, possesso dopo possesso. Ottantadue sere, o quasi. Gli altri si fermano. Tu no.",
+            "it": "Niente transizioni facili. Tutto si costruisce, possesso dopo possesso. Ottantadue sere, o quasi. Gli altri si fermano. Tu no.",
+            "en": "No easy transitions. Everything is built, possession after possession. Eighty-two nights, or close. Others stop. You don't."
+          },
+          {
+            "season": 9,
+            "age": 27,
+            "overall": 81,
+            "raw": "Hai chiuso l'anno intero. La statistica più quieta, e la più rara. Mezzo campo, pazienza, il tiro giusto al secondo giusto.",
+            "it": "Hai chiuso l'anno intero. La statistica più quieta, e la più rara. Mezzo campo, pazienza, il tiro giusto al secondo giusto.",
+            "en": "You played the whole year. The quietest stat, and the rarest. Half court, patience, the right shot at the right second."
+          },
+          {
+            "season": 10,
+            "age": 28,
+            "overall": 80,
+            "raw": "Il voto è arrivato. Non cambia i lunedì, cambia il modo in cui ti presentano. Una piazza che ha già deciso. Tu tieni il mestiere, che è più fragile della fede loro.",
+            "it": "Il voto è arrivato. Non cambia i lunedì, cambia il modo in cui ti presentano. Una piazza che ha già deciso. Tu tieni il mestiere, che è più fragile della fede loro.",
+            "en": "The vote came in. It doesn't change your Mondays; it changes how they introduce you. A fan base that has already made up its mind. You hold on to your work, which is more fragile than their faith."
+          },
+          {
+            "season": 11,
+            "age": 29,
+            "overall": 79,
+            "raw": "Ventiquattro secondi, il tiro giusto. Tu aspetti il diciottesimo, anche se fischiano. Vincere è diventato un'abitudine pericolosa: ci si abitua, e poi pesa.",
+            "it": "Ventiquattro secondi, il tiro giusto. Tu aspetti il diciottesimo, anche se fischiano. Vincere è diventato un'abitudine pericolosa: ci si abitua, e poi pesa.",
+            "en": "Twenty-four seconds, the right shot. You wait for eighteen, even when they boo. Winning has become a dangerous habit: you get used to it, and then it weighs on you."
+          },
+          {
+            "season": 12,
+            "age": 30,
+            "overall": 76,
+            "raw": "I compagni ti cercano con lo sguardo prima del tempo morto. A New Orleans sei un pezzo dello schema. Ogni vittoria sembra dovuta. È il momento in cui si sbaglia di più.",
+            "it": "I compagni ti cercano con lo sguardo prima del tempo morto. A New Orleans sei un pezzo dello schema. Ogni vittoria sembra dovuta. È il momento in cui si sbaglia di più.",
+            "en": "Teammates look for you before the timeout. In New Orleans you're part of the playbook. Every win feels owed. That's when the most mistakes happen."
+          },
+          {
+            "season": 13,
+            "age": 31,
+            "overall": 73,
+            "raw": "Set lunghi, letture lente. Chi ha fretta resta fuori dallo schema. Passi corti, sguardi lunghi. A New Orleans il gruppo ha imparato il tuo tempo.",
+            "it": "Set lunghi, letture lente. Chi ha fretta resta fuori dallo schema. Passi corti, sguardi lunghi. A New Orleans il gruppo ha imparato il tuo tempo.",
+            "en": "Long sets, slow reads. Whoever's in a hurry falls out of the system. Short steps, long looks. In New Orleans the group has learned your rhythm."
+          },
+          {
+            "season": 14,
+            "age": 32,
+            "overall": 72,
+            "raw": "A 32 anni il primo passo è ancora una decisione. Il secondo, un negoziato. L'eliminazione precedente non si è sciolta. Lavora in silenzio, a ottobre.",
+            "it": "A 32 anni il primo passo è ancora una decisione. Il secondo, un negoziato. L'eliminazione precedente non si è sciolta. Lavora in silenzio, a ottobre.",
+            "en": "At 32, the first step is still a decision. The second, a negotiation. The last elimination hasn't faded. It works in silence, in October."
+          },
+          {
+            "season": 15,
+            "age": 33,
+            "overall": 70,
+            "raw": "Il corpo ha un archivio. A ottobre lo sfogli con cura, pagina dopo pagina. La primavera scorsa è restata sotto le unghie. Ogni possesso di ottobre ne porta un pezzo.",
+            "it": "Il corpo ha un archivio. A ottobre lo sfogli con cura, pagina dopo pagina. La primavera scorsa è restata sotto le unghie. Ogni possesso di ottobre ne porta un pezzo.",
+            "en": "The body keeps an archive. In October you leaf through it carefully, page by page. Last spring stayed under your fingernails. Every October possession carries a piece of it."
+          },
+          {
+            "season": 16,
+            "age": 34,
+            "overall": 69,
+            "raw": "Trentaquattro anni, e il ruolo è già una vittoria, se lo tieni dritto. A Los Angeles entri nello spogliatoio e il rumore non cambia. È il segno che sei dei loro.",
+            "it": "Trentaquattro anni, e il ruolo è già una vittoria, se lo tieni dritto. A Los Angeles entri nello spogliatoio e il rumore non cambia. È il segno che sei dei loro.",
+            "en": "Thirty-four, and the role is already a win, if you keep it straight. In Los Angeles you walk into the locker room and the noise doesn't change. It's the sign you're one of them."
+          }
+        ],
+        "ending": {
+          "raw": "Il compagno che ogni squadra da titolo vorrebbe avere accanto. Chi ha bruciato le tappe non ha mai smesso di correre.",
+          "it": "Il compagno che ogni squadra da titolo vorrebbe avere accanto. La tua preparazione pre-draft era la G League.",
+          "en": "The teammate every title team would want by its side. Your pre-draft preparation was the G League.",
+          "commentIt": "16 stagioni a referto. La longevità, qui, non è un incidente. Nessun titolo. Non tutte le carriere chiudono con i confetti. 4 maglie diverse. Il mestiere è stato un viaggio, non una casa. Il tuo percorso pre-draft era la G League. La carriera si è costruita stagione per stagione.",
+          "commentEn": "16 seasons in the box scores. Longevity, here, is no accident. No titles. Not every career ends with confetti. 4 different jerseys. Your career was a journey, not a home. Your pre-draft path was the G League. Your career took shape one season at a time."
+        }
+      }
+    },
+    {
+      "seed": 7107,
+      "role": "PF",
+      "path": "NCAA",
+      "nationality": "Francia",
+      "engineVersion": "2.24.0-beta",
+      "rivalName": "Tomas Vukovic",
+      "fullStateBefore": "ebe8f859198dfe4c6318c3c19932255c231065d58e8deb0a9dfbc8a1de3dfeeb",
+      "fullStateAfter": "ebe8f859198dfe4c6318c3c19932255c231065d58e8deb0a9dfbc8a1de3dfeeb",
+      "unchanged": true,
+      "display": {
+        "choices": [
+          {
+            "season": 0,
+            "title": "Percorso",
+            "pick": "NCAA",
+            "it": "Percorso",
+            "en": "Path"
+          },
+          {
+            "season": 0,
+            "title": "Chiamata",
+            "pick": "33ª · Cleveland Cavaliers",
+            "it": "Chiamata",
+            "en": "The call"
+          },
+          {
+            "season": 1,
+            "title": "Rookie of the Year",
+            "pick": "Impatto a due vie",
+            "it": "Rookie of the Year",
+            "en": "Rookie of the Year"
+          },
+          {
+            "season": 1,
+            "title": "Primo turno",
+            "pick": "Due liberi, come se fosse giugno",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 1,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Chiudi la bocca, apri il campo",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 1,
+            "title": "Finali Est/Ovest",
+            "pick": "Il canestro è di chi arriva terzo",
+            "it": "Finali Est/Ovest",
+            "en": "Conference finals"
+          },
+          {
+            "season": 1,
+            "title": "Finali NBA",
+            "pick": "Due liberi, come se fosse giugno",
+            "it": "Finali NBA",
+            "en": "NBA Finals"
+          },
+          {
+            "season": 2,
+            "title": "Notte in bianco prima di una gara in nazionale mediatica",
+            "pick": "Chiudi tutto e dormi",
+            "it": "Notte in bianco prima di una gara in nazionale mediatica",
+            "en": "A sleepless night before a nationally televised game"
+          },
+          {
+            "season": 2,
+            "title": "Primo turno",
+            "pick": "Ogni rimbalzo, come se fosse l'ultimo",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 2,
+            "title": "Agenzia libera",
+            "pick": "Utah Jazz · 5×$16.5M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 3,
+            "title": "Il veterano della panchina ti prende da parte",
+            "pick": "Gli chiedi di allenarti dopo",
+            "it": "Il veterano della panchina ti prende da parte",
+            "en": "The bench veteran takes you aside"
+          },
+          {
+            "season": 4,
+            "title": "Dopo una battuta a secco",
+            "pick": "Spegni la testa, dormi",
+            "it": "Dopo una battuta a secco",
+            "en": "After a scoreless night"
+          },
+          {
+            "season": 5,
+            "title": "Lo scontro con Tomas Vukovic",
+            "pick": "Gioco di squadra",
+            "it": "Lo scontro con Tomas Vukovic",
+            "en": "The showdown with Tomas Vukovic"
+          },
+          {
+            "season": 5,
+            "title": "Primo turno",
+            "pick": "Uno contro uno, sul possesso decisivo",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 6,
+            "title": "Distorsione alta alla caviglia",
+            "pick": "Chirurgia sperimentale",
+            "it": "Distorsione alta alla caviglia",
+            "en": "High ankle sprain"
+          },
+          {
+            "season": 6,
+            "title": "Primo turno",
+            "pick": "Set lunghi, letture lente",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 7,
+            "title": "Scambio",
+            "pick": "Utah Jazz → Oklahoma City Thunder",
+            "it": "Scambio",
+            "en": "Trade"
+          },
+          {
+            "season": 7,
+            "title": "A 27 anni scade il contratto",
+            "pick": "Chiedi di cambiare aria",
+            "it": "A 27 anni scade il contratto",
+            "en": "At 27, the contract is running out"
+          },
+          {
+            "season": 7,
+            "title": "Primo turno",
+            "pick": "Svuota il lato, decidi tu",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 7,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Due liberi, come se fosse giugno",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 7,
+            "title": "Finali Est/Ovest",
+            "pick": "Prendi il controllo della serie",
+            "it": "Finali Est/Ovest",
+            "en": "Conference finals"
+          },
+          {
+            "season": 7,
+            "title": "Finali NBA",
+            "pick": "Il tiro che ti definirà",
+            "it": "Finali NBA",
+            "en": "NBA Finals"
+          },
+          {
+            "season": 7,
+            "title": "Agenzia libera",
+            "pick": "Sacramento Kings · 4×$31.9M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 8,
+            "title": "A 28 anni l'area non perdona",
+            "pick": "Una sera da gregario",
+            "it": "A 28 anni l'area non perdona",
+            "en": "At 28, the paint doesn't forgive"
+          },
+          {
+            "season": 8,
+            "title": "Primo turno",
+            "pick": "Alza il muro, ogni uscita",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 8,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Gioco fisico, ogni possesso",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 9,
+            "title": "A 29 anni i numeri chiedono un ruolo",
+            "pick": "Resti nello schema",
+            "it": "A 29 anni i numeri chiedono un ruolo",
+            "en": "At 29, the numbers demand a role"
+          },
+          {
+            "season": 9,
+            "title": "Primo turno",
+            "pick": "Tieni la posizione, non il palleggio",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 10,
+            "title": "La schiena si blocca",
+            "pick": "Percorso prudente",
+            "it": "La schiena si blocca",
+            "en": "Your back locks up"
+          },
+          {
+            "season": 10,
+            "title": "Primo turno",
+            "pick": "Leggi il loro tempo morto meglio di loro",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 10,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Prendi il loro, anche se costa",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 11,
+            "title": "Convocazione internazionale",
+            "pick": "Rifiuti per riposare",
+            "it": "Convocazione internazionale",
+            "en": "International call-up"
+          },
+          {
+            "season": 11,
+            "title": "Primo turno",
+            "pick": "Il tiro che hai guadagnato in dieci anni",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 11,
+            "title": "Agenzia libera",
+            "pick": "Denver Nuggets · 2×$17.2M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 12,
+            "title": "Un corridoio senza eco",
+            "pick": "Aspetti chi è ancora in doccia",
+            "it": "Un corridoio senza eco",
+            "en": "A hallway with no echo"
+          },
+          {
+            "season": 13,
+            "title": "Scambio",
+            "pick": "Resto",
+            "it": "Scambio",
+            "en": "Trade"
+          },
+          {
+            "season": 13,
+            "title": "Una primavera da pesare",
+            "pick": "Lo spogliatoio, tenuto",
+            "it": "Una primavera da pesare",
+            "en": "A spring to weigh"
+          },
+          {
+            "season": 13,
+            "title": "Agenzia libera",
+            "pick": "Memphis Grizzlies · 4×$15.2M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          }
+        ],
+        "development": [
+          {
+            "season": 1,
+            "label": "Un invito, tre sessioni, nient'altro",
+            "line": "Poche sessioni, niente teatro. Tu hai tenuto il tono, e lo staff ha preso appunti.",
+            "before": 62,
+            "after": 63,
+            "age": 21,
+            "it": "Poche sessioni, niente teatro. Tu hai tenuto il tono, e lo staff ha preso appunti.",
+            "en": "Few sessions, no theater. You kept your tone, and the staff took notes."
+          },
+          {
+            "season": 2,
+            "label": "Lavoro sul ruolo, luglio già chiuso",
+            "line": "Ripetizioni, specchio, nient'altro. Il ruolo, a ottobre, parla da solo.",
+            "before": 64,
+            "after": 66,
+            "age": 22,
+            "it": "Ripetizioni, specchio, nient'altro. Il ruolo, a ottobre, parla da solo.",
+            "en": "Reps, mirror, nothing else. In October, your role speaks for itself."
+          },
+          {
+            "season": 3,
+            "label": "Due settimane, un maestro, nient'altro",
+            "line": "Palestra vuota, un maestro. Il gesto, a settembre, è un altro di un palmo.",
+            "before": 66,
+            "after": 69,
+            "age": 23,
+            "it": "Palestra vuota, un maestro. Il gesto, a settembre, è cambiato di poco.",
+            "en": "An empty gym, a mentor. By September the motion has changed a little."
+          },
+          {
+            "season": 4,
+            "label": "Il gesto, di nuovo, finché ha smesso di essere una decisione",
+            "line": "L'estate, nuda: gli stessi tiri, lo stesso specchio, un polso che a settembre non è più una domanda.",
+            "before": 69,
+            "after": 72,
+            "age": 24,
+            "it": "L'estate, nuda: gli stessi tiri, lo stesso specchio, un polso che a settembre non è più una domanda.",
+            "en": "Summer, bare: the same shots, the same mirror, a wrist that by September is no longer a question."
+          },
+          {
+            "season": 5,
+            "label": "Un torneo senza minutaggi, già giocato",
+            "line": "Cemento, un luglio. Ti ha ricordato il primo tiro, e quanto costa ancora.",
+            "before": 72,
+            "after": 74,
+            "age": 25,
+            "it": "Cemento, un luglio. Ti ha ricordato il primo tiro, e quanto costa ancora.",
+            "en": "Concrete, one July. It reminded you of your first shot, and what it still costs."
+          },
+          {
+            "season": 6,
+            "label": "Tre gare, un aereo, un'altra maglia: estate così",
+            "line": "Tre gare, un fuso, un orgoglio che non sta nel referto. Sei tornato.",
+            "before": 75,
+            "after": 76,
+            "age": 26,
+            "it": "Tre gare, un fuso, un orgoglio che non sta nel referto. Sei tornato.",
+            "en": "Three games, a time zone, a pride that doesn't fit in the box score. You're back."
+          },
+          {
+            "season": 7,
+            "label": "Ripetizioni, specchio, nient'altro: è andata così",
+            "line": "Tre settimane sporche. A ottobre si vedrà se sono bastate.",
+            "before": 76,
+            "after": 76,
+            "age": 27,
+            "it": "Tre settimane sporche. A ottobre si vedrà se sono bastate.",
+            "en": "Three dirty weeks. October will tell if they were enough."
+          },
+          {
+            "season": 8,
+            "label": "Luglio sui filmati, senza pubblico",
+            "line": "Hai riletto una serie. Hai trovato un possesso che non avevi visto. Basta quello.",
+            "before": 76,
+            "after": 74,
+            "age": 28,
+            "it": "Hai riletto una serie. Hai trovato un possesso che non avevi visto. Basta quello.",
+            "en": "You reviewed a series. You found a possession you hadn't seen. That's enough."
+          },
+          {
+            "season": 9,
+            "label": "Tre settimane di gradi, già spese",
+            "line": "Tre settimane di pazienza articolare. Il mestiere, a quest'età, passa di lì.",
+            "before": 72,
+            "after": 74,
+            "age": 29,
+            "it": "Tre settimane di pazienza articolare. Il mestiere, in questa fase della carriera, passa di lì.",
+            "en": "Three weeks of joint patience. At this stage of your career, that's where the work is."
+          },
+          {
+            "season": 10,
+            "label": "Il corpo ha chiesto tregua. Gliel'hai data",
+            "line": "La tregua non è stata pigrizia. È la forma più adulta del lavoro, e l'hai tenuta.",
+            "before": 74,
+            "after": 72,
+            "age": 30,
+            "it": "La tregua non è stata pigrizia. È la forma più adulta del lavoro, e l'hai tenuta.",
+            "en": "The break wasn't laziness. It's the most grown-up form of work, and you stuck to it."
+          },
+          {
+            "season": 11,
+            "label": "Laboratorio di tiro, tre settimane",
+            "line": "Palestra vuota, il gesto nudo. A ottobre lo staff lo capisce dal polso.",
+            "before": 70,
+            "after": 71,
+            "age": 31,
+            "it": "Palestra vuota, il gesto nudo. A ottobre lo staff lo capisce dal polso.",
+            "en": "Empty gym, the motion bare. In October the staff can tell from your wrist."
+          },
+          {
+            "season": 12,
+            "label": "Tre settimane sullo specchio, senza copertina",
+            "line": "Hai chiuso luglio in palestra. Lo staff, a settembre, lo capisce dal passo.",
+            "before": 71,
+            "after": 70,
+            "age": 32,
+            "it": "Hai chiuso luglio in palestra. Lo staff, a settembre, lo capisce dal passo.",
+            "en": "You closed out July in the gym. The staff can tell in September from your stride."
+          },
+          {
+            "season": 13,
+            "label": "Due giorni di palmo, già letti",
+            "line": "Il regolamento, da vicino. Lo staff trova un giocatore che legge il palmo, non lo discute.",
+            "before": 70,
+            "after": 67,
+            "age": 33,
+            "it": "Il regolamento, da vicino. Lo staff trova un giocatore che legge il palmo, non lo discute.",
+            "en": "The rulebook, up close. The staff finds a player who reads the call, not argues it."
+          }
+        ],
+        "seasons": [
+          {
+            "season": 1,
+            "age": 21,
+            "overall": 61,
+            "raw": "Hai 21 anni e il mestiere ti guarda dall'alto. Tu rispondi coi possessi, non con le interviste. Due passaggi in più, un ferro più gentile. Qui la pazienza è un atletismo.",
+            "it": "Hai 21 anni e il mestiere ti guarda dall'alto. Tu rispondi coi possessi, non con le interviste. Due passaggi in più, un ferro più gentile. Qui la pazienza è un atletismo.",
+            "en": "You're 21 and the job looks down on you. You answer with possessions, not interviews. Two extra passes, a softer rim. Here patience is a form of athleticism."
+          },
+          {
+            "season": 2,
+            "age": 22,
+            "overall": 63,
+            "raw": "Giugno è lontano. Il contratto con te stesso, no. A 22 anni il palazzetto è ancora una stanza nuova. Ogni sera impari un nome.",
+            "it": "Giugno è lontano. Il contratto con te stesso, no. A 22 anni il palazzetto è ancora una stanza nuova. Ogni sera impari un nome.",
+            "en": "June is far away. The contract with yourself isn't. At 22, the arena is still a new room. Every night you learn a name."
+          },
+          {
+            "season": 3,
+            "age": 23,
+            "overall": 66,
+            "raw": "Hai lasciato Cleveland Cavaliers. Il corridoio nuovo puzza di vernice e di attesa. Al palazzetto di Salt Lake City il rumore cambia quando tocchi palla. La piazza di Salt Lake City non chiede numeri: chiede presenza.",
+            "it": "Hai lasciato Cleveland Cavaliers. Il corridoio nuovo puzza di vernice e di attesa. Al palazzetto di Salt Lake City il rumore cambia quando tocchi palla. La piazza di Salt Lake City non chiede numeri: chiede presenza.",
+            "en": "You left Cleveland Cavaliers. The new hallway smells of paint and of waiting. In the Salt Lake City arena the noise changes when you touch the ball. The Salt Lake City crowd doesn't ask for numbers: it asks for presence."
+          },
+          {
+            "season": 4,
+            "age": 24,
+            "overall": 69,
+            "raw": "A Salt Lake City, la piazza di Salt Lake City entra già caldo. Tu cerchi il possesso, che è più onesto del coro. Un blocco, una finta, un'uscita. Lo schema ha il tempo di un respiro lungo.",
+            "it": "A Salt Lake City, il pubblico è già caldo. Tu cerchi il possesso, che è più onesto del coro. Un blocco, una finta, un'uscita. Lo schema ha il tempo di un respiro lungo.",
+            "en": "In Salt Lake City, the Salt Lake City crowd shows up already fired up. You look for the possession, which is more honest than the chant. A screen, a fake, a curl. The play takes the time of one long breath."
+          },
+          {
+            "season": 5,
+            "age": 25,
+            "overall": 72,
+            "raw": "La piazza di Salt Lake City ha una voce. Quest'anno la senti anche quando il palazzetto è mezzo vuoto. Mezzo campo, pazienza, il tiro giusto al secondo giusto.",
+            "it": "La piazza di Salt Lake City ha una voce. Quest'anno la senti anche quando il palazzetto è mezzo vuoto. Mezzo campo, pazienza, il tiro giusto al secondo giusto.",
+            "en": "The Salt Lake City crowd has a voice. This year you hear it even when the arena is half empty. Half court, patience, the right shot at the right second."
+          },
+          {
+            "season": 6,
+            "age": 26,
+            "overall": 75,
+            "raw": "Ventiquattro secondi usati fino in fondo. Il canestro, se arriva, è meritatissimo. La città di Salt Lake City ti riconosce per strada. Non è fama: è abitudine, e pesa lo stesso.",
+            "it": "Ventiquattro secondi usati fino in fondo. Il canestro, se arriva, è meritatissimo. La città di Salt Lake City ti riconosce per strada. Non è fama: è abitudine, e pesa lo stesso.",
+            "en": "Twenty-four seconds used to the very end. The basket, if it comes, is well deserved. The city of Salt Lake City recognizes you on the street. It isn't fame: it's habit, and it weighs just the same."
+          },
+          {
+            "season": 7,
+            "age": 27,
+            "overall": 76,
+            "raw": "Niente alibi di circolazione. Isolamento vuole dire responsabilità, nuda. Prima settimana a Oklahoma City Thunder: nomi, uscite, un armadietto che non è ancora tuo.",
+            "it": "Niente alibi di circolazione. Isolamento vuole dire responsabilità, nuda. Prima settimana agli Oklahoma City Thunder: nomi, uscite, un armadietto che non è ancora tuo.",
+            "en": "No ball-movement alibis. Isolation means responsibility, bare. First week with Oklahoma City Thunder: names, sets, a locker that isn't yours yet."
+          },
+          {
+            "season": 8,
+            "age": 28,
+            "overall": 76,
+            "raw": "L'aria arriva corta. Chi pensa due volte ha già perso il contropiede. Nuova maglia, stessa testa. Sacramento Kings è un'altra lingua da imparare.",
+            "it": "L'aria arriva corta. Chi pensa due volte ha già perso il contropiede. Nuova maglia, stessa testa. Sacramento Kings è un'altra lingua da imparare.",
+            "en": "The air comes short. Whoever thinks twice has already lost the fast break. New jersey, same head. Sacramento Kings are another language to learn."
+          },
+          {
+            "season": 9,
+            "age": 29,
+            "overall": 74,
+            "raw": "Sacramento Kings è una maglia. Sacramento è una stanza. Tu abiti tutte e due, con attenzione diversa. Una transizione dopo l'altra. Il campionato, a questo passo, è una maratona corta.",
+            "it": "Sacramento Kings è una maglia. Sacramento è una stanza. Tu abiti tutte e due, con attenzione diversa. Una transizione dopo l'altra. Il campionato, a questo passo, è una maratona corta.",
+            "en": "Sacramento Kings are a jersey. Sacramento is a room. You live in both, with different kinds of care. One transition after another. At this pace, the season is a short marathon."
+          },
+          {
+            "season": 10,
+            "age": 30,
+            "overall": 74,
+            "raw": "L'eliminazione precedente non si è sciolta. Lavora in silenzio, a ottobre. La lista infortuni ti tiene in una stanza laterale. Si gioca, tu conti i giorni.",
+            "it": "L'eliminazione precedente non si è sciolta. Lavora in silenzio, a ottobre. La lista infortuni ti tiene in una stanza laterale. Si gioca, tu conti i giorni.",
+            "en": "The last elimination hasn't faded. It works in silence, in October. The injury list keeps you in a side room. They play; you count the days."
+          },
+          {
+            "season": 11,
+            "age": 31,
+            "overall": 72,
+            "raw": "Ottavi. Nessuno vi teme, e questo, a volte, basta per entrare. Il calendario non ti ha piegato. Lo staff lo dice piano, come un complimento vero.",
+            "it": "Ottavi. Nessuno vi teme, e questo, a volte, basta per entrare. Il calendario non ti ha piegato. Lo staff lo dice piano, come un complimento vero.",
+            "en": "Eighth seed. Nobody fears you, and sometimes that's enough to get in. The schedule didn't bend you. The staff says it quietly, like a real compliment."
+          },
+          {
+            "season": 12,
+            "age": 32,
+            "overall": 71,
+            "raw": "La primavera scorsa è restata sotto le unghie. Ogni possesso di ottobre ne porta un pezzo. Difese schierate, sempre. Vincere vuole dire smontarle, non superarle di corsa.",
+            "it": "La primavera scorsa è restata sotto le unghie. Ogni possesso di ottobre ne porta un pezzo. Difese schierate, sempre. Vincere vuole dire smontarle, non superarle di corsa.",
+            "en": "Last spring stayed under your fingernails. Every October possession carries a piece of it. Set defenses, always. Winning means taking them apart, not outrunning them."
+          },
+          {
+            "season": 13,
+            "age": 33,
+            "overall": 70,
+            "raw": "In spogliatoio, a Denver, il silenzio è comodo. Non è freddezza: è abitudine buona. Pazienza tattica. Il pubblico fischia; lo staff no, e tu stai con lo staff.",
+            "it": "In spogliatoio, a Denver, il silenzio è comodo. Non è freddezza: è abitudine buona. Pazienza tattica. Il pubblico fischia; lo staff no, e tu stai con lo staff.",
+            "en": "In the locker room in Denver, the silence is comfortable. It's not coldness: it's a good habit. Tactical patience. The crowd boos; the staff doesn't, and you side with the staff."
+          }
+        ],
+        "ending": {
+          "raw": "Una carriera onesta, fatta di minuti guadagnati, non regalati. Tutto è partito da un campus universitario.",
+          "it": "Una carriera onesta, fatta di minuti guadagnati, non regalati. La tua preparazione pre-draft era il percorso NCAA.",
+          "en": "An honest career, made of minutes earned, not handed out. Your pre-draft preparation was the NCAA path.",
+          "commentIt": "13 stagioni. Abbastanza per una biografia, non abbastanza per annoiarsi. Due titoli. Abbastanza per non essere un incidente di calendario. Un anno spezzato. Si vede ancora, nel modo in cui conta i minuti. 5 maglie diverse. Il mestiere è stato un viaggio, non una casa.",
+          "commentEn": "13 seasons. Enough for a biography, not enough to get bored. Two titles. Enough not to be a scheduling accident. A broken year. It still shows, in the way you count minutes. 5 different jerseys. Your career was a journey, not a home."
+        }
+      }
+    },
+    {
+      "seed": 89081,
+      "role": "C",
+      "path": "Europa",
+      "nationality": "Canada",
+      "engineVersion": "2.24.0-beta",
+      "rivalName": "Tomas Vukovic",
+      "fullStateBefore": "0a750dcee029cae38cc3dcc6bb43e02356587e59909d6e49ffdab386db5eb1b6",
+      "fullStateAfter": "0a750dcee029cae38cc3dcc6bb43e02356587e59909d6e49ffdab386db5eb1b6",
+      "unchanged": true,
+      "display": {
+        "choices": [
+          {
+            "season": 0,
+            "title": "Percorso",
+            "pick": "Europa",
+            "it": "Percorso",
+            "en": "Path"
+          },
+          {
+            "season": 0,
+            "title": "Chiamata",
+            "pick": "21ª · New Orleans Pelicans",
+            "it": "Chiamata",
+            "en": "The call"
+          },
+          {
+            "season": 1,
+            "title": "Rookie of the Year",
+            "pick": "Uso aggressivo",
+            "it": "Rookie of the Year",
+            "en": "Rookie of the Year"
+          },
+          {
+            "season": 2,
+            "title": "La conferenza che non chiede",
+            "pick": "Ringrazi, già in corridoio",
+            "it": "La conferenza che non chiede",
+            "en": "The press conference that asks nothing"
+          },
+          {
+            "season": 3,
+            "title": "Una notte fuori finisce sui tabloid",
+            "pick": "Trasformi tutto in beneficenza",
+            "it": "Una notte fuori finisce sui tabloid",
+            "en": "A night out ends up in the tabloids"
+          },
+          {
+            "season": 3,
+            "title": "Agenzia libera",
+            "pick": "New Orleans Pelicans · 4×$14.9M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 4,
+            "title": "In sala video, tre azioni di __RIVAL__, una tua",
+            "pick": "Chiedi le tue tre, dopo",
+            "it": "In sala video, tre azioni di Tomas Vukovic, una tua",
+            "en": "In the film room, three plays by Tomas Vukovic, one of yours"
+          },
+          {
+            "season": 5,
+            "title": "Un tempo morto che dura troppo",
+            "pick": "Chiedi il possesso, se arriva",
+            "it": "Un tempo morto che dura troppo",
+            "en": "A timeout that lasts too long"
+          },
+          {
+            "season": 6,
+            "title": "Un infortunio altrui ti spinge nel quintetto titolare",
+            "pick": "Ti prendi ogni possesso",
+            "it": "Un infortunio altrui ti spinge nel quintetto titolare",
+            "en": "Someone else's injury pushes you into the starting five"
+          },
+          {
+            "season": 7,
+            "title": "Lo scontro con Tomas Vukovic",
+            "pick": "Rispondi a canestro",
+            "it": "Lo scontro con Tomas Vukovic",
+            "en": "The showdown with Tomas Vukovic"
+          },
+          {
+            "season": 7,
+            "title": "Agenzia libera",
+            "pick": "Memphis Grizzlies · 3×$23.5M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 8,
+            "title": "A 26 anni l'area non perdona",
+            "pick": "Stai nello schema",
+            "it": "A 26 anni l'area non perdona",
+            "en": "At 26, the paint doesn't forgive"
+          },
+          {
+            "season": 8,
+            "title": "Primo turno",
+            "pick": "Uno contro uno, sul possesso decisivo",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 8,
+            "title": "Semifinali Est/Ovest",
+            "pick": "Ventiquattro secondi, il tiro giusto",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 9,
+            "title": "Frattura da stress al piede",
+            "pick": "Riabilitazione aggressiva",
+            "it": "Frattura da stress al piede",
+            "en": "Stress fracture in the foot"
+          },
+          {
+            "season": 10,
+            "title": "Convocazione internazionale",
+            "pick": "Rifiuti per riposare",
+            "it": "Convocazione internazionale",
+            "en": "International call-up"
+          },
+          {
+            "season": 10,
+            "title": "Primo turno",
+            "pick": "Ventiquattro secondi, il tiro giusto",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 10,
+            "title": "Agenzia libera",
+            "pick": "Brooklyn Nets · 5×$28.4M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 11,
+            "title": "Scambio",
+            "pick": "Resto",
+            "it": "Scambio",
+            "en": "Trade"
+          },
+          {
+            "season": 11,
+            "title": "A 29 anni l'area non perdona",
+            "pick": "Stai nello schema",
+            "it": "A 29 anni l'area non perdona",
+            "en": "At 29, the paint doesn't forgive"
+          },
+          {
+            "season": 11,
+            "title": "Primo turno",
+            "pick": "Gioco fisico, ogni possesso",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 11,
+            "title": "Semifinali Est/Ovest",
+            "pick": "La fame, nuda, sul possesso largo",
+            "it": "Semifinali Est/Ovest",
+            "en": "Conference semifinals"
+          },
+          {
+            "season": 11,
+            "title": "Agenzia libera",
+            "pick": "Brooklyn Nets · 3×$26.2M",
+            "it": "Agenzia libera",
+            "en": "Free agency"
+          },
+          {
+            "season": 12,
+            "title": "Il giorno dopo i giornali",
+            "pick": "Lavoro silenzioso",
+            "it": "Il giorno dopo i giornali",
+            "en": "The day after the papers"
+          },
+          {
+            "season": 12,
+            "title": "Primo turno",
+            "pick": "Spacca la linea, ogni uscita",
+            "it": "Primo turno",
+            "en": "First round"
+          },
+          {
+            "season": 13,
+            "title": "L'eliminazione che non si è sciolta",
+            "pick": "Cambi qualcosa nel corpo",
+            "it": "L'eliminazione che non si è sciolta",
+            "en": "The elimination that never faded"
+          },
+          {
+            "season": 13,
+            "title": "Primo turno",
+            "pick": "Spacca la linea, ogni uscita",
+            "it": "Primo turno",
+            "en": "First round"
+          }
+        ],
+        "development": [
+          {
+            "season": 1,
+            "label": "Tre giorni di ritiro, già chiusi",
+            "line": "Tre sessioni, troppi occhi. Lo staff ha preso nota del passo, e basta.",
+            "before": 61,
+            "after": 63,
+            "age": 19,
+            "it": "Tre sessioni, troppi occhi. Lo staff ha preso nota del passo, e basta.",
+            "en": "Three sessions, too many eyes. The staff took note of your stride, and that's it."
+          },
+          {
+            "season": 2,
+            "label": "Tre settimane di mestiere, già fatte",
+            "line": "Sudore senza testimoni. Il ruolo, a settembre, è un altro di un palmo.",
+            "before": 63,
+            "after": 65,
+            "age": 20,
+            "it": "Sudore senza testimoni. Il ruolo, a settembre, è leggermente cambiato.",
+            "en": "Sweat with no witnesses. By September, your role has shifted a little."
+          },
+          {
+            "season": 3,
+            "label": "L'estate è finita più in alto del parquet",
+            "line": "Hai corso in quota. Il primo contropiede di ottobre è più lungo, e tu lo sai.",
+            "before": 65,
+            "after": 67,
+            "age": 21,
+            "it": "Hai corso in quota. Il primo contropiede di ottobre è più lungo, e tu lo sai.",
+            "en": "You ran at altitude. October's first fast break is longer, and you know it."
+          },
+          {
+            "season": 4,
+            "label": "Luglio sul mestiere, nudo, già speso",
+            "line": "Niente amichevoli da copertina. Solo il lavoro che ottobre chiederà.",
+            "before": 68,
+            "after": 70,
+            "age": 22,
+            "it": "Niente amichevoli da copertina. Solo il lavoro che ottobre chiederà.",
+            "en": "No showcase scrimmages. Just the work October will ask for."
+          },
+          {
+            "season": 5,
+            "label": "Tiri, specchio, estate già spesa",
+            "line": "Pochi testimoni, molti tiri. Il miglioramento, se c'è, non ha fatto rumore.",
+            "before": 70,
+            "after": 72,
+            "age": 23,
+            "it": "Pochi testimoni, molti tiri. Il miglioramento, se c'è, non ha fatto rumore.",
+            "en": "Few witnesses, lots of shots. The improvement, if there is one, made no noise."
+          },
+          {
+            "season": 6,
+            "label": "Un palazzetto piccolo, una fame grande, un luglio",
+            "line": "Cemento, un luglio. Ti ha ricordato il primo tiro, e quanto costa ancora.",
+            "before": 73,
+            "after": 74,
+            "age": 24,
+            "it": "Cemento, un luglio. Ti ha ricordato il primo tiro, e quanto costa ancora.",
+            "en": "Concrete, one July. It reminded you of your first shot, and what it still costs."
+          },
+          {
+            "season": 7,
+            "label": "L'estate è stata un corridoio di voci",
+            "line": "La dirigenza ha fatto i conti. I tuoi no. Chicago (CHI) resta nel foglio, come una porta socchiusa. Los Angeles (LAL) è nel foglio.",
+            "before": 74,
+            "after": 76,
+            "tradeDest": {
+              "name": "Los Angeles Lakers",
+              "abbr": "LAL",
+              "city": "Los Angeles",
+              "color": "#552583",
+              "secondary": "#FDB927",
+              "conf": "West",
+              "div": "Pacific",
+              "power": 77,
+              "star": "Miles Navarro",
+              "tier": "mid",
+              "note": "Il marchio più pesante. Ogni stagione è una vetrina, e una scadenza."
+            },
+            "tradeForced": false,
+            "age": 25,
+            "it": "Proposta di scambio estivo: Los Angeles Lakers. Una proposta non equivale a uno scambio concluso.",
+            "en": "Summer trade proposal: Los Angeles Lakers. A proposal is not a completed trade."
+          },
+          {
+            "season": 8,
+            "label": "Il polso, nudo, per tre settimane",
+            "line": "Il laboratorio ha avuto un agosto. Lo staff, al primo allenamento, lo legge dal polso.",
+            "before": 76,
+            "after": 76,
+            "age": 26,
+            "it": "Il laboratorio ha avuto un agosto. Lo staff, al primo allenamento, lo legge dal polso.",
+            "en": "The lab had its August. At the first practice, the staff reads it in your wrist."
+          },
+          {
+            "season": 9,
+            "label": "Senza pubblico, tre settimane sul gesto",
+            "line": "Tre settimane sporche. A ottobre si vedrà se sono bastate.",
+            "before": 76,
+            "after": 76,
+            "age": 27,
+            "it": "Tre settimane sporche. A ottobre si vedrà se sono bastate.",
+            "en": "Three dirty weeks. October will tell if they were enough."
+          },
+          {
+            "season": 10,
+            "label": "Campetti, asfalto, un luglio già chiuso",
+            "line": "Partite vere senza staff. Sudore diverso, e una fame che a volte si era spenta.",
+            "before": 76,
+            "after": 75,
+            "age": 28,
+            "it": "Partite vere senza staff. Sudore diverso, e una fame che a volte si era spenta.",
+            "en": "Real games without staff. A different kind of sweat, and a hunger that had sometimes faded."
+          },
+          {
+            "season": 11,
+            "label": "Gradi, non chili: estate già fatta",
+            "line": "Tre settimane di pazienza articolare. Il mestiere, a quest'età, passa di lì.",
+            "before": 75,
+            "after": 75,
+            "age": 29,
+            "it": "Tre settimane di pazienza articolare. Il mestiere, in questa fase della carriera, passa di lì.",
+            "en": "Three weeks of joint patience. At this stage of your career, that's where the work is."
+          },
+          {
+            "season": 12,
+            "label": "Una stanza buia, i possessi riletti, già chiusa",
+            "line": "Una stanza, una matita, i possessi che nessuno taglia. A ottobre le letture arrivano un tempo prima.",
+            "before": 75,
+            "after": 74,
+            "age": 30,
+            "it": "Al termine dell'estate, l'overall è diminuito.",
+            "en": "At summer's end, overall has decreased."
+          },
+          {
+            "season": 13,
+            "label": "Due giorni di fischio, già letti",
+            "line": "Il regolamento, da vicino. Lo staff trova un giocatore che legge il palmo, non lo discute.",
+            "before": 74,
+            "after": 72,
+            "age": 31,
+            "it": "Il regolamento, da vicino. Lo staff trova un giocatore che legge il palmo, non lo discute.",
+            "en": "The rulebook, up close. The staff finds a player who reads the call, not argues it."
+          }
+        ],
+        "seasons": [
+          {
+            "season": 1,
+            "age": 19,
+            "overall": 61,
+            "raw": "Chi ha paura del contatto resta perimetro. Chi resta, qui, si sporca. Troppo giovane per i discorsi da veterano. A 19 anni basta arrivare in orario e leggere la difesa.",
+            "it": "Chi ha paura del contatto resta perimetro. Chi resta, qui, si sporca. Troppo giovane per i discorsi da veterano. A 19 anni basta arrivare in orario e leggere la difesa.",
+            "en": "Whoever fears contact stays on the perimeter. Whoever stays, here, gets dirty. Too young for veteran speeches. At 19, it's enough to show up on time and read the defense."
+          },
+          {
+            "season": 2,
+            "age": 20,
+            "overall": 63,
+            "raw": "Una matricola che non si nasconde. Il calendario, il primo, è già una ferita e una scuola. Ogni trasferta è una tregua. Il palazzetto di casa, no.",
+            "it": "Una matricola che non si nasconde. Il calendario, il primo, è già una ferita e una scuola. Ogni trasferta è una tregua. Il palazzetto di casa, no.",
+            "en": "A rookie who doesn't hide. The first schedule is already a wound and a school. Every road trip is a truce. The home arena isn't."
+          },
+          {
+            "season": 3,
+            "age": 21,
+            "overall": 65,
+            "raw": "Hai 21 anni e il mestiere ti guarda dall'alto. Tu rispondi coi possessi, non con le interviste. A fine gara i vestiti pesano. È il segno che avete giocato la loro lingua.",
+            "it": "Hai 21 anni e il mestiere ti guarda dall'alto. Tu rispondi coi possessi, non con le interviste. A fine gara i vestiti pesano. È il segno che avete giocato la loro lingua.",
+            "en": "You're 21 and the job looks down on you. You answer with possessions, not interviews. At the end of the game your clothes feel heavy. It's the sign you played in their language."
+          },
+          {
+            "season": 4,
+            "age": 22,
+            "overall": 68,
+            "raw": "A 22 anni il palazzetto è ancora una stanza nuova. Ogni sera impari un nome. Le sconfitte si accumulano come polvere. Lo staff chiude la porta prima di parlare.",
+            "it": "A 22 anni il palazzetto è ancora una stanza nuova. Ogni sera impari un nome. Le sconfitte si accumulano come polvere. Lo staff chiude la porta prima di parlare.",
+            "en": "At 22, the arena is still a new room. Every night you learn a name. The losses pile up like dust. The staff closes the door before speaking."
+          },
+          {
+            "season": 5,
+            "age": 23,
+            "overall": 70,
+            "raw": "Le ginocchia dei lunghi parlano. Tu rispondi con il corpo, non con la voce. La piazza di New Orleans ha una voce. Quest'anno la senti anche quando il palazzetto è mezzo vuoto.",
+            "it": "Le ginocchia dei lunghi parlano. Tu rispondi con il corpo, non con la voce. La piazza di New Orleans ha una voce. Quest'anno la senti anche quando il palazzetto è mezzo vuoto.",
+            "en": "The bigs' knees talk. You answer with your body, not your voice. The New Orleans crowd has a voice. This year you hear it even when the arena is half empty."
+          },
+          {
+            "season": 6,
+            "age": 24,
+            "overall": 73,
+            "raw": "Chiusura sul rimbalzo, spinta, di nuovo. La partita ha un rumore sordo. Due inverni, o più. A New Orleans il tuo posto a tavola non si discute più.",
+            "it": "Chiusura sul rimbalzo, spinta, di nuovo. La partita ha un rumore sordo. Due inverni, o più. A New Orleans il tuo posto a tavola non si discute più.",
+            "en": "Box out, push, again. The game has a dull thud to it. Two winters, or more. In New Orleans your seat at the table is no longer up for debate."
+          },
+          {
+            "season": 7,
+            "age": 25,
+            "overall": 74,
+            "raw": "A New Orleans entri nello spogliatoio e il rumore non cambia. È il segno che sei dei loro. New Orleans Pelicans è una maglia. New Orleans è una stanza. Tu abiti tutte e due, con attenzione diversa.",
+            "it": "A New Orleans entri nello spogliatoio e il rumore non cambia. È il segno che sei dei loro. New Orleans Pelicans è una maglia. New Orleans è una stanza. Tu abiti tutte e due, con attenzione diversa.",
+            "en": "In New Orleans you walk into the locker room and the noise doesn't change. It's the sign you're one of them. New Orleans Pelicans are a jersey. New Orleans is a room. You live in both, with different kinds of care."
+          },
+          {
+            "season": 8,
+            "age": 26,
+            "overall": 76,
+            "raw": "Hai lasciato New Orleans Pelicans. Il corridoio nuovo puzza di vernice e di attesa. A Memphis, la piazza di Memphis entra già caldo. Tu cerchi il possesso, che è più onesto del coro.",
+            "it": "Hai lasciato New Orleans Pelicans. Il corridoio nuovo puzza di vernice e di attesa. A Memphis, il pubblico è già caldo. Tu cerchi il possesso, che è più onesto del coro.",
+            "en": "You left New Orleans Pelicans. The new hallway smells of paint and of waiting. A Memphis, the Memphis entra già caldo crowd. You look for the possession, which is more honest than the chant."
+          },
+          {
+            "season": 9,
+            "age": 27,
+            "overall": 76,
+            "raw": "Il quaderno degli schemi è un libro, non un volantino. Lo sfogli, o resti in panchina. La città di Memphis ti riconosce per strada. Non è fama: è abitudine, e pesa lo stesso.",
+            "it": "Il quaderno degli schemi è un libro, non un volantino. Lo sfogli, o resti in panchina. La città di Memphis ti riconosce per strada. Non è fama: è abitudine, e pesa lo stesso.",
+            "en": "The playbook is a book, not a flyer. You study it, or you sit on the bench. The city of Memphis recognizes you on the street. It isn't fame: it's habit, and it weighs just the same."
+          },
+          {
+            "season": 10,
+            "age": 28,
+            "overall": 76,
+            "raw": "Due, tre anni qui. A Memphis non devi più presentarti: entri, e lo schema ti riconosce. Al palazzetto di Memphis il rumore cambia quando tocchi palla. La piazza di Memphis non chiede numeri: chiede presenza.",
+            "it": "Due, tre anni qui. A Memphis non devi più presentarti: entri, e lo schema ti riconosce. Al palazzetto di Memphis il rumore cambia quando tocchi palla. La piazza di Memphis non chiede numeri: chiede presenza.",
+            "en": "Two, three years here. In Memphis you no longer need to introduce yourself: you walk in, and the system knows you. In the Memphis arena the noise changes when you touch the ball. The Memphis crowd doesn't ask for numbers: it asks for presence."
+          },
+          {
+            "season": 11,
+            "age": 29,
+            "overall": 75,
+            "raw": "Un passaggio in più verso l'angolo. Qui è legge, non cortesia. Prima settimana a Brooklyn Nets: nomi, uscite, un armadietto che non è ancora tuo.",
+            "it": "Un passaggio in più verso l'angolo. Qui è legge, non cortesia. Prima settimana ai Brooklyn Nets: nomi, uscite, un armadietto che non è ancora tuo.",
+            "en": "One more pass to the corner. Here it's law, not courtesy. First week with Brooklyn Nets: names, sets, a locker that isn't yours yet."
+          },
+          {
+            "season": 12,
+            "age": 30,
+            "overall": 75,
+            "raw": "Tutto gira intorno al perimetro. Tiro da tre: se non spacchi la linea, resti fuori dallo schema. Le battute interne, a Brooklyn, ti includono senza sforzo. Sei di casa.",
+            "it": "Tutto gira intorno al perimetro. Tiro da tre: se non spacchi la linea, resti fuori dallo schema. Le battute interne, a Brooklyn, ti includono senza sforzo. Sei di casa.",
+            "en": "Everything revolves around the perimeter. Three-point shooting: if you don't break the line, you're out of the system. The inside jokes in Brooklyn include you without effort. You're at home."
+          },
+          {
+            "season": 13,
+            "age": 31,
+            "overall": 74,
+            "raw": "Passi corti, sguardi lunghi. A Brooklyn il gruppo ha imparato il tuo tempo. Allargare, allargare, poi il tiro. Chi chiude il campo si offende da solo.",
+            "it": "Passi corti, sguardi lunghi. A Brooklyn il gruppo ha imparato il tuo tempo. Allargare, allargare, poi il tiro. Chi chiude il campo si offende da solo.",
+            "en": "Short steps, long looks. In Brooklyn the group has learned your rhythm. Spread it, spread it, then shoot. Whoever shrinks the floor hurts himself."
+          }
+        ],
+        "ending": {
+          "raw": "Non tutte le storie finiscono con un trofeo alzato, e va bene così. Il ragazzo cresciuto in Europa è arrivato più lontano di quanto molti immaginassero.",
+          "it": "Non tutte le storie finiscono con un trofeo alzato, e va bene così. La tua preparazione pre-draft era l'accademia europea.",
+          "en": "Not every story ends with a trophy held high, and that's fine. Your pre-draft preparation was a European academy.",
+          "commentIt": "13 stagioni. Abbastanza per una biografia, non abbastanza per annoiarsi. Nessun titolo. Non tutte le carriere chiudono con i confetti. Un anno spezzato. Si vede ancora, nel modo in cui conta i minuti. Il tuo percorso pre-draft era europeo. Il resto lo raccontano le stagioni.",
+          "commentEn": "13 seasons. Enough for a biography, not enough to get bored. No titles. Not every career ends with confetti. A broken year. It still shows, in the way you count minutes. Your pre-draft path was European. The seasons tell the rest."
+        }
+      }
+    }
+  ]
+}

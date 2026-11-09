@@ -131,9 +131,9 @@ test("copy review 2026-10-13: Italian and English chrome carry the same placehol
   assert.deepEqual(bad, []);
 });
 
-test("owner decisions 2026-10-14: guide4Body (L-01), difficulty EN (L-02), es off", () => {
-  assert.match(t("guide4Body", "it"), /riprendi esattamente da dove eri/);
-  assert.match(t("guide4Body", "en"), /pick up exactly where you left off/);
+test("owner decisions 2026-10-14: guide4Body (L-01; qualified local-save claim 2026-11-07), difficulty EN (L-02), es off", () => {
+  assert.match(t("guide4Body", "it"), /ultimo salvataggio riuscito/);
+  assert.match(t("guide4Body", "en"), /last successful save/);
   for (const l of ["it", "en"] as const) assert.doesNotMatch(t("guide4Body", l), /stessa carta|same card/);
   assert.equal(difficultyFace("esordio", "en").desc, "Generous growth, rare injuries, more open playoffs. Made for learning the game.");
   assert.equal(difficultyFace("leggenda", "en").desc, "Injuries pile up and the playoffs are a war. Only the special ones survive.");

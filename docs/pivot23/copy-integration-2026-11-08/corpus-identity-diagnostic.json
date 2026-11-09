@@ -1,0 +1,32 @@
+[
+  {
+    "seed": 777001,
+    "diagnostic": "two independent runs of SAME revision, not cross-revision equivalence",
+    "firstRawDiff": "$.careerId",
+    "diffExcludingOnlyNondeterministicCareerId": null
+  },
+  {
+    "seed": 777002,
+    "diagnostic": "two independent runs of SAME revision, not cross-revision equivalence",
+    "firstRawDiff": "$.careerId",
+    "diffExcludingOnlyNondeterministicCareerId": null
+  },
+  {
+    "seed": 777003,
+    "diagnostic": "two independent runs of SAME revision, not cross-revision equivalence",
+    "firstRawDiff": "$.careerId",
+    "diffExcludingOnlyNondeterministicCareerId": null
+  },
+  {
+    "seed": 7107,
+    "diagnostic": "two independent runs of SAME revision, not cross-revision equivalence",
+    "firstRawDiff": "$.careerId",
+    "diffExcludingOnlyNondeterministicCareerId": null
+  },
+  {
+    "seed": 89081,
+    "diagnostic": "two independent runs of SAME revision, not cross-revision equivalence",
+    "firstRawDiff": "$.careerId",
+    "diffExcludingOnlyNondeterministicCareerId": null
+  }
+]

@@ -10,7 +10,7 @@ import { t } from "../i18n.ts";
 import { playCareerSim, verdictOf } from "../engine.ts";
 import { buildLiveSave } from "../save.ts";
 import type { PlayerState } from "../types.ts";
-import { loadNarrativeEn, nx, nxCheck } from "./index.ts";
+import { loadNarrativeEn, nx, nxCheck, itDisplay } from "./index.ts";
 import { LEGACY_EN_IT } from "./legacy-it.ts";
 import { EN_PROSE, IT_PROSE } from "./markers.ts";
 import { NOT_PROSE } from "./not-prose.ts";
@@ -159,10 +159,11 @@ test("a realistic Italian save round-trips and its stored prose reads in English
     end.verdict,
     end.closing,
   ].filter((x): x is string => typeof x === "string" && x.length > 0);
+  const canonicalBefore = JSON.stringify(p);
   const misses: string[] = [];
   const leaks: string[] = [];
   for (const text of texts) {
-    assert.equal(nx(text, "it"), text);
+    assert.equal(nx(text, "it"), itDisplay(text)); // display fixes are not save migrations
     const r = nxCheck(text, "en");
     if (!r.ok) misses.push(text.slice(0, 120));
     else if (IT_PROSE.test(r.text)) leaks.push(r.text.slice(0, 120));
@@ -170,6 +171,7 @@ test("a realistic Italian save round-trips and its stored prose reads in English
   console.log(`[i18n] realistic save seed 8801: ${texts.length - misses.length}/${texts.length} stored fields in English, leaks ${leaks.length}`);
   assert.deepEqual(leaks, []);
   assert.deepEqual(misses.slice(0, 12), []);
+  assert.equal(JSON.stringify(p), canonicalBefore);
 });
 
 test("owner decisions 2026-10-14 (L-05/L-06/L-07/L-11/S03-S06): old and new Italian both reach correct English", async () => {

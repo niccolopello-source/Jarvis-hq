@@ -1,12 +1,13 @@
 /** Strings and narrative for the Career Legacy Report and Card, Italian and English. */
 import type { Lang } from "./i18n";
 import type { LegacyReport, RecordLine, TimelineItem } from "./legacy-report";
-import { nationLabel, playoffResultLabel, roleLabel } from "./labels";
+import { nationLabel, playoffResultLabel, roleLabel, italianTeamPreposition } from "./labels";
 import { NBA_TEAMS } from "./teams";
 
 /** English article for a team: "the Utah Jazz", but "Real Madrid". Italian needs none here. */
 export function theTeam(name: string, lang: Lang): string {
-  if (lang !== "en" || !name) return name;
+  if (!name) return name;
+  if (lang !== "en") return italianTeamPreposition(name,"con").slice(4);
   return NBA_TEAMS.some((t) => t.name === name) ? `the ${name}` : name;
 }
 
@@ -199,6 +200,10 @@ export const fmtInt = (n: number, lang: Lang) => n.toLocaleString(lang === "en" 
 
 /** Award names on the Legacy screen: one name per award, Italian names in Italian. Display only. */
 const AWARD_IT: Readonly<Record<string, string>> = {
+  "NBA Champion": "Campione NBA",
+  "EuroLeague Champion": "Campione di Eurolega",
+  "Finals MVP": "MVP delle Finali",
+  FMVP: "MVP delle Finali",
   "Most Improved Player": "Giocatore più migliorato",
   MIP: "Giocatore più migliorato",
   "Sixth Man": "Sesto uomo dell'anno",
@@ -210,6 +215,7 @@ const AWARD_IT: Readonly<Record<string, string>> = {
   DPOY: "Difensore dell'anno",
 };
 const AWARD_EN: Readonly<Record<string, string>> = {
+  FMVP: "Finals MVP",
   "Sixth Man": "Sixth Man of the Year",
   "6MOY": "Sixth Man of the Year",
   MIP: "Most Improved Player",
@@ -235,12 +241,12 @@ export function timelineLine(item: TimelineItem, lang: Lang): string {
     case "draft":
       return lt("tlDraft", lang, {
         pick: lang === "en" ? `${ordinalEn(item.value ?? 0)} overall` : String(item.value ?? ""),
-        team: item.subject ? (lang === "en" ? ` by ${theTeam(item.subject, lang)}` : ` da ${item.subject}`) : "",
+        team: item.subject ? (lang === "en" ? ` by ${theTeam(item.subject, lang)}` : ` ${italianTeamPreposition(item.subject,"da")}`) : "",
       });
     case "debut":
       return lt("tlDebut", lang, { team: theTeam(item.subject, lang) });
     case "move":
-      return lt("tlMove", lang, { team: lang === "en" ? theTeam(item.subject, lang) : `${/^[AEIOUaeiou]/.test(item.subject) ? "ad" : "a"} ${item.subject}` });
+      return lt("tlMove", lang, { team: lang === "en" ? theTeam(item.subject, lang) : italianTeamPreposition(item.subject,"a") });
     case "award":
       return lt((item.value ?? 1) > 1 ? "tlAward" : "tlAwardOnce", lang, { award: legacyAwardLabel(item.subject, lang) });
     case "title":
@@ -272,14 +278,14 @@ export function narrativeOf(r: LegacyReport, lang: Lang): string[] {
   const role = r.roleCode ? roleLabel(r.roleCode, lang) : roleLabel(r.roleLabel, lang);
   const nation = r.nationality ? nationLabel(r.nationality, lang) : null;
   if (lang === "en") {
-    const who = nation ? `${r.name}, ${/^[AEIOU]/i.test(role) ? "an" : "a"} ${role.toLowerCase()} from ${nation}` : `${r.name}, ${/^[AEIOU]/i.test(role) ? "an" : "a"} ${role.toLowerCase()}`;
+    const who = nation ? `${r.name}, ${/^[AEIOU]/i.test(role) ? "an" : "a"} ${role.toLowerCase()} from ${nation === "United States" ? "the United States" : nation}` : `${r.name}, ${/^[AEIOU]/i.test(role) ? "an" : "a"} ${role.toLowerCase()}`;
     out.push(r.draftPick
       ? `${who}, went ${ordinalEn(r.draftPick)} overall${r.draftTeam ? ` to ${theTeam(r.draftTeam, lang)}` : ""}.`
       : `${who}.`);
   } else {
     const who = nation ? `${r.name}, ${role.toLowerCase()} (${nation})` : `${r.name}, ${role.toLowerCase()}`;
     out.push(r.draftPick
-      ? `${who}, scelto con la ${r.draftPick}ª chiamata al draft${r.draftTeam ? ` da ${r.draftTeam}` : ""}.`
+      ? `${who}, scelto con la ${r.draftPick}ª chiamata al draft${r.draftTeam ? ` ${italianTeamPreposition(r.draftTeam,"da")}` : ""}.`
       : `${who}.`);
   }
   const teams = r.stints.filter((s, i, all) => all.findIndex((x) => x.abbr === s.abbr) === i).length;
@@ -293,7 +299,7 @@ export function narrativeOf(r: LegacyReport, lang: Lang): string[] {
   if (bestRow && r.rows.length > 1) {
     out.push(lang === "en"
       ? `The best season was ${bestRow.yearLabel} with ${theTeam(bestRow.team, lang)}: ${fmt1(bestRow.ppg, lang)} points, ${fmt1(bestRow.rpg, lang)} rebounds and ${fmt1(bestRow.apg, lang)} assists per game.`
-      : `La stagione migliore è il ${bestRow.yearLabel} con ${bestRow.team}: ${fmt1(bestRow.ppg, lang)} punti, ${fmt1(bestRow.rpg, lang)} rimbalzi e ${fmt1(bestRow.apg, lang)} assist a partita.`);
+      : `La stagione migliore è il ${bestRow.yearLabel} ${italianTeamPreposition(bestRow.team,"con")}: ${fmt1(bestRow.ppg, lang)} punti, ${fmt1(bestRow.rpg, lang)} rimbalzi e ${fmt1(bestRow.apg, lang)} assist a partita.`);
   }
   if (r.awards.length) {
     const list = listJoin(r.awards.slice(0, 4).map(([id, n]) => countedAward(id, n, lang)), lang);

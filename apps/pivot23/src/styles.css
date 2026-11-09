@@ -1745,6 +1745,7 @@ img.court-mark-photo {
 .career-view {
   touch-action: pan-y;
   overflow: hidden;
+  overflow: clip; /* carousel transforms own x; hidden would still permit native focus/scrollIntoView drift */
   flex: 1;
   min-height: 0;
   display: flex;
@@ -1759,6 +1760,7 @@ img.court-mark-photo {
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  overflow: clip;
   touch-action: pan-y;
 }
 .swipe-track {
@@ -1775,6 +1777,7 @@ img.court-mark-photo {
   will-change: transform;
 }
 .swipe-slide {
+  scroll-padding-block: 12px;
   flex: 0 0 100%;
   width: 100%;
   min-width: 100%;
@@ -1992,6 +1995,7 @@ img.court-mark-photo {
   transition: box-shadow 280ms ease;
 }
 @media (prefers-reduced-motion: reduce) {
+  .swipe-track { transition: none; }
   .fade-in,
   .tab-pane,
   .flag-mark,
@@ -2622,3 +2626,8 @@ img.court-mark-photo {
   outline: 2px solid var(--color-accent);
   outline-offset: 4px;
 }
+.name-count{display:block;text-align:right;font-size:.75rem;color:#555;margin-top:4px}
+@media (prefers-color-scheme: dark){.name-count{color:var(--color-muted)}}
+
+/* Life headings remain readable after native anchor/focus scrolling below career chrome. */
+.swipe-slide h4 { scroll-margin-block-start: 12px; }

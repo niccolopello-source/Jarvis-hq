@@ -9,7 +9,7 @@ describe("Italian display fixes (stored text unchanged)", () => {
     assert.equal(nx("Dai una mano a Team USA senza esporti troppo.", "it"), "Dai una mano a Team USA senza esporti troppo.");
   });
   it("rephrases 'si gioca a crescita' draft news", () => {
-    assert.equal(nx("A Atlanta il draft spinge verso la crescita. Caleb Silva è il volto, si gioca a crescita.", "it"), "A Atlanta il draft spinge verso la crescita. Caleb Silva è il volto del nuovo corso.");
+    assert.equal(nx("A Atlanta il draft spinge verso la crescita. Caleb Silva è il volto, si gioca a crescita.", "it"), "Ad Atlanta il draft spinge verso la crescita. Caleb Silva è il volto del nuovo corso.");
   });
   it("English lookup still uses the old stored key", async () => {
     await loadNarrativeEn();

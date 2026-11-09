@@ -3,7 +3,7 @@
  * (role codes, nationality ids, attribute keys, stored playoff strings); only the screen
  * changes with the language. No saved data is rewritten.
  */
-import { ATTR_LABELS, HIDDEN_LABELS, ROLES } from "./data";
+import { ATTR_LABELS, HIDDEN_LABELS, ROLES, NBA_TEAMS, EURO_TEAMS } from "./data";
 import type { Lang } from "./i18n";
 import type { AttrKey, HiddenKey, Role } from "./types";
 
@@ -18,7 +18,8 @@ const ROLE_EN: Record<Role, string> = {
 };
 
 export function roleLabel(role: Role | string, lang: UiLang): string {
-  const r = role as Role;
+  const oldLabels: Record<string,Role> = { playmaker:"PG",guardia:"SG","guardia tiratrice":"SG","ala piccola":"SF","ala grande":"PF",centro:"C" };
+  const r = (oldLabels[role.toLowerCase()] ?? role) as Role;
   if (lang === "en") return ROLE_EN[r] ?? String(role);
   if (r === "SG") return "Guardia tiratrice";
   return ROLES[r]?.label ?? String(role);
@@ -37,7 +38,7 @@ const NATION_EN: Record<string, string> = {
   Turchia: "Turkey",
   Lettonia: "Latvia",
   Georgia: "Georgia",
-  USA: "USA",
+  USA: "United States",
   Canada: "Canada",
   Brasile: "Brazil",
   Argentina: "Argentina",
@@ -46,7 +47,9 @@ const NATION_EN: Record<string, string> = {
 };
 
 export function nationLabel(id: string, lang: UiLang): string {
-  return lang === "en" ? NATION_EN[id] ?? id : id;
+  const codes: Record<string,string> = { ITA:"Italia", ESP:"Spagna", FRA:"Francia", SRB:"Serbia", GRE:"Grecia", LTU:"Lituania", GER:"Germania", SLO:"Slovenia", CRO:"Croazia", TUR:"Turchia", LAT:"Lettonia", GEO:"Georgia", CAN:"Canada", BRA:"Brasile", ARG:"Argentina", AUS:"Australia", NGR:"Nigeria" };
+  const name = codes[id] ?? id;
+  return lang === "en" ? NATION_EN[name] ?? name : name === "USA" ? "Stati Uniti" : name;
 }
 
 const ATTR_EN: Record<AttrKey, string> = {
@@ -186,4 +189,15 @@ export function awardNoteLabel(note: string, lang: UiLang): string {
   const value = String(note || "");
   if (lang !== "en") return value;
   return NOTE_EN.reduce((acc, [re, to]) => acc.replace(re, to), value);
+}
+
+/** Articles for known team ids only; unknown historical names are not guessed. */
+export function italianTeamPreposition(name: string, prep: "a"|"da"|"con"): string {
+  let article: "i"|"gli"|"il"|"lo"|"la"|"l'";
+  if (NBA_TEAMS.some(t=>t.name===name)) article=/^[AEIOU]/.test(name)||name==="Houston Rockets"?"gli":"i";
+  else if (EURO_TEAMS.some(t=>t.name===name)) {
+    article=["Virtus Bologna","Crvena Zvezda"].includes(name)?"la":["EA7 Olimpia Milano","ALBA Berlino","AS Monaco","Anadolu Efes","Olympiacos"].includes(name)?"l'":name==="Zalgiris Kaunas"?"lo":"il";
+  } else return `${prep} ${name}`;
+  const forms={a:{i:"ai ",gli:"agli ",il:"al ",lo:"allo ",la:"alla ","l'":"all'"},da:{i:"dai ",gli:"dagli ",il:"dal ",lo:"dallo ",la:"dalla ","l'":"dall'"},con:{i:"con i ",gli:"con gli ",il:"con il ",lo:"con lo ",la:"con la ","l'":"con l'"}};
+  return forms[prep][article]+name;
 }
