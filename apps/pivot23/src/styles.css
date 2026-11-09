@@ -2612,6 +2612,11 @@ img.court-mark-photo {
   }
   .intro-hero.home-screen .lang-row {
     margin-bottom: 10px;
+    gap: 6px;
+  }
+  /* Four languages (2026-11-09) on one line in the narrow landscape column; 48px targets kept. */
+  .intro-hero.home-screen .lang-btn {
+    padding: 8px 10px;
   }
   .intro-hero.home-screen .ghost-btn.mt-2\.5 {
     margin-top: 6px;
