@@ -1,0 +1,6417 @@
+[
+  {
+    "id": "engine-version/225-beta",
+    "loaded": true,
+    "engine": "2.25.0-beta",
+    "loadReport": {
+      "state": "ok",
+      "version": 2,
+      "backedUp": false
+    },
+    "bytesAfterLoad": true,
+    "writeAccepted": true,
+    "bytesAfterWrite": false,
+    "numericAtLeast225": true
+  },
+  {
+    "id": "engine-version/225",
+    "loaded": true,
+    "engine": "2.25.0",
+    "loadReport": {
+      "state": "ok",
+      "version": 2,
+      "backedUp": false
+    },
+    "bytesAfterLoad": true,
+    "writeAccepted": true,
+    "bytesAfterWrite": false,
+    "numericAtLeast225": true
+  },
+  {
+    "id": "engine-version/300",
+    "loaded": true,
+    "engine": "3.0.0",
+    "loadReport": {
+      "state": "ok",
+      "version": 2,
+      "backedUp": false
+    },
+    "bytesAfterLoad": true,
+    "writeAccepted": true,
+    "bytesAfterWrite": false,
+    "numericAtLeast225": true
+  },
+  {
+    "id": "engine-version/2.9",
+    "loaded": true,
+    "engine": "2.9.0",
+    "loadReport": {
+      "state": "ok",
+      "version": 2,
+      "backedUp": false
+    },
+    "bytesAfterLoad": true,
+    "writeAccepted": true,
+    "bytesAfterWrite": false,
+    "numericAtLeast225": false
+  },
+  {
+    "id": "engine-version/224",
+    "loaded": true,
+    "engine": "2.24.0-beta",
+    "loadReport": {
+      "state": "ok",
+      "version": 2,
+      "backedUp": false
+    },
+    "bytesAfterLoad": true,
+    "writeAccepted": true,
+    "bytesAfterWrite": false,
+    "numericAtLeast225": false
+  },
+  {
+    "id": "engine-version/absent",
+    "loaded": false,
+    "loadReport": {
+      "state": "corrupt",
+      "version": 2,
+      "backedUp": true
+    },
+    "bytesAfterLoad": true,
+    "writeAccepted": true,
+    "bytesAfterWrite": false,
+    "numericAtLeast225": false
+  },
+  {
+    "id": "engine-version/null",
+    "loaded": false,
+    "loadReport": {
+      "state": "corrupt",
+      "version": 2,
+      "backedUp": true
+    },
+    "bytesAfterLoad": true,
+    "writeAccepted": true,
+    "bytesAfterWrite": false,
+    "numericAtLeast225": false
+  },
+  {
+    "id": "engine-version/number",
+    "loaded": false,
+    "loadReport": {
+      "state": "corrupt",
+      "version": 2,
+      "backedUp": true
+    },
+    "bytesAfterLoad": true,
+    "writeAccepted": true,
+    "bytesAfterWrite": false,
+    "numericAtLeast225": false
+  },
+  {
+    "id": "engine-version/empty",
+    "loaded": true,
+    "engine": "",
+    "loadReport": {
+      "state": "ok",
+      "version": 2,
+      "backedUp": false
+    },
+    "bytesAfterLoad": true,
+    "writeAccepted": true,
+    "bytesAfterWrite": false,
+    "numericAtLeast225": false
+  },
+  {
+    "id": "engine-version/garbage",
+    "loaded": true,
+    "engine": "garbage",
+    "loadReport": {
+      "state": "ok",
+      "version": 2,
+      "backedUp": false
+    },
+    "bytesAfterLoad": true,
+    "writeAccepted": true,
+    "bytesAfterWrite": false,
+    "numericAtLeast225": false
+  },
+  {
+    "id": "recovery/primary=legacy/session=none/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": false
+  },
+  {
+    "id": "recovery/primary=legacy/session=none/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=none/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=none/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=none/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=legacy/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": false
+  },
+  {
+    "id": "recovery/primary=legacy/session=legacy/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=legacy/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=legacy/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=legacy/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=corrupt/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=corrupt/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=corrupt/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=corrupt/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=corrupt/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=future-schema/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=future-schema/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=future-schema/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=future-schema/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=future-schema/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=future-engine/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": false
+  },
+  {
+    "id": "recovery/primary=legacy/session=future-engine/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=future-engine/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=future-engine/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=legacy/session=future-engine/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=none/backup=none",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=none/backup=legacy",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=none/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=none/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=none/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=legacy/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=legacy/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=legacy/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=legacy/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=legacy/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=corrupt/backup=none",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=corrupt/backup=legacy",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=corrupt/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=corrupt/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=corrupt/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=future-schema/backup=none",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=future-schema/backup=legacy",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=future-schema/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=future-schema/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=future-schema/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f64e03409ba890b0fdccc3eacc12c99914e120db9baa5d89dffa381ad9a3d48a"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=future-engine/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=future-engine/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=future-engine/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=future-engine/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=corrupt/session=future-engine/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=none/backup=none",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=none/backup=legacy",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=none/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=none/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=none/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=legacy/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=legacy/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=legacy/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=legacy/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=legacy/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=corrupt/backup=none",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=corrupt/backup=legacy",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=corrupt/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=corrupt/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=corrupt/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=future-schema/backup=none",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=future-schema/backup=legacy",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=future-schema/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=future-schema/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=future-schema/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=future-engine/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=future-engine/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=future-engine/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=future-engine/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-schema/session=future-engine/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=none/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": false
+  },
+  {
+    "id": "recovery/primary=future-engine/session=none/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=none/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=none/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=none/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=legacy/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": false
+  },
+  {
+    "id": "recovery/primary=future-engine/session=legacy/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=legacy/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=legacy/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=legacy/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=corrupt/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=corrupt/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=corrupt/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=corrupt/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=corrupt/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=future-schema/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=future-schema/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=future-schema/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=future-schema/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=future-schema/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=future-engine/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": null,
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": false
+  },
+  {
+    "id": "recovery/primary=future-engine/session=future-engine/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "51951b8cd9a950ceda7c1319759f39771ae83f413b27a1d37b42694b574c2756",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=future-engine/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=future-engine/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=future-engine/session=future-engine/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "647c31403933d0c446dc69054314cdf5a362a8e04501d66e4a6d863c52a52111",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=none/backup=none",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=none/backup=legacy",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=none/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=none/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=none/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=legacy/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=legacy/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=legacy/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=legacy/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=legacy/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=corrupt/backup=none",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=corrupt/backup=legacy",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=corrupt/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=corrupt/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=corrupt/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=future-schema/backup=none",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=future-schema/backup=legacy",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=future-schema/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=future-schema/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=future-schema/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "8470847d06c5d4e6463d6658204e1b4e8f7ae5a6e46a06c60924806f734fac9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=future-engine/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=future-engine/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=future-engine/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=future-engine/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=checksum/session=future-engine/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "2634a6b0524a56a740d217f0f505304ee491f1e1ee730b1df0e8ee609d3026f2",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=none/backup=none",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=none/backup=legacy",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=none/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=none/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=none/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=legacy/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=legacy/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=legacy/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=legacy/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=legacy/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "2.24.0-beta",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=corrupt/backup=none",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=corrupt/backup=legacy",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=corrupt/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=corrupt/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=corrupt/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "corrupt",
+          "version": 2,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=future-schema/backup=none",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=future-schema/backup=legacy",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=future-schema/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=future-schema/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=future-schema/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      },
+      {
+        "loaded": false,
+        "engine": null,
+        "report": {
+          "state": "future",
+          "version": 3,
+          "backedUp": true
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "c420787e1e44863e639e1048b3ebaa58fda705e74a37899016018dc7b83604d5",
+        "previousBackupSha256": "f5ddce9a3c11ec87ee464d8ef86f368991b9798ddb8a94e56a65a1e8e0d85d24"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=future-engine/backup=none",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": null
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": null
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=future-engine/backup=legacy",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "a9856d74424728c189be7a85fbaadfb911db6f7bca771d83d70e2f6eb363b4bf"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=future-engine/backup=corrupt",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "5c5eaa45e06d79ca7604483b6ab6ae3a15ac10ee364d2b36f6a82615b53d4d9c"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=future-engine/backup=future-schema",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "d707ff6ee547b3b82dd23978a7e7fae60a594682006c5d8e5888b3c866cb56ba"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "recovery/primary=incomplete/session=future-engine/backup=future-engine",
+    "attempts": [
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      },
+      {
+        "loaded": true,
+        "engine": "3.0.0",
+        "report": {
+          "state": "ok",
+          "version": 2,
+          "backedUp": false
+        },
+        "primaryIntact": true,
+        "backupRawSha256": "5040c4834ee02ed006c57211937408603bc70dc0b5c3db3c4b7d1b4fa8beefb5",
+        "previousBackupSha256": "486c6131f1fdd5946bb212d1cef921472c32c778a9f3a366bae6335584f2e66e"
+      }
+    ],
+    "explicitRestoreReturned": true
+  },
+  {
+    "id": "missing-rng",
+    "seed": 81003,
+    "actualStream": 3596199287,
+    "restoredStream": 81003,
+    "primaryIntact": true,
+    "loaded": true
+  }
+]

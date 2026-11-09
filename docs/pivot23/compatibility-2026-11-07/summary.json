@@ -1,0 +1,366 @@
+{
+  "checkedEuropeRome": "2026-11-07 21:58 CET Europe/Rome",
+  "sourceCommits": {
+    "main": "33810f74ebfb3e1a9ffd5daa0db646993ebb3d7f",
+    "pr152": "490bc861f44a48d9b22cdf1aec63bf8c30ec0705",
+    "pr153": "3393f524fd32c3f1b9a42a9341e7c9295ba54a03"
+  },
+  "comparisons": {
+    "main-vs153": {
+      "fullCrossRevision": {
+        "checkpoints": 6454,
+        "pass": 6454,
+        "fail": 0
+      },
+      "perVersion": {
+        "2.12.0-beta": {
+          "checkpoints": 503,
+          "pass": 503,
+          "fail": 0
+        },
+        "2.13.0-beta": {
+          "checkpoints": 502,
+          "pass": 502,
+          "fail": 0
+        },
+        "2.14.0-beta": {
+          "checkpoints": 483,
+          "pass": 483,
+          "fail": 0
+        },
+        "2.15.0-beta": {
+          "checkpoints": 483,
+          "pass": 483,
+          "fail": 0
+        },
+        "2.16.0-beta": {
+          "checkpoints": 483,
+          "pass": 483,
+          "fail": 0
+        },
+        "2.17.0-beta": {
+          "checkpoints": 483,
+          "pass": 483,
+          "fail": 0
+        },
+        "2.18.0-beta": {
+          "checkpoints": 483,
+          "pass": 483,
+          "fail": 0
+        },
+        "2.19.0-beta": {
+          "checkpoints": 482,
+          "pass": 482,
+          "fail": 0
+        },
+        "2.20.0-beta": {
+          "checkpoints": 482,
+          "pass": 482,
+          "fail": 0
+        },
+        "2.21.0-beta": {
+          "checkpoints": 479,
+          "pass": 479,
+          "fail": 0
+        },
+        "2.22.0-beta": {
+          "checkpoints": 482,
+          "pass": 482,
+          "fail": 0
+        },
+        "2.23.0-beta": {
+          "checkpoints": 482,
+          "pass": 482,
+          "fail": 0
+        },
+        "2.24.0-beta": {
+          "checkpoints": 466,
+          "pass": 466,
+          "fail": 0
+        }
+      },
+      "resume": {
+        "checks": 9830,
+        "fullPass": 1006,
+        "fullFail": 8824,
+        "persistedFail": 0,
+        "rngFail": 0
+      }
+    },
+    "main-vs152": {
+      "fullCrossRevision": {
+        "checkpoints": 6454,
+        "pass": 6454,
+        "fail": 0
+      },
+      "perVersion": {
+        "2.12.0-beta": {
+          "checkpoints": 503,
+          "pass": 503,
+          "fail": 0
+        },
+        "2.13.0-beta": {
+          "checkpoints": 502,
+          "pass": 502,
+          "fail": 0
+        },
+        "2.14.0-beta": {
+          "checkpoints": 483,
+          "pass": 483,
+          "fail": 0
+        },
+        "2.15.0-beta": {
+          "checkpoints": 483,
+          "pass": 483,
+          "fail": 0
+        },
+        "2.16.0-beta": {
+          "checkpoints": 483,
+          "pass": 483,
+          "fail": 0
+        },
+        "2.17.0-beta": {
+          "checkpoints": 483,
+          "pass": 483,
+          "fail": 0
+        },
+        "2.18.0-beta": {
+          "checkpoints": 483,
+          "pass": 483,
+          "fail": 0
+        },
+        "2.19.0-beta": {
+          "checkpoints": 482,
+          "pass": 482,
+          "fail": 0
+        },
+        "2.20.0-beta": {
+          "checkpoints": 482,
+          "pass": 482,
+          "fail": 0
+        },
+        "2.21.0-beta": {
+          "checkpoints": 479,
+          "pass": 479,
+          "fail": 0
+        },
+        "2.22.0-beta": {
+          "checkpoints": 482,
+          "pass": 482,
+          "fail": 0
+        },
+        "2.23.0-beta": {
+          "checkpoints": 482,
+          "pass": 482,
+          "fail": 0
+        },
+        "2.24.0-beta": {
+          "checkpoints": 466,
+          "pass": 466,
+          "fail": 0
+        }
+      },
+      "resume": {
+        "checks": 9830,
+        "fullPass": 1006,
+        "fullFail": 8824,
+        "persistedFail": 0,
+        "rngFail": 0
+      }
+    },
+    "phases-main-vs153": {
+      "fullCrossRevision": {
+        "checkpoints": 936,
+        "pass": 936,
+        "fail": 0
+      },
+      "perVersion": {
+        "2.12.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.13.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.14.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.15.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.16.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.17.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.18.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.19.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.20.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.21.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.22.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.23.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.24.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        }
+      },
+      "resume": {
+        "checks": 1872,
+        "fullPass": 1716,
+        "fullFail": 156,
+        "persistedFail": 0,
+        "rngFail": 0
+      }
+    },
+    "phases-main-vs152": {
+      "fullCrossRevision": {
+        "checkpoints": 936,
+        "pass": 936,
+        "fail": 0
+      },
+      "perVersion": {
+        "2.12.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.13.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.14.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.15.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.16.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.17.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.18.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.19.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.20.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.21.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.22.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.23.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        },
+        "2.24.0-beta": {
+          "checkpoints": 72,
+          "pass": 72,
+          "fail": 0
+        }
+      },
+      "resume": {
+        "checks": 1872,
+        "fullPass": 1716,
+        "fullFail": 156,
+        "persistedFail": 0,
+        "rngFail": 0
+      }
+    }
+  },
+  "scope": "Synthetic audit only; cross-revision PASS is not overall acceptance or future-save safety.",
+  "qualityChecks": {
+    "main": {
+      "unit": "PASS 427/427",
+      "stats": "PASS 42/42",
+      "lint": "PASS",
+      "typecheck": "PASS",
+      "build": "PASS",
+      "headers": "PASS 6"
+    },
+    "cumulative153": {
+      "unit": "PASS 427/427",
+      "stats": "PASS 49/49",
+      "lint": "PASS",
+      "typecheck": "PASS",
+      "build": "PASS",
+      "headers": "PASS 6"
+    },
+    "harness": {
+      "comparatorTests": "PASS 3/3",
+      "strictWorkerTypes": "PASS",
+      "scriptsLint": "PASS"
+    },
+    "browserE2E": "NOT RUN",
+    "futureProtection": "FAIL required invariant, diagnosis only; policy decision needed",
+    "overall": "AUDIT COMPLETE; ACCEPTANCE INCOMPLETE"
+  },
+  "environment": {
+    "node": "v24.22.1",
+    "pnpm": "10.34.6",
+    "install": "frozen lockfile"
+  }
+}
