@@ -86,7 +86,7 @@ import { choiceShowsVoidedExtraYear } from "@/lib/pivot/career-coherence";
 import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
 import { ModalDialog } from "@/components/pivot/Dialog";
 import { LazyChunk } from "@/components/pivot/ChunkBoundary";
-import { attrLabel, chipLabel, confLabel, seedLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel, seasonsPlayedLabel, seedConfLabel, countWord } from "@/lib/pivot/labels";
+import { attrLabel, chipLabel, seedLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel, seasonsPlayedLabel, seedConfLabel, countWord } from "@/lib/pivot/labels";
 import { fmtDec, legacyAwardLabel } from "@/lib/pivot/legacy-i18n";
 import { contextualText, developmentText, archivedRival } from "@/lib/pivot/copy-context";
 import { loadNarrativeEn, loadNarrativeEs, loadNarrativeZh, nx } from "@/lib/pivot/narrative";
