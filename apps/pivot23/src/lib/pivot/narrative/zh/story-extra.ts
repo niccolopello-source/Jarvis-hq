@@ -348,4 +348,6 @@ export const ZH_STORY_EXTRA: Readonly<Record<string, string>> = {
   "Rimandi, vuoi capire il ruolo": "你暂缓，想先弄清角色",
   "Prima i minuti, poi la cifra.": "先谈时间，再谈数字。",
   "Niente firma oggi. Una conversazione onesta sul tuo metro quadrato.": "今天不签字。一次关于你那一平方米的坦诚对话。",
+  "__RIVAL__ firma un contratto massimo: i paragoni ripartono": "__RIVAL__签下顶薪合同：比较又开始了",
+  "In sala video, tre azioni di __RIVAL__, una tua": "录像室里，三个__RIVAL__的回合，一个你的",
 };

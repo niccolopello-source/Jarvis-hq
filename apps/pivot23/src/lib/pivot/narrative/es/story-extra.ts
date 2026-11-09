@@ -348,4 +348,6 @@ export const ES_STORY_EXTRA: Readonly<Record<string, string>> = {
   "Rimandi, vuoi capire il ruolo": "Lo aplazas, quieres entender el rol",
   "Prima i minuti, poi la cifra.": "Primero los minutos, luego la cifra.",
   "Niente firma oggi. Una conversazione onesta sul tuo metro quadrato.": "Hoy no hay firma. Una conversación honesta sobre tu metro cuadrado.",
+  "__RIVAL__ firma un contratto massimo: i paragoni ripartono": "__RIVAL__ firma un contrato máximo: vuelven las comparaciones",
+  "In sala video, tre azioni di __RIVAL__, una tua": "En la sala de vídeo, tres jugadas de __RIVAL__, una tuya",
 };
