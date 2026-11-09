@@ -4,19 +4,22 @@ import {pathToFileURL} from 'node:url';
 import {writeFileSync,mkdirSync,readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
-const [rootArg,outArg]=process.argv.slice(2); if(!rootArg||!outArg)throw Error('usage: causal-audit.mjs APP_ROOT OUT_DIR');
+import {choosePolicy} from './policy-preview.mjs';
+const [rootArg,outArg,modeArg]=process.argv.slice(2);
+if(modeArg && modeArg!=="--policies-only")throw Error("unknown audit mode"); if(!rootArg||!outArg)throw Error('usage: causal-audit.mjs APP_ROOT OUT_DIR');
 const root=resolve(rootArg),out=resolve(outArg); mkdirSync(out,{recursive:true});
 const load=p=>import(pathToFileURL(resolve(root,p)).href);
 const E=await load('src/lib/pivot/engine.ts'),R=await load('src/lib/pivot/rng.ts'),P=await load('src/lib/pivot/peak.ts'),L=await load('src/lib/pivot/legacy.ts');
 Date.now=()=>1794081600000;
-const profiles=['random','best','worst','morale-up','morale-down','star','role','low-initial-morale','high-initial-morale'];
+const policyProfiles=['best','worst','morale-up','morale-down'];
+const profiles=modeArg==='--policies-only'?policyProfiles:['random',...policyProfiles,'star','role','low-initial-morale','high-initial-morale'];
 const rows=[],sensitivity=[];
-const choose=p=>(s,ev)=>{let bi=0,bv=-Infinity;ev.choices.forEach((c,i)=>{const fx=c.fx(structuredClone(s));const v=(p==='worst'||p==='morale-down'?-1:1)*(p.startsWith('morale-')?Number(fx.morale??0):E.contextualPulse(structuredClone(s),fx));if(v>bv){bv=v;bi=i;}});return bi;};
+
 let index=0;
 for(const role of ['PG','SG','SF','PF','C'])for(const path of ['NCAA','Europa','G-League'])for(const difficulty of ['esordio','pro','allstar','leggenda'])for(let replica=0;replica<2;replica++,index++){
 const seed=940000+index*97;
 for(const profile of profiles){
-const job=E.openCareerSim({name:'Causal synthetic',role,path,difficulty,seed,nationality:'ITA',number:23,engineVersion:'2.25.0',draft:profile==='star'?'best':profile==='role'?'worst':'random',...(profile==='star'?{potential:97}:profile==='role'?{potential:66}:{}),...(['best','worst','morale-up','morale-down'].includes(profile)?{choose:choose(profile)}:{})});
+const job=E.openCareerSim({name:'Causal synthetic',role,path,difficulty,seed,nationality:'ITA',number:23,engineVersion:'2.25.0',draft:profile==='star'?'best':profile==='role'?'worst':'random',...(profile==='star'?{potential:97}:profile==='role'?{potential:66}:{}),...(['best','worst','morale-up','morale-down'].includes(profile)?{choose:choosePolicy(profile,E,R)}:{})});
 job.s.careerId=`causal-${seed}`;
 if(profile==='low-initial-morale')job.s.morale=10;
 if(profile==='high-initial-morale')job.s.morale=100;
@@ -30,4 +33,4 @@ rows.push({seed,role,path,difficulty,replica,profile,potential:s.potential,apex:
 }console.error(`completed ${index+1}/120`);}
 const sha=s=>createHash('sha256').update(s).digest('hex');
 for(const [name,data]of[['careers.json',rows],['sensitivity.json',sensitivity]])writeFileSync(resolve(out,name),JSON.stringify(data)+'\n');
-writeFileSync(resolve(out,'run-manifest.json'),JSON.stringify({node:process.version,at:new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Rome',dateStyle:'short',timeStyle:'long'}).format(new Date())+' Europe/Rome',root,profiles,seedFormula:'940000+index*97',careers:rows.length,singleSeasons:sensitivity.length,harnessSha256:sha(readFileSync(new URL(import.meta.url))),files:Object.fromEntries(['careers.json','sensitivity.json'].map(f=>[f,sha(readFileSync(resolve(out,f)))]))},null,2)+'\n');
+writeFileSync(resolve(out,'run-manifest.json'),JSON.stringify({node:process.version,at:new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Rome',dateStyle:'short',timeStyle:'long'}).format(new Date())+' Europe/Rome',root,profiles,seedFormula:'940000+index*97',careers:rows.length,singleSeasons:sensitivity.length,harnessSha256:sha(readFileSync(new URL(import.meta.url))),previewModuleSha256:sha(readFileSync(new URL('./policy-preview.mjs',import.meta.url))),mode:modeArg??'all',files:Object.fromEntries(['careers.json','sensitivity.json'].map(f=>[f,sha(readFileSync(resolve(out,f)))]))},null,2)+'\n');
