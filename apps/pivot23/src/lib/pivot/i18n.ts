@@ -321,6 +321,26 @@ const IT = {
     resumeSub: "Il gruppo è già in campo. Manca solo il tuo nome sul referto.",
     resumeGo: "Entra in campo",
     resumeGoDetail: "La stagione riprende da qui.",
+    /* Career doors + sheets (2026-11-10). */
+    pendingChoice: "Scelta in attesa",
+    backToStory: "Torna",
+    closeSheet: "Chiudi",
+    seasonLatest: "Ultima",
+    seasonLatestDone: "Ultima conclusa",
+    seasonPrev: "Stagione precedente",
+    seasonNext: "Stagione successiva",
+    yearSheetTitle: "La tua stagione",
+    yearContract: "Contratto",
+    yearAge: "Età",
+    yearRole: "Ruolo",
+    leagueSheetNba: "La stagione NBA",
+    leagueSheetEuro: "La stagione di Eurolega",
+    seasonAwardsH: "Premi della stagione",
+    recapYearChip: "Scheda in Anno",
+    recapAwardsChip: "Premi in Lega",
+    royPointer: "Sei {n}° · classifica completa in Lega",
+    pendingBadge: "{n} scelta in attesa",
+    newDot: "novità",
   /*@@IT@@*/
 } as const;
 
@@ -612,6 +632,26 @@ const EN: Record<Msg, string> = {
     resumeSub: "The group is already on the floor. Only your name is missing from the scoresheet.",
     resumeGo: "Take the floor",
     resumeGoDetail: "The season picks up from here.",
+    /* Career doors + sheets (2026-11-10). */
+    pendingChoice: "Decision waiting",
+    backToStory: "Back",
+    closeSheet: "Close",
+    seasonLatest: "Latest",
+    seasonLatestDone: "Latest completed",
+    seasonPrev: "Previous season",
+    seasonNext: "Following season",
+    yearSheetTitle: "Your season",
+    yearContract: "Contract",
+    yearAge: "Age",
+    yearRole: "Role",
+    leagueSheetNba: "The NBA season",
+    leagueSheetEuro: "The EuroLeague season",
+    seasonAwardsH: "Season awards",
+    recapYearChip: "Card in Year",
+    recapAwardsChip: "Awards in League",
+    royPointer: "You're #{n} · full race in League",
+    pendingBadge: "{n} decision waiting",
+    newDot: "new",
   /*@@EN@@*/
 };
 

@@ -46,8 +46,10 @@ test("every narrative string in the sources has an English entry (static coverag
 });
 
 test("demo hardening 2026-10-16: DOM selectors (closest/querySelector/matches) are not catalog prose", () => {
-  const found = extractFile(join(comp, "SwipePager.tsx")).map((f) => f.key);
-  assert.ok(!found.some((k) => k.includes("[role='button']")), found.join(" | "));
+  // SwipePager.tsx (the original case) was retired with the four-doors navigation (2026-11-10);
+  // CareerDoors.tsx now carries the closest()/querySelector() selectors.
+  const found = extractFile(join(comp, "CareerDoors.tsx")).map((f) => f.key);
+  assert.ok(!found.some((k) => k.includes("[role='dialog']") || k.includes("[data-door=") || k.includes(".door-sheet-head")), found.join(" | "));
   assert.ok(!Object.keys(NARRATIVE_EN).some((k) => /^button, a, input/.test(k)));
 });
 

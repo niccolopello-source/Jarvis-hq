@@ -252,7 +252,7 @@ test("the year sheet explains the main stats and hides the advanced ones", async
     { width: 390, height: 844 },
   ]) {
     await page.setViewportSize(viewport);
-    const heights = await page.locator(".seg-track button").evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height));
+    const heights = await page.locator(".door-bar button").evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height));
     expect(heights.length).toBeGreaterThan(0);
     expect(Math.min(...heights)).toBeGreaterThanOrEqual(44);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);

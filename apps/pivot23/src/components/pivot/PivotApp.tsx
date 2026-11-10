@@ -1,8 +1,8 @@
 import { registerLiveFlush, livePersistenceAllowed, canPersistEngineVersion } from "@/lib/pivot/live-protection";
 
 import { Component, memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
-import { BookOpen, ChevronLeft, ClipboardList, RotateCcw, Trophy, Table2 } from "lucide-react";
-import { LeaguePanel, PersonalAwards, RoyBoard, TeamDossier } from "@/components/pivot/LeaguePanel";
+import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
+import { LeaguePanel, PersonalAwards, TeamDossier } from "@/components/pivot/LeaguePanel";
 import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/TeamMark";
 import { CAREER_NAME_MAX, careerName, chipsFromFx, chipsFromSnapshot, consequenceSchedule, endSentence, formatCareerTotal, getSeasonDisplayLabel, tidyText, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
@@ -123,7 +123,7 @@ import { CrashFallback } from "./CrashFallback";
 import { signalBootAttention } from "@/boot-signal";
 import { SoundToggle } from "@/intro-sound/SoundToggle";
 import { clearLive, hasLiveSave, lastLoadReport, loadLive, loadSwipe, logSeqFrom, persistentStorageAvailable, releaseLiveFlush, saveLive, saveSwipe, watchLiveConflicts, type LiveLoadReport } from "@/lib/pivot/save";
-import { CAREER_TABS, SwipeTrack } from "@/components/pivot/SwipePager";
+import { CAREER_DOORS, DoorBar, DoorContext, DoorSheet, useOpenDoor, type OpenDoor } from "@/components/pivot/CareerDoors";
 import { careerCommentary, hofTier, palmares } from "@/lib/pivot/legacy";
 import { settleYearTitle } from "@/lib/pivot/league";
 import type {
@@ -282,13 +282,6 @@ export function PivotApp() {
   const [screen, setScreen] = useState<Screen>(
     boot?.screen === "draft" || boot?.screen === "career" ? boot.screen : "intro",
   );
-  const [tab, setTab] = useState<Tab>(() => {
-    if (typeof window !== "undefined") {
-      const sw = loadSwipe();
-      if (sw?.tab === "log" || sw?.tab === "season" || sw?.tab === "league" || sw?.tab === "career") return sw.tab;
-    }
-    return (boot?.tab as Tab) || "log";
-  });
   const [name, setName] = useState("");
   const [role, setRole] = useState<Role>("PG");
   const [nat, setNat] = useState("Italia");
@@ -326,6 +319,16 @@ export function PivotApp() {
         },
       ],
     };
+  });
+  /* The open door is saved as before (`LiveSave.tab` / pivot-v2-swipe). A decision waiting in the
+     diary always wins: the career reopens on Storia and no sheet is restored on top of it. */
+  const [tab, setTab] = useState<Tab>(() => {
+    if (pending) return "log";
+    if (typeof window !== "undefined") {
+      const sw = loadSwipe();
+      if (sw?.tab === "log" || sw?.tab === "season" || sw?.tab === "league" || sw?.tab === "career") return sw.tab;
+    }
+    return (boot?.tab as Tab) || "log";
   });
   const [log, setLog] = useState<LogEntry[]>(boot?.log || []);
   const [fxChips, setFxChips] = useState<Record<string, string[]>>({});
@@ -1558,105 +1561,137 @@ function CareerView(props: {
 }) {
   const lang = useLang();
   const { player, tab, setTab, pending } = props;
-  const last = player.seasonHistory[player.seasonHistory.length - 1];
-  const [hint, setHint] = useState(() => loadSwipe()?.hint !== true);
   const [fullLog, setFullLog] = useState(false);
   const logShown = fullLog || props.log.length <= 24 ? props.log : props.log.slice(-24);
-  function goTab(next: Tab, dir: "next" | "prev") {
+  const storyRef = useRef<HTMLDivElement | null>(null);
+  const [compact, setCompact] = useState(false);
+  const [yearFocus, setYearFocus] = useState<number | null>(null);
+  const sheetOpen = tab !== "log";
+
+  /* "New" dots: a door lights up only when its content really changed since it was last opened.
+     Signatures start at the current career, so a reload or a fresh career shows no dots. Memory only:
+     nothing new is stored. */
+  const signatures: Record<Exclude<Tab, "log">, string> = {
+    season: String(player.seasonHistory.length),
+    league: `${player.seasonHistory.length}|${player.championLog?.length ?? 0}|${player.currentLeague?.yearLabel ?? ""}`,
+    career: `${player.devLog.length}|${player.milestones.length}|${player.seasonHistory.reduce((n, r) => n + r.awards.length, 0)}`,
+  };
+  const [seen, setSeen] = useState(() => ({ ...signatures }));
+  // Opening a door turns its dot off (state adjusted during render, no effect round-trip).
+  if (tab !== "log" && seen[tab] !== signatures[tab]) setSeen({ ...seen, [tab]: signatures[tab] });
+  const fresh: Partial<Record<Tab, boolean>> = {
+    season: seen.season !== signatures.season,
+    league: seen.league !== signatures.league,
+    career: seen.career !== signatures.career,
+  };
+
+  function goTab(next: Tab, season?: number) {
+    if (next === "season") setYearFocus(typeof season === "number" ? season : null);
     if (next === tab) return;
+    const from = CAREER_DOORS.indexOf(tab);
+    const to = CAREER_DOORS.indexOf(next);
     setTab(next);
-    saveSwipe({ tab: next, dir, hint: true });
-    if (hint) setHint(false);
+    // Same record as before (tab + direction); the swipe hint is retired, so it stays "seen".
+    saveSwipe({ tab: next, dir: to >= from ? "next" : "prev", hint: true });
   }
+  const goRef = useRef(goTab);
+  useLayoutEffect(() => {
+    goRef.current = goTab;
+  });
+  // Stable across renders, so the memoised diary cards do not re-render with every scroll.
+  const openDoor = useMemo<OpenDoor>(() => (next, opts) => goRef.current(next, opts?.season), []);
+
+  // Closing a sheet leaves the diary exactly where it was: Storia never unmounts, its scroll stays.
+  // Focus goes back to the Storia door so the keyboard continues from the bar.
+  const prevTab = useRef(tab);
+  useEffect(() => {
+    const was = prevTab.current;
+    prevTab.current = tab;
+    if (was !== "log" && tab === "log") {
+      const active = document.activeElement;
+      if (!active || active === document.body || !active.isConnected) {
+        document.querySelector<HTMLElement>(".door-bar [data-door='log']")?.focus({ preventScroll: true });
+      }
+    }
+  }, [tab]);
+
+  function backToPending() {
+    goTab("log");
+    requestAnimationFrame(() => {
+      const el = storyRef.current?.querySelector<HTMLElement>("[data-pending]");
+      if (!el) return;
+      el.scrollIntoView({ behavior: "auto", block: "nearest" });
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
+      el.focus({ preventScroll: true });
+    });
+  }
+
+  function onStoryScroll() {
+    const y = storyRef.current?.scrollTop ?? 0;
+    // Hysteresis so the header does not flicker at the threshold.
+    setCompact((c) => (c ? y > 8 : y > 40));
+  }
+
+  const nba = player.league !== "EuroLega";
+  const lastRow = player.seasonHistory[player.seasonHistory.length - 1];
+  const sheetTitle =
+    tab === "season" ? t("yearSheetTitle", lang) : tab === "league" ? t(nba ? "leagueSheetNba" : "leagueSheetEuro", lang) : t("tabLife", lang);
+
   return (
+    <DoorContext.Provider value={openDoor}>
     <div
-      className="career-view"
+      className={`career-view${sheetOpen ? " is-sheet-open" : ""}`}
       style={{ ["--team" as string]: player.team.color }}
     >
-      <div className="career-chrome">
-        {props.saveMissed ? (
-          <p className="save-miss" role="alert">{t("saveMiss", lang)}</p>
-        ) : null}
-        <div
-          className="flex justify-between items-center gap-2.5 py-2.5 border-b border-line"
-          style={{ boxShadow: `inset 0 -2px 0 ${player.team.color}` }}
-        >
-          <div className="min-w-0 flex-1 flex items-center gap-3">
-            <TeamMark team={player.team} size={52} number={player.number} />
-            <div className="min-w-0">
-              <div className="font-display text-[22px] leading-tight truncate">{nx(player.name, lang)}</div>
-              <div className="hud-meta">
-                <FlagMark nation={player.nationality} size={24} />
-                <span>{roleLabel(player.role, lang)}</span>
-                <span className="hud-age">{tf("ageYears", { n: player.age }, lang)}</span>
-                <span className="hud-year">{getSeasonDisplayLabel(player.season || 1)}</span>
-              </div>
-              <div className="hud-club">
-                <TeamCrest team={player.team} size={16} />
-                <span>
-                  {player.team.name} · {player.league === "EuroLega" ? t("leagueEuro", lang) : "NBA"}
-                </span>
-              </div>
-              {last ? (
-                <div className="hud-line tabular">
-                  {fmtDec(last.ppg, lang)}
-                  <span>/</span>
-                  {fmtDec(last.rpg, lang)}
-                  <span>/</span>
-                  {fmtDec(last.apg, lang)}
-                  <span>{t("lastSeason", lang)}</span>
+      <div className="career-stage">
+        <div className={`career-chrome${compact ? " is-compact" : ""}`} inert={sheetOpen}>
+          {props.saveMissed ? (
+            <p className="save-miss" role="alert">{t("saveMiss", lang)}</p>
+          ) : null}
+          <div className="hud-row" style={{ boxShadow: `inset 0 -2px 0 ${player.team.color}` }}>
+            <div className="min-w-0 flex-1 flex items-center gap-3">
+              <span className="hud-mark"><TeamMark team={player.team} size={52} number={player.number} /></span>
+              <div className="min-w-0 flex-1">
+                <div className="hud-name-row">
+                  <span className="hud-name font-display truncate">{nx(player.name, lang)}</span>
+                  <span className="hud-year-inline tabular">{getSeasonDisplayLabel(player.season || 1)}</span>
                 </div>
-              ) : null}
-              <div className="hud-contract">
-                {player.contract.yearsRemaining === 1 ? t("contractYear", lang) : tf("contractYears", { n: player.contract.yearsRemaining }, lang)} × ${player.contract.annualM}M
-                {last ? (() => {
-                  const rec = teamRecord(last);
-                  return rec.seed ? ` · ${seedConfLabel(rec.seed, rec.conf, lang)}` : "";
-                })() : ""}
+                <div className="hud-meta">
+                  <FlagMark nation={player.nationality} size={24} />
+                  <span>{roleLabel(player.role, lang)}</span>
+                  <span className="hud-age">{tf("ageYears", { n: player.age }, lang)}</span>
+                  <span className="hud-year">{getSeasonDisplayLabel(player.season || 1)}</span>
+                </div>
+                <div className="hud-club">
+                  <TeamCrest team={player.team} size={16} />
+                  <span>
+                    {player.team.name} · {player.league === "EuroLega" ? t("leagueEuro", lang) : "NBA"}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-          <div
-            className="text-center ovr-orb"
-            style={{ boxShadow: `0 8px 22px color-mix(in oklab, ${player.team.color} 28%, transparent)` }}
-          >
-            <div className="font-display text-[22px] text-wood leading-none tabular ovr-orb-num" key={displayOverall(player.overall)}>
-              {displayOverall(player.overall)}
-            </div>
-            <div className="text-[9px] text-muted tracking-wider mt-0.5">OVR</div>
-          </div>
-          </div>
-        </div>
-        <div className="seg-track" role="group" aria-label={t("careerTabs", lang)}>
-          {(
-            [
-              ["log", t("tabLog", lang), BookOpen],
-              ["season", t("tabYear", lang), ClipboardList],
-              ["league", t("tabLeague", lang), Table2],
-              ["career", t("tabLife", lang), Trophy],
-            ] as const
-          ).map(([id, lab, Icon]) => (
-            <button
-              key={id}
-              className={tab === id ? "on" : ""}
-              aria-pressed={tab === id}
-              onClick={() => {
-                const from = CAREER_TABS.indexOf(tab);
-                const to = CAREER_TABS.indexOf(id);
-                goTab(id, to >= from ? "next" : "prev");
-              }}
+            <div
+              className="text-center ovr-orb shrink-0"
+              style={{ boxShadow: `0 8px 22px color-mix(in oklab, ${player.team.color} 28%, transparent)` }}
             >
-              <Icon className="size-3.5" /> {lab}
-            </button>
-          ))}
+              <div className="font-display text-[22px] text-wood leading-none tabular ovr-orb-num" key={displayOverall(player.overall)}>
+                {displayOverall(player.overall)}
+              </div>
+              <div className="ovr-orb-cap text-[9px] text-muted tracking-wider mt-0.5">OVR</div>
+            </div>
+          </div>
         </div>
-        {hint && <p className="swipe-hint">{t("swipeHint", lang)}</p>}
-      </div>
 
-      <SwipeTrack tab={tab} onTab={goTab} labels={[t("tabLog", lang), t("tabYear", lang), t("tabLeague", lang), t("tabLife", lang)]}>
-        {[
-          <div key="log" className="pt-3.5">
+        <div
+          ref={storyRef}
+          className="story-scroll"
+          role="region"
+          aria-label={t("tabLog", lang)}
+          tabIndex={0}
+          inert={sheetOpen}
+          onScroll={onStoryScroll}
+        >
+          <div className="pt-3.5">
             {!fullLog && props.log.length > 24 && (
               <button type="button" className="ghost-btn mb-3" onClick={() => setFullLog(true)}>
                 {t("showFullLog", lang)}
@@ -1671,6 +1706,9 @@ function CareerView(props: {
                 className={props.locked ? "pending-beat is-held" : "pending-beat"}
                 onClickCapture={swallowRepeatTap}
               >
+                {pending.kind !== "recap" && pending.kind !== "call" ? (
+                  <p className="pending-kicker" aria-hidden="true">{t("pendingChoice", lang)}</p>
+                ) : null}
                 <PendingBlock
                   player={player}
                   pending={pending}
@@ -1686,16 +1724,39 @@ function CareerView(props: {
                 />
               </div>
             )}
-          </div>,
-          <SeasonSheet key="season" player={player} />,
-          <LeaguePanel key="league" player={player} />,
-          <div key="career">
-            <StatsTab player={player} chartData={props.chartData} />
-            <ReviewTab player={player} />
-          </div>,
-        ]}
-      </SwipeTrack>
+          </div>
+        </div>
+
+        {sheetOpen ? (
+          <DoorSheet
+            id={tab}
+            title={sheetTitle}
+            sub={
+              tab === "league" && lastRow ? (
+                <>{lastRow.yearLabel} · <b>{t("seasonLatestDone", lang)}</b></>
+              ) : undefined
+            }
+            onClose={() => goTab("log")}
+            pending={!!pending}
+            onBackToPending={backToPending}
+          >
+            {tab === "season" ? (
+              <SeasonSheet key={`${player.seasonHistory.length}-${yearFocus ?? "last"}`} player={player} focus={yearFocus} />
+            ) : tab === "league" ? (
+              <LeaguePanel player={player} />
+            ) : (
+              <div>
+                <StatsTab player={player} chartData={props.chartData} />
+                <ReviewTab player={player} />
+              </div>
+            )}
+          </DoorSheet>
+        ) : null}
+      </div>
+
+      <DoorBar tab={tab} onDoor={(id) => goTab(id)} pendingCount={pending && !props.locked ? 1 : 0} fresh={fresh} />
     </div>
+    </DoorContext.Provider>
   );
 }
 
@@ -2013,6 +2074,23 @@ function Decision({
   );
 }
 
+/** "Scheda in Anno · Premi in Lega": the diary points at the doors instead of repeating them. */
+function RecapDoors({ season }: { season: number }) {
+  const lang = useLang();
+  const openDoor = useOpenDoor();
+  if (!openDoor) return null;
+  return (
+    <p className="recap-doors">
+      <button type="button" className="recap-door" onClick={() => openDoor("season", { season })}>
+        {t("recapYearChip", lang)}
+      </button>
+      <button type="button" className="recap-door" onClick={() => openDoor("league")}>
+        {t("recapAwardsChip", lang)}
+      </button>
+    </p>
+  );
+}
+
 function RecapCard({
   row,
   qualified,
@@ -2029,6 +2107,8 @@ function RecapCard({
   const lang = useLang();
   const rec = teamRecord(row);
   const mvpCard = isHighStakesPresentation({ awards: row.awards });
+  // Full numbers live in Anno, awards and the Rookie race in Lega: the season-end card keeps one
+  // compact line of stats and points at the two doors.
   return (
     <div className={`log-card recap ${qualified ? "in" : "out"}${mvpCard ? " stake-gold" : ""}`}>
       <h3 className="text-xl mb-0.5">
@@ -2042,7 +2122,7 @@ function RecapCard({
           {rec.seed ? ` · ${seedConfLabel(rec.seed, rec.conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
         </span>
       </p>
-      <div className="totals-strip mb-3">
+      <div className="totals-strip mb-2">
         {[
           [fmtDec(row.ppg, lang), "PPG"],
           [fmtDec(row.rpg, lang), "RPG"],
@@ -2054,52 +2134,9 @@ function RecapCard({
           </div>
         ))}
       </div>
-      <div className="font-display text-[13px] mb-2 tabular text-muted">
-        {row.gp} GP · {fmtDec(row.min, lang)} MIN
-      </div>
-      <div className="grid grid-cols-3 gap-1.5 text-center text-[11px] text-muted mb-2">
-        <StatMini l="STL" v={fmtDec(row.spg, lang)} />
-        <StatMini l="BLK" v={fmtDec(row.bpg, lang)} />
-        <StatMini l="TOV" v={fmtDec(row.tov, lang)} />
-        <StatMini l="FG%" v={fmtDec(row.fg * 100, lang)} />
-        <StatMini l="3P%" v={fmtDec(row.tp * 100, lang)} />
-        <StatMini l="FT%" v={fmtDec(row.ft * 100, lang)} />
-        <StatMini l="TS%" v={fmtDec(row.ts * 100, lang)} />
-        <StatMini l="PER" v={fmtDec(row.per, lang)} />
-        <StatMini l="+/-" v={`${row.plusMinus > 0 ? "+" : ""}${fmtDec(row.plusMinus, lang)}`} />
-      </div>
-      {(() => {
-        const adv = advancedOf(row);
-        return (
-          <div className="grid grid-cols-3 gap-1.5 text-center text-[11px] text-muted mb-2">
-            <StatMini l="USG%" v={fmtDec(adv.usg, lang)} />
-            <StatMini l="AST%" v={fmtDec(adv.astPct, lang)} />
-            <StatMini l="eFG%" v={fmtDec(adv.efg * 100, lang)} />
-            <StatMini l="TOV%" v={fmtDec(adv.tovPct, lang)} />
-            <StatMini l="BPM" v={`${adv.bpm > 0 ? "+" : ""}${fmtDec(adv.bpm, lang)}`} />
-            <StatMini l="VORP" v={`${adv.vorp > 0 ? "+" : ""}${fmtDec(adv.vorp, lang)}`} />
-          </div>
-        );
-      })()}
-      {row.awards.length ? (
-        <div className="league-awards-mini">
-          {row.awards.map((a, i) => (
-            <span key={`${i}-${a}`} className="yours">{awardDisplay(a, lang)}</span>
-          ))}
-        </div>
-      ) : (
-        <p className="text-[13px] text-muted mb-3 italic">{nx(awardNote, lang)}</p>
-      )}
-      {row.league && row.league.awards.length > 0 && (
-        <div className="league-awards-mini">
-          {row.league.awards.map((a) => (
-            <span key={a.title} className={a.isPlayer ? "yours" : ""}>
-              {awardDisplay(a.title, lang)} · {a.name}
-            </span>
-          ))}
-        </div>
-      )}
-      {row.season === 1 && row.league?.royRace?.length ? <RoyBoard race={row.league.royRace} /> : null}
+      {!row.awards.length && awardNote ? (
+        <p className="text-[13px] text-muted mb-2 italic">{nx(awardNote, lang)}</p>
+      ) : null}
       {row.mood && (
         <p className="feel-line">{contextualText(row.mood, lang, {age: row.age})}</p>
       )}
@@ -2107,32 +2144,27 @@ function RecapCard({
       <button className="ghost-btn" onClick={onGo}>
         {t(qualified ? "enterPlayoffs" : "nextSeason", lang)}
       </button>
+      {/* After the main action: the season card's first button is always "carry on". */}
+      <RecapDoors season={row.season} />
     </div>
   );
 }
 
 function RecapSummary({ row, result }: { row: SeasonRow; result?: string }) {
   const lang = useLang();
+  const rec = teamRecord(row);
   return (
-    <div className="log-card recap">
-      <h3 className="text-xl mb-0.5">
-        {tf("seasonN", { n: row.season }, lang)} · {getSeasonDisplayLabel(row.season)}
-      </h3>
-      <p className="text-[12px] text-muted mb-2">
-        <TeamCrest team={{ abbr: row.teamAbbr, color: row.teamColor, secondary: row.teamSecondary || row.teamColor }} size={16} />
-        {" "}
-        <span>
-          {tf("ageYears", { n: row.age }, lang)} · {row.team} · {teamRecord(row).w}-{teamRecord(row).l}
-          {teamRecord(row).seed ? ` · ${seedConfLabel(teamRecord(row).seed!, teamRecord(row).conf, lang)}` : ""} · OVR {displayOverall(row.overall)}
+    <div className="log-card recap recap-line">
+      <div className="recap-line-head">
+        <h3 className="text-[16px]">
+          {tf("seasonN", { n: row.season }, lang)} · {getSeasonDisplayLabel(row.season)}
+        </h3>
+        <span className="text-[12px] text-muted tabular">
+          {rec.w}-{rec.l}
+          {rec.seed ? ` · ${seedConfLabel(rec.seed, rec.conf, lang)}` : ` · ${t("outOfPlayoffs", lang)}`}
         </span>
-      </p>
-      <div className="font-display text-[17px] mb-1 tabular">
-        {fmtDec(row.ppg, lang)} / {fmtDec(row.rpg, lang)} / {fmtDec(row.apg, lang)}
-        <span className="text-muted text-[13px] font-sans"> · {row.gp} GP · PER {fmtDec(row.per, lang)}</span>
       </div>
-      {row.awards.length > 0 && (
-        <p className="text-[13px] text-wood mb-1">{row.awards.map((a) => awardDisplay(a, lang)).join(" · ")}</p>
-      )}
+      <RecapDoors season={row.season} />
       {row.mood && <p className="feel-line">{contextualText(row.mood, lang, {age: row.age})}</p>}
       {result && <p className="text-[13px] text-muted italic">{nx(result, lang)}</p>}
     </div>
@@ -2153,31 +2185,51 @@ function SeriesScoreText({text}:{text:string}) {
   return <>{text.split(/(\d+-\d+)/g).map((part,i)=>/^\d+-\d+$/.test(part)?<span key={i} style={{whiteSpace:"nowrap"}}>{part}</span>:part)}</>;
 }
 
-function SeasonSheet({ player }: { player: PlayerState }) {
+function SeasonSheet({ player, focus }: { player: PlayerState; focus?: number | null }) {
   const history = player.seasonHistory;
   const lang = useLang();
-  const [idx, setIdx] = useState(Math.max(0, history.length - 1));
-  const row = history[Math.min(idx, history.length - 1)];
+  const openDoor = useOpenDoor();
+  const latest = Math.max(0, history.length - 1);
+  // Opens on the latest completed season (or the one a diary chip asked for). The sheet remounts on
+  // every open and when a season is added, so it never stays on an old year.
+  const asked = typeof focus === "number" ? history.findIndex((h) => h.season === focus) : -1;
+  const [idx, setIdx] = useState(asked >= 0 ? asked : latest);
+  const row = history[Math.min(idx, latest)];
   if (!row) {
     return <p className="empty-hint pt-3">{t("seasonEmpty", lang)}</p>;
   }
   const rec = teamRecord(row);
   const snap = row.league;
+  const isLatest = idx >= latest;
+  const roy = row.season === 1 && snap?.royRace?.length
+    ? [...snap.royRace].sort((a, b) => b.score - a.score).findIndex((c) => c.isPlayer) + 1
+    : 0;
   return (
-    <div className="pt-3 fade-in">
-      {history.length > 1 && (
-        <div className="year-chips">
-          {history.map((h, i) => (
-            <button
-              key={h.season}
-              className={`year-chip ${i === idx ? "on" : ""}`}
-              onClick={() => setIdx(i)}
-            >
-              {getSeasonDisplayLabel(h.season)}
-            </button>
-          ))}
+    <div className="pt-1 fade-in">
+      <div className="year-stepper" role="group" aria-label={t("tabYear", lang)}>
+        <button
+          type="button"
+          className="year-step"
+          aria-label={t("seasonPrev", lang)}
+          disabled={idx <= 0}
+          onClick={() => setIdx((i) => Math.max(0, i - 1))}
+        >
+          <ChevronLeft className="size-5" aria-hidden="true" />
+        </button>
+        <div className="year-now" aria-live="polite">
+          <span className="tabular">{getSeasonDisplayLabel(row.season)}</span>
+          {isLatest ? <b>{t("seasonLatest", lang)}</b> : null}
         </div>
-      )}
+        <button
+          type="button"
+          className="year-step"
+          aria-label={t("seasonNext", lang)}
+          disabled={isLatest}
+          onClick={() => setIdx((i) => Math.min(latest, i + 1))}
+        >
+          <ChevronRight className="size-5" aria-hidden="true" />
+        </button>
+      </div>
       <div className="flex items-center gap-3 mb-3">
         <TeamMark
           team={{ abbr: row.teamAbbr, color: row.teamColor, secondary: row.teamSecondary || row.teamColor }}
@@ -2185,9 +2237,9 @@ function SeasonSheet({ player }: { player: PlayerState }) {
           number={player.number}
         />
         <div>
-          <h3 className="font-display text-[22px]">{getSeasonDisplayLabel(row.season)}</h3>
+          <h3 className="font-display text-[22px]">{row.team}</h3>
           <p className="text-[13px] text-muted">
-            {row.team} · {rec.w}-{rec.l}
+            {rec.w}-{rec.l}
             {rec.seed ? ` · ${seedConfLabel(rec.seed, rec.conf, lang)}` : ` · ${t("outOfPlayoffs", lang)}`} · OVR {displayOverall(row.overall)}
           </p>
         </div>
@@ -2216,6 +2268,24 @@ function SeasonSheet({ player }: { player: PlayerState }) {
         <StatMini l="+/-" v={`${row.plusMinus > 0 ? "+" : ""}${fmtDec(row.plusMinus, lang)}`} />
       </div>
       <p className="stat-legend">{t("statLegend", lang)}</p>
+      {isLatest ? (
+        <div className="year-facts">
+          <div>
+            <span>{t("yearContract", lang)}</span>
+            <b>
+              {player.contract.yearsRemaining === 1 ? t("contractYear", lang) : tf("contractYears", { n: player.contract.yearsRemaining }, lang)} × ${player.contract.annualM}M
+            </b>
+          </div>
+          <div>
+            <span>{t("yearAge", lang)}</span>
+            <b>{tf("ageYears", { n: player.age }, lang)}</b>
+          </div>
+          <div>
+            <span>{t("yearRole", lang)}</span>
+            <b>{roleLabel(player.role, lang)}</b>
+          </div>
+        </div>
+      ) : null}
       <details className="adv-stats">
         <summary>{t("advStats", lang)}</summary>
       {(() => {
@@ -2239,8 +2309,15 @@ function SeasonSheet({ player }: { player: PlayerState }) {
         );
       })()}
       </details>
-      {row.awards.length > 0 && <PersonalAwards title={t("yearAwards", lang)} rows={[row]} />}
-      {row.season === 1 && <RoyBoard player={player} race={row.league?.royRace} />}
+      {roy > 0 && isLatest && player.season === 1 && player.league !== "EuroLega" && openDoor ? (
+        <button type="button" className="door-link" onClick={() => openDoor("league")}>
+          <span>
+            <b>{awardDisplay("Rookie of the Year", lang)}</b>
+            <em>{tf("royPointer", { n: roy }, lang)}</em>
+          </span>
+          <ChevronRight className="size-4" aria-hidden="true" />
+        </button>
+      ) : null}
       {row.seriesLog && row.seriesLog.length > 0 && (
         <>
           <h4 className="stats-heading">{t("playoffPath", lang)}</h4>
@@ -2362,18 +2439,7 @@ const ReviewTab = memo(function ReviewTab({ player }: { player: PlayerState }) {
           ))}
         </div>
       )}
-      <h4 className="font-display text-[19px] mb-2">{t("choices", lang)}</h4>
-      {player.choiceLog.length === 0 && <p className="text-muted italic text-[13px]">{t("noChoices", lang)}</p>}
-      {player.choiceLog.map((c, i) => (
-        <div key={i} className="flex gap-2 py-1.5 text-[13px] border-b border-line">
-          <span className="text-wood font-display min-w-[36px]">{tf("seasonShort", { n: c.season }, lang)}</span>
-          <span>
-            <span className="text-muted">{contextualText(c.title, lang, {rivalName: player.rivalName})}: </span>
-            {contextualText(c.pick, lang, {rivalName: player.rivalName})}
-            {choiceShowsVoidedExtraYear(c, player) ? <span className="text-muted"> — {t("extraYearVoided", lang)}</span> : null}
-          </span>
-        </div>
-      ))}
+      {/* Past choices live only in the diary (Storia): no second list here. */}
       <h4 className="font-display text-[19px] mt-4 mb-2">{t("milestonesH", lang)}</h4>
       {player.milestones.length === 0 && <p className="text-muted italic text-[13px]">{t("noMilestones", lang)}</p>}
       {player.milestones.length > 0 && (

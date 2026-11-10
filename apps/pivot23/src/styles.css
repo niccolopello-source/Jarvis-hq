@@ -1752,61 +1752,6 @@ img.court-mark-photo {
   display: flex;
   flex-direction: column;
 }
-.career-view.is-swiping,
-.swipe-pager.is-swiping {
-  cursor: grabbing;
-  user-select: none;
-}
-.swipe-pager {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  overflow: clip;
-  touch-action: pan-y;
-}
-.swipe-track {
-  display: flex;
-  flex-wrap: nowrap;
-  width: 100%;
-  height: 100%;
-  transform: translate3d(calc(var(--page, 0) * -100% + var(--swipe-x, 0px)), 0, 0);
-  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-.career-view.is-swiping .swipe-track,
-.swipe-pager.is-swiping .swipe-track {
-  transition: none;
-  will-change: transform;
-}
-.swipe-slide {
-  scroll-padding-block: 12px;
-  flex: 0 0 100%;
-  width: 100%;
-  min-width: 100%;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  touch-action: pan-y;
-  contain: layout style;
-}
-.swipe-pager.is-swiping .swipe-slide {
-  touch-action: none;
-  overflow-y: hidden;
-}
-.swipe-slide.off {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 520px;
-  pointer-events: none;
-}
-.swipe-hint {
-  margin: 0 0 8px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--color-muted);
-  letter-spacing: 0.01em;
-  animation: hintIn 480ms cubic-bezier(0.22, 1, 0.36, 1);
-}
 .career-chrome {
 
   position: relative;
@@ -1822,43 +1767,6 @@ img.court-mark-photo {
   user-select: none;
   transform: translateZ(0);
   contain: layout style;
-}
-.seg-track {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  background: var(--color-plank);
-  border-radius: 16px;
-  padding: 4px;
-  gap: 3px;
-  margin: 10px 0 4px;
-  touch-action: pan-x;
-  user-select: none;
-  transform: translateX(calc(var(--swipe-x, 0px) * 0.07));
-  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-.career-view.is-swiping .seg-track {
-  transition: none;
-}
-.seg-track button {
-  border: none;
-  background: transparent;
-  /* D-12: plain muted was 4.15:1 on the plank background. */
-  color: color-mix(in oklab, var(--color-chalk) 40%, var(--color-muted));
-  border-radius: 12px;
-  min-height: 44px;
-  font-family: var(--font-display);
-  font-size: 13.5px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-.seg-track button.on {
-  background: var(--color-panel);
-  color: var(--color-chalk);
-  box-shadow: 0 1px 3px rgba(28, 28, 25, 0.08),
-    inset 0 -2px 0 color-mix(in oklab, var(--team, var(--color-court)) 70%, transparent);
 }
 .world-feed {
   list-style: none;
@@ -2487,7 +2395,7 @@ img.court-mark-photo {
 .swipe-hint {
   color: color-mix(in oklab, var(--color-chalk) 72%, var(--color-muted));
 }
-.swipe-slide:focus-visible {
+.story-scroll:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: -2px;
 }
@@ -2636,7 +2544,7 @@ img.court-mark-photo {
 @media (prefers-color-scheme: dark){.name-count{color:var(--color-muted)}}
 
 /* Life headings remain readable after native anchor/focus scrolling below career chrome. */
-.swipe-slide h4 { scroll-margin-block-start: 12px; }
+.door-sheet-body h4 { scroll-margin-block-start: 12px; }
 
 /*
  * Simplified Chinese (2026-11-09). System CJK fonts only: no web font, no CDN, CSP unchanged.
@@ -2659,4 +2567,635 @@ img.court-mark-photo {
 :root:lang(es) :where(button, .lang-btn, .eyebrow, .tab, [role="tab"]) {
   overflow-wrap: anywhere;
   hyphens: auto;
+}
+
+/*
+ * Career: four clear doors + Storia is home (owner decision 2026-11-10).
+ * Phone / tablet (< 1180 px): doors in a bottom bar above the home indicator, sheets full height
+ * over the diary. No ad space anywhere in the mobile career chrome (ads are desktop-only, in the
+ * reserved rails). Desktop (>= 1180 px): doors on top, the sheet is a panel inside the content
+ * column, so the reserved side rails and the 72 px footer row are never covered.
+ */
+:root {
+  /* Brand red as text: AA on both themes (pure #E10600 on #1c1c1e is ~3.4:1). */
+  --door-ink: color-mix(in oklab, var(--color-accent) 72%, var(--color-chalk));
+}
+.pivot-app.career-mode {
+  padding-bottom: 0;
+}
+.career-view {
+  position: relative;
+}
+.career-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.story-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  /* 24 px fixed between the last button of a waiting decision and the door bar. */
+  padding-bottom: 24px;
+  scroll-padding-block: 12px 24px;
+}
+.pending-kicker {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--door-ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pending-kicker::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+/* Header: full at the top of the diary, one compact row once the diary scrolls. */
+.hud-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.hud-name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.hud-name {
+  font-size: 22px;
+  line-height: 1.2;
+  min-width: 0;
+}
+.hud-year-inline {
+  display: none;
+  flex: none;
+  font-size: 12.5px;
+  color: color-mix(in oklab, var(--color-chalk) 72%, var(--color-muted));
+}
+.hud-mark {
+  display: inline-flex;
+  flex: none;
+}
+.career-chrome.is-compact .hud-meta,
+.career-chrome.is-compact .hud-club {
+  display: none;
+}
+.career-chrome.is-compact .hud-year-inline {
+  display: inline;
+}
+.career-chrome.is-compact .hud-row {
+  padding-block: 6px;
+}
+.career-chrome.is-compact .hud-name {
+  font-size: 18px;
+}
+.career-chrome.is-compact .hud-mark .jersey-mark {
+  width: 34px;
+  height: 34px;
+}
+.career-chrome.is-compact .ovr-orb {
+  width: auto;
+  height: 34px;
+  border-radius: 999px;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 12px;
+  box-shadow: none !important;
+}
+.career-chrome.is-compact .ovr-orb-num {
+  font-size: 18px;
+  line-height: 34px;
+}
+.career-chrome.is-compact .ovr-orb-cap {
+  margin-top: 0;
+}
+/* 320 px phones and landscape phones: always one row, otherwise the decision does not fit. */
+@media (max-width: 359px), (max-height: 520px) and (orientation: landscape) {
+  .career-chrome .hud-meta,
+  .career-chrome .hud-club {
+    display: none;
+  }
+  .career-chrome .hud-year-inline {
+    display: inline;
+  }
+  .career-chrome .hud-row {
+    padding-block: 6px;
+  }
+  .career-chrome .hud-name {
+    font-size: 17px;
+  }
+  .career-chrome .hud-mark {
+    display: none;
+  }
+  .career-chrome .ovr-orb {
+    width: auto;
+    height: 32px;
+    border-radius: 999px;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 10px;
+    box-shadow: none !important;
+  }
+  .career-chrome .ovr-orb-num {
+    font-size: 17px;
+    line-height: 32px;
+  }
+  .career-chrome .ovr-orb-cap {
+    margin-top: 0;
+  }
+  .pending-kicker {
+    margin-bottom: 4px;
+  }
+}
+
+/* The four doors. */
+.door-bar {
+  flex: none;
+  position: relative;
+  z-index: 80;
+  margin: 0 -20px;
+  padding: 6px max(8px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  background: color-mix(in oklab, var(--color-bg) 94%, transparent);
+  backdrop-filter: saturate(150%) blur(12px);
+  -webkit-backdrop-filter: saturate(150%) blur(12px);
+  border-top: 1px solid var(--color-line);
+  user-select: none;
+}
+.door-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.door {
+  min-height: 56px;
+  border: 0;
+  background: transparent;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 2px;
+  /* Not team colour: dark clubs (Denver, Utah navy) made the old active state unreadable. */
+  color: color-mix(in oklab, var(--color-chalk) 55%, var(--color-muted));
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  -webkit-tap-highlight-color: transparent;
+}
+.door-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 28px;
+  border-radius: 999px;
+  transition: background-color var(--motion-quick) ease;
+}
+.door-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.door.on {
+  color: var(--door-ink);
+}
+.door.on .door-icon {
+  background: color-mix(in oklab, var(--color-accent) 18%, transparent);
+  color: var(--color-accent);
+}
+.door-badge {
+  position: absolute;
+  top: -4px;
+  right: 4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  font-family: var(--font-sans);
+  box-shadow: 0 0 0 2px var(--color-bg);
+}
+.door-dot {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e8b931;
+  box-shadow: 0 0 0 2px var(--color-bg);
+}
+
+/* Sheets over the diary. */
+.door-scrim {
+  position: absolute;
+  inset: 0 -20px;
+  z-index: 70;
+  background: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.2s var(--ease-out);
+}
+.door-sheet {
+  position: absolute;
+  inset: 8px -20px 0;
+  z-index: 71;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--color-bg);
+  border: 1px solid var(--color-line);
+  border-bottom: 0;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -16px 36px rgba(0, 0, 0, 0.28);
+  transform: translate3d(0, var(--sheet-drag, 0px), 0);
+  transition: transform 220ms var(--ease-out);
+  animation: doorSheetUp 260ms var(--ease-out);
+}
+@keyframes doorSheetUp {
+  from {
+    transform: translate3d(0, 32px, 0);
+    opacity: 0.4;
+  }
+}
+.door-sheet.is-dragging {
+  transition: none;
+}
+.door-sheet.no-motion {
+  animation: none;
+  transition: none;
+}
+.door-sheet-head {
+  order: 0;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  align-items: start;
+  gap: 8px;
+  padding: 16px 12px 8px 20px;
+  touch-action: none;
+  cursor: grab;
+}
+.door-grabber {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-line);
+  transform: translateX(-50%);
+}
+.door-sheet-kicker {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--door-ink);
+}
+.door-sheet-title {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-chalk);
+}
+.door-sheet-title:focus {
+  outline: none;
+}
+.door-sheet-title:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.door-sheet-sub {
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: color-mix(in oklab, var(--color-chalk) 72%, var(--color-muted));
+}
+.door-sheet-sub b {
+  color: var(--color-chalk);
+  font-weight: 600;
+}
+.door-close {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--color-line);
+  background: var(--color-panel-2);
+  color: var(--color-chalk);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.door-sheet-body {
+  order: 1;
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 0 20px 20px;
+}
+.door-pending {
+  order: 2;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  margin: 0 12px 10px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--color-chalk);
+  color: var(--color-bg);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.door-pending-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  flex: none;
+}
+.door-pending-text {
+  flex: 1;
+  min-width: 0;
+}
+.door-pending-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 700;
+  color: color-mix(in oklab, var(--color-accent) 55%, var(--color-bg));
+}
+/* Short screens (320×568, landscape phones): the "Scelta in attesa · Torna" bar goes to the top of
+   the sheet, so it does not stack on the door bar and eat the content. */
+@media (max-height: 600px) {
+  .door-pending {
+    order: 1;
+    margin: 0 12px 6px;
+    min-height: 44px;
+  }
+  .door-sheet-body {
+    order: 2;
+  }
+  .door-sheet-head {
+    padding-top: 14px;
+    padding-bottom: 6px;
+  }
+  .door-sheet-title {
+    font-size: 19px;
+  }
+}
+
+/* Anno: one season at a time, ‹ › instead of a second horizontal scroller. */
+.year-stepper {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 14px;
+  padding: 4px;
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  background: var(--color-panel-2);
+}
+.year-step {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-chalk);
+  display: grid;
+  place-items: center;
+}
+.year-step:disabled {
+  opacity: 0.35;
+}
+.year-now {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+}
+.year-now b {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--color-success) 80%, var(--color-chalk));
+}
+.year-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 10px 0 12px;
+}
+.year-facts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.year-facts span {
+  font-size: 11px;
+  color: color-mix(in oklab, var(--color-chalk) 72%, var(--color-muted));
+}
+.year-facts b {
+  font-size: 13px;
+  color: var(--color-chalk);
+  overflow-wrap: anywhere;
+}
+.door-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  margin: 10px 0;
+  padding: 8px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  background: var(--color-panel-2);
+  color: var(--color-chalk);
+  text-align: left;
+}
+.door-link > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.door-link b {
+  font-family: var(--font-display);
+  font-size: 14px;
+}
+.door-link em {
+  font-style: normal;
+  font-size: 12px;
+  color: color-mix(in oklab, var(--color-chalk) 72%, var(--color-muted));
+}
+
+/* Diary recap: one line, chips open the doors. */
+.recap-line-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.recap-doors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+.recap-door {
+  min-height: 32px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--color-line);
+  background: var(--color-panel-2);
+  color: var(--color-chalk);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .door-sheet,
+  .door-scrim {
+    animation: none;
+    transition: none;
+  }
+  .door-icon {
+    transition: none;
+  }
+}
+
+@media (min-width: 1180px) {
+  .pivot-app.career-mode {
+    padding-bottom: 12px;
+  }
+  .door-bar {
+    order: -1;
+    margin: 0 0 6px;
+    padding: 6px;
+    border: 1px solid var(--color-line);
+    border-radius: 16px;
+    background: var(--color-panel-2);
+  }
+  .door-row {
+    max-width: none;
+  }
+  .door {
+    flex-direction: row;
+    gap: 6px;
+    min-height: 44px;
+    font-size: 14px;
+  }
+  .door-icon {
+    width: 36px;
+  }
+  .door.on {
+    background: color-mix(in oklab, var(--color-accent) 12%, transparent);
+  }
+  .door.on .door-icon {
+    background: transparent;
+  }
+  /* The panel stays inside the content column: side rails and footer row are never covered. */
+  .door-scrim {
+    inset: 0;
+    border-radius: 16px;
+  }
+  .door-sheet {
+    inset: 0 max(0px, calc((100% - 720px) / 2));
+    border-radius: 18px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .door-grabber {
+    display: none;
+  }
+  .door-sheet-head {
+    cursor: default;
+  }
+}
+/* The 24 px are measured from the bottom of the waiting card to the door bar. */
+.story-scroll .pending-beat > :last-child {
+  margin-bottom: 0;
+}
+/* Landscape phones: one-line doors (icon + name side by side), 48 px high, to give the story room. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .door-bar {
+    padding-top: 4px;
+    padding-bottom: calc(4px + env(safe-area-inset-bottom));
+  }
+  .door {
+    flex-direction: row;
+    gap: 4px;
+    min-height: 44px;
+  }
+  .door-icon {
+    width: 40px;
+  }
+}
+/* 320-wide phones: a tighter waiting card, so its answers fit above the doors more often. */
+@media (max-width: 359px) {
+  .story-scroll .pending-beat .log-card {
+    padding: 16px 14px;
+    border-radius: 22px;
+  }
+  .story-scroll .pending-beat .feel-line {
+    font-size: 14.5px;
+    line-height: 1.5;
+    margin: 8px 0 12px;
+  }
+  .story-scroll .pending-beat .choice-btn {
+    padding: 10px 12px;
+  }
+  .story-scroll .pending-beat h3 {
+    font-size: 18px;
+  }
 }
