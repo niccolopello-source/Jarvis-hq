@@ -3286,3 +3286,46 @@ img.court-mark-photo {
 .door-pending {
   box-shadow: 0 -10px 18px -12px rgba(0, 0, 0, 0.45);
 }
+/* Landscape phones: the season-end card in two columns (numbers left, the season's words right) with
+   "Prossima stagione" and the Anno / Lega chips on one last row, so the whole card — title included —
+   fits between the header and the door bar instead of leaving the chips cut by the bar. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .story-scroll .pending-beat .log-card.recap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "head mood"
+      "meta mood"
+      "totals mood"
+      "award door"
+      "go chips";
+    grid-template-rows: auto auto auto 1fr auto;
+    column-gap: 18px;
+    align-items: start;
+  }
+  .story-scroll .pending-beat .recap-head { grid-area: head; }
+  .story-scroll .pending-beat .recap-meta { grid-area: meta; }
+  .story-scroll .pending-beat .recap .totals-strip { grid-area: totals; margin-bottom: 6px; }
+  .story-scroll .pending-beat .recap-award { grid-area: award; margin-bottom: 0; }
+  .story-scroll .pending-beat .recap-mood { grid-area: mood; margin: 0 0 6px; }
+  .story-scroll .pending-beat .recap-door-line { grid-area: door; margin: 0 0 8px; text-align: left; }
+  .story-scroll .pending-beat .recap-go { grid-area: go; align-self: end; margin-top: 8px; }
+  .story-scroll .pending-beat .recap .recap-doors {
+    grid-area: chips;
+    align-self: end;
+    justify-content: flex-end;
+    margin: 8px 0 0;
+    min-height: 40px;
+    align-items: center;
+  }
+}
+/* Sheets whose "Torna" bar sits on top (short screens): the same soft edge at the top of the
+   content as at the bottom, and room for it, so a line scrolling past reads as "more above". */
+@media (max-height: 600px) {
+  .door-sheet-body {
+    padding-top: 14px;
+    scroll-padding-top: 14px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14px, #000 calc(100% - 20px), transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 14px, #000 calc(100% - 20px), transparent);
+  }
+}

@@ -249,3 +249,51 @@ test("desktop ≥ 1180: doors on top, the sheet stays inside the content column,
   expect(g.sheet.bottom).toBeLessThanOrEqual(g.foot.top);
   for (const rail of g.rails) if (rail.w > 0) expect(rail.right <= g.sheet.left || rail.left >= g.sheet.right).toBe(true);
 });
+
+test("844×390: the season-end card fits — title under the header, main button and Anno / Lega chips whole above the doors", async ({ page }) => {
+  test.setTimeout(150_000);
+  await page.setViewportSize({ width: 844, height: 390 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await startCareer(page, "Recap Orizzontale");
+  await toSeasonEnd(page);
+  await settle(page, 400);
+  const g = await page.evaluate(() => {
+    const chrome = document.querySelector(".career-chrome")!.getBoundingClientRect();
+    const bar = document.querySelector(".door-bar")!.getBoundingClientRect();
+    const card = document.querySelector("[data-pending] .log-card.recap")!;
+    const title = card.querySelector("h3")!.getBoundingClientRect();
+    const buttons = [...card.querySelectorAll("button")].map((b) => b.getBoundingClientRect());
+    return { chromeBottom: chrome.bottom, barTop: bar.top, titleTop: title.top, buttons: buttons.map((b) => ({ top: b.top, bottom: b.bottom })) };
+  });
+  expect(g.titleTop).toBeGreaterThanOrEqual(g.chromeBottom);
+  expect(g.buttons.length).toBeGreaterThanOrEqual(3); // Prossima stagione / Entra nei playoff + two chips
+  for (const b of g.buttons) {
+    expect(b.top).toBeGreaterThanOrEqual(g.chromeBottom);
+    expect(g.barTop - b.bottom).toBeGreaterThanOrEqual(24);
+  }
+});
+
+test("320×568: with Torna on top, the sheet content starts below it and fades at the top edge", async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await startCareer(page, "Torna In Cima");
+  for (const name of ["Anno", "Lega", "Vita"]) {
+    await door(page, name).click();
+    await expect(page.locator(".door-pending")).toBeVisible();
+    await settle(page, 400);
+    const g = await page.evaluate(() => {
+      const body = document.querySelector<HTMLElement>(".door-sheet-body")!;
+      const torna = document.querySelector(".door-pending")!.getBoundingClientRect();
+      const b = body.getBoundingClientRect();
+      const first = body.firstElementChild!.getBoundingClientRect();
+      const cs = getComputedStyle(body);
+      return { tornaBottom: torna.bottom, bodyTop: b.top, firstTop: first.top, padTop: parseFloat(cs.paddingTop), mask: cs.maskImage || (cs as unknown as { webkitMaskImage: string }).webkitMaskImage };
+    });
+    expect(g.bodyTop).toBeGreaterThanOrEqual(g.tornaBottom - 0.5);
+    expect(g.padTop).toBeGreaterThanOrEqual(14);
+    // At rest the first line sits below the fade, not inside it.
+    expect(g.firstTop - g.bodyTop).toBeGreaterThanOrEqual(14);
+    expect(g.mask).toMatch(/^linear-gradient\(rgba\(0, 0, 0, 0\)/);
+  }
+});

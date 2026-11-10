@@ -1478,11 +1478,15 @@ function revealPending(el: HTMLElement) {
     target = bottom + BOTTOM - view;
   } else {
     // Too tall for the diary. A choice starts at its kicker (question first); a "carry on" card
-    // (season recap, draft call) keeps its main button above the bar instead.
-    const action = el.querySelector<HTMLElement>(".pending-kicker") ? null : el.querySelector<HTMLElement>(".ghost-btn, .primary-btn");
-    target = action ? action.getBoundingClientRect().bottom - box.top + cur + BOTTOM - view : top - TOP;
+    // (season recap, draft call) keeps all its buttons above the bar instead — the main one and the
+    // Anno / Lega chips under it — so no button is left cut in half by the bar.
+    const buttons = [...el.querySelectorAll<HTMLElement>("button")];
+    const lowest = buttons.length ? Math.max(...buttons.map((b) => b.getBoundingClientRect().bottom)) : null;
+    const choice = !!el.querySelector(".pending-kicker");
+    target = !choice && lowest !== null ? lowest - box.top + cur + BOTTOM - view : top - TOP;
   }
-  scroller.scrollTop = Math.max(0, target);
+  // scrollTop snaps to whole pixels: round up so the 24 px never become 23.6.
+  scroller.scrollTop = Math.max(0, Math.ceil(target));
 }
 
 function teamRecord(row: SeasonRow) {
@@ -2152,10 +2156,10 @@ function RecapCard({
   // compact line of stats and points at the two doors.
   return (
     <div className={`log-card recap ${qualified ? "in" : "out"}${mvpCard ? " stake-gold" : ""}`}>
-      <h3 className="text-xl mb-0.5">
+      <h3 className="recap-head text-xl mb-0.5">
         {tf("seasonN", { n: row.season }, lang)} · {getSeasonDisplayLabel(row.season)}
       </h3>
-      <p className="text-[12px] text-muted mb-2">
+      <p className="recap-meta text-[12px] text-muted mb-2">
         <TeamCrest team={{ abbr: row.teamAbbr, color: row.teamColor, secondary: row.teamSecondary || row.teamColor }} size={16} />
         {" "}
         <span>
@@ -2176,13 +2180,13 @@ function RecapCard({
         ))}
       </div>
       {!row.awards.length && awardNote ? (
-        <p className="text-[13px] text-muted mb-2 italic">{nx(awardNote, lang)}</p>
+        <p className="recap-award text-[13px] text-muted mb-2 italic">{nx(awardNote, lang)}</p>
       ) : null}
       {row.mood && (
-        <p className="feel-line">{contextualText(row.mood, lang, {age: row.age})}</p>
+        <p className="recap-mood feel-line">{contextualText(row.mood, lang, {age: row.age})}</p>
       )}
-      <p className="feel-line door">{nx(door, lang)}</p>
-      <button className="ghost-btn" onClick={onGo}>
+      <p className="recap-door-line feel-line door">{nx(door, lang)}</p>
+      <button className="recap-go ghost-btn" onClick={onGo}>
         {t(qualified ? "enterPlayoffs" : "nextSeason", lang)}
       </button>
       {/* After the main action: the season card's first button is always "carry on". */}
