@@ -35,6 +35,21 @@ async function toSeasonEnd(page: Page) {
   throw new Error("season end not reached");
 }
 
+/** From the season-end card through the offseason to the first choice of the next season. */
+async function toNextSeasonChoice(page: Page) {
+  const season = () => page.evaluate(() => { const raw = JSON.parse(localStorage.getItem("pivot-v2-save") ?? "null"); return (raw?.data ?? raw)?.player?.season ?? 0; });
+  const start = await season();
+  for (let i = 0; i < 60; i += 1) {
+    await page.waitForTimeout(600);
+    const held = (await page.locator(".pending-beat.is-held").count()) > 0;
+    if (held) continue;
+    if ((await page.locator(".pending-kicker").count()) > 0 && (await season()) > start) return;
+    const b = page.locator("[data-pending] button:not(.recap-door)").first();
+    if (await b.isVisible().catch(() => false)) await b.click({ timeout: 3000 }).catch(() => {});
+  }
+  throw new Error("next season's first choice not reached");
+}
+
 const doors = (page: Page) => page.getByRole("navigation", { name: "Sezioni della carriera" });
 const door = (page: Page, name: string) => doors(page).getByRole("button", { name, exact: true });
 
@@ -49,8 +64,39 @@ test("sheets open over the diary, close with X, Storia, Escape or a drag, and th
   await expect(doors(page).getByRole("button")).toHaveCount(4);
   await expect(door(page, "Storia")).toHaveAttribute("aria-pressed", "true");
   await expect(door(page, "Storia")).toHaveAccessibleDescription("1 scelta in attesa");
+  // Nothing completed yet: Anno has no "new" dot.
+  await expect(door(page, "Anno").locator(".door-dot")).toHaveCount(0);
+
+  // A real choice is waiting: every sheet shows "Scelta in attesa · Torna" and its content ends
+  // above that bar (nothing scrolls under it), and Torna lands on the card below the header.
+  for (const name of ["Anno", "Lega", "Vita"]) {
+    await door(page, name).click();
+    await expect(page.locator(".door-pending")).toBeVisible();
+    await settle(page, 500); // lazy sheet content (charts) mounted
+    const fit = await page.evaluate(async () => {
+      const body = document.querySelector<HTMLElement>(".door-sheet-body")!;
+      body.scrollTop = body.scrollHeight;
+      await new Promise((r) => setTimeout(r, 100));
+      const b = body.getBoundingClientRect();
+      const p = document.querySelector(".door-pending")!.getBoundingClientRect();
+      // The end of the sheet's content (its last block), scrolled all the way down.
+      const last = body.lastElementChild!.getBoundingClientRect().bottom;
+      return { bodyBottom: b.bottom, tornaTop: p.top, last, padding: parseFloat(getComputedStyle(body).paddingBottom) };
+    });
+    expect(fit.bodyBottom).toBeLessThanOrEqual(fit.tornaTop + 0.5);
+    expect(fit.last).toBeLessThanOrEqual(fit.tornaTop);
+    expect(fit.padding).toBeGreaterThanOrEqual(32);
+  }
+  await page.getByRole("button", { name: /Scelta in attesa/ }).click();
+  await expect(page.locator(".door-sheet")).toHaveCount(0);
+  await expect(page.locator(".pending-kicker")).toBeInViewport();
+  const under = await page.evaluate(() => document.querySelector(".pending-kicker")!.getBoundingClientRect().top - document.querySelector(".career-chrome")!.getBoundingClientRect().bottom);
+  expect(under).toBeGreaterThanOrEqual(0);
 
   await toSeasonEnd(page);
+  // The season-end card is a "carry on" button, not a choice: no badge, no Torna bar in the sheets.
+  await expect(door(page, "Storia").locator(".door-badge")).toHaveCount(0);
+  await expect(door(page, "Storia")).not.toHaveAccessibleDescription(/scelta in attesa/);
   const story = page.getByRole("region", { name: "Storia" });
   await story.evaluate((el) => (el.scrollTop = Math.max(0, el.scrollHeight - el.clientHeight - 120)));
   await settle(page);
@@ -66,7 +112,7 @@ test("sheets open over the diary, close with X, Storia, Escape or a drag, and th
   await expect(sheet.getByRole("button", { name: "Stagione successiva" })).toBeDisabled();
   await expect(sheet).toContainText("Contratto");
   await expect(page.locator(".career-chrome")).not.toContainText("×");
-  await expect(sheet.getByRole("button", { name: /Scelta in attesa/ })).toBeVisible();
+  await expect(sheet.getByRole("button", { name: /Scelta in attesa/ })).toHaveCount(0);
   // The diary is still mounted under the sheet (inert), with its scroll untouched.
   await expect(page.locator(".story-scroll")).toHaveAttribute("inert", "");
   await sheet.getByRole("button", { name: "Chiudi" }).click();
@@ -83,7 +129,7 @@ test("sheets open over the diary, close with X, Storia, Escape or a drag, and th
 
   // Vita: no past-choices list (choices live in the diary only); Escape closes.
   await door(page, "Vita").click();
-  await expect(page.getByRole("dialog", { name: "Vita" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "La tua carriera" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Scelte", exact: true })).toHaveCount(0);
   await page.keyboard.press("Escape");
   await expect(page.locator(".door-sheet")).toHaveCount(0);
@@ -104,11 +150,6 @@ test("sheets open over the diary, close with X, Storia, Escape or a drag, and th
   await expect(page.locator(".door-sheet")).toHaveCount(0);
   expect(await story.evaluate((el) => el.scrollTop)).toBe(y);
 
-  // "Torna" lands on the waiting card.
-  await door(page, "Lega").click();
-  await page.getByRole("button", { name: /Scelta in attesa/ }).click();
-  await expect(page.locator(".door-sheet")).toHaveCount(0);
-  await expect(page.locator("[data-pending]").first()).toBeInViewport();
 });
 
 test("a waiting decision reopens on Storia even if a sheet was the last door; Anno follows the latest season", async ({ page }) => {
@@ -134,6 +175,10 @@ test("a waiting decision reopens on Storia even if a sheet was the last door; An
   const first = (await page.locator(".year-now .tabular").innerText()).trim();
   await door(page, "Storia").click();
   await page.locator("[data-pending] .ghost-btn").filter({ hasText: /Prossima stagione|Entra nei playoff/ }).click();
+  // Through the offseason to the first choice of the new season (Anno not opened since): its dot is on
+  // before that season ends.
+  await toNextSeasonChoice(page);
+  await expect(door(page, "Anno").locator(".door-dot")).toHaveCount(1);
   await toSeasonEnd(page);
   await expect(door(page, "Anno").locator(".door-dot")).toHaveCount(1);
   await door(page, "Anno").click();
@@ -148,12 +193,12 @@ for (const vp of [
   { width: 390, height: 844 },
   { width: 844, height: 390 },
 ]) {
-  test(`${vp.width}×${vp.height}: doors ≥ 44 px at the bottom, one-row header on small screens, 24 px above the doors`, async ({ page }) => {
+  test(`${vp.width}×${vp.height}: doors ≥ 44 px at the bottom, one-row header on small screens, the waiting choice starts under the header and ends 24 px above the doors`, async ({ page }) => {
     test.setTimeout(90_000);
     await page.setViewportSize(vp);
     await page.emulateMedia({ reducedMotion: "reduce" });
     await startCareer(page, "Spazio Scelta");
-    await page.getByRole("region", { name: "Storia" }).evaluate((el) => (el.scrollTop = el.scrollHeight));
+    // No manual scroll: the app places the waiting card itself.
     await settle(page, 400);
     const g = await page.evaluate(() => {
       const bar = document.querySelector(".door-bar")!.getBoundingClientRect();
@@ -162,10 +207,15 @@ for (const vp of [
       const name = document.querySelector(".hud-name")!.getBoundingClientRect();
       const orb = document.querySelector(".career-chrome .ovr-orb")!.getBoundingClientRect();
       const doors = [...document.querySelectorAll(".door-bar button")].map((b) => b.getBoundingClientRect());
-      return { vh: innerHeight, barTop: bar.top, barBottom: bar.bottom, gap: bar.top - card.bottom, chromeH: chrome.height, nameTop: name.top, orbTop: orb.top, orbBottom: orb.bottom, doors: doors.map((d) => ({ h: d.height, w: d.width })) };
+      const kicker = document.querySelector(".pending-kicker")!.getBoundingClientRect();
+      const title = document.querySelector(".pending-beat h3")!.getBoundingClientRect();
+      return { vh: innerHeight, barTop: bar.top, barBottom: bar.bottom, gap: bar.top - card.bottom, chromeBottom: chrome.bottom, kickerTop: kicker.top, titleTop: title.top, chromeH: chrome.height, nameTop: name.top, orbTop: orb.top, orbBottom: orb.bottom, doors: doors.map((d) => ({ h: d.height, w: d.width })) };
     });
     expect(Math.round(g.barBottom)).toBe(vp.height);
     expect(Math.round(g.gap)).toBeGreaterThanOrEqual(24);
+    // "SCELTA IN ATTESA" and the title are below the sticky header, not under it.
+    expect(g.kickerTop).toBeGreaterThanOrEqual(g.chromeBottom);
+    expect(g.titleTop).toBeGreaterThan(g.kickerTop);
     for (const d of g.doors) {
       expect(d.h).toBeGreaterThanOrEqual(44);
       expect(d.w).toBeGreaterThanOrEqual(44);

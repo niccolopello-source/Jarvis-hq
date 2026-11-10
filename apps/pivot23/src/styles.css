@@ -2602,7 +2602,7 @@ img.court-mark-photo {
   overscroll-behavior: contain;
   touch-action: pan-y;
   /* 24 px fixed between the last button of a waiting decision and the door bar. */
-  padding-bottom: 24px;
+  padding-bottom: 28px; /* 24 px + the 2–4 px the door bar overlaps */
   scroll-padding-block: 12px 24px;
 }
 .pending-kicker {
@@ -3198,4 +3198,91 @@ img.court-mark-photo {
   .story-scroll .pending-beat h3 {
     font-size: 18px;
   }
+}
+
+/* Short screens (320×568, landscape phones): the whole waiting card — "SCELTA IN ATTESA", title,
+   question and answers — has to fit between the header and the door bar (revealPending starts it
+   under the header and keeps 24 px above the bar). */
+@media (max-height: 600px) {
+  .story-scroll .pending-kicker {
+    margin-bottom: 4px;
+  }
+  .story-scroll .pending-beat .log-card {
+    padding: 12px 14px 12px 16px;
+    border-radius: 20px;
+  }
+  .story-scroll .pending-beat h3 {
+    font-size: 17px;
+    line-height: 1.25;
+  }
+  .story-scroll .pending-beat .feel-line {
+    font-size: 14px;
+    line-height: 1.45;
+    margin: 6px 0 10px;
+    padding-left: 12px;
+  }
+  .story-scroll .pending-beat .choice-list {
+    gap: 6px;
+  }
+  .story-scroll .pending-beat .choice-btn {
+    padding: 8px 12px;
+    gap: 1px;
+  }
+  .story-scroll .pending-beat .choice-btn > .font-display {
+    font-size: 15px;
+  }
+  .story-scroll .pending-beat .choice-btn > .text-muted {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+}
+/* Season-end card on short screens: one-line stat tiles, so "Prossima stagione" stays on screen. */
+@media (max-height: 600px) {
+  .story-scroll .pending-beat .totals-strip {
+    gap: 6px;
+  }
+  .story-scroll .pending-beat .totals-cell {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 4px;
+    border-radius: 12px;
+  }
+  .story-scroll .pending-beat .totals-cell .tv {
+    font-size: 18px;
+  }
+  .story-scroll .pending-beat .feel-line.door {
+    font-size: 13px;
+    margin: 4px 0 10px;
+  }
+  .story-scroll .pending-beat .ghost-btn {
+    padding: 10px 12px;
+  }
+  .story-scroll .pending-beat .recap-doors {
+    margin: 6px 0 0;
+  }
+}
+/* Landscape phones: the answers sit side by side, so title + question + answers fit in ~270 px. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .story-scroll .pending-beat .choice-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    align-items: stretch;
+  }
+  .story-scroll .pending-beat .choice-btn {
+    justify-content: flex-start;
+  }
+}
+/* Sheet content never runs under "Scelta in attesa · Torna": the body ends above the bar (flex
+   column), keeps 32 px of room after its last line and fades its lower edge, so a line cut by the
+   scroll edge reads as "more below" instead of "covered by the bar". */
+.door-sheet-body {
+  padding-bottom: 32px;
+  scroll-padding-bottom: 32px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 20px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 20px), transparent);
+}
+.door-pending {
+  box-shadow: 0 -10px 18px -12px rgba(0, 0, 0, 0.45);
 }

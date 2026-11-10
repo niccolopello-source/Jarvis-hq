@@ -38,7 +38,7 @@ test("selector: four languages, native names, BCP 47 tags, unknown -> Italian", 
 
 test("chrome key parity: es and zh define every one of the IT/EN keys, no fallback", () => {
   const keys = msgKeys();
-  assert.equal(keys.length, 304);
+  assert.equal(keys.length, 305);
   assert.deepEqual(Object.keys(ES_CHROME).sort(), [...keys].sort());
   assert.deepEqual(Object.keys(ZH_CHROME).sort(), [...keys].sort());
   for (const l of EXTRA) {

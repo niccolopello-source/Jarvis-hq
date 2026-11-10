@@ -302,6 +302,7 @@ export const ZH_CHROME: Record<Msg, string> = {
   seasonPrev: "上一赛季",
   seasonNext: "下一赛季",
   yearSheetTitle: "你的赛季",
+  lifeSheetTitle: "你的生涯",
   yearContract: "合同",
   yearAge: "年龄",
   yearRole: "位置",

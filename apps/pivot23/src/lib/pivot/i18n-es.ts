@@ -301,6 +301,7 @@ export const ES_CHROME: Record<Msg, string> = {
   seasonPrev: "Temporada anterior",
   seasonNext: "Temporada siguiente",
   yearSheetTitle: "Tu temporada",
+  lifeSheetTitle: "Tu carrera",
   yearContract: "Contrato",
   yearAge: "Edad",
   yearRole: "Posición",

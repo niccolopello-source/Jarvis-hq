@@ -450,7 +450,7 @@ export function PivotApp() {
     if (screen !== "career" || !pending) return;
     const el = document.querySelector<HTMLElement>("[data-pending]");
     if (!el) return;
-    el.scrollIntoView({ behavior: "auto", block: "nearest" });
+    revealPending(el);
     // The control that was just used is gone with the old card: hand focus to the new one so a
     // keyboard or screen-reader user continues from here instead of the top of the page.
     const active = document.activeElement;
@@ -1450,6 +1450,41 @@ function openPlayoff(s: PlayerState, round: number, opponent: Team): Pending {
   return { kind: "playoff", round, opponent, nerves: withPlayer(s, () => playoffNerves(s, label, opponent.name)) };
 }
 
+/**
+ * Brings the waiting card into the diary viewport. "SCELTA IN ATTESA" and the title always start
+ * below the header (the diary scroller sits under it, 8 px margin); when the whole card fits, it is
+ * shown entirely with its answers 24 px above the door bar. A choice taller than the diary starts at
+ * its top, so the question is read before the answers.
+ */
+function revealPending(el: HTMLElement) {
+  const scroller = el.closest<HTMLElement>(".story-scroll");
+  if (!scroller) {
+    el.scrollIntoView({ behavior: "auto", block: "nearest" });
+    return;
+  }
+  const TOP = 8;
+  const BOTTOM = 24;
+  const box = scroller.getBoundingClientRect();
+  const r = el.getBoundingClientRect();
+  const cur = scroller.scrollTop;
+  // The door bar may overlap the diary's last pixels: measure up to the bar, not the scroller edge.
+  const bar = document.querySelector<HTMLElement>(".door-bar")?.getBoundingClientRect();
+  const view = bar && bar.top > box.top && bar.top < box.bottom ? bar.top - box.top : scroller.clientHeight;
+  const top = r.top - box.top + cur;
+  const bottom = r.bottom - box.top + cur;
+  let target: number;
+  if (bottom - top <= view - TOP - BOTTOM) {
+    if (top - cur >= TOP && bottom - cur <= view - BOTTOM) return;
+    target = bottom + BOTTOM - view;
+  } else {
+    // Too tall for the diary. A choice starts at its kicker (question first); a "carry on" card
+    // (season recap, draft call) keeps its main button above the bar instead.
+    const action = el.querySelector<HTMLElement>(".pending-kicker") ? null : el.querySelector<HTMLElement>(".ghost-btn, .primary-btn");
+    target = action ? action.getBoundingClientRect().bottom - box.top + cur + BOTTOM - view : top - TOP;
+  }
+  scroller.scrollTop = Math.max(0, target);
+}
+
 function teamRecord(row: SeasonRow) {
   const snap = row.league;
   if (snap) {
@@ -1567,12 +1602,18 @@ function CareerView(props: {
   const [compact, setCompact] = useState(false);
   const [yearFocus, setYearFocus] = useState<number | null>(null);
   const sheetOpen = tab !== "log";
+  /* Badge on Storia and "Scelta in attesa · Torna" only for a real open choice. The season recap
+     ("Prossima stagione") and the draft call are a continue button, not a choice; a card already
+     answered and held on screen (locked) is not waiting either. */
+  const choiceWaiting = !!pending && !props.locked && pending.kind !== "recap" && pending.kind !== "call";
 
   /* "New" dots: a door lights up only when its content really changed since it was last opened.
      Signatures start at the current career, so a reload or a fresh career shows no dots. Memory only:
      nothing new is stored. */
   const signatures: Record<Exclude<Tab, "log">, string> = {
-    season: String(player.seasonHistory.length),
+    // A new season starting counts too (2027-28 begins and Anno has not been opened since); before
+    // the first completed season Anno has nothing to show, so no dot.
+    season: player.seasonHistory.length ? `${player.seasonHistory.length}|${player.season}` : "0",
     league: `${player.seasonHistory.length}|${player.championLog?.length ?? 0}|${player.currentLeague?.yearLabel ?? ""}`,
     career: `${player.devLog.length}|${player.milestones.length}|${player.seasonHistory.reduce((n, r) => n + r.awards.length, 0)}`,
   };
@@ -1620,7 +1661,7 @@ function CareerView(props: {
     requestAnimationFrame(() => {
       const el = storyRef.current?.querySelector<HTMLElement>("[data-pending]");
       if (!el) return;
-      el.scrollIntoView({ behavior: "auto", block: "nearest" });
+      revealPending(el);
       if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
       el.focus({ preventScroll: true });
     });
@@ -1635,7 +1676,7 @@ function CareerView(props: {
   const nba = player.league !== "EuroLega";
   const lastRow = player.seasonHistory[player.seasonHistory.length - 1];
   const sheetTitle =
-    tab === "season" ? t("yearSheetTitle", lang) : tab === "league" ? t(nba ? "leagueSheetNba" : "leagueSheetEuro", lang) : t("tabLife", lang);
+    tab === "season" ? t("yearSheetTitle", lang) : tab === "league" ? t(nba ? "leagueSheetNba" : "leagueSheetEuro", lang) : t("lifeSheetTitle", lang);
 
   return (
     <DoorContext.Provider value={openDoor}>
@@ -1737,7 +1778,7 @@ function CareerView(props: {
               ) : undefined
             }
             onClose={() => goTab("log")}
-            pending={!!pending}
+            pending={choiceWaiting}
             onBackToPending={backToPending}
           >
             {tab === "season" ? (
@@ -1754,7 +1795,7 @@ function CareerView(props: {
         ) : null}
       </div>
 
-      <DoorBar tab={tab} onDoor={(id) => goTab(id)} pendingCount={pending && !props.locked ? 1 : 0} fresh={fresh} />
+      <DoorBar tab={tab} onDoor={(id) => goTab(id)} pendingCount={choiceWaiting ? 1 : 0} fresh={fresh} />
     </div>
     </DoorContext.Provider>
   );
@@ -1933,7 +1974,7 @@ function PendingBlock(props: {
         <p className="feel-line">
           {nx(pending.nerves, lang)}
         </p>
-        <div className="flex flex-col gap-2">
+        <div className="choice-list flex flex-col gap-2">
           {choices.map((c, i) => (
             <button key={c.label} className="choice-btn" onClick={() => props.onPlayoff(i)}>
               <span className="font-display font-semibold text-base text-chalk">{nx(c.label, lang)}</span>
@@ -1951,7 +1992,7 @@ function PendingBlock(props: {
         <p className="text-[13.5px] text-muted mb-3">
           {nx(pending.desk, lang)}
         </p>
-        <div className="flex flex-col gap-2">
+        <div className="choice-list flex flex-col gap-2">
           {pending.offers.map((o) => (
             <button
               key={o.id}
@@ -1991,7 +2032,7 @@ function PendingBlock(props: {
           <TeamMark team={to} size={52} number={player.number} />
         </div>
         <p className="feel-line">{contextualText(pending.pitch, lang, {rivalName: player.rivalName})}</p>
-        <div className="flex flex-col gap-2">
+        <div className="choice-list flex flex-col gap-2">
           <button className="choice-btn offer-btn" style={{ ["--club" as string]: to.color }} onClick={() => props.onTrade(true)}>
             <span className="font-display font-semibold text-[16px] text-chalk">{tf("tradeAccept", { team: to.name }, lang)}</span>
             <span className="text-[12.5px] text-muted">{tf("tradeAcceptDetail", { city: to.city }, lang)}</span>
@@ -2062,7 +2103,7 @@ function Decision({
     <div className={`log-card ${cls || "vignette beat-important"}`}>
       <h3 className="text-[20px] mb-1">{nx(title, lang)}</h3>
       <p className="feel-line">{nx(sub, lang)}</p>
-      <div className="flex flex-col gap-2">
+      <div className="choice-list flex flex-col gap-2">
         {options.map((o) => (
           <button key={o.label} className="choice-btn" onClick={o.run}>
             <span className="font-display font-semibold text-[16px] text-chalk">{nx(o.label, lang)}</span>
