@@ -9,3 +9,9 @@ test("web analytics loads only in production on a real host", () => {
   }
   assert.equal(shouldLoadWebAnalytics(false, "pivot23.vercel.app"), false);
 });
+
+test("speed insights script is pinned to the same-origin path (CSP 'self', no third-party host)", async () => {
+  const { SPEED_INSIGHTS_SRC } = await import("./SpeedInsights");
+  assert.equal(SPEED_INSIGHTS_SRC, "/_vercel/speed-insights/script.js");
+  assert.doesNotMatch(SPEED_INSIGHTS_SRC, /^https?:/);
+});

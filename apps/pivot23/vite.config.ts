@@ -61,10 +61,13 @@ export default defineConfig(({ mode }) => {
           groups: [
             { name: "react-vendor", test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/, priority: 30 },
             // Everything else from node_modules is the chart stack (recharts and its deps), which only the
-            // lazy CareerChart reaches; lucide-react stays with the app code that uses it at start.
+            // lazy CareerChart reaches. lucide-react and the tiny Vercel Web Analytics / Speed Insights
+            // loaders stay with the app code that uses them at start: if they landed here, the entry
+            // would import chart-vendor statically and the home would download recharts (~103 KB gzip).
             {
               name: "chart-vendor",
-              test: (id) => /[\\/]node_modules[\\/]/.test(id) && !/[\\/]node_modules[\\/]lucide-react[\\/]/.test(id),
+              test: (id) =>
+                /[\\/]node_modules[\\/]/.test(id) && !/[\\/]node_modules[\\/](lucide-react|@vercel[\\/](analytics|speed-insights))[\\/]/.test(id),
               priority: 20,
             },
             // Story text and its helpers; rolldown also pulls their pure dependencies (world, teams, rng)

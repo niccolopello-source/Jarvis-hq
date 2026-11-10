@@ -6,6 +6,7 @@ import { PivotApp } from "@/components/pivot/PivotApp";
 import "./styles.css";
 import { IntroCurtain, prepareIntro } from "./intro";
 import { armIntroSound } from "./intro-sound/controller";
+import { SpeedInsights } from "./SpeedInsights";
 import { WebAnalytics } from "./WebAnalytics";
 
 const themeMeta = document.querySelector('meta[name="theme-color"]');
@@ -57,5 +58,6 @@ createRoot(root).render(
     </AppErrorBoundary></LivePersistenceBoundary>
     <IntroCurtain />
     <WebAnalytics />
+    <SpeedInsights />
   </>,
 );
