@@ -28,7 +28,7 @@ test("Italian home loads neither recharts nor any translated catalog; the career
   await page.waitForLoadState("networkidle");
   expect(has(js, "chart-vendor"), js.join(",")).toBe(false);
   expect(has(js, "CareerChart"), js.join(",")).toBe(false);
-  for (const c of ["catalog-en", "catalog-es", "catalog-zh"]) expect(has(js, c), js.join(",")).toBe(false);
+  for (const c of ["catalog-en", "catalog-es", "catalog-zh", "catalog-identity"]) expect(has(js, c), js.join(",")).toBe(false);
 
   await page.getByRole("button", { name: "Inizia", exact: true }).click();
   await page.getByPlaceholder("Es. Marco Ferrara").fill("Alex Rivers");
@@ -42,21 +42,26 @@ test("Italian home loads neither recharts nor any translated catalog; the career
   await page.getByRole("button", { name: "Vita", exact: true }).click();
   await expect.poll(() => has(js, "chart-vendor"), { timeout: 15_000 }).toBe(true);
   await expect(page.locator(".recharts-wrapper").first()).toBeAttached({ timeout: 15_000 });
-  for (const c of ["catalog-en", "catalog-es", "catalog-zh"]) expect(has(js, c), js.join(",")).toBe(false);
+  for (const c of ["catalog-en", "catalog-es", "catalog-zh", "catalog-identity"]) expect(has(js, c), js.join(",")).toBe(false);
   expect(errors).toEqual([]);
 });
 
+/*
+ * Spanish and Chinese are layered on the identity entries of the English catalog (names, numbers:
+ * catalog-identity, a few KB) and switch without waiting for the whole English catalog
+ * (2026-11-10); English still follows right after as their fallback. identity.test.ts pins that
+ * the screen text is unchanged.
+ */
 for (const [pick, own, others] of [
-  ["中文", "catalog-zh", ["catalog-es"]],
-  ["Español", "catalog-es", ["catalog-zh"]],
-  ["English", "catalog-en", ["catalog-es", "catalog-zh"]],
+  ["中文", ["catalog-zh", "catalog-identity", "catalog-en"], ["catalog-es"]],
+  ["Español", ["catalog-es", "catalog-identity", "catalog-en"], ["catalog-zh"]],
+  ["English", ["catalog-en"], ["catalog-es", "catalog-zh", "catalog-identity"]],
 ] as const) {
-  test(`picking ${pick} downloads only its catalog (plus the English fallback), never recharts on the home`, async ({ page }) => {
+  test(`picking ${pick} downloads only its catalog chunks (plus the English fallback), never recharts on the home`, async ({ page }) => {
     const js = track(page);
     await page.goto("/");
     await page.getByRole("button", { name: pick, exact: true }).click();
-    await expect.poll(() => has(js, own), { timeout: 15_000 }).toBe(true);
-    await expect.poll(() => has(js, "catalog-en"), { timeout: 15_000 }).toBe(true);
+    for (const c of own) await expect.poll(() => has(js, c), { timeout: 15_000 }).toBe(true);
     await page.waitForLoadState("networkidle");
     for (const c of others) expect(has(js, c), js.join(",")).toBe(false);
     expect(has(js, "chart-vendor"), js.join(",")).toBe(false);
