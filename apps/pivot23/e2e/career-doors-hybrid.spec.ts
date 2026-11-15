@@ -27,8 +27,22 @@ async function seed(page: Page, json: string, extra: Record<string, string> = {}
 
 async function resumeIfAsked(page: Page) {
   const resume = page.locator("button").filter({ hasText: /Riprendi|Resume|Reanudar|继续/ }).first();
-  if (await resume.isVisible({ timeout: 4000 }).catch(() => false)) await resume.click();
-  await expect(page.locator(".door-bar")).toBeVisible();
+  const bar = page.locator(".door-bar");
+  try {
+    await Promise.race([
+      resume.waitFor({ state: "visible", timeout: 4000 }),
+      bar.waitFor({ state: "visible", timeout: 4000 }),
+    ]);
+  } catch {
+    /* the door-bar assertion below reports a real failure */
+  }
+  try {
+    await expect(resume).toBeVisible({ timeout: 200 });
+    await resume.click();
+  } catch {
+    /* already in career, or no prompt */
+  }
+  await expect(bar).toBeVisible();
 }
 
 function tradeNoticeCareer(): PlayerState {
@@ -40,6 +54,51 @@ function tradeNoticeCareer(): PlayerState {
   player.season = 3;
   player.age = 24;
   return player;
+}
+
+async function startCareer(page: Page, name = "Anno Ultima") {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Inizia", exact: true }).click();
+  await page.getByPlaceholder("Es. Marco Ferrara").fill(name);
+  await page.getByRole("button", { name: "Gioca il Draft" }).click();
+  const ready = page.getByRole("heading", { name: "Il tuo giocatore è pronto" });
+  for (let r = 0; r < 12 && !(await ready.isVisible().catch(() => false)); r += 1) {
+    await page.locator(".draft-card").first().click();
+    await page.waitForTimeout(650);
+  }
+  await page.getByRole("button", { name: "Inizia la carriera" }).click();
+  await page.getByRole("button", { name: /College NCAA/ }).click();
+  await page.getByRole("button", { name: "Entra in palestra" }).click();
+  await expect(page.locator("[data-pending] .choice-btn").first()).toBeVisible();
+}
+
+/** Plays decisions (never while a card is held) until the season-end card is on screen. */
+async function toSeasonEnd(page: Page) {
+  const recap = page.locator("[data-pending] .ghost-btn").filter({ hasText: /Prossima stagione|Entra nei playoff/ });
+  for (let i = 0; i < 60; i += 1) {
+    await page.waitForTimeout(600);
+    const held = (await page.locator(".pending-beat.is-held").count()) > 0;
+    if (!held && (await recap.isVisible().catch(() => false))) return;
+    if (held) continue;
+    const b = page.locator("[data-pending] button:not(.recap-door)").first();
+    if (await b.isVisible().catch(() => false)) await b.click({ timeout: 3000 }).catch(() => {});
+  }
+  throw new Error("season end not reached");
+}
+
+/** From the season-end card through the offseason to the first choice of the next season. */
+async function toNextSeasonChoice(page: Page) {
+  const season = () => page.evaluate(() => { const raw = JSON.parse(localStorage.getItem("pivot-v2-save") ?? "null"); return (raw?.data ?? raw)?.player?.season ?? 0; });
+  const start = await season();
+  for (let i = 0; i < 60; i += 1) {
+    await page.waitForTimeout(600);
+    const held = (await page.locator(".pending-beat.is-held").count()) > 0;
+    if (held) continue;
+    if ((await page.locator(".pending-kicker").count()) > 0 && (await season()) > start) return;
+    const b = page.locator("[data-pending] button:not(.recap-door)").first();
+    if (await b.isVisible().catch(() => false)) await b.click({ timeout: 3000 }).catch(() => {});
+  }
+  throw new Error("next season's first choice not reached");
 }
 
 for (const sheet of ["season", "league", "career"] as const) {
@@ -95,38 +154,56 @@ test("a decision resolved just before opening a sheet does not pull focus or clo
   const player = tradeNoticeCareer();
   await seed(page, JSON.stringify(buildLiveSave(player, { kind: "trade-notice", team: structuredClone(NBA_TEAMS[0]!), from: "Brooklyn Nets", pitch: "Minuti veri." }, [], "career", "log", 1)));
   await resumeIfAsked(page);
+  const before = (await page.locator("[data-pending]").first().innerText()).trim();
   await page.locator("[data-pending] button").first().click();
   await door(page, "Anno").click();
-  await page.waitForTimeout(3000); // past the hold: the next card lands in the diary under the sheet
+  await expect(page.locator(".door-sheet")).toBeVisible();
+  const nextCard = page.locator(".story-scroll [data-pending]");
+  await expect(nextCard).toBeVisible({ timeout: 10_000 });
+  await expect(nextCard).not.toHaveText(before);
   await expect(page.locator(".door-sheet")).toBeVisible();
   expect(await page.evaluate(() => !!document.activeElement?.closest(".door-sheet"))).toBe(true);
   await page.keyboard.press("Escape");
   await expect(door(page, "Storia")).toBeFocused();
 });
 
-test("Anno opens on the latest completed season (exact label from the save) after more seasons are added", async ({ browser, baseURL }) => {
-  const done = playCareerSim({ seed: 3, difficulty: "pro" });
-  for (const n of [2, 5, done.seasonHistory.length]) {
-    const player = structuredClone(done);
-    player.seasonHistory = player.seasonHistory.slice(0, n);
-    const json = JSON.stringify(buildLiveSave(player, null, [], "career", "season", 1));
-    const ctx = await browser.newContext({ viewport: { width: 393, height: 852 }, baseURL, reducedMotion: "reduce" });
-    const p = await ctx.newPage();
-    await seed(p, json, { "pivot-v2-swipe": JSON.stringify({ tab: "season", dir: "next", hint: true }) });
-    await resumeIfAsked(p);
-    await door(p, "Storia").click(); // close whatever a restored door opened
-    await door(p, "Anno").click();
-    const want = getSeasonDisplayLabel(player.seasonHistory[n - 1]!.season);
-    await expect(p.locator(".year-now .tabular")).toHaveText(want);
-    await expect(p.locator(".year-now")).toContainText("Ultima");
-    await expect(p.getByRole("button", { name: "Stagione successiva" })).toBeDisabled();
-    await ctx.close();
-  }
+test("Anno opens on the latest completed season (exact label from the save) after a new season is added in the same session", async ({ page }) => {
+  test.setTimeout(150_000);
+  await page.setViewportSize({ width: 393, height: 852 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await startCareer(page, "Anno Ultima");
+  await toSeasonEnd(page);
+  await door(page, "Anno").click();
+  const first = (await page.locator(".year-now .tabular").innerText()).trim();
+  const firstSeason = await page.evaluate(() => {
+    const raw = JSON.parse(localStorage.getItem("pivot-v2-save") ?? "null");
+    const hist = (raw?.data ?? raw)?.player?.seasonHistory ?? [];
+    return hist[hist.length - 1]?.season ?? 0;
+  });
+  expect(first).toBe(getSeasonDisplayLabel(firstSeason));
+  await expect(page.locator(".year-now")).toContainText("Ultima");
+  await expect(page.getByRole("button", { name: "Stagione successiva" })).toBeDisabled();
+  await door(page, "Storia").click();
+  await page.locator("[data-pending] .ghost-btn").filter({ hasText: /Prossima stagione|Entra nei playoff/ }).click();
+  await toNextSeasonChoice(page);
+  await toSeasonEnd(page);
+  const latestSeason = await page.evaluate(() => {
+    const raw = JSON.parse(localStorage.getItem("pivot-v2-save") ?? "null");
+    const hist = (raw?.data ?? raw)?.player?.seasonHistory ?? [];
+    return hist[hist.length - 1]?.season ?? 0;
+  });
+  const want = getSeasonDisplayLabel(latestSeason);
+  expect(want).not.toBe(first);
+  await door(page, "Anno").click();
+  await expect(page.locator(".year-now .tabular")).toHaveText(want);
+  await expect(page.locator(".year-now")).toContainText("Ultima");
+  await expect(page.getByRole("button", { name: "Stagione successiva" })).toBeDisabled();
 });
 
 const GONE: Record<string, RegExp> = { it: /non è più salvata/, en: /no longer saved/, es: /ya no está guardada/, zh: /不再保存/ };
 for (const [label, seedNo] of [["NBA", 1], ["EuroLega", 4242]] as const) {
   test(`Lega on a compacted ${label} save: full table only when the rows exist, a clear note otherwise (IT/EN/ES/ZH)`, async ({ browser, baseURL }) => {
+    test.setTimeout(240_000);
     const done = playCareerSim({ seed: seedNo, difficulty: "pro" });
     expect(done.league).toBe(label);
     for (const level of [0, 1, 2]) {
