@@ -270,6 +270,7 @@ export const ZH_CHROME: Record<Msg, string> = {
   team: "球队",
   standingsLater: "排名会在第一个赛季结束后出现。",
   standingsLaterAlbo: "排名会在第一个赛季结束后出现。历届冠军榜已经开放。",
+  standingsGone: "本赛季的完整排名已不再保存。奖项、数据王和历届冠军仍然保留。",
   alboNba: "NBA历届冠军",
   alboEuro: "欧洲篮球联赛历届冠军",
   alboCap: "自2023-24赛季以来的冠军球队。如果你赢得总冠军戒指，你的名字会留在这里。",

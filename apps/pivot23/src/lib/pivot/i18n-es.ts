@@ -269,6 +269,7 @@ export const ES_CHROME: Record<Msg, string> = {
   team: "Equipo",
   standingsLater: "La clasificación aparece después de la primera temporada.",
   standingsLaterAlbo: "La clasificación aparece después de la primera temporada. El palmarés, mientras tanto, ya está abierto.",
+  standingsGone: "La clasificación completa de esta temporada ya no está guardada. Quedan los premios, los líderes y los campeones.",
   alboNba: "Campeones de la NBA",
   alboEuro: "Campeones de la EuroLeague",
   alboCap: "Los equipos campeones, desde 2023-24. Si ganas el anillo, tu nombre se queda aquí.",
