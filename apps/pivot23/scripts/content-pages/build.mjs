@@ -194,7 +194,7 @@ function describe(md, max = 158) {
 }
 
 // ---------- layout ----------
-const LOGO = `<svg class="logo" viewBox="0 0 80 80" aria-hidden="true" focusable="false"><circle cx="40" cy="40" r="34.6" fill="none" stroke="currentColor" stroke-width="5.4"/><g fill="none" stroke="currentColor" stroke-width="3.15" stroke-linecap="round"><path d="M22.2 22.4 A22.2 22.2 0 0 1 57.8 22.4"/><path d="M57.8 57.6 A22.2 22.2 0 0 1 22.2 57.6"/></g><line x1="4.2" y1="40" x2="16.6" y2="40" stroke="currentColor" stroke-width="4.4"/><line x1="63.4" y1="40" x2="75.8" y2="40" stroke="currentColor" stroke-width="4.4"/><text x="40" y="41.5" text-anchor="middle" dominant-baseline="central" font-size="26" font-weight="700" fill="#f5f5f7" font-family="system-ui, sans-serif">23</text></svg>`;
+const LOGO = `<svg class="logo" viewBox="0 0 80 80" aria-hidden="true" focusable="false"><circle cx="40" cy="40" r="34.6" fill="none" stroke="currentColor" stroke-width="5.4"/><g fill="none" stroke="currentColor" stroke-width="3.15" stroke-linecap="round"><path d="M22.2 22.4 A22.2 22.2 0 0 1 57.8 22.4"/><path d="M57.8 57.6 A22.2 22.2 0 0 1 22.2 57.6"/></g><line x1="4.2" y1="40" x2="16.6" y2="40" stroke="currentColor" stroke-width="4.4"/><line x1="63.4" y1="40" x2="75.8" y2="40" stroke="currentColor" stroke-width="4.4"/><text x="40" y="41.5" text-anchor="middle" dominant-baseline="central" font-size="26" font-weight="700" font-family="system-ui, sans-serif">23</text></svg>`;
 
 function layout({ lang, key, route, title, description, body, alternate }) {
   const t = UI[lang];
@@ -221,7 +221,8 @@ function layout({ lang, key, route, title, description, body, alternate }) {
 <title>${esc(title)} · PIVOT 23</title>
 <meta name="description" content="${esc(description)}" />
 <meta name="robots" content="index,follow" />
-<meta name="theme-color" content="#0c0b0d" />
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)" />
 <link rel="canonical" href="${SITE}${route}" />
 ${altLinks}
 <meta property="og:title" content="${esc(title)} · PIVOT 23" />
