@@ -32,40 +32,65 @@ let toIt: Catalog | null = null;
 
 /*
  * Spanish and Chinese (2026-11-09). Same keys as English (the Italian source). Each catalog is a
- * lazy chunk layered over English: a fragment with no Spanish/Chinese entry renders in English,
- * never in Italian. Translations are NOT reviewed by native speakers yet.
+ * lazy chunk layered over the identity entries of the English catalog (proper names, numbers:
+ * key === English text), so the switch no longer waits for the whole English catalog (~137 KB
+ * gzip, 2026-11-10): every other English key has a Spanish and a Chinese entry
+ * (identity.test.ts). The English catalog is still fetched right after, off the critical path,
+ * for the rare text the language cannot resolve: that text keeps falling back to English, never
+ * Italian, once it has arrived. Translations are NOT reviewed by native speakers yet.
  */
 type Extra = "es" | "zh";
 const narrativeExtra: Record<Extra, Readonly<Record<string, string>>> = { es: {}, zh: {} };
 const extraLoad: Partial<Record<Extra, Promise<void>>> = {};
 const toExtra: Partial<Record<Extra, Catalog>> = {};
 const ownExtra: Partial<Record<Extra, Catalog>> = {};
+let narrativeIdentity: Readonly<Record<string, string>> = {};
+let identityLoad: Promise<void> | null = null;
 
-/** Loads the Spanish narrative catalog (and the English one it falls back to). */
+/** The identity entries of the English catalog (a small lazy chunk shared by Spanish and Chinese). */
+function loadIdentity(): Promise<void> {
+  identityLoad ??= import("./catalog-identity").then((m) => {
+    narrativeIdentity = m.NARRATIVE_IDENTITY;
+    delete toExtra.es;
+    delete toExtra.zh;
+    delete ownExtra.es;
+    delete ownExtra.zh;
+  });
+  return identityLoad;
+}
+
+/** The English fallback for Spanish and Chinese, started once their own text is in. */
+function prefetchEnFallback() {
+  void loadNarrativeEn().catch(() => undefined);
+}
+
+/** Loads the Spanish narrative catalog (and the identity entries it is layered on). */
 export function loadNarrativeEs(): Promise<void> {
-  extraLoad.es ??= Promise.all([loadNarrativeEn(), import("./catalog-es")]).then(([, m]) => {
+  extraLoad.es ??= Promise.all([loadIdentity(), import("./catalog-es")]).then(([, m]) => {
     narrativeExtra.es = m.NARRATIVE_ES;
     delete toExtra.es;
     delete ownExtra.es;
+    prefetchEnFallback();
   });
   return extraLoad.es;
 }
 
-/** Loads the Chinese narrative catalog (and the English one it falls back to). */
+/** Loads the Chinese narrative catalog (and the identity entries it is layered on). */
 export function loadNarrativeZh(): Promise<void> {
-  extraLoad.zh ??= Promise.all([loadNarrativeEn(), import("./catalog-zh")]).then(([, m]) => {
+  extraLoad.zh ??= Promise.all([loadIdentity(), import("./catalog-zh")]).then(([, m]) => {
     narrativeExtra.zh = m.NARRATIVE_ZH;
     delete toExtra.zh;
     delete ownExtra.zh;
+    prefetchEnFallback();
   });
   return extraLoad.zh;
 }
 
-/** English pairs, then the language's chrome, then the language's narrative: last one wins. */
+/** Identity pairs, English chrome, then the language's chrome, then its narrative: last one wins. */
 function extraCatalog(lang: Extra): Catalog {
   const hit = toExtra[lang];
   if (hit) return hit;
-  const pairs: Record<string, string> = { ...narrativeEn };
+  const pairs: Record<string, string> = { ...narrativeIdentity };
   for (const [it, en] of chromePairs()) if (!(it in pairs)) pairs[it] = en;
   for (const [it, out] of chromePairsFor(lang)) pairs[it] = out;
   Object.assign(pairs, narrativeExtra[lang]);
@@ -76,14 +101,11 @@ function extraCatalog(lang: Extra): Catalog {
 function ownCatalog(lang: Extra): Catalog {
   const hit = ownExtra[lang];
   if (hit) return hit;
-  const pairs: Record<string, string> = {};
-  for (const [it, en] of Object.entries(narrativeEn)) if (normKey(it) === en) pairs[it] = en;
+  const pairs: Record<string, string> = { ...narrativeIdentity };
   for (const [it, out] of chromePairsFor(lang)) pairs[it] = out;
   Object.assign(pairs, narrativeExtra[lang]);
   return (ownExtra[lang] = buildCatalog(pairs));
 }
-
-const normKey = (s: string) => s.replace(/\s+/g, " ").trim();
 
 const CJK = "\u3400-\u9fff\uf900-\ufaff";
 const CJK_PUNCT = "\u3000-\u303f\uff00-\uffef";

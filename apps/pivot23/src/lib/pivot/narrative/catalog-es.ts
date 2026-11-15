@@ -1,6 +1,6 @@
 /**
  * Spanish narrative catalog: Italian source key -> Spanish, merged from ./es.
- * Lazy chunk, layered over the English catalog (missing keys render in English). Generated from
+ * Lazy chunk, layered over the identity entries of the English catalog (catalog-identity.ts). Generated from
  * the 2026-11-09 translation pass; NOT reviewed by native speakers (docs/pivot23/i18n-es-zh/).
  */
 import { ES_AWARDS_HELPERS } from "./es/awards-helpers.ts";
