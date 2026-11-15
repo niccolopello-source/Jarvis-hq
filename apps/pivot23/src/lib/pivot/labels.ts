@@ -360,3 +360,34 @@ export function seasonCountZh(n: number): string {
 export function countWord(n: number, word: string, lang: UiLang): string {
   return lang === "zh" ? `${n}${word}` : `${n} ${word}`;
 }
+
+/**
+ * Links to the static site pages (public/, built from content/): guide, FAQ, blog, about, contact, legal.
+ * The pages exist in Italian and English; Spanish and Chinese labels point to the English pages.
+ */
+export type SiteLink = readonly [href: string, text: string];
+const SITE_IT: readonly SiteLink[] = [
+  ["/guida/", "Guida"],
+  ["/faq/", "FAQ"],
+  ["/blog/", "Blog"],
+  ["/chi-siamo/", "Chi siamo"],
+  ["/contatti/", "Contatti"],
+  ["/privacy/", "Privacy"],
+  ["/cookie/", "Cookie"],
+  ["/termini/", "Termini"],
+];
+const SITE_EN_ROUTES = ["/en/guide/", "/en/faq/", "/en/blog/", "/en/about/", "/en/contact/", "/en/privacy/", "/en/cookies/", "/en/terms/"] as const;
+const SITE_TEXT = {
+  en: ["Guide", "FAQ", "Blog", "About", "Contact", "Privacy", "Cookies", "Terms"],
+  es: ["Guía", "FAQ", "Blog", "Quiénes somos", "Contacto", "Privacidad", "Cookies", "Términos"],
+  zh: ["玩法指南", "常见问题", "博客", "关于我们", "联系我们", "隐私", "Cookie", "条款"],
+} as const;
+const siteZip = (text: readonly string[]): readonly SiteLink[] => SITE_EN_ROUTES.map((href, i) => [href, text[i]] as const);
+const SITE_NAV = { it: "Pagine del sito", en: "Site pages", es: "Páginas del sitio", zh: "网站页面" } as const;
+
+export function siteLinks(lang: UiLang): readonly SiteLink[] {
+  return byLang(lang, { it: SITE_IT, en: siteZip(SITE_TEXT.en), es: siteZip(SITE_TEXT.es), zh: siteZip(SITE_TEXT.zh) });
+}
+export function siteLinksName(lang: UiLang): string {
+  return byLang(lang, SITE_NAV);
+}

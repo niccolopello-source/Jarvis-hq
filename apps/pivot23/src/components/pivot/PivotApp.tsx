@@ -7,6 +7,7 @@ import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/Tea
 import { CAREER_NAME_MAX, careerName, chipsFromFx, chipsFromSnapshot, consequenceSchedule, endSentence, formatCareerTotal, getSeasonDisplayLabel, tidyText, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
 import { InstagramLink } from "@/components/pivot/InstagramLink";
+import { SiteLinks } from "@/components/pivot/SiteLinks";
 import { SideRail, adBreakAtSeasonEnd } from "@/ads";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
 import { pathFeel, playoffNerves, draftWho, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
@@ -1264,6 +1265,7 @@ export function PivotApp() {
             <InstagramLink lang={lang} />
             <p className="totem-credit totem-home">Powered by Totem</p>
           </div>
+          <SiteLinks lang={lang} />
         </section>
       )}
 

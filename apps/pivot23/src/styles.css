@@ -2660,3 +2660,37 @@ img.court-mark-photo {
   overflow-wrap: anywhere;
   hyphens: auto;
 }
+
+/* Static site pages (guide, FAQ, legal): a small muted link row at the foot of the home screen only.
+   It sits in the normal flow after the Totem row, never over the play area, rails or reserved footer. */
+.site-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px 4px;
+  margin-top: 14px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.site-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 7px;
+  color: var(--color-muted);
+  font-size: 12px;
+  text-decoration: none;
+  border-radius: 6px;
+}
+.site-links a:hover {
+  color: var(--color-chalk);
+  text-decoration: underline;
+}
+.site-links a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 0;
+}
+@media (min-width: 1180px) {
+  .site-links {
+    margin-top: 24px;
+  }
+}

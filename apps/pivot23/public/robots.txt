@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-# Single-page app. The public entry is the canonical host.
+# The game (/) plus static content pages (guide, FAQ, blog, legal). Canonical host: www.
 Sitemap: https://www.pivot23.com/sitemap.xml
