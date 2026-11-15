@@ -1,6 +1,6 @@
 /**
  * Simplified Chinese (zh-CN) narrative catalog: Italian source key -> Chinese, merged from ./zh.
- * Lazy chunk, layered over the English catalog (missing keys render in English). Generated from
+ * Lazy chunk, layered over the identity entries of the English catalog (catalog-identity.ts). Generated from
  * the 2026-11-09 translation pass; NOT reviewed by native speakers (docs/pivot23/i18n-es-zh/).
  */
 import { ZH_AWARDS_HELPERS } from "./zh/awards-helpers.ts";
