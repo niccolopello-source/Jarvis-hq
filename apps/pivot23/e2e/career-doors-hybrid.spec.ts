@@ -200,7 +200,7 @@ test("Anno opens on the latest completed season (exact label from the save) afte
   await expect(page.getByRole("button", { name: "Stagione successiva" })).toBeDisabled();
 });
 
-const GONE: Record<string, RegExp> = { it: /non è più salvata/, en: /no longer saved/, es: /ya no está guardada/, zh: /不再保存/ };
+const GONE: Record<string, RegExp> = { it: /non è più disponibile/, en: /no longer available/, es: /ya no está disponible/, zh: /不再可用/ };
 for (const [label, seedNo] of [["NBA", 1], ["EuroLega", 4242]] as const) {
   test(`Lega on a compacted ${label} save: full table only when the rows exist, a clear note otherwise (IT/EN/ES/ZH)`, async ({ browser, baseURL }) => {
     test.setTimeout(240_000);
