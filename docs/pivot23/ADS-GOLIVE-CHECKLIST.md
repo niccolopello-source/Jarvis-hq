@@ -39,5 +39,14 @@ Sono variabili di **build**: dopo ogni modifica serve un nuovo deploy (redeploy 
 - [ ] Unisci la PR della CSP enforcing (il merge su main pubblica in produzione).
 - [ ] Controlla www.pivot23.com: desktop con annunci dopo il consenso, mobile senza codice ads, Lighthouse.
 
+## 5. Consenso (CMP) — requisiti del proprietario
+- [ ] Messaggio della CMP certificata Google (Privacy & messaging, IAB TCF) personalizzato con il branding PIVOT 23: colori, font e logo dai design token esistenti (`apps/pivot23/src/styles.css`, `styles/deluxe.css`).
+- [ ] Banner mostrato alla prima visita, sulla home/landing page.
+- [ ] Nuova richiesta di consenso quando cambia la versione dell'informativa (cambi sostanziali).
+- [ ] Link permanente "Preferenze cookie" / "Cookie preferences" nel footer/menu della home page che riapre la CMP.
+
+## 6. Legale
+- [ ] Privacy e Cookie Policy (docs/pivot23/legal) riviste da un legale, placeholder risolti (elenco cookie dalla CMP, ruolo Vercel ex art. 28/DPA); email privacy provvisoria da sostituire con una dedicata.
+
 ## Rollback
 Imposta `VITE_ADS_ENABLED` vuota su Production e fai il redeploy: il bundle torna allo stub, senza codice ads. La CSP può restare.

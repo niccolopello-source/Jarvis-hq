@@ -1,10 +1,10 @@
 > ⚠️ **BOZZA — NON PUBBLICARE.** Testo preparato da un assistente, non da un avvocato. Deve essere verificato da un legale prima della pubblicazione. Le voci **DA VERIFICARE** non sono state confermate dal codice o da fonti ufficiali.
 
 # Informativa privacy — PIVOT 23 (www.pivot23.com)
-Ultimo aggiornamento: [DATA]
+Ultimo aggiornamento / in vigore dal: 21 ottobre 2026
 
 ## 1. Titolare del trattamento
-[TITOLARE] — [INDIRIZZO] — Email: [EMAIL CONTATTO]. Responsabile della protezione dei dati (RPD/DPO): [DPO, se nominato — DA VERIFICARE se obbligatorio].
+Niccoló Pelizzon — via della Cava 2, 31049 Valdobbiadene (TV), Italia — Email: niccolo.pello@gmail.com (indirizzo provvisorio, sarà sostituito da un indirizzo dedicato). Non è stato nominato un DPO; per ogni richiesta privacy contattare il titolare all'email niccolo.pello@gmail.com.
 
 ## 2. In breve
 - PIVOT 23 si gioca senza account e senza registrazione.
@@ -17,7 +17,7 @@ Ultimo aggiornamento: [DATA]
 | Dati | Dove | Finalità | Base giuridica |
 |---|---|---|---|
 | Salvataggi, archivio carriere, preferenze (lingua, suono, tema carta, suggerimenti) | Solo nel tuo browser | Far funzionare il gioco su tua richiesta | Art. 122 Codice privacy (strumenti strettamente necessari); il titolare non riceve questi dati |
-| Dati tecnici di connessione (indirizzo IP, user agent, orario) trattati dal fornitore di hosting | Server del fornitore (Vercel Inc.) | Erogare il sito, sicurezza | Legittimo interesse (art. 6.1.f GDPR) — **DA VERIFICARE**: log e tempi di conservazione di Vercel |
+| Dati tecnici di connessione (indirizzo IP, user agent, orario) trattati dal fornitore di hosting | Server del fornitore (Vercel Inc.) | Erogare il sito, sicurezza | Legittimo interesse (art. 6.1.f GDPR) — Vercel opera come responsabile ex art. 28 GDPR (vedi § 7) |
 | Pagine viste anonime e aggregate (URL della pagina, referrer, paese, tipo di dispositivo/browser/sistema operativo); nessun cookie, nessun identificatore persistente: secondo Vercel le visite sono distinte con un hash della richiesta che si azzera ogni giorno | Vercel Inc. (Vercel Web Analytics), stesso dominio del sito (`/_vercel/insights`) | Statistiche aggregate di utilizzo del sito | Legittimo interesse (art. 6.1.f GDPR); nessuna memorizzazione/accesso sul dispositivo, quindi non serve consenso ex art. 122 — **DA VERIFICARE** con il legale e sulla documentazione Vercel (https://vercel.com/docs/analytics/privacy-policy) |
 | Identificatori pubblicitari, cookie, IP, dati del dispositivo, segnale di consenso TCF (solo desktop, solo con pubblicità attiva) | Google e partner certificati | Mostrare annunci non personalizzati, limitare la frequenza, misurare in forma aggregata, prevenire frodi | Consenso (art. 122 Codice privacy, art. 6.1.a GDPR) per la memorizzazione/accesso sul dispositivo; per alcune finalità Google indica il legittimo interesse nel TCF — **DA VERIFICARE** con il legale |
 
@@ -37,13 +37,17 @@ Il gioco può interessare minori. In Italia il consenso al trattamento nei servi
 ## 6. Conservazione
 - Dati nel browser: finché non li cancelli (cancellazione dati del sito o "nuova carriera"). 
 - Consenso: memorizzato dalla CMP; il banner non viene riproposto prima di 6 mesi dopo un rifiuto, salvo cambi rilevanti (Linee guida Garante 10/06/2021). Durata dei cookie Google: vedi Cookie Policy — **DA VERIFICARE**.
-- Log hosting: [DURATA] — **DA VERIFICARE**.
+- Log hosting: i log di runtime sono conservati da Vercel per 1 giorno (piano Pro) — **DA VERIFICARE** al passaggio a Pro. <!-- Fonte: https://vercel.com/docs/observability/runtime-logs (Limits: Hobby 1 ora / Pro 1 giorno). Oggi il progetto è su Hobby (1 ora); il testo vale dal passaggio a Pro. -->
 
 ## 7. Destinatari
-Fornitore di hosting e di Web Analytics (Vercel Inc., [ruolo: responsabile ex art. 28 — DA VERIFICARE]); Google e i fornitori elencati nella CMP (solo desktop, con pubblicità attiva).
+Fornitore di hosting e di Web Analytics (Vercel Inc., responsabile del trattamento ex art. 28 GDPR, vedi sotto); Google e i fornitori elencati nella CMP (solo desktop, con pubblicità attiva).
+
+### Hosting
+<!-- NOTA: questo testo vale dal passaggio del progetto al piano Vercel Pro. Il DPA di Vercel si applica solo ai clienti Pro/Enterprise e le Fair Use Guidelines vietano la pubblicità (incluso Google AdSense) sul piano Hobby (https://vercel.com/docs/limits/fair-use-guidelines). Il passaggio a Pro va fatto prima di attivare gli annunci. -->
+Il sito è ospitato da Vercel Inc. (440 N Barranca Ave #4133, Covina, CA 91723, USA), che tratta i dati tecnici di navigazione (ad es. indirizzo IP e log di sistema) in qualità di responsabile del trattamento ai sensi dell'art. 28 GDPR, in base al Data Processing Addendum di Vercel (https://vercel.com/legal/dpa). I trasferimenti verso gli Stati Uniti avvengono sulla base delle Clausole Contrattuali Standard approvate dalla Commissione europea (Decisione 2021/914). L'elenco dei sub-responsabili è disponibile su https://security.vercel.com.
 
 ## 8. I tuoi diritti
-Accesso, rettifica, cancellazione, limitazione, opposizione, portabilità (artt. 15–22 GDPR), revoca del consenso in ogni momento tramite il link "Preferenze cookie" nel sito, senza pregiudicare la liceità precedente. Reclamo al Garante per la protezione dei dati personali (www.garanteprivacy.it). Contatto: [EMAIL CONTATTO]. Nota: i dati di gioco sono solo nel tuo browser e il titolare non può accedervi; puoi cancellarli tu dalle impostazioni del browser.
+Accesso, rettifica, cancellazione, limitazione, opposizione, portabilità (artt. 15–22 GDPR), revoca del consenso in ogni momento tramite il link "Preferenze cookie" nel sito, senza pregiudicare la liceità precedente. Reclamo al Garante per la protezione dei dati personali (www.garanteprivacy.it). Contatto: niccolo.pello@gmail.com. Nota: i dati di gioco sono solo nel tuo browser e il titolare non può accedervi; puoi cancellarli tu dalle impostazioni del browser.
 
 ## 9. Modifiche
 Pubblicheremo qui ogni modifica, con la data di aggiornamento.
