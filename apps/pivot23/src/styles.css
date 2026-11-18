@@ -2614,6 +2614,14 @@ img.court-mark-photo {
   content-visibility: visible;
   contain-intrinsic-size: auto;
 }
+/* The waiting answers must stay still: entrance transforms (cardIn, fadeIn) would restart
+   if the card remounts and the click target would keep moving. */
+.story-scroll .pending-beat .log-card,
+.story-scroll .pending-beat .choice-btn,
+.story-scroll [data-pending] .choice-btn {
+  animation: none;
+  transform: none;
+}
 .pending-kicker {
   margin: 0 0 6px;
   font-size: 11px;

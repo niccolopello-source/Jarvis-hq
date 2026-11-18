@@ -1610,6 +1610,11 @@ function CareerView(props: {
      ("Prossima stagione") and the draft call are a continue button, not a choice; a card already
      answered and held on screen (locked) is not waiting either. */
   const choiceWaiting = !!pending && !props.locked && pending.kind !== "recap" && pending.kind !== "call";
+  /* A full header can leave the diary just overflowing. Scrolling then shrinks the header, the
+     diary fits, scroll snaps back, the header grows again: the waiting answers keep moving.
+     Compact for any pending card (choice, recap, or hold) so the header height stays put and
+     the decision has room. */
+  const chromeCompact = compact || !!pending;
 
   /* "New" dots: a door lights up only when its content really changed since it was last opened.
      Signatures start at the current career, so a reload or a fresh career shows no dots. Memory only:
@@ -1689,7 +1694,7 @@ function CareerView(props: {
       style={{ ["--team" as string]: player.team.color }}
     >
       <div className="career-stage">
-        <div className={`career-chrome${compact ? " is-compact" : ""}`} inert={sheetOpen}>
+        <div className={`career-chrome${chromeCompact ? " is-compact" : ""}`} inert={sheetOpen}>
           {props.saveMissed ? (
             <p className="save-miss" role="alert">{t("saveMiss", lang)}</p>
           ) : null}
