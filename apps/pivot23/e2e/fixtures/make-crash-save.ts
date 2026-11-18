@@ -12,6 +12,11 @@ import { buildLiveSave } from "../../src/lib/pivot/save.ts";
  */
 const save = JSON.parse(JSON.stringify(buildLiveSave(playCareerSim({ seed: 4242, difficulty: "pro" }), null, [], "career", "log", 1)));
 for (const row of save.player.seasonHistory) row.awards = "x";
+/* Four-doors UI (2026-11-10): the season sheet that used to break on `awards` is no longer mounted
+   behind Storia, so the diary carries a broken row too (a season recap whose mood line is not text).
+   Storia, the home that is always on screen, cannot draw it. */
+const last = save.player.seasonHistory[save.player.seasonHistory.length - 1];
+save.log = [{ id: "crash-recap", kind: "recap", title: "Stagione", resolved: true, row: { ...last, mood: { broken: true } } }];
 const { c: _old, ...body } = save;
 void _old;
 const signed = { ...body, c: sha256(JSON.stringify(body)).slice(0, 16) };

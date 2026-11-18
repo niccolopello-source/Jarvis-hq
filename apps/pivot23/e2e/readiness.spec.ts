@@ -163,7 +163,7 @@ test("career header text keeps AA contrast on every NBA club colour", async ({ p
     await page.emulateMedia({ colorScheme: i % 3 === 2 ? "dark" : "light" }); // every third club in dark mode
     await page.setViewportSize(abbr < "M" ? { width: 320, height: 568 } : { width: 390, height: 844 });
     await seed(page, { "pivot-v2-save": save });
-    await expect(page.locator(".career-chrome .hud-line")).toBeVisible();
+    await expect(page.locator(".career-chrome .hud-name")).toBeVisible();
     await settle(page, 500);
     const r = await new AxeBuilder({ page }).include(".career-chrome").withRules(["color-contrast"]).analyze();
     failures.push(...r.violations.flatMap((v) => v.nodes.map((n) => `${abbr}: ${n.target.join(" ")} ${(n.failureSummary ?? "").slice(60, 160)}`)));
@@ -234,9 +234,12 @@ test("a full career: draft to retirement to archive, with a reload in the middle
   const checked = new Set<string>();
   const contrast: string[] = [];
   for (let step = 0; step < 300; step += 1) {
-    if (await page.locator(".result-view").isVisible().catch(() => false)) break;
     const pending = page.locator("[data-pending]").first();
-    await expect(pending).toBeVisible({ timeout: 15_000 });
+    const result = page.locator(".result-view");
+    // After the last click there can be a short gap with neither card nor result
+    // view yet (seen on Linux WebKit / iPhone 13). Wait for either, don't treat retirement as a stall.
+    await expect(pending.or(result)).toBeVisible({ timeout: 15_000 });
+    if (await result.isVisible().catch(() => false)) break;
     if (!reloaded && (await season()) >= 6) {
       // Mid-career: let the debounced save land, reload, and expect the same career back.
       await page.waitForTimeout(1500);

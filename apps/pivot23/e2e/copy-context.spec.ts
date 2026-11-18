@@ -14,12 +14,14 @@ for(const lang of ['it','en'] as const) test(`EDGE ${lang}: forced independent p
  await expect(page.getByText(lang==='it'?"Al termine dell'estate, l'overall è diminuito.":"At summer's end, overall has decreased.",{exact:false})).toBeVisible();
  await expect(page.getByText(lang==='it'?"Al termine dell'estate, l'overall è invariato.":"At summer's end, overall is unchanged.",{exact:false})).toBeVisible();
  await expect(page.getByText(lang==='it'?'La preparazione per ottobre conta a ogni età.':'Preparation for October matters at every age.',{exact:false})).toBeVisible();
- await expect(page.locator('.review-pane')).toContainText(lang==='it'?'tre azioni di Elijah Voss':'three plays by Elijah Voss');
+ // Past choices now live only in the diary (four-doors UI, 2026-11-10): Life has no choice list. The
+ // resolved rival name is still checked on the archived career below ('In sala video, tre azioni di Elijah Voss').
+ await expect(page.locator('.review-pane')).not.toContainText('__RIVAL__');
  expect(await page.locator('body').innerText()).not.toContain('__RIVAL__');
  if(lang==='it') {await expect(page.locator('.life-timeline')).toContainText("Rookie dell'anno");await expect(page.locator('.life-timeline')).toContainText('Campione NBA');await expect(page.locator('.life-timeline')).toContainText('MVP delle Finali');}
  await expect(page.locator('[data-development-season="1"]')).toContainText(lang==='it'?'62,0→59,0':'62.0→59.0');
  expect(await page.locator('[data-development-season]').count()).toBe(3);
- const scoreLines=await page.locator('.swipe-slide.on').evaluate(el=>{
+ const scoreLines=await page.locator('.door-sheet-body').evaluate(el=>{
   const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);const lines:number[]=[];
   while(walker.nextNode()){const node=walker.currentNode;for(const m of (node.textContent??'').matchAll(/\b\d-\d\b/g)){const range=document.createRange();range.setStart(node,m.index!);range.setEnd(node,m.index!+m[0].length);lines.push(range.getClientRects().length);}}
   return lines;
@@ -28,16 +30,16 @@ for(const lang of ['it','en'] as const) test(`EDGE ${lang}: forced independent p
  // A native scroll-to-content must not scroll the hidden carousel ancestors horizontally.
  await page.getByText(lang==='it'?"Al termine dell'estate, l'overall è diminuito.":"At summer's end, overall has decreased.",{exact:false}).scrollIntoViewIfNeeded();
  await page.waitForTimeout(450);
- const hiddenScroll=await page.locator('.career-view,.swipe-pager').evaluateAll(els=>els.map(el=>el.scrollLeft));
+ const hiddenScroll=await page.locator('.career-view,.career-stage').evaluateAll(els=>els.map(el=>el.scrollLeft));
  expect(hiddenScroll).toEqual([0,0]);
  const out=process.env.COPY_SHOTS;
  if(out){
   mkdirSync(out,{recursive:true});
   await page.getByText(lang==='it'?"Al termine dell'estate, l'overall è diminuito.":"At summer's end, overall has decreased.",{exact:false}).scrollIntoViewIfNeeded();
   await page.screenshot({path:join(out,`390-${lang}-edge-development.png`),animations:'disabled'});
-  const heading=page.getByRole('heading',{name:lang==='it'?'Scelte':'Choices',exact:true});await heading.evaluate(el=>el.scrollIntoView({block:'start'}));
-  const pos=await heading.boundingBox();const chrome=await page.locator('.career-chrome').boundingBox();expect(pos!.y).toBeGreaterThanOrEqual(chrome!.y+chrome!.height+8);
-  console.log('COPY_GEOMETRY',lang,await page.evaluate(()=>({width:innerWidth,documentWidth:document.documentElement.scrollWidth,x:scrollX,roots:[...document.querySelectorAll('.career-view,.swipe-pager,.swipe-slide.on')].map(el=>({class:el.className,x:el.getBoundingClientRect().x,width:el.getBoundingClientRect().width,scrollLeft:el.scrollLeft}))})));
+  const heading=page.getByRole('heading',{name:lang==='it'?'Traguardi':'Milestones',exact:true});await heading.evaluate(el=>el.scrollIntoView({block:'start'}));
+  const pos=await heading.boundingBox();const chrome=await page.locator('.door-sheet-head').boundingBox();expect(pos!.y).toBeGreaterThanOrEqual(chrome!.y+chrome!.height+8);
+  console.log('COPY_GEOMETRY',lang,await page.evaluate(()=>({width:innerWidth,documentWidth:document.documentElement.scrollWidth,x:scrollX,roots:[...document.querySelectorAll('.career-view,.career-stage,.door-sheet-body')].map(el=>({class:el.className,x:el.getBoundingClientRect().x,width:el.getBoundingClientRect().width,scrollLeft:el.scrollLeft}))})));
   await page.screenshot({path:join(out,`390-${lang}-edge-life.png`),animations:'disabled'});
  }
 
@@ -60,8 +62,8 @@ for(const lang of ['it','en'] as const)test(`NATURAL ${lang}: actual simulated h
  await expect(page.locator('[data-development-season]')).toHaveCount(natural.development.length);
  const last=natural.development.at(-1);await expect(page.locator(`[data-development-season="${last.season}"]`)).toContainText(last.before.toLocaleString(lang==='it'?'it-IT':'en-US',{minimumFractionDigits:1,maximumFractionDigits:1}));
  const out=process.env.COPY_SHOTS;if(out){mkdirSync(out,{recursive:true});await page.locator(`[data-development-season="${last.season}"]`).scrollIntoViewIfNeeded();await page.screenshot({path:join(out,`390-${lang}-development.png`),animations:'disabled'});}
- const heading=page.getByRole('heading',{name:lang==='it'?'Scelte':'Choices',exact:true});await heading.evaluate(el=>el.scrollIntoView({block:'start'}));
- const rect=await heading.boundingBox();const bar=await page.locator('.career-chrome').boundingBox();expect(rect!.y).toBeGreaterThanOrEqual(bar!.y+bar!.height+8);
+ const heading=page.getByRole('heading',{name:lang==='it'?'Traguardi':'Milestones',exact:true});await heading.evaluate(el=>el.scrollIntoView({block:'start'}));
+ const rect=await heading.boundingBox();const bar=await page.locator('.door-sheet-head').boundingBox();expect(rect!.y).toBeGreaterThanOrEqual(bar!.y+bar!.height+8);
  if(out)await page.screenshot({path:join(out,`390-${lang}-life.png`),animations:'disabled'});
  expect(await page.locator('body').innerText()).not.toContain('__RIVAL__');
  await page.getByRole('button',{name:lang==='it'?'Storia':'Story',exact:true}).click();await page.getByRole('button',{name:lang==='it'?/Chiudi ora/:/Retire now/}).click();await expect(page.getByRole('region',{name:'Career Card'})).toBeVisible();

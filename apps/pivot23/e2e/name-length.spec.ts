@@ -62,9 +62,12 @@ test("a 32-character name survives draft, career, Legacy Report, Career Card and
 
   const seen: string[] = [];
   for (let step = 0; step < 300; step += 1) {
-    if (await page.locator(".result-view").isVisible().catch(() => false)) break;
     const pending = page.locator("[data-pending]").first();
-    await expect(pending).toBeVisible({ timeout: 15_000 });
+    const result = page.locator(".result-view");
+    // After the last click there can be a short gap with neither card nor result
+    // view yet (seen on Linux WebKit / iPhone 13). Wait for either, don't treat retirement as a stall.
+    await expect(pending.or(result)).toBeVisible({ timeout: 15_000 });
+    if (await result.isVisible().catch(() => false)) break;
     const sig = (await pending.innerText()).slice(0, 160);
     seen.push(sig);
     const tail = seen.slice(-4);

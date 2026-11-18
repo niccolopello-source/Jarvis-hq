@@ -34,9 +34,12 @@ test("a reload while a playoff or market card is pending brings back the same sa
   const reloadedOn = new Set<string>();
   const seen: string[] = [];
   for (let step = 0; step < 400; step += 1) {
-    if (await page.locator(".result-view").isVisible().catch(() => false)) break;
     const pending = page.locator("[data-pending]").first();
-    await expect(pending).toBeVisible({ timeout: 15_000 });
+    const result = page.locator(".result-view");
+    // After the last click there can be a short gap with neither card nor result
+    // view yet (seen on Linux WebKit / iPhone 13). Wait for either, don't treat retirement as a stall.
+    await expect(pending.or(result)).toBeVisible({ timeout: 15_000 });
+    if (await result.isVisible().catch(() => false)) break;
     // PendingBlock renders its own [data-pending] card inside the .pending-beat wrapper: classify the innermost.
     const card = page.locator("[data-pending]").last();
     const cls = (await card.getAttribute("class")) ?? "";

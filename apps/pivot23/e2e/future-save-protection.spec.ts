@@ -141,7 +141,7 @@ test("same-career concurrent tab cannot autosave; future write wins over pending
   );
   await page.goto("/");
   await expect(
-    page.getByRole("group", { name: "Sezioni della carriera" }),
+    page.getByRole("navigation", { name: "Sezioni della carriera" }),
   ).toBeVisible();
   await expect(page.getByTestId("live-protection")).toHaveCount(0);
   const second = await context.newPage();
@@ -241,7 +241,7 @@ for (const engine of [undefined, null, 225, "", "garbage"])
       await page.evaluate(() => localStorage.getItem("pivot-v2-save")),
     ).toBe(source);
     await expect(
-      page.getByRole("group", { name: "Sezioni della carriera" }),
+      page.getByRole("navigation", { name: "Sezioni della carriera" }),
     ).toHaveCount(0);
   });
 
@@ -289,7 +289,7 @@ test("unreadable primary storage never mounts or falls back to a valid legacy se
     await page.evaluate(() => sessionStorage.getItem("pivot-v2-save")),
   ).toBe(value);
   await expect(
-    page.getByRole("group", { name: "Sezioni della carriera" }),
+    page.getByRole("navigation", { name: "Sezioni della carriera" }),
   ).toHaveCount(0);
   expect(errors).toEqual([]);
 });

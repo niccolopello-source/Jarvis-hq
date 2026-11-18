@@ -234,9 +234,12 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
   const nba = player.league !== "EuroLega";
   const all = nba ? [...snap.east, ...snap.west] : snap.euro;
   const toggle = (abbr: string) => setPicked((cur) => (cur === abbr ? null : abbr));
+  /* A compacted save keeps awards, leaders and champions but drops the standings rows (save.ts
+     stripStandings / compactPlayer): say so instead of drawing an empty table. */
+  const hasStandings = all.length > 0;
   return (
     <div className="pt-3 fade-in">
-      <p className="chart-cap">{tf("leagueCap", { y: snap.yearLabel }, lang)}</p>
+      {hasStandings ? <p className="chart-cap">{tf("leagueCap", { y: snap.yearLabel }, lang)}</p> : null}
       {latestTitle && (
         <div className={`albo-featured ${latestTitle.isPlayer ? "yours" : ""}`}>
           <div className="albo-kicker">{t("reigningChamp", lang)}</div>
@@ -253,26 +256,10 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
           </div>
         </div>
       )}
-      {player.season === 1 && nba && (snap.royRace?.length ?? 0) > 0 ? (
-        <RoyBoard race={snap.royRace} />
-      ) : null}
-      {nba && (snap.dpoyRace?.length ?? 0) > 0 ? <DpoyBoard race={snap.dpoyRace} /> : null}
-      <AwardRaces player={player} />
-      <PersonalAwards
-        title={t("yours", lang)}
-        rows={player.seasonHistory.slice(-1)}
-      />
-      {nba ? (
-        <>
-          <Table title={t("confEast", lang)} rows={snap.east} mine={mine} onPick={toggle} selected={picked} />
-          <Table title={t("confWest", lang)} rows={snap.west} mine={mine} onPick={toggle} selected={picked} />
-        </>
-      ) : (
-        <Table title={t("leagueEuro", lang)} rows={snap.euro} mine={mine} onPick={toggle} selected={picked} />
-      )}
+      {/* Season awards live here only (one place): Anno points here, Vita keeps the career ones. */}
       {snap.awards.filter((a) => a.title !== "ROY" || player.season === 1).length > 0 && (
         <>
-          <h4 className="stats-heading">{t("leagueAwards", lang)}</h4>
+          <h4 className="stats-heading">{t("seasonAwardsH", lang)}</h4>
           <ul className="award-board">
             {snap.awards
               .filter((a) => a.title !== "ROY" || player.season === 1)
@@ -291,6 +278,27 @@ export const LeaguePanel = memo(function LeaguePanel({ player }: { player: Playe
             })}
           </ul>
         </>
+      )}
+      {player.season === 1 && nba && (snap.royRace?.length ?? 0) > 0 ? (
+        <RoyBoard race={snap.royRace} />
+      ) : null}
+      {nba && (snap.dpoyRace?.length ?? 0) > 0 ? <DpoyBoard race={snap.dpoyRace} /> : null}
+      <AwardRaces player={player} />
+      <PersonalAwards
+        title={t("yours", lang)}
+        rows={player.seasonHistory.slice(-1)}
+      />
+      {!hasStandings ? (
+        <p className="empty-hint" data-standings-gone>
+          {t("standingsGone", lang)}
+        </p>
+      ) : nba ? (
+        <>
+          <Table title={t("confEast", lang)} rows={snap.east} mine={mine} onPick={toggle} selected={picked} />
+          <Table title={t("confWest", lang)} rows={snap.west} mine={mine} onPick={toggle} selected={picked} />
+        </>
+      ) : (
+        <Table title={t("leagueEuro", lang)} rows={snap.euro} mine={mine} onPick={toggle} selected={picked} />
       )}
       {snap.leaders.length > 0 && (
         <>
