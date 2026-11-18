@@ -2605,6 +2605,15 @@ img.court-mark-photo {
   padding-bottom: 28px; /* 24 px + the 2–4 px the door bar overlaps */
   scroll-padding-block: 12px 24px;
 }
+/* The diary is a nested scroller. content-visibility: auto with a 120 px intrinsic
+   size shrinks cards that leave the scrollport and expands them again when the
+   compact header or a click-scroll moves: the waiting choice keeps jumping and
+   Playwright reports "element is not stable". A season log is short, so keep
+   every card in layout. */
+.story-scroll .log-card {
+  content-visibility: visible;
+  contain-intrinsic-size: auto;
+}
 .pending-kicker {
   margin: 0 0 6px;
   font-size: 11px;
