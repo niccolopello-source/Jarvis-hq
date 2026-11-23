@@ -132,6 +132,8 @@ export const ES_CHROME: Record<Msg, string> = {
   swipeHint: "Desliza entre Historia, Año, Liga y Vida",
   showFullLog: "Mostrar toda la historia",
   leagueEuro: "EuroLeague",
+  awaitingDraft: "A la espera del Draft",
+  freeAgent: "Agente libre",
   careerTabs: "Secciones de la carrera",
   finalChampion: "Final · Campeón",
   choiceMade: "Elección: {x}",

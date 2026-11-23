@@ -62,7 +62,12 @@ test("English entries only use placeholders that exist in their Italian key", ()
 
 test("loc-followup 2026-10-13: every Italian slot reaches the English text (no silently dropped values)", () => {
   // The rookie-contract line folds {3} ("anno"/"anni") into the English plural {2|year|years}: documented, allowed.
-  const ALLOWED = new Set(["{0} Sei la {1}ª scelta. Contratto: {2} {3} a {4} milioni."]);
+  // The playoff score line drops {3} ("serie"/"partita"): kind is applied in proseTidy / formatPlayoffScoreLine
+  // (won series vs. game), so this ALLOWED entry is an intentional widening of the slot invariant.
+  const ALLOWED = new Set([
+    "{0} Sei la {1}ª scelta. Contratto: {2} {3} a {4} milioni.",
+    "{0}-{1} (noi–{2}, {3})",
+  ]);
   const bad: string[] = [];
   for (const [k, v] of Object.entries(NARRATIVE_EN)) {
     if (ALLOWED.has(k)) continue;
@@ -122,7 +127,7 @@ test("interpolated slots are translated recursively, ordinals and plurals follow
   assert.equal(nx("Il Draft si avvicina. Alex Rivers, un playmaker greco, deve scegliere i primi passi da professionista.", "en"), "The Draft is coming. Alex Rivers, a Greek point guard, has to choose the first steps as a pro.");
   assert.match(nx("Dalla G-League al salto. Portland Trail Blazers firma corto. Niente alibi di campus, solo minuti da coprire. Sei la 1ª scelta. Contratto: 1 anno a 4.1 milioni.", "en"), /You are the 1st pick\. Contract: 1 year at 4\.1 million\.$/);
   assert.match(nx("Dalla G-League al salto. Portland Trail Blazers firma corto. Niente alibi di campus, solo minuti da coprire. Sei la 22ª scelta. Contratto: 3 anni a 4.1 milioni.", "en"), /22nd pick\. Contract: 3 years/);
-  assert.equal(nx("Elim. Primo turno 1-4", "en"), "Out in the First Round 1-4");
+  assert.equal(nx("Elim. Primo turno 1-4", "en"), "Out in the first round, 1-4");
 });
 
 test("old saves: English procedural text from earlier releases reads in Italian", () => {

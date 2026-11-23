@@ -48,19 +48,19 @@ function rolePhrases(): Record<string, string> {
 }
 
 const ROUND_EN: Record<string, string> = {
-  "Primo turno": "First Round",
-  "Semifinali Est/Ovest": "Conference Semifinals",
-  "Finali Est/Ovest": "Conference Finals",
+  "Primo turno": "first round",
+  "Semifinali Est/Ovest": "conference semifinals",
+  "Finali Est/Ovest": "conference finals",
   "Finali NBA": "NBA Finals",
-  "Quarti di finale": "Quarterfinals",
-  "Semifinale Final Four": "Final Four Semifinal",
+  "Quarti di finale": "quarterfinals",
+  "Semifinale Final Four": "Final Four semifinal",
   "Finale Eurolega": "EuroLeague Final",
 };
 
 /** Season-row playoff results "Elim. <round> <score>" (engine.ts), one entry per round. */
 function eliminations(): Record<string, string> {
   const out: Record<string, string> = {};
-  for (const r of [...NBA_ROUNDS, ...EURO_ROUNDS]) out[`Elim. ${r} {0}`] = `Out in the ${ROUND_EN[r] ?? r} {0}`;
+  for (const r of [...NBA_ROUNDS, ...EURO_ROUNDS]) out[`Elim. ${r} {0}`] = `Out in the ${ROUND_EN[r] ?? r}, {0}`;
   return out;
 }
 

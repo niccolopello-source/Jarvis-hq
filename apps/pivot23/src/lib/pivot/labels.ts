@@ -261,6 +261,12 @@ export function roundLabel(label: string, lang: UiLang): string {
  * Season playoff outcome as stored in SeasonRow.playoff ("Fuori", "Campione",
  * "Elim. Primo turno 1-4", or a round label). Unknown strings are shown as stored.
  */
+/** Italian display for a stored "Elim. <round> <score>" id. Does not rewrite saves. */
+export function formatEliminatedIt(round: string, score: string): string {
+  const phrase = IT_OUT_ROUND[round];
+  return phrase ? `Eliminato ${phrase} (${score})` : `Elim. ${round} ${score}`;
+}
+
 export function playoffResultLabel(raw: string | undefined | null, lang: UiLang): string {
   const value = String(raw ?? "");
   if (!value) return value;
@@ -268,14 +274,28 @@ export function playoffResultLabel(raw: string | undefined | null, lang: UiLang)
     // "Elim. Finali Est/Ovest 2-4" -> "Eliminato in finale di conference (2-4)". Stored text unchanged.
     const it = /^Elim\. (.+?) (\d+-\d+)$/.exec(value);
     if (!it) return value;
-    const round = IT_OUT_ROUND[it[1]!];
-    return round ? `Eliminato ${round} (${it[2]})` : value;
+    return formatEliminatedIt(it[1]!, it[2]!);
   }
   if (value === "Fuori") return byLang(lang, { it: value, en: "Missed playoffs", es: "Fuera de los playoffs", zh: "未进季后赛" });
   if (value === "Campione") return byLang(lang, { it: value, en: "Champion", es: "Campeón", zh: "总冠军" });
   const m = /^Elim\. (.+?) (\d+-\d+)$/.exec(value);
-  if (m) return byLang(lang, { it: value, en: `Out: ${roundLabel(m[1]!, lang)} ${m[2]}`, es: `Eliminado: ${roundLabel(m[1]!, lang)} ${m[2]}`, zh: `${roundLabel(m[1]!, lang)}出局 ${m[2]}` });
+  if (m) {
+    const score = m[2]!;
+    return byLang(lang, {
+      it: value,
+      en: `Out in the ${enOutRoundPhrase(m[1]!)}, ${score}`,
+      es: `Eliminado: ${roundLabel(m[1]!, lang)} ${score}`,
+      zh: `${roundLabel(m[1]!, lang)}出局 ${score}`,
+    });
+  }
   return roundLabel(value, lang);
+}
+
+/** "first round", but keep leading proper nouns (NBA Finals, EuroLeague, Final Four). */
+export function enOutRoundPhrase(round: string): string {
+  const r = roundLabel(round, "en");
+  if (/^(NBA|EuroLeague|Final Four)/.test(r)) return r;
+  return r.charAt(0).toLowerCase() + r.slice(1);
 }
 
 const NOTE_EN: [RegExp, string][] = [
@@ -334,15 +354,86 @@ export function awardNoteLabel(note: string, lang: UiLang): string {
   return table.reduce((acc, [re, to]) => acc.replace(re, to), value);
 }
 
+export type ItalianTeamArticle = "i" | "gli" | "il" | "lo" | "la" | "l'";
+
+/**
+ * Plural "gli" for NBA names that start with a vowel, mute H + vowel (Houston),
+ * s+consonant, z, gn, ps, x or y. No current NBA name starts with s+consonant or z;
+ * the rule is kept so a future id would not get a bare "i".
+ */
+export function nbaNeedsGli(name: string): boolean {
+  const w = name.trim();
+  if (/^[AEIOUÀÈÉÌÒÙ]/i.test(w)) return true;
+  if (/^H[AEIOUÀÈÉÌÒÙ]/i.test(w)) return true;
+  if (/^S[^aeiouhàèéìòù]/i.test(w)) return true;
+  if (/^[ZX]/i.test(w) || /^(Gn|Ps|Y)/i.test(w)) return true;
+  return false;
+}
+
 /** Articles for known team ids only; unknown historical names are not guessed. */
+export function italianTeamArticle(name: string): ItalianTeamArticle | null {
+  if (NBA_TEAMS.some((t) => t.name === name)) return nbaNeedsGli(name) ? "gli" : "i";
+  if (EURO_TEAMS.some((t) => t.name === name)) {
+    if (["Virtus Bologna", "Crvena Zvezda"].includes(name)) return "la";
+    if (["EA7 Olimpia Milano", "ALBA Berlino", "AS Monaco", "Anadolu Efes", "Olympiacos"].includes(name)) return "l'";
+    if (name === "Zalgiris Kaunas") return "lo";
+    return "il";
+  }
+  return null;
+}
+
 export function italianTeamPreposition(name: string, prep: "a"|"da"|"con"): string {
-  let article: "i"|"gli"|"il"|"lo"|"la"|"l'";
-  if (NBA_TEAMS.some(t=>t.name===name)) article=/^[AEIOU]/.test(name)||name==="Houston Rockets"?"gli":"i";
-  else if (EURO_TEAMS.some(t=>t.name===name)) {
-    article=["Virtus Bologna","Crvena Zvezda"].includes(name)?"la":["EA7 Olimpia Milano","ALBA Berlino","AS Monaco","Anadolu Efes","Olympiacos"].includes(name)?"l'":name==="Zalgiris Kaunas"?"lo":"il";
-  } else return `${prep} ${name}`;
+  const article = italianTeamArticle(name);
+  if (!article) return `${prep} ${name}`;
   const forms={a:{i:"ai ",gli:"agli ",il:"al ",lo:"allo ",la:"alla ","l'":"all'"},da:{i:"dai ",gli:"dagli ",il:"dal ",lo:"dallo ",la:"dalla ","l'":"dall'"},con:{i:"con i ",gli:"con gli ",il:"con il ",lo:"con lo ",la:"con la ","l'":"con l'"}};
   return forms[prep][article]+name;
+}
+
+function seriesWon(score: string, kind: string): boolean {
+  const m = /^(\d+)-(\d+)$/.exec(score);
+  if (!m) return false;
+  const series = /^(serie|series)$/i.test(kind);
+  return series && Number(m[1]) > Number(m[2]);
+}
+
+/** "los" for every NBA side; el/la for known Euro sides. */
+function spanishTeamArticle(name: string): string {
+  if (NBA_TEAMS.some((t) => t.name === name)) return "los ";
+  if (EURO_TEAMS.some((t) => t.name === name)) {
+    if (["Virtus Bologna", "Crvena Zvezda"].includes(name)) return "la ";
+    return "el ";
+  }
+  return "";
+}
+
+/**
+ * Playoff score line as the player reads it. Display only: the stored
+ * `playoffLineScore()` parenthetical is unchanged.
+ * A won series uses "sui/sugli" / "over the" / "ante"; otherwise "contro i/gli" / "against the" / "contra".
+ */
+export function formatPlayoffScoreLine(score: string, team: string, kind: string, lang: UiLang): string {
+  const won = seriesWon(score, kind);
+  const teamName = team.trim();
+  if (lang === "it") {
+    const art = italianTeamArticle(teamName);
+    if (won) {
+      if (!art) return `${score} su ${teamName}`;
+      const su = { i: "sui ", gli: "sugli ", il: "sul ", lo: "sullo ", la: "sulla ", "l'": "sull'" } as const;
+      return `${score} ${su[art]}${teamName}`;
+    }
+    if (!art) return `${score} contro ${teamName}`;
+    const contro = { i: "contro i ", gli: "contro gli ", il: "contro il ", lo: "contro lo ", la: "contro la ", "l'": "contro l'" } as const;
+    return `${score} ${contro[art]}${teamName}`;
+  }
+  if (lang === "en") {
+    return won ? `${score} over the ${teamName}` : `${score} against the ${teamName}`;
+  }
+  if (lang === "es") {
+    const art = spanishTeamArticle(teamName);
+    return won ? `${score} ante ${art}${teamName}` : `${score} contra ${art}${teamName}`;
+  }
+  // zh
+  return won ? `${score}击败${teamName}` : `${score}，对${teamName}`;
 }
 
 /** "N seasons played" in Spanish / Chinese (display only). Italian and English stay in PivotApp. */

@@ -1,5 +1,6 @@
 
 import { useEffect, useId, useRef } from "react";
+import { isUnsigned } from "@/lib/pivot/teams";
 import type { Team } from "@/lib/pivot/types";
 
 type Mark = Pick<Team, "abbr" | "color" | "secondary">;
@@ -355,6 +356,7 @@ export function TeamMark({
   const id = `jm-${uid}`;
   const cut = jerseyCut(team.abbr);
   const ink = inkOn(team.color);
+  const unsigned = isUnsigned(team);
   return (
     <svg
       width={size}
@@ -390,6 +392,7 @@ export function TeamMark({
         </>
       )}
       <Motif abbr={team.abbr} ink={ink} />
+      {!unsigned && (
       <text
         x="40"
         y={number != null ? 58 : 62}
@@ -401,10 +404,11 @@ export function TeamMark({
       >
         {team.abbr}
       </text>
+      )}
       {number != null && (
         <text
           x="40"
-          y="76"
+          y={unsigned ? 64 : 76}
           textAnchor="middle"
           fill={ink}
           fontFamily="Barlow Condensed, sans-serif"

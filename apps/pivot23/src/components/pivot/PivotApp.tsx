@@ -87,6 +87,7 @@ import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
 import { ModalDialog } from "@/components/pivot/Dialog";
 import { LazyChunk } from "@/components/pivot/ChunkBoundary";
 import { attrLabel, chipLabel, seedLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel, seasonsPlayedLabel, seedConfLabel, countWord } from "@/lib/pivot/labels";
+import { clubLine, contractLine } from "@/lib/pivot/copy-display";
 import { fmtDec, legacyAwardLabel } from "@/lib/pivot/legacy-i18n";
 import { contextualText, developmentText, archivedRival } from "@/lib/pivot/copy-context";
 import { loadNarrativeEn, loadNarrativeEs, loadNarrativeZh, nx } from "@/lib/pivot/narrative";
@@ -1594,7 +1595,7 @@ function CareerView(props: {
               <div className="hud-club">
                 <TeamCrest team={player.team} size={16} />
                 <span>
-                  {player.team.name} · {player.league === "EuroLega" ? t("leagueEuro", lang) : "NBA"}
+                  {clubLine(player, lang)}
                 </span>
               </div>
               {last ? (
@@ -1607,13 +1608,19 @@ function CareerView(props: {
                   <span>{t("lastSeason", lang)}</span>
                 </div>
               ) : null}
-              <div className="hud-contract">
-                {player.contract.yearsRemaining === 1 ? t("contractYear", lang) : tf("contractYears", { n: player.contract.yearsRemaining }, lang)} × ${player.contract.annualM}M
-                {last ? (() => {
+              {(() => {
+                const deal = contractLine(player, lang);
+                const seedBit = last ? (() => {
                   const rec = teamRecord(last);
                   return rec.seed ? ` · ${seedConfLabel(rec.seed, rec.conf, lang)}` : "";
-                })() : ""}
-              </div>
+                })() : "";
+                if (!deal && !seedBit) return null;
+                return (
+                  <div className="hud-contract">
+                    {deal}{seedBit}
+                  </div>
+                );
+              })()}
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">

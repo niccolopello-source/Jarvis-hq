@@ -177,7 +177,7 @@ export const ZH_STORY_FEEL: Readonly<Record<string, string>> = {
   "Qualcuno deve rompere il ghiaccio.": "总得有人打破僵局。",
   "Dici poco. Basta. Il viaggio di ritorno è meno lungo.": "你话不多，但够了。回程似乎更短了。",
   "Metti le cuffie e lasci stare": "你戴上耳机，随它去",
-  "Il lutto, a modo tuo.": "用你的方式消化悲伤。",
+  "Il lutto, a modo tuo.": "用你的方式面对失败。",
   "Chiedi a {COACH} cosa ha visto": "你问{COACH}看到了什么",
   "Anche una sconfitta si studia.": "失败也可以研究。",
   "In una settimana le scarpe sono dritte. Qualcuno lo nota.": "一周之内你的鞋就摆正了。有人注意到了。",

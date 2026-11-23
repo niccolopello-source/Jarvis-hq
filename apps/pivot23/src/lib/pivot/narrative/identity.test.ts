@@ -8,7 +8,7 @@ import { NARRATIVE_IDENTITY } from "./catalog-identity.ts";
 import { NARRATIVE_ZH } from "./catalog-zh.ts";
 import { playCareerTexts, storyPoolTexts } from "./harness.ts";
 import { identityEntries } from "./identity.ts";
-import { loadNarrativeEn, loadNarrativeEs, loadNarrativeZh, nx, zhTidy } from "./index.ts";
+import { loadNarrativeEn, loadNarrativeEs, loadNarrativeZh, nx, proseTidy, zhTidy } from "./index.ts";
 import { IT_PROSE } from "./markers.ts";
 import { buildCatalog, translateWith } from "./translate.ts";
 
@@ -71,11 +71,13 @@ test("Spanish and Chinese render exactly as with the whole English catalog under
     for (const text of texts) {
       const r = translateWith(cat, text, IT_PROSE);
       let want: string;
-      if (r.ok) want = lang === "zh" ? zhTidy(r.text) : r.text;
-      else {
+      if (r.ok) {
+        const tidied = proseTidy(r.text, lang);
+        want = lang === "zh" ? zhTidy(tidied) : tidied;
+      } else {
         unresolved += 1;
         const e = translateWith(enCat, text, IT_PROSE);
-        want = e.ok ? agreeTeamsEn(e.text) : text;
+        want = e.ok ? proseTidy(agreeTeamsEn(e.text), "en") : text;
       }
       if (nx(text, lang) !== want) diff.push(text.slice(0, 120));
     }
