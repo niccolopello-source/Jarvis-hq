@@ -77,7 +77,7 @@ export const ZH_PLAYOFF_DOORS: Readonly<Record<string, string>> = {
   "Loro questa serie la sanno a memoria. Tu copi il passo, possesso dopo possesso, senza chiedere il permesso di esistere.": "这轮系列赛他们烂熟于心。你一个回合接一个回合地学他们的节奏，不必请求存在的许可。",
   "Cambia gli abbinamenti in difesa": "调整防守对位",
   "Leggi il corpo davanti, non il copione": "读懂面前的对手，而不是剧本",
-  "L'isolamento è una responsabilità, nuda.": "单打是只属于你的责任。",
+  "L'isolamento è una responsabilità, nuda.": "单打时，一切都靠你。",
   "Lo schema è un orologio. Non fermarlo": "进攻是一座钟。别让它停下",
   "Chi tiene la lancetta si sente, e non in bene.": "谁卡住指针，谁就会被注意到，而且不是好事。",
   "Fidati dello staff, senza eroismi": "相信教练组，不逞英雄",

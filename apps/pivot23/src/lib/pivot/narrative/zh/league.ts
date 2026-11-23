@@ -69,7 +69,7 @@ export const ZH_LEAGUE: Readonly<Record<string, string>> = {
   "{SCORE}. Giugno vi appartiene, e {OPP} lo sa per ultimo.": "{SCORE}。六月属于你们，{OPP}是最后一个明白的。",
   "Campioni, {SCORE}. Il peso al dito arriva dopo, a casa, in silenzio.": "冠军，{SCORE}。手指上的分量要等到后来，回到家，在寂静中才感觉到。",
   "{OPP} cede in finale {SCORE}. Non si trova una frase: si alza.": "{OPP}在总决赛以{SCORE}落败。找不到合适的话：直接把它举起来。",
-  "{SCORE} in sette, o meno. Il dito pesa, e la città canta.": "{SCORE}。手指沉甸甸的，城市在歌唱。",
+  "{SCORE} in sette, o meno. Il dito pesa, e la città canta.": "{SCORE}。无名指沉甸甸的，城市在歌唱。",
   "Campioni contro {OPP}, {SCORE}. Il silenzio dopo i confetti è il più buono.": "对阵{OPP}夺冠，{SCORE}。彩带落下后的寂静最美好。",
   "{SCORE}. La serie più lunga dell'anno, e l'unica che resta appesa.": "{SCORE}。这一年最长的系列赛，也是唯一会被挂在墙上的那一轮。",
   "Anello. {SCORE} su {OPP}. Si tiene, e si tace un poco.": "冠军戒指。{SCORE}击败{OPP}。握住它，安静一会儿。",

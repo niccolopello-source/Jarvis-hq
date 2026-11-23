@@ -454,7 +454,7 @@ const EN: Record<Msg, string> = {
     swipeHint: "Swipe between Story, Year, League, Life",
     showFullLog: "Show the whole story",
     leagueEuro: "EuroLeague",
-    awaitingDraft: "Awaiting the draft",
+    awaitingDraft: "Awaiting the Draft",
     freeAgent: "Free agent",
     careerTabs: "Career sections",
     finalChampion: "Final · Champion",

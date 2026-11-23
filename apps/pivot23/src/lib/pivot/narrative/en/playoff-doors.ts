@@ -130,7 +130,7 @@ export const EN_PLAYOFF_DOORS: Readonly<Record<string, string>> = {
   "Niente alibi di circolazione.": "No ball-movement alibis.",
   "Un metro quadro, un difensore, il resto a guardare. Così si chiude, qui.": "One square meter, one defender, the rest watching. That's how you close here.",
   "Leggi il corpo davanti, non il copione": "Read the body in front of you, not the script",
-  "L'isolamento è una responsabilità, nuda.": "Isolation is a responsibility that's all yours.",
+  "L'isolamento è una responsabilità, nuda.": "In isolation, it's all on you.",
   "Una finta, un passo. Il canestro è una conseguenza, non un urlo.": "A fake, a step. The basket is a consequence, not a scream.",
   "La palla deve uscire": "The ball has to move",
   "Se la tieni, lo schema si offende.": "If you hold it, the play takes offense.",

@@ -69,7 +69,7 @@ export const ES_LEAGUE: Readonly<Record<string, string>> = {
   "{SCORE}. Giugno vi appartiene, e {OPP} lo sa per ultimo.": "{SCORE}. Junio os pertenece, y {OPP} es el último en enterarse.",
   "Campioni, {SCORE}. Il peso al dito arriva dopo, a casa, in silenzio.": "Campeones, {SCORE}. El peso en el dedo llega después, en casa, en silencio.",
   "{OPP} cede in finale {SCORE}. Non si trova una frase: si alza.": "{OPP} cede en la final {SCORE}. No hay frase que valga: se levanta.",
-  "{SCORE} in sette, o meno. Il dito pesa, e la città canta.": "{SCORE}. El dedo pesa, y la ciudad canta.",
+  "{SCORE} in sette, o meno. Il dito pesa, e la città canta.": "{SCORE}. El dedo del anillo pesa, y la ciudad canta.",
   "Campioni contro {OPP}, {SCORE}. Il silenzio dopo i confetti è il più buono.": "Campeones contra {OPP}, {SCORE}. El silencio después del confeti es el mejor.",
   "{SCORE}. La serie più lunga dell'anno, e l'unica che resta appesa.": "{SCORE}. La serie más larga del año, y la única que queda colgada en la pared.",
   "Anello. {SCORE} su {OPP}. Si tiene, e si tace un poco.": "Anillo. {SCORE} ante {OPP}. Se sostiene, y se calla un rato.",

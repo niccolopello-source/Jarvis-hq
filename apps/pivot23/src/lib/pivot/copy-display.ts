@@ -16,13 +16,23 @@ export function clubLine(player: ClubPlayer, lang: Lang): string {
   return `${player.team.name} · ${league}`;
 }
 
+function hasSignedDeal(contract: Contract): boolean {
+  return Boolean(contract.teamName?.trim());
+}
+
 /**
  * Contract line. Hidden until a real deal exists (the dummy 3×$4.2M on an unsigned
  * player is not shown). An expired deal reads as free agency, not "0 years × $…".
  * Returns an empty string when the row should be omitted.
+ *
+ * Atypical save: a team abbr other than UND but no signed deal (empty teamName).
+ * Do not invent a salary. If years have already run out, show free agent; otherwise omit.
  */
 export function contractLine(player: ContractPlayer, lang: Lang): string {
-  if (isUnsigned(player.team) || !player.contract.teamName) return "";
+  if (isUnsigned(player.team)) return "";
+  if (!hasSignedDeal(player.contract)) {
+    return player.contract.yearsRemaining <= 0 ? t("freeAgent", lang) : "";
+  }
   if (player.contract.yearsRemaining <= 0) return t("freeAgent", lang);
   const years =
     player.contract.yearsRemaining === 1

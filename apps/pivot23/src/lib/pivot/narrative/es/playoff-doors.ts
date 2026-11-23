@@ -77,7 +77,7 @@ export const ES_PLAYOFF_DOORS: Readonly<Record<string, string>> = {
   "Loro questa serie la sanno a memoria. Tu copi il passo, possesso dopo possesso, senza chiedere il permesso di esistere.": "Ellos se saben esta serie de memoria. Tú copias su ritmo, posesión a posesión, sin pedir permiso para existir.",
   "Cambia gli abbinamenti in difesa": "Cambia los emparejamientos en defensa",
   "Leggi il corpo davanti, non il copione": "Lee el cuerpo que tienes delante, no el guion",
-  "L'isolamento è una responsabilità, nuda.": "El aislamiento es una responsabilidad solo tuya.",
+  "L'isolamento è una responsabilità, nuda.": "En el aislamiento, todo depende de ti.",
   "Lo schema è un orologio. Non fermarlo": "El ataque es un reloj. No lo pares",
   "Chi tiene la lancetta si sente, e non in bene.": "Quien retiene la manecilla del reloj se nota, y no para bien.",
   "Fidati dello staff, senza eroismi": "Confía en el cuerpo técnico, sin heroicidades",

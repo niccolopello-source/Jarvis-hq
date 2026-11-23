@@ -94,7 +94,7 @@ export const EN_STORY_FEEL: Readonly<Record<string, string>> = {
   "Qualcuno deve rompere il ghiaccio.": "Someone has to break the ice.",
   "Dici poco. Basta. Il viaggio di ritorno è meno lungo.": "You say little. It's enough. The ride home feels shorter.",
   "Metti le cuffie e lasci stare": "You put your headphones on and let it be",
-  "Il lutto, a modo tuo.": "Grief, your way.",
+  "Il lutto, a modo tuo.": "Take the loss your way.",
   "Il rumore bianco ti tiene compagnia. Domani riparti da lì.": "White noise keeps you company. Tomorrow you start again from there.",
   "Chiedi a {COACH} cosa ha visto": "You ask {COACH} what he saw",
   "Anche una sconfitta si studia.": "Even a loss can be studied.",

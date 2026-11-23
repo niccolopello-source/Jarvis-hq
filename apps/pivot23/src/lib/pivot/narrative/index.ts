@@ -7,7 +7,7 @@
  * Fallback is always the stored text, unchanged: an unknown string is never blanked or guessed
  * (also while the English chunk is not loaded yet).
  */
-import { italianTeamPreposition, formatEliminatedIt } from "../labels";
+import { italianTeamPreposition, formatEliminatedIt, formatPlayoffScoreLine } from "../labels";
 import { NBA_TEAMS, EURO_TEAMS } from "../teams";
 import { chromePairs, chromePairsFor, type Lang } from "../i18n";
 import { LEGACY_EN_IT } from "./legacy-it";
@@ -172,12 +172,15 @@ const IT_DISPLAY_FIXES: ReadonlyArray<readonly [RegExp, string | ((...m: string[
   // TITLE_LINES: "$SCORE in sette, o meno" after a series already finished
   [/(\d+-\d+(?:\s*\([^)]+\))?)\s+in sette, o meno/gi, "$1"],
   // playoffLineScore debug-style parenthetical, stored in flavor
-  [/(\d+-\d+)\s*\(noi–([^,]+), (?:serie|partita)\)/g, "$1 contro $2"],
+  [/(\d+-\d+)\s*\(noi–([^,]+), (serie|partita)\)/g, (_m: string, score: string, team: string, kind: string) => formatPlayoffScoreLine(score, team, kind, "it")],
+  // championship TITLE_LINES only: the ring, not a generic finger
+  [/Il dito pesa, e la città canta\./g, "Il dito dell'anello pesa, e la città canta."],
+  [/Il lutto, a modo tuo\./g, "Vivi la sconfitta a modo tuo."],
   // remaining "nudo/nuda" fragments, including lines concatenated in summer results
-  [/Il premio è questo, nudo\./g, "Il premio è questo, senza ornamenti."],
-  [/, e il resto è mestiere nudo\./g, ", e il resto è solo campo."],
+  [/Il premio è questo, nudo\./g, "Il premio è tutto qui."],
+  [/, e il resto è mestiere nudo\./g, ", e il resto si decide in campo."],
   [/È un compito, nudo\./g, "È solo un lavoro da fare."],
-  [/responsabilità, nuda\./g, "una responsabilità tutta tua."],
+  [/Isolamento vuole dire responsabilità, nuda\./g, "In isolamento, tocca solo a te."],
   [/L'estate, nuda:/g, "L'estate senza fronzoli:"],
   [/Palestra vuota, il gesto nudo\./g, "Palestra vuota, solo il gesto."],
   [/il gesto nudo/g, "solo il gesto"],
@@ -216,7 +219,7 @@ export const IT_LINE_REWRITES: ReadonlyArray<readonly [string, string]> = [
   ["La fame, nuda, sul possesso largo", "Pura fame, sul possesso largo"],
   ["Se arrivi fin qui da ragazzo, non restare educato. La fame, nuda, vale più del copione.", "Se arrivi fin qui da ragazzo, non restare educato. La fame pura vale più del copione."],
   ["L'ultimo possesso, nudo", "L'ultimo possesso, senza schemi"],
-  ["L'isolamento è una responsabilità, nuda.", "L'isolamento è una responsabilità tutta tua."],
+  ["L'isolamento è una responsabilità, nuda.", "In isolamento, tocca solo a te."],
   ["Luglio sul mestiere, nudo, già speso", "Luglio di solo lavoro, già speso"],
   ["L'estate, nuda: gli stessi tiri, lo stesso specchio, un polso che a settembre non è più una domanda.", "L'estate senza fronzoli: gli stessi tiri, lo stesso specchio, un polso che a settembre non è più una domanda."],
   ["Il gesto, nudo, ripetuto fino ad agosto", "Il gesto, ripetuto fino ad agosto"],
@@ -224,7 +227,7 @@ export const IT_LINE_REWRITES: ReadonlyArray<readonly [string, string]> = [
   ["Palestra vuota, il gesto nudo. A ottobre lo staff lo capisce dal polso.", "Palestra vuota, solo il gesto. A ottobre lo staff lo capisce dal polso."],
   ["Tregua nuda, già firmata", "Tregua semplice, già firmata"],
   ["Tregua nuda. Novembre ti trova in piedi, e questo basta.", "Una tregua semplice. Novembre ti trova in piedi, e questo basta."],
-  ["Niente alibi di circolazione. Isolamento vuole dire responsabilità, nuda.", "Niente alibi di circolazione. Isolamento vuole dire una responsabilità tutta tua."],
+  ["Niente alibi di circolazione. Isolamento vuole dire responsabilità, nuda.", "Niente alibi di circolazione. In isolamento, tocca solo a te."],
   ["Il mestiere, nudo. Niente racconto che tenga il posto del lavoro.", "Solo il lavoro. Niente racconto che tenga il posto del campo."],
   ["La palestra, nuda, di lunedì", "La palestra vuota, di lunedì"],
   ["Il vuoto nel calendario non è un alibi. È un compito, nudo.", "Il vuoto nel calendario non è un alibi. È solo un lavoro da fare."],
@@ -242,13 +245,35 @@ export function proseTidy(text: string, lang: Lang): string {
   let out = text.replace(/\bG-League\b/g, "G League");
   if (lang === "en") {
     out = out.replace(/(\d+-\d+)\s+in seven, or fewer/gi, "$1");
-    out = out.replace(/(\d+-\d+)\s*\(us vs\. ([^,]+), (?:series|game)\)/g, "$1 against $2");
   } else if (lang === "es") {
     out = out.replace(/(\d+-\d+)\s+en siete, o menos/gi, "$1");
-    out = out.replace(/(\d+-\d+)\s*\(nosotros–([^,]+), (?:serie|partido)\)/g, "$1 contra $2");
   } else if (lang === "zh") {
     out = out.replace(/(\d+-\d+)，七场或更少/g, "$1");
-    out = out.replace(/(\d+-\d+)（我们对([^，]+)，(?:serie|partita|系列赛|比赛)）/g, "$1，对$2");
+  }
+  // Stored Italian parenthetical, or a catalog leftover, always finished here so articles and
+  // "over/sui" for a won series apply in every language.
+  out = out.replace(/(\d+-\d+)\s*\(noi–([^,]+), (serie|partita)\)/g, (_m, score: string, team: string, kind: string) => formatPlayoffScoreLine(score, team, kind, lang));
+  if (lang === "en") {
+    out = out.replace(/(\d+-\d+)\s*\(us vs\. ([^,]+), (series|game)\)/g, (_m, score: string, team: string, kind: string) => formatPlayoffScoreLine(score, team, kind, "en"));
+    out = out.replace(/(\d+-\d+)\s+against(?:\s+the)?\s+([^.]+?)(?=\.|$)/g, (all, score: string, team: string) => {
+      const left = Number(score.split("-")[0]);
+      const kind = left >= 3 ? "series" : "game";
+      return formatPlayoffScoreLine(score, team.trim(), kind, "en");
+    });
+  } else if (lang === "es") {
+    out = out.replace(/(\d+-\d+)\s*\(nosotros–([^,]+), (serie|partido)\)/g, (_m, score: string, team: string, kind: string) => formatPlayoffScoreLine(score, team, kind, "es"));
+    out = out.replace(/(\d+-\d+)\s+(?:contra|ante)(?:\s+l[oa]s)?\s+([^.]+?)(?=\.|$)/g, (all, score: string, team: string) => {
+      const left = Number(score.split("-")[0]);
+      const kind = left >= 3 ? "serie" : "partido";
+      return formatPlayoffScoreLine(score, team.trim(), kind, "es");
+    });
+  } else if (lang === "zh") {
+    out = out.replace(/(\d+-\d+)（我们对([^，]+)，(?:serie|partita|系列赛|比赛)）/g, (_m, score: string, team: string) => formatPlayoffScoreLine(score, team, "serie", "zh"));
+    out = out.replace(/(\d+-\d+)，对([^.。]+)/g, (all, score: string, team: string) => {
+      const left = Number(score.split("-")[0]);
+      const kind = left >= 3 ? "serie" : "partita";
+      return formatPlayoffScoreLine(score, team.trim(), kind, "zh");
+    });
   }
   return out;
 }

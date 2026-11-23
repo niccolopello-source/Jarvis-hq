@@ -177,7 +177,7 @@ export const ES_STORY_FEEL: Readonly<Record<string, string>> = {
   "Qualcuno deve rompere il ghiaccio.": "Alguien tiene que romper el hielo.",
   "Dici poco. Basta. Il viaggio di ritorno è meno lungo.": "Dices poco. Basta. El viaje de vuelta parece más corto.",
   "Metti le cuffie e lasci stare": "Te pones los auriculares y lo dejas estar",
-  "Il lutto, a modo tuo.": "El duelo, a tu manera.",
+  "Il lutto, a modo tuo.": "Vive la derrota a tu manera.",
   "Chiedi a {COACH} cosa ha visto": "Preguntas a {COACH} qué vio",
   "Anche una sconfitta si studia.": "Hasta una derrota se puede estudiar.",
   "In una settimana le scarpe sono dritte. Qualcuno lo nota.": "En una semana tus zapatillas están rectas. Alguien lo nota.",

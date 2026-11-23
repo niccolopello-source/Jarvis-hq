@@ -62,7 +62,7 @@ export const EN_LEAGUE: Readonly<Record<string, string>> = {
   "Campioni, {SCORE}. Il peso al dito arriva dopo, a casa, in silenzio.": "Champions, {SCORE}. The weight on your finger comes later, at home, in silence.",
   "{OPP} cede in finale {SCORE}. Non si trova una frase: si alza.": "{OPP} gives way in the Finals {SCORE}. You can't find a sentence: you lift it.",
   "Anello, {SCORE}. {OPP} c'è quasi arrivato. Voi ci siete arrivati.": "A ring, {SCORE}. {OPP} almost got there. You got there.",
-  "{SCORE} in sette, o meno. Il dito pesa, e la città canta.": "{SCORE}. Your finger feels heavy, and the city sings.",
+  "{SCORE} in sette, o meno. Il dito pesa, e la città canta.": "{SCORE}. Your ring finger feels heavy, and the city sings.",
   "Campioni contro {OPP}, {SCORE}. Il silenzio dopo i confetti è il più buono.": "Champions against {OPP}, {SCORE}. The silence after the confetti is the best kind.",
   "Giugno chiude {SCORE}. L'anello non si descrive: si tiene, e si tace un poco.": "June closes {SCORE}. A ring can't be described: you hold it, and stay quiet for a while.",
   "{SCORE}. La serie più lunga dell'anno, e l'unica che resta appesa.": "{SCORE}. The longest series of the year, and the only one that stays hanging on the wall.",
