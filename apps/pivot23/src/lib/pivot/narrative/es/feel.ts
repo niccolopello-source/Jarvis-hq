@@ -624,5 +624,5 @@ export const ES_FEEL: Readonly<Record<string, string>> = {
   "La tregua del mestiere": "Un respiro de la rutina",
   "Niente tesi da vendere": "Ninguna tesis que vender",
   "Un febbraio senza tesi": "Un febrero sin tesis",
-  "La palestra, nuda, di lunedì": "El gimnasio, desnudo, un lunes",
+  "La palestra, nuda, di lunedì": "El gimnasio vacío, un lunes",
 };

@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { IT_LINE_REWRITES, loadNarrativeEn, nx } from "./narrative/index";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const SOURCES = ["story-feel.ts", "story-extra.ts", "story-late.ts", "playoff-doors.ts", "feel.ts"].map((f) =>
+const SOURCES = ["story-feel.ts", "story-extra.ts", "story-late.ts", "playoff-doors.ts", "feel.ts", "summer.ts"].map((f) =>
   readFileSync(join(here, f), "utf8"),
 );
 const BANNED_IT = /\b(nud[oaie]|mestiere)\b/i;
@@ -16,7 +16,7 @@ test("every rewritten line is still emitted by the engine (old wording stays sto
 });
 
 test("Italian readers see the new wording, with no 'nudo' / 'mestiere'", () => {
-  assert.equal(IT_LINE_REWRITES.length, 13);
+  assert.equal(IT_LINE_REWRITES.length, 26);
   for (const [old, neu] of IT_LINE_REWRITES) {
     assert.equal(nx(old, "it"), neu);
     assert.doesNotMatch(neu, BANNED_IT, neu);

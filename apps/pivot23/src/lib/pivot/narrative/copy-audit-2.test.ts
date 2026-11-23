@@ -57,8 +57,8 @@ test("copy audit 2026-10-16: the doubled 'Out Out' is no longer reachable in Eng
   assert.deepEqual([...new Set(bad)], []);
   // Stored Italian from any save ("Fuori " + "Elim. <round> <score>") reads as one clean English sentence.
   assert.equal(nx("Fuori Elim. Primo turno 2-4. Ottobre lo sa, anche se tu fai finta di no.", "en"), "Out in the First Round 2-4. October knows it, even if you pretend it doesn't.");
-  // Italian stays exactly as stored (narrative.test.ts invariant); the Italian slip is listed in the review for approval.
-  assert.equal(nx("Fuori Elim. Primo turno 2-4. Ottobre lo sa, anche se tu fai finta di no.", "it"), "Fuori Elim. Primo turno 2-4. Ottobre lo sa, anche se tu fai finta di no.");
+  // Italian display is rewritten; the stored key is unchanged (saves and English catalog).
+  assert.equal(nx("Fuori Elim. Primo turno 2-4. Ottobre lo sa, anche se tu fai finta di no.", "it"), "Eliminato al primo turno (2-4). Ottobre lo sa, anche se tu fai finta di no.");
 });
 
 test("official terminology stays consistent in English (chrome, catalog and rendered text)", () => {

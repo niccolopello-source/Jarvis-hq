@@ -7,7 +7,7 @@
  * Fallback is always the stored text, unchanged: an unknown string is never blanked or guessed
  * (also while the English chunk is not loaded yet).
  */
-import { italianTeamPreposition } from "../labels";
+import { italianTeamPreposition, formatEliminatedIt } from "../labels";
 import { NBA_TEAMS, EURO_TEAMS } from "../teams";
 import { chromePairs, chromePairsFor, type Lang } from "../i18n";
 import { LEGACY_EN_IT } from "./legacy-it";
@@ -127,7 +127,8 @@ export function zhTidy(text: string): string {
 function extraNx(text: string, lang: Extra): string {
   const r = translateWith(extraCatalog(lang), text, IT_PROSE);
   if (!r.ok) return nx(text, "en");
-  return lang === "zh" ? zhTidy(r.text) : r.text;
+  const tidied = proseTidy(r.text, lang);
+  return lang === "zh" ? zhTidy(tidied) : tidied;
 }
 
 function enCatalog(): Catalog {
@@ -164,6 +165,28 @@ const IT_DISPLAY_FIXES: ReadonlyArray<readonly [RegExp, string | ((...m: string[
   [/Quattro maglie, o più\. (\d+) (squadre|città)\./g, (_m: string, n: string, w: string) => w === "città" ? `${n} città diverse.` : `${n} maglie diverse.`],
   // feel.ts: "Dalla G-League al salto." -> official spelling
   [/\bG-League\b/g, "G League"],
+  // story-late.ts: "Fuori Elim. Primo turno 2-4" (Elim. already in last.playoff)
+  [/Fuori Elim\. (.+?) (\d+-\d+)/g, (_m: string, round: string, score: string) => formatEliminatedIt(round, score)],
+  // leftover stored "Elim. <round> <score>" inside running text
+  [/\bElim\. (.+?) (\d+-\d+)/g, (_m: string, round: string, score: string) => formatEliminatedIt(round, score)],
+  // TITLE_LINES: "$SCORE in sette, o meno" after a series already finished
+  [/(\d+-\d+(?:\s*\([^)]+\))?)\s+in sette, o meno/gi, "$1"],
+  // playoffLineScore debug-style parenthetical, stored in flavor
+  [/(\d+-\d+)\s*\(noi–([^,]+), (?:serie|partita)\)/g, "$1 contro $2"],
+  // remaining "nudo/nuda" fragments, including lines concatenated in summer results
+  [/Il premio è questo, nudo\./g, "Il premio è questo, senza ornamenti."],
+  [/, e il resto è mestiere nudo\./g, ", e il resto è solo campo."],
+  [/È un compito, nudo\./g, "È solo un lavoro da fare."],
+  [/responsabilità, nuda\./g, "una responsabilità tutta tua."],
+  [/L'estate, nuda:/g, "L'estate senza fronzoli:"],
+  [/Palestra vuota, il gesto nudo\./g, "Palestra vuota, solo il gesto."],
+  [/il gesto nudo/g, "solo il gesto"],
+  [/Il gesto, nudo,/g, "Il gesto,"],
+  [/Il polso, nudo,/g, "Solo il polso,"],
+  [/Luglio sul mestiere, nudo,/g, "Luglio di solo lavoro,"],
+  [/Tregua nuda,/g, "Tregua semplice,"],
+  [/Tregua nuda\./g, "Una tregua semplice."],
+  [/La palestra, nuda,/g, "La palestra vuota,"],
 ];
 
 /**
@@ -194,8 +217,41 @@ export const IT_LINE_REWRITES: ReadonlyArray<readonly [string, string]> = [
   ["Se arrivi fin qui da ragazzo, non restare educato. La fame, nuda, vale più del copione.", "Se arrivi fin qui da ragazzo, non restare educato. La fame pura vale più del copione."],
   ["L'ultimo possesso, nudo", "L'ultimo possesso, senza schemi"],
   ["L'isolamento è una responsabilità, nuda.", "L'isolamento è una responsabilità tutta tua."],
+  ["Luglio sul mestiere, nudo, già speso", "Luglio di solo lavoro, già speso"],
+  ["L'estate, nuda: gli stessi tiri, lo stesso specchio, un polso che a settembre non è più una domanda.", "L'estate senza fronzoli: gli stessi tiri, lo stesso specchio, un polso che a settembre non è più una domanda."],
+  ["Il gesto, nudo, ripetuto fino ad agosto", "Il gesto, ripetuto fino ad agosto"],
+  ["Il polso, nudo, per tre settimane", "Solo il polso, per tre settimane"],
+  ["Palestra vuota, il gesto nudo. A ottobre lo staff lo capisce dal polso.", "Palestra vuota, solo il gesto. A ottobre lo staff lo capisce dal polso."],
+  ["Tregua nuda, già firmata", "Tregua semplice, già firmata"],
+  ["Tregua nuda. Novembre ti trova in piedi, e questo basta.", "Una tregua semplice. Novembre ti trova in piedi, e questo basta."],
+  ["Niente alibi di circolazione. Isolamento vuole dire responsabilità, nuda.", "Niente alibi di circolazione. Isolamento vuole dire una responsabilità tutta tua."],
+  ["Il mestiere, nudo. Niente racconto che tenga il posto del lavoro.", "Solo il lavoro. Niente racconto che tenga il posto del campo."],
+  ["La palestra, nuda, di lunedì", "La palestra vuota, di lunedì"],
+  ["Il vuoto nel calendario non è un alibi. È un compito, nudo.", "Il vuoto nel calendario non è un alibi. È solo un lavoro da fare."],
+  ["Il lutto, fatto mestiere.", "Trasformi l'eliminazione in lavoro."],
+  ["Il lutto, fatto mestiere. I fotogrammi, riletti, tengono per l'inverno.", "Trasformi l'eliminazione in lavoro. I fotogrammi, riletti, tengono per l'inverno."],
 ];
 const IT_LINE_MAP: ReadonlyMap<string, string> = new Map(IT_LINE_REWRITES);
+
+/**
+ * Post-translation tidy for English, Spanish and Chinese. Catalog keys stay the stored
+ * Italian (including the old parenthetical score and "in sette, o meno"); only what the
+ * player reads is cleaned. Official spelling: G League, not G-League.
+ */
+export function proseTidy(text: string, lang: Lang): string {
+  let out = text.replace(/\bG-League\b/g, "G League");
+  if (lang === "en") {
+    out = out.replace(/(\d+-\d+)\s+in seven, or fewer/gi, "$1");
+    out = out.replace(/(\d+-\d+)\s*\(us vs\. ([^,]+), (?:series|game)\)/g, "$1 against $2");
+  } else if (lang === "es") {
+    out = out.replace(/(\d+-\d+)\s+en siete, o menos/gi, "$1");
+    out = out.replace(/(\d+-\d+)\s*\(nosotros–([^,]+), (?:serie|partido)\)/g, "$1 contra $2");
+  } else if (lang === "zh") {
+    out = out.replace(/(\d+-\d+)，七场或更少/g, "$1");
+    out = out.replace(/(\d+-\d+)（我们对([^，]+)，(?:serie|partita|系列赛|比赛)）/g, "$1，对$2");
+  }
+  return out;
+}
 
 export function itDisplay(text: string): string {
   const whole = IT_LINE_MAP.get(text);
@@ -226,7 +282,7 @@ export function nx(text: string | null | undefined, lang: Lang): string {
   if (lang === "es" || lang === "zh") return extraNx(text, lang);
   if (lang === "en") {
     const r = translateWith(enCatalog(), text, IT_PROSE);
-    return r.ok ? agreeTeamsEn(r.text) : text;
+    return r.ok ? proseTidy(agreeTeamsEn(r.text), "en") : proseTidy(text, "en");
   }
   // Italian prose is never sent through the reverse catalog; short English lines with no
   // give-away word ("No meeting. Just games.") still are, and only an exact full match changes them.
@@ -241,11 +297,12 @@ export function nx(text: string | null | undefined, lang: Lang): string {
 export function nxCheck(text: string, lang: Lang): { text: string; ok: boolean } {
   if (lang === "es" || lang === "zh") {
     const r = translateWith(extraCatalog(lang), text, IT_PROSE);
-    return lang === "zh" ? { ...r, text: zhTidy(r.text) } : r;
+    const tidied = proseTidy(r.text, lang);
+    return lang === "zh" ? { ...r, text: zhTidy(tidied) } : { ...r, text: tidied };
   }
   if (lang === "en") {
     const r = translateWith(enCatalog(), text, IT_PROSE);
-    return { ...r, text: agreeTeamsEn(r.text) };
+    return { ...r, text: proseTidy(agreeTeamsEn(r.text), "en") };
   }
   return translateWith(itCatalog(), text, EN_PROSE);
 }

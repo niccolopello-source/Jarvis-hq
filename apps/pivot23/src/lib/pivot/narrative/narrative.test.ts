@@ -62,7 +62,11 @@ test("English entries only use placeholders that exist in their Italian key", ()
 
 test("loc-followup 2026-10-13: every Italian slot reaches the English text (no silently dropped values)", () => {
   // The rookie-contract line folds {3} ("anno"/"anni") into the English plural {2|year|years}: documented, allowed.
-  const ALLOWED = new Set(["{0} Sei la {1}ª scelta. Contratto: {2} {3} a {4} milioni."]);
+  // The playoff score line drops {3} ("serie"/"partita"): the score plus the opponent is enough.
+  const ALLOWED = new Set([
+    "{0} Sei la {1}ª scelta. Contratto: {2} {3} a {4} milioni.",
+    "{0}-{1} (noi–{2}, {3})",
+  ]);
   const bad: string[] = [];
   for (const [k, v] of Object.entries(NARRATIVE_EN)) {
     if (ALLOWED.has(k)) continue;

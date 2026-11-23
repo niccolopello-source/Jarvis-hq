@@ -261,6 +261,12 @@ export function roundLabel(label: string, lang: UiLang): string {
  * Season playoff outcome as stored in SeasonRow.playoff ("Fuori", "Campione",
  * "Elim. Primo turno 1-4", or a round label). Unknown strings are shown as stored.
  */
+/** Italian display for a stored "Elim. <round> <score>" id. Does not rewrite saves. */
+export function formatEliminatedIt(round: string, score: string): string {
+  const phrase = IT_OUT_ROUND[round];
+  return phrase ? `Eliminato ${phrase} (${score})` : `Elim. ${round} ${score}`;
+}
+
 export function playoffResultLabel(raw: string | undefined | null, lang: UiLang): string {
   const value = String(raw ?? "");
   if (!value) return value;
@@ -268,8 +274,7 @@ export function playoffResultLabel(raw: string | undefined | null, lang: UiLang)
     // "Elim. Finali Est/Ovest 2-4" -> "Eliminato in finale di conference (2-4)". Stored text unchanged.
     const it = /^Elim\. (.+?) (\d+-\d+)$/.exec(value);
     if (!it) return value;
-    const round = IT_OUT_ROUND[it[1]!];
-    return round ? `Eliminato ${round} (${it[2]})` : value;
+    return formatEliminatedIt(it[1]!, it[2]!);
   }
   if (value === "Fuori") return byLang(lang, { it: value, en: "Missed playoffs", es: "Fuera de los playoffs", zh: "未进季后赛" });
   if (value === "Campione") return byLang(lang, { it: value, en: "Champion", es: "Campeón", zh: "总冠军" });

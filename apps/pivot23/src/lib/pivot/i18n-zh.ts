@@ -133,6 +133,8 @@ export const ZH_CHROME: Record<Msg, string> = {
   swipeHint: "在故事、本赛季、联盟和生涯之间滑动",
   showFullLog: "显示完整故事",
   leagueEuro: "欧洲篮球联赛",
+  awaitingDraft: "等待选秀",
+  freeAgent: "自由球员",
   careerTabs: "生涯栏目",
   finalChampion: "总决赛 · 冠军",
   choiceMade: "选择：{x}",
