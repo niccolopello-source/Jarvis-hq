@@ -171,8 +171,6 @@ const IT_DISPLAY_FIXES: ReadonlyArray<readonly [RegExp, string | ((...m: string[
   [/\bElim\. (.+?) (\d+-\d+)/g, (_m: string, round: string, score: string) => formatEliminatedIt(round, score)],
   // TITLE_LINES: "$SCORE in sette, o meno" after a series already finished
   [/(\d+-\d+(?:\s*\([^)]+\))?)\s+in sette, o meno/gi, "$1"],
-  // playoffLineScore debug-style parenthetical, stored in flavor
-  [/(\d+-\d+)\s*\(noi–([^,]+), (serie|partita)\)/g, (_m: string, score: string, team: string, kind: string) => formatPlayoffScoreLine(score, team, kind, "it")],
   // championship TITLE_LINES only: the ring, not a generic finger
   [/Il dito pesa, e la città canta\./g, "Il dito dell'anello pesa, e la città canta."],
   [/Il lutto, a modo tuo\./g, "Vivi la sconfitta a modo tuo."],
@@ -237,6 +235,39 @@ export const IT_LINE_REWRITES: ReadonlyArray<readonly [string, string]> = [
 const IT_LINE_MAP: ReadonlyMap<string, string> = new Map(IT_LINE_REWRITES);
 
 /**
+ * Display-only rewrite of a stored playoffLineScore parenthetical (and leftover
+ * catalog phrasing). If the line already names the opponent twice, the score
+ * stays bare ("4-2"); otherwise the #165 phrasing is kept ("4-2 sui …" / "over the …").
+ */
+const PLAYOFF_TEAM_NAMES = [...NBA_TEAMS, ...EURO_TEAMS]
+  .map((team) => team.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+  .sort((a, b) => b.length - a.length)
+  .join("|");
+
+export function rewritePlayoffScoreDisplay(text: string, lang: Lang): string {
+  let out = text;
+  const apply = (re: RegExp, kindOf: (score: string, kind?: string) => string, dest: Lang = lang) => {
+    const src = out;
+    out = src.replace(re, (_all: string, score: string, team: string, kindOrOffset: string | number) => {
+      const kind = typeof kindOrOffset === "string" ? kindOrOffset : undefined;
+      return formatPlayoffScoreLine(score, team, kindOf(score, kind), dest, src);
+    });
+  };
+  apply(/(\d+-\d+)\s*\(noi–([^,]+), (serie|partita)\)/g, (_score, kind) => kind!);
+  if (lang === "en") {
+    apply(/(\d+-\d+)\s*\(us vs\. ([^,]+), (series|game)\)/g, (_score, kind) => kind!, "en");
+    apply(new RegExp(`(\\d+-\\d+)\\s+against(?:\\s+the)?\\s+(${PLAYOFF_TEAM_NAMES})`, "g"), (score) => (Number(score.split("-")[0]) >= 3 ? "series" : "game"), "en");
+  } else if (lang === "es") {
+    apply(/(\d+-\d+)\s*\(nosotros–([^,]+), (serie|partido)\)/g, (_score, kind) => kind!, "es");
+    apply(new RegExp(`(\\d+-\\d+)\\s+(?:contra|ante)(?:\\s+l[oa]s)?\\s+(${PLAYOFF_TEAM_NAMES})`, "g"), (score) => (Number(score.split("-")[0]) >= 3 ? "serie" : "partido"), "es");
+  } else if (lang === "zh") {
+    apply(/(\d+-\d+)（我们对([^，]+)，(?:serie|partita|系列赛|比赛)）/g, () => "serie", "zh");
+    apply(new RegExp(`(\\d+-\\d+)，对(${PLAYOFF_TEAM_NAMES})`, "g"), (score) => (Number(score.split("-")[0]) >= 3 ? "serie" : "partita"), "zh");
+  }
+  return out;
+}
+
+/**
  * Post-translation tidy for English, Spanish and Chinese. Catalog keys stay the stored
  * Italian (including the old parenthetical score and "in sette, o meno"); only what the
  * player reads is cleaned. Official spelling: G League, not G-League.
@@ -251,31 +282,8 @@ export function proseTidy(text: string, lang: Lang): string {
     out = out.replace(/(\d+-\d+)，七场或更少/g, "$1");
   }
   // Stored Italian parenthetical, or a catalog leftover, always finished here so articles and
-  // "over/sui" for a won series apply in every language.
-  out = out.replace(/(\d+-\d+)\s*\(noi–([^,]+), (serie|partita)\)/g, (_m, score: string, team: string, kind: string) => formatPlayoffScoreLine(score, team, kind, lang));
-  if (lang === "en") {
-    out = out.replace(/(\d+-\d+)\s*\(us vs\. ([^,]+), (series|game)\)/g, (_m, score: string, team: string, kind: string) => formatPlayoffScoreLine(score, team, kind, "en"));
-    out = out.replace(/(\d+-\d+)\s+against(?:\s+the)?\s+([^.]+?)(?=\.|$)/g, (all, score: string, team: string) => {
-      const left = Number(score.split("-")[0]);
-      const kind = left >= 3 ? "series" : "game";
-      return formatPlayoffScoreLine(score, team.trim(), kind, "en");
-    });
-  } else if (lang === "es") {
-    out = out.replace(/(\d+-\d+)\s*\(nosotros–([^,]+), (serie|partido)\)/g, (_m, score: string, team: string, kind: string) => formatPlayoffScoreLine(score, team, kind, "es"));
-    out = out.replace(/(\d+-\d+)\s+(?:contra|ante)(?:\s+l[oa]s)?\s+([^.]+?)(?=\.|$)/g, (all, score: string, team: string) => {
-      const left = Number(score.split("-")[0]);
-      const kind = left >= 3 ? "serie" : "partido";
-      return formatPlayoffScoreLine(score, team.trim(), kind, "es");
-    });
-  } else if (lang === "zh") {
-    out = out.replace(/(\d+-\d+)（我们对([^，]+)，(?:serie|partita|系列赛|比赛)）/g, (_m, score: string, team: string) => formatPlayoffScoreLine(score, team, "serie", "zh"));
-    out = out.replace(/(\d+-\d+)，对([^.。]+)/g, (all, score: string, team: string) => {
-      const left = Number(score.split("-")[0]);
-      const kind = left >= 3 ? "serie" : "partita";
-      return formatPlayoffScoreLine(score, team.trim(), kind, "zh");
-    });
-  }
-  return out;
+  // "over/sui" for a won series apply in every language. Bare score if the line already names the opponent.
+  return rewritePlayoffScoreDisplay(out, lang);
 }
 
 export function itDisplay(text: string): string {
@@ -298,7 +306,7 @@ export function itDisplay(text: string): string {
     .replaceAll("una uscita nuova","un'uscita nuova");
   for (const [from, to] of IT_ROUTE_REWRITES) out = out.replaceAll(from, to);
   for (const [re, to] of IT_DISPLAY_FIXES) out = typeof to === "string" ? out.replace(re, to) : out.replace(re, to);
-  return out;
+  return rewritePlayoffScoreDisplay(out, "it");
 }
 
 /** Stored narrative text -> text in `lang`. Unknown text comes back exactly as stored. */
