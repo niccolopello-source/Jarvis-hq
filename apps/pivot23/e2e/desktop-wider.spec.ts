@@ -142,16 +142,19 @@ test("1440x900: game column grows past 880 px, rails stay at least 200 px, ads O
   expect(await startWidth(page)).toBeLessThanOrEqual(640);
 });
 
-// Column cap at 1920 is 1200 today. If Pello picks P1b (1280), change these bounds to 1270–1290.
-test("1920x1080: game column grows further, rails stay at least 200 px, ads OFF", async ({ page }) => {
+// P1b: Pello chose a 1280 column cap at 1920 (rails 320).
+test("1920x1080: game column caps at 1280 px, rails stay at least 200 px, ads OFF", async ({ page }) => {
   await page.setViewportSize({ width: 1920, height: 1080 });
   await openHome(page);
   const m = await metrics(page);
-  expect(m.app?.width).toBeGreaterThanOrEqual(1190);
-  expect(m.app?.width).toBeLessThanOrEqual(1210);
+  expect(m.app?.width).toBeGreaterThanOrEqual(1270);
+  expect(m.app?.width).toBeLessThanOrEqual(1290);
   const visibleRails = m.rails.filter((r) => r.visible);
   expect(visibleRails.length).toBe(2);
-  for (const r of visibleRails) expect(r.width).toBeGreaterThanOrEqual(200);
+  for (const r of visibleRails) {
+    expect(r.width).toBeGreaterThanOrEqual(310);
+    expect(r.width).toBeLessThanOrEqual(330);
+  }
   expect(m.foot?.visible).toBe(true);
   expect(m.foot?.height).toBeGreaterThanOrEqual(70);
   expect(m.foot?.height).toBeLessThanOrEqual(74);
@@ -315,4 +318,31 @@ test("1280x800: title and Inizia share the centred 640 px axis", async ({ page }
   expect(axis.titleX).toBe(axis.startX);
   expect(axis.langX).toBe(axis.startX);
   expect(axis.ledeX).toBe(axis.startX);
+});
+
+test("desktop footer and mobile home show Instagram plus X, TikTok and YouTube as Presto, not as links", async ({ page }) => {
+  for (const vp of [
+    { width: 390, height: 844 },
+    { width: 1280, height: 800 },
+    { width: 1920, height: 1080 },
+  ]) {
+    await page.setViewportSize(vp);
+    await openHome(page);
+    const row = page.locator(vp.width >= 1180 ? ".ad-foot .totem-row" : ".totem-row-home");
+    await expect(row).toBeVisible({ timeout: 15_000 });
+    const ig = row.locator(".ig-link");
+    await expect(ig).toHaveCount(1);
+    await expect(ig).toHaveAttribute("href", INSTAGRAM);
+    const soon = row.locator(".social-soon");
+    await expect(soon).toBeVisible();
+    await expect(soon).toHaveAttribute("aria-label", /presto|soon|pronto|即将推出/i);
+    const items = soon.locator(".social-soon-item");
+    await expect(items).toHaveCount(3);
+    await expect(items.nth(0)).toHaveAttribute("aria-label", /X/i);
+    await expect(items.nth(1)).toHaveAttribute("aria-label", /TikTok/i);
+    await expect(items.nth(2)).toHaveAttribute("aria-label", /YouTube/i);
+    expect(await soon.locator("a").count()).toBe(0);
+    expect(await soon.locator("button").count()).toBe(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+  }
 });
