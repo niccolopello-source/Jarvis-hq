@@ -7,35 +7,12 @@ import { buildLegacyReport, cardFaceOf, type CardFace, type LegacyReport } from 
 import { fmtDec, fmtInt, legacyAwardLabel, lt, narrativeOf, pickLabel, recordLabel, recordValue, seasonsLabel, timelineLine } from "@/lib/pivot/legacy-i18n";
 import { COSMETIC_FLAGS, loadCardTheme, saveCardTheme, themeById, visibleThemes, type CardTheme } from "@/lib/pivot/cosmetics";
 import type { ArchiveCareer } from "@/lib/pivot/types";
-import type { Lang } from "@/lib/pivot/i18n";
-import { exportCardPng, pngFileName, type ExportOutcome, type PngLabels } from "./exportPng";
+import { CareerShareBar, cardLabels } from "./CareerShareBar";
 import "@/styles/legacy.css";
 
 function themeStyle(theme: CardTheme): Record<string, string> {
   const p = theme.palette;
   return { "--lc-bg1": p.bg1, "--lc-bg2": p.bg2, "--lc-ink": p.ink, "--lc-muted": p.muted, "--lc-accent": p.accent, "--lc-frame": p.frame };
-}
-
-function cardLabels(face: CardFace, lang: Lang): PngLabels {
-  const role = face.roleCode ? roleLabel(face.roleCode, lang) : roleLabel(face.roleLabel, lang);
-  const stats: [string, string][] = face.averages
-    ? [[fmtDec(face.averages.ppg, lang), "PPG"], [fmtDec(face.averages.rpg, lang), "RPG"], [fmtDec(face.averages.apg, lang), "APG"]]
-    : [];
-  if (face.titles > 0) stats.push([fmtInt(face.titles, lang), lt("titles", lang)]);
-  return {
-    role,
-    nation: face.nationality ? nationLabel(face.nationality, lang) : null,
-    ages: face.ages ? `${lt("age", lang)} ${face.ages}` : "",
-    seasons: face.seasons ? seasonsLabel(face.seasons, lang) : "",
-    stats,
-    honors: face.honors.map(([id, n]) => {
-      const name = legacyAwardLabel(id, lang);
-      return n > 1 ? `${n}× ${name}` : name;
-    }),
-    verdict: nx(face.verdict, lang),
-    footer: lt("footer", lang),
-    peak: `${lt("peak", lang)} ${face.peak}`,
-  };
 }
 
 /** The collectible. Presentation only: it reads the face, never the engine. */
@@ -300,7 +277,6 @@ export function LegacyExperience({ entry }: { entry: ArchiveCareer }) {
   const face = useMemo(() => cardFaceOf(report), [report]);
   const [themeId, setThemeId] = useState(() => loadCardTheme());
   const [previewId, setPreviewId] = useState<string | null>(null);
-  const [status, setStatus] = useState<ExportOutcome | "busy" | null>(null);
   const theme = themeById(previewId ?? themeId);
   const uid = `lr-${(entry.careerId || entry.id).replace(/[^a-zA-Z0-9-]/g, "").slice(0, 24)}`;
 
@@ -313,23 +289,11 @@ export function LegacyExperience({ entry }: { entry: ArchiveCareer }) {
     }
   }
 
-  async function onExport() {
-    setStatus("busy");
-    // The PNG always uses a theme the player can keep: a prototype preview is not exported.
-    setStatus(await exportCardPng(face, themeById(themeId), cardLabels(face, lang), pngFileName(face.name)));
-  }
-
   return (
     <div className="legacy-experience">
       <LegacyCardView face={face} theme={theme} careerId={entry.careerId} />
-      <div className="lc-actions">
-        <button type="button" className="primary-btn" onClick={onExport} disabled={status === "busy"} data-export-png>
-          {lt("exportPng", lang)}
-        </button>
-        <p className="lc-status" role="status" aria-live="polite">
-          {status === "busy" ? lt("exporting", lang) : status === "done" ? lt("exportDone", lang) : status === "failed" ? lt("exportFail", lang) : status === "unsupported" ? lt("exportUnsupported", lang) : ""}
-        </p>
-      </div>
+      {/* Share sits next to the card, never on the PNG. The exported image still uses the kept theme, not a preview. */}
+      <CareerShareBar face={face} theme={themeById(themeId)} />
       <ThemePicker themeId={themeId} previewId={previewId} onPick={pick} />
       <LegacyReportView report={report} uid={uid} />
       {report.simulated ? <p className="lr-muted">{lt("simulated", lang)}</p> : null}

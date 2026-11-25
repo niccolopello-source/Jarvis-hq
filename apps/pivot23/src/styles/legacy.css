@@ -50,7 +50,12 @@
 .lc-foot { margin: 10px 0 0; font-size: 11px; color: var(--lc-muted); }
 
 .lc-actions { max-width: 420px; margin: 14px auto 0; }
-.lc-status { min-height: 1.2em; margin: 6px 0 0; font-size: 13px; color: var(--color-muted); }
+.lc-share { max-width: 420px; margin: 14px auto 0; min-width: 0; }
+.lc-share-title { margin: 0 0 8px; font-weight: 700; font-size: 14px; }
+.lc-share-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.lc-share-native { grid-column: 1 / -1; }
+.lc-share-btn { width: 100%; min-height: 44px; }
+.lc-status { min-height: 1.2em; margin: 6px 0 0; font-size: 13px; color: var(--color-muted); overflow-wrap: anywhere; }
 .lc-themes { max-width: 420px; margin: 10px auto 40px; scroll-margin-bottom: 8px; padding: 0; border: 0; min-width: 0; }
 .lc-themes legend { font-weight: 700; font-size: 14px; margin-bottom: 8px; }
 .lc-theme-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }

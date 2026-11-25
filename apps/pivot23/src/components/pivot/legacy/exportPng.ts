@@ -141,26 +141,41 @@ export function drawCard(ctx: CanvasRenderingContext2D, face: CardFace, theme: C
 
 export type ExportOutcome = "done" | "unsupported" | "failed";
 
-export async function exportCardPng(face: CardFace, theme: CardTheme, labels: PngLabels, fileName: string): Promise<ExportOutcome> {
-  if (typeof document === "undefined") return "unsupported";
+/** Renders the Career Card to a PNG blob in memory. No download, no network. */
+export async function renderCardPngBlob(face: CardFace, theme: CardTheme, labels: PngLabels): Promise<{ ok: true; blob: Blob } | { ok: false; outcome: Exclude<ExportOutcome, "done"> }> {
+  if (typeof document === "undefined") return { ok: false, outcome: "unsupported" };
   const canvas = document.createElement("canvas");
   canvas.width = PNG_W;
   canvas.height = PNG_H;
   const ctx = canvas.getContext("2d");
-  if (!ctx || typeof canvas.toBlob !== "function") return "unsupported";
+  if (!ctx || typeof canvas.toBlob !== "function") return { ok: false, outcome: "unsupported" };
   try {
     await document.fonts?.ready;
     drawCard(ctx, face, theme, labels);
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
-    if (!blob) return "failed";
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    if (!blob) return { ok: false, outcome: "failed" };
+    return { ok: true, blob };
+  } catch {
+    return { ok: false, outcome: "failed" };
+  }
+}
+
+export function triggerBlobDownload(blob: Blob, fileName: string): void {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+export async function exportCardPng(face: CardFace, theme: CardTheme, labels: PngLabels, fileName: string): Promise<ExportOutcome> {
+  const rendered = await renderCardPngBlob(face, theme, labels);
+  if (!rendered.ok) return rendered.outcome;
+  try {
+    triggerBlobDownload(rendered.blob, fileName);
     return "done";
   } catch {
     return "failed";
