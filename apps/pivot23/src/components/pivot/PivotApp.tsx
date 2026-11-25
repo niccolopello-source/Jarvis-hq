@@ -7,6 +7,7 @@ import { CourtMark, FlagMark, TeamCrest, TeamMark } from "@/components/pivot/Tea
 import { CAREER_NAME_MAX, careerName, chipsFromFx, chipsFromSnapshot, consequenceSchedule, endSentence, formatCareerTotal, getSeasonDisplayLabel, tidyText, isGenuineFinalsRound, isHighStakesPresentation, NBA_FINALS_LABEL, seasonCountLabel } from "@/components/pivot/presentation";
 import { MiniGuide } from "@/components/pivot/Guide";
 import { InstagramLink } from "@/components/pivot/InstagramLink";
+import { FeedbackView } from "@/components/pivot/FeedbackView";
 import { SideRail, adBreakAtSeasonEnd } from "@/ads";
 import { DIFFICULTIES, diffOf } from "@/lib/pivot/difficulty";
 import { pathFeel, playoffNerves, draftWho, summerFeel, noAwardLine, doorLine, faDeskLine } from "@/lib/pivot/feel";
@@ -84,6 +85,7 @@ import {
 import { initLang, registerLangLoader, setLang, t, tf, useLang, awardDisplay, DEMO_LANGS, LANG_NAMES, LANG_TAG, difficultyFace } from "@/lib/pivot/i18n";
 import { choiceShowsVoidedExtraYear } from "@/lib/pivot/career-coherence";
 import { newLifeAsk, type NewLifeAsk } from "@/lib/pivot/new-life";
+import { browserFeedbackStore, isFeedbackUnlocked, persistUnlock, readUnlockFlag } from "@/lib/pivot/feedback";
 import { ModalDialog } from "@/components/pivot/Dialog";
 import { LazyChunk } from "@/components/pivot/ChunkBoundary";
 import { attrLabel, chipLabel, seedLabel, hiddenLabel, nationLabel, playoffResultLabel, roleLabel, roundLabel, seasonsPlayedLabel, seedConfLabel, countWord } from "@/lib/pivot/labels";
@@ -368,6 +370,7 @@ export function PivotApp() {
   const saveGen = useRef(0);
   const lang = useLang();
   const [newLife, setNewLife] = useState<NewLifeDialog | null>(null);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const newLifeBusy = useRef(false);
   const [storageOff] = useState(() => typeof window !== "undefined" && !persistentStorageAvailable());
   const [loadNotice, setLoadNotice] = useState<LiveLoadReport | null>(() =>
@@ -387,6 +390,17 @@ export function PivotApp() {
 
   // Finished = this career already has an archive entry (persisted or only in memory).
   const playerDone = !!player?.careerId && archive.some((c) => c.careerId === player.careerId);
+
+  const feedbackUnlocked = isFeedbackUnlocked({
+    archiveCount: archive.length,
+    liveFinished: playerDone,
+    unlockFlag: readUnlockFlag(browserFeedbackStore() ?? { getItem: () => null, setItem: () => undefined }),
+  });
+  useEffect(() => {
+    if (!feedbackUnlocked) return;
+    const store = browserFeedbackStore();
+    if (store) persistUnlock(store);
+  }, [feedbackUnlocked]);
 
   useLayoutEffect(() => {
     document.documentElement.classList.remove("pivot-live", "pivot-ready");
@@ -1191,7 +1205,10 @@ export function PivotApp() {
         ) : null}
         {archiveNote && (screen === "result" || screen === "intro") ? <p className="app-notice">{archiveNote}</p> : null}
       </div>
-      {screen === "intro" && (
+      {screen === "intro" && feedbackOpen && (
+        <FeedbackView archive={archive} onBack={() => setFeedbackOpen(false)} />
+      )}
+      {screen === "intro" && !feedbackOpen && (
         <section className="intro-hero home-screen">
           <SoundToggle />
           {premiere ? (
@@ -1261,6 +1278,16 @@ export function PivotApp() {
               {t("archive", lang)} · {archive.length}
             </button>
           )}
+          {feedbackUnlocked ? (
+            <button
+              type="button"
+              className="ghost-btn mt-2.5"
+              data-feedback="open"
+              onClick={() => { setPremiere(false); setFeedbackOpen(true); }}
+            >
+              {t("feedback", lang)}
+            </button>
+          ) : null}
           <div className="totem-row totem-row-home">
             <InstagramLink lang={lang} />
             <p className="totem-credit totem-home">Powered by Totem</p>
