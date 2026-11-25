@@ -16,7 +16,8 @@ export function isValidClient(id: string): boolean {
   return /^ca-pub-\d{16}$/.test(id);
 }
 
-/** Side rail threshold: 1280px leaves >= 200px per rail beside the 880px game column (160x600 fits). */
+/** Side rail threshold: 1280px leaves >= 200px per rail beside the 880px game column (160x600 fits).
+ *  From 1440 px the game column grows in CSS; each rail stays at least 200 px. Ads stay OFF by default. */
 export const DESKTOP_MIN_WIDTH = 1280;
 
 /** Interstitial frequency cap: at most one every N season ends and never twice within MIN_GAP_MS. */

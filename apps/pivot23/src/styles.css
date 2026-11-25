@@ -2241,7 +2241,10 @@ img.court-mark-photo {
   }
 }
 
-/* Instagram icon: same row as the Totem credit, bottom-left; credit stays centred. */
+/* Instagram left, Totem credit centred, X/TikTok/YouTube "Presto" on the right.
+ * Below 1180 the Presto group wraps onto a second row so the first row (IG +
+ * credit) stays as it was and the home column does not overflow.
+ */
 .totem-row {
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr) 44px;
@@ -2253,12 +2256,56 @@ img.court-mark-photo {
   grid-row: 1;
   margin: 0;
 }
+.social-soon {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 8px;
+  pointer-events: none;
+}
+.social-soon-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  color: var(--color-muted);
+  line-height: 1.15;
+}
+.social-soon-name {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.social-soon-tag {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+@media (min-width: 1180px) {
+  .totem-row {
+    grid-template-columns: minmax(44px, 1fr) auto minmax(44px, 1fr);
+    column-gap: 8px;
+  }
+  .social-soon {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    justify-content: flex-end;
+    margin-top: 0;
+  }
+}
 .totem-row-home {
   margin-top: 16px;
 }
 .ig-link {
   grid-column: 1;
   grid-row: 1;
+  justify-self: start;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2284,6 +2331,161 @@ img.court-mark-photo {
   .totem-row-home {
     display: none;
   }
+}
+
+/*
+ * Wider desktop stage (2026-11-25 concept).
+ * 1180–1439 px keeps the 880 px game column, so 1280 px still leaves ~200 px
+ * per side rail (a 160x600 ad fits). Ads stay OFF: the rails are empty reserved
+ * space only. Do not use zoom or transform: scale (keeps images sharp).
+ * Mobile and tablet (< 1180 px) are unchanged.
+ * Bottom band: "Powered by Totem", the official Instagram link, and X / TikTok /
+ * YouTube shown as "Presto" placeholders (no URL, not links). No handles are invented.
+ * FLAG: social-placeholder — no official URL in the repo yet for X, TikTok or YouTube.
+ */
+/* P1/P3 (Lucille review of #167): from the desktop stage breakpoint.
+ * Home CTAs cap at 640px and stay centred so "Inizia" does not stretch to 1100px.
+ * Column padding-bottom drops from 64px to 28px: the Totem credit lives in .ad-foot.
+ * NOTE: .feedback-page / .feedback-review are not on this branch (they land with
+ * #168, grokbot/feedback-section). When the two merge, apply the same 640px cap
+ * to .feedback-page .primary-btn and .feedback-review.
+ * P1b (25 Nov, Pello): at 1920 the column cap is 1280, rails 320+320.
+ */
+@media (min-width: 1180px) {
+  .pivot-stage > .pivot-app:not(.career-mode) {
+    padding-bottom: 28px;
+  }
+  .intro-hero.home-screen > .primary-btn,
+  .intro-hero.home-screen > .ghost-btn {
+    max-width: 640px;
+    margin-inline: auto;
+  }
+  /* P2 polish (Lucille): title, lede and languages share the same centred 640px
+   * axis as the home CTAs, instead of sitting on the full column while the
+   * buttons are centred at 640. Sound and skip stay in the corners.
+   */
+  .intro-hero.home-screen > .eyebrow,
+  .intro-hero.home-screen > .display-title,
+  .intro-hero.home-screen > .lede,
+  .intro-hero.home-screen > .lang-row {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 640px;
+    margin-inline: auto;
+    text-align: left;
+  }
+}
+
+@media (min-width: 1440px) {
+  .pivot-stage {
+    grid-template-columns: minmax(200px, 1fr) minmax(0, min(1040px, calc(100vw - 400px))) minmax(200px, 1fr);
+    /* P2: keep the footer band at 72px at every desktop width (same as 1180). */
+  }
+  .pivot-stage > .pivot-app:not(.career-mode) {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+  /* P2: leave .display-title at the base clamp(52px, 14vw, 76px). */
+  .page-title {
+    font-size: clamp(36px, 3.2vw, 48px);
+  }
+  .lede {
+    font-size: 18px;
+  }
+  .log-card {
+    padding: 26px 24px;
+  }
+  .totem-credit {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .pivot-stage {
+    /* P1b: Pello chose a 1280 cap (25 Nov). Rails stay min 200px so a 160x600 slot fits. At 1920: column 1280, rails 320+320. */
+    grid-template-columns: minmax(200px, 1fr) minmax(0, min(1280px, calc(100vw - 400px))) minmax(200px, 1fr);
+  }
+  .page-title {
+    font-size: clamp(38px, 2.4vw, 52px);
+  }
+  .log-card {
+    padding: 28px 26px;
+  }
+}
+
+/* Short desktop heights (Lucille review of #167): keep Pareri above the 72px
+ * Totem foot at 1280x720 and 1366x768. Threshold is max-height 780px so
+ * 1280x800 typography stays unchanged. No #168 selectors here.
+ */
+@media (min-width: 1180px) and (max-height: 780px) {
+  .intro-hero.home-screen {
+    min-height: 0;
+    justify-content: flex-start;
+    padding-top: 0;
+  }
+  .pivot-stage > .pivot-app:not(.career-mode) {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  .intro-hero.home-screen .court-mark {
+    width: 112px;
+    height: 112px;
+    margin: 0 auto 8px;
+  }
+  .intro-hero.home-screen .display-title {
+    font-size: clamp(44px, 7vh, 64px);
+    margin-bottom: 4px;
+  }
+  .intro-hero.home-screen .lede { margin-bottom: 8px; }
+  .intro-hero.home-screen .lang-row { margin-bottom: 8px; }
+  .intro-hero.home-screen > .ghost-btn { margin-top: 6px; }
+}
+
+/* 5 home CTAs on a common laptop height (Lucille review of 4e4f346): compact
+ * typography up to max-height 860px so Pareri stays above the 72px foot at
+ * 1280x800 when Rivedi + Nuova vita + Come si gioca + Archivio + Pareri are
+ * all visible. 4-CTA homes at 800 stay on the 168px mark.
+ * Selector: a direct .primary-btn followed by four .ghost-btn siblings.
+ * :nth-of-type(5) would be wrong here because SoundToggle and .cine-skip are
+ * also <button> siblings. .home-five-cta is a markup fallback for browsers without :has().
+ */
+@media (min-width: 1180px) and (max-height: 860px) {
+  /* :has() for current Chromium/Safari; .home-five-cta is the no-:has() fallback
+   * (class set on the hero and .pivot-app from the home markup).
+   */
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn),
+  .intro-hero.home-screen.home-five-cta {
+    min-height: 0;
+    justify-content: flex-start;
+    padding-top: 0;
+  }
+  /* Nested :has(:has()) is invalid in current Chromium (Element.matches throws),
+   * so the previous selector never applied and padding stayed 32/28. One :has()
+   * on the app, same sibling count as the typography rule.
+   */
+  .pivot-stage > .pivot-app:not(.career-mode):has(.intro-hero.home-screen > .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn),
+  .pivot-stage > .pivot-app:not(.career-mode).home-five-cta {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .court-mark,
+  .intro-hero.home-screen.home-five-cta .court-mark {
+    width: 112px;
+    height: 112px;
+    margin: 0 auto 8px;
+  }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .display-title,
+  .intro-hero.home-screen.home-five-cta .display-title {
+    font-size: clamp(44px, 7vh, 64px);
+    margin-bottom: 4px;
+  }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .lede,
+  .intro-hero.home-screen.home-five-cta .lede { margin-bottom: 8px; }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .lang-row,
+  .intro-hero.home-screen.home-five-cta .lang-row { margin-bottom: 8px; }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) > .ghost-btn,
+  .intro-hero.home-screen.home-five-cta > .ghost-btn { margin-top: 6px; }
 }
 
 .hud-meta,
