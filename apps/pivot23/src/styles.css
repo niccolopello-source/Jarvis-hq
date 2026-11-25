@@ -2353,6 +2353,34 @@ img.court-mark-photo {
   }
 }
 
+/* Short desktop heights (Lucille review of #167): keep Pareri above the 72px
+ * Totem foot at 1280x720 and 1366x768. Threshold is max-height 780px so
+ * 1280x800 typography stays unchanged. No #168 selectors here.
+ */
+@media (min-width: 1180px) and (max-height: 780px) {
+  .intro-hero.home-screen {
+    min-height: 0;
+    justify-content: flex-start;
+    padding-top: 0;
+  }
+  .pivot-stage > .pivot-app:not(.career-mode) {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  .intro-hero.home-screen .court-mark {
+    width: 112px;
+    height: 112px;
+    margin: 0 auto 8px;
+  }
+  .intro-hero.home-screen .display-title {
+    font-size: clamp(44px, 7vh, 64px);
+    margin-bottom: 4px;
+  }
+  .intro-hero.home-screen .lede { margin-bottom: 8px; }
+  .intro-hero.home-screen .lang-row { margin-bottom: 8px; }
+  .intro-hero.home-screen > .ghost-btn { margin-top: 6px; }
+}
+
 .hud-meta,
 .hud-club,
 .hud-line,

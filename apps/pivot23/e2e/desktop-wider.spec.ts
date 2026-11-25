@@ -60,6 +60,31 @@ async function startWidth(page: import("@playwright/test").Page): Promise<number
   return box ? box.width : null;
 }
 
+
+async function settleHome(page: import("@playwright/test").Page) {
+  await page.locator("#boot").waitFor({ state: "detached", timeout: 15_000 }).catch(() => {});
+  const skip = page.getByRole("button", { name: "Salta", exact: true });
+  if (await skip.isVisible().catch(() => false)) await skip.click();
+}
+
+async function homeFold(page: import("@playwright/test").Page) {
+  return page.evaluate(() => {
+    const app = document.querySelector(".pivot-app");
+    const foot = document.querySelector(".ad-foot")?.getBoundingClientRect();
+    const mark = document.querySelector(".intro-hero.home-screen .court-mark")?.getBoundingClientRect();
+    const last = [...document.querySelectorAll(".intro-hero.home-screen > .primary-btn, .intro-hero.home-screen > .ghost-btn")]
+      .at(-1)
+      ?.getBoundingClientRect();
+    return {
+      overflow: app ? app.scrollHeight - app.clientHeight : -1,
+      markW: mark ? Math.round(mark.width) : 0,
+      lastBottom: last ? Math.round(last.bottom) : 0,
+      footTop: foot ? Math.round(foot.top) : 0,
+    };
+  });
+}
+
+
 test("390x844 mobile: no side or footer rails, column stays narrow, totem+instagram on the home row", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openHome(page);
@@ -91,6 +116,11 @@ test("1280x800: 880 px column preserved so each rail stays ~200 px, footer band 
   expect(m.liveAds).toBe(0);
   expect(await startWidth(page)).toBeLessThanOrEqual(640);
   await expect(page.locator(".ad-rail.ad-rail-off")).toHaveCount(2);
+  await settleHome(page);
+  const fold800 = await homeFold(page);
+  // Compact short-height rules start at max-height 780px; 800 must stay at the 168px mark.
+  expect(fold800.markW).toBeGreaterThanOrEqual(160);
+  expect(fold800.markW).toBeLessThanOrEqual(176);
 });
 
 test("1440x900: game column grows past 880 px, rails stay at least 200 px, ads OFF", async ({ page }) => {
@@ -130,4 +160,46 @@ test("1920x1080: game column grows further, rails stay at least 200 px, ads OFF"
   expect(m.overflow).toBe(false);
   expect(m.liveAds).toBe(0);
   expect(await startWidth(page)).toBeLessThanOrEqual(640);
+});
+
+// Short-height compact home (Lucille fold fix, max-height 780px). Feasible without
+// #168: the default home must not overflow the column, the last CTA must sit
+// above the 72px foot, and the court mark shrinks to 112px. 1280x800 is covered
+// in the existing test (mark stays ~168).
+test("1280x720: short-height home stays compact, no column overflow, last CTA above the foot", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await openHome(page);
+  await settleHome(page);
+  const m = await metrics(page);
+  expect(m.app?.width).toBeGreaterThanOrEqual(870);
+  expect(m.app?.width).toBeLessThanOrEqual(890);
+  expect(m.foot?.visible).toBe(true);
+  expect(m.foot?.height).toBeGreaterThanOrEqual(70);
+  expect(m.foot?.height).toBeLessThanOrEqual(74);
+  expect(m.liveAds).toBe(0);
+  expect(await startWidth(page)).toBeLessThanOrEqual(640);
+  const fold = await homeFold(page);
+  expect(fold.markW).toBeGreaterThanOrEqual(106);
+  expect(fold.markW).toBeLessThanOrEqual(118);
+  expect(fold.overflow).toBe(0);
+  expect(fold.lastBottom).toBeLessThanOrEqual(fold.footTop + 1);
+});
+
+test("1366x768: short-height home stays compact, no column overflow, last CTA above the foot", async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await openHome(page);
+  await settleHome(page);
+  const m = await metrics(page);
+  expect(m.app?.width).toBeGreaterThanOrEqual(870);
+  expect(m.app?.width).toBeLessThanOrEqual(890);
+  expect(m.foot?.visible).toBe(true);
+  expect(m.foot?.height).toBeGreaterThanOrEqual(70);
+  expect(m.foot?.height).toBeLessThanOrEqual(74);
+  expect(m.liveAds).toBe(0);
+  expect(await startWidth(page)).toBeLessThanOrEqual(640);
+  const fold = await homeFold(page);
+  expect(fold.markW).toBeGreaterThanOrEqual(106);
+  expect(fold.markW).toBeLessThanOrEqual(118);
+  expect(fold.overflow).toBe(0);
+  expect(fold.lastBottom).toBeLessThanOrEqual(fold.footTop + 1);
 });
