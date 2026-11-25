@@ -55,6 +55,11 @@ async function openHome(page: import("@playwright/test").Page) {
   await expect(page.getByRole("button", { name: "Inizia", exact: true })).toBeVisible({ timeout: 15_000 });
 }
 
+async function startWidth(page: import("@playwright/test").Page): Promise<number | null> {
+  const box = await page.getByRole("button", { name: "Inizia", exact: true }).boundingBox();
+  return box ? box.width : null;
+}
+
 test("390x844 mobile: no side or footer rails, column stays narrow, totem+instagram on the home row", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openHome(page);
@@ -78,10 +83,13 @@ test("1280x800: 880 px column preserved so each rail stays ~200 px, footer band 
   expect(visibleRails.length).toBe(2);
   for (const r of visibleRails) expect(r.width).toBeGreaterThanOrEqual(190);
   expect(m.foot?.visible).toBe(true);
+  expect(m.foot?.height).toBeGreaterThanOrEqual(70);
+  expect(m.foot?.height).toBeLessThanOrEqual(74);
   expect(m.credit).toBe("Powered by Totem");
   expect(m.ig).toBe(INSTAGRAM);
   expect(m.overflow).toBe(false);
   expect(m.liveAds).toBe(0);
+  expect(await startWidth(page)).toBeLessThanOrEqual(640);
   await expect(page.locator(".ad-rail.ad-rail-off")).toHaveCount(2);
 });
 
@@ -95,12 +103,16 @@ test("1440x900: game column grows past 880 px, rails stay at least 200 px, ads O
   expect(visibleRails.length).toBe(2);
   for (const r of visibleRails) expect(r.width).toBeGreaterThanOrEqual(200);
   expect(m.foot?.visible).toBe(true);
+  expect(m.foot?.height).toBeGreaterThanOrEqual(70);
+  expect(m.foot?.height).toBeLessThanOrEqual(74);
   expect(m.credit).toBe("Powered by Totem");
   expect(m.ig).toBe(INSTAGRAM);
   expect(m.overflow).toBe(false);
   expect(m.liveAds).toBe(0);
+  expect(await startWidth(page)).toBeLessThanOrEqual(640);
 });
 
+// Column cap at 1920 is 1200 today. If Pello picks P1b (1280), change these bounds to 1270–1290.
 test("1920x1080: game column grows further, rails stay at least 200 px, ads OFF", async ({ page }) => {
   await page.setViewportSize({ width: 1920, height: 1080 });
   await openHome(page);
@@ -111,8 +123,11 @@ test("1920x1080: game column grows further, rails stay at least 200 px, ads OFF"
   expect(visibleRails.length).toBe(2);
   for (const r of visibleRails) expect(r.width).toBeGreaterThanOrEqual(200);
   expect(m.foot?.visible).toBe(true);
+  expect(m.foot?.height).toBeGreaterThanOrEqual(70);
+  expect(m.foot?.height).toBeLessThanOrEqual(74);
   expect(m.credit).toBe("Powered by Totem");
   expect(m.ig).toBe(INSTAGRAM);
   expect(m.overflow).toBe(false);
   expect(m.liveAds).toBe(0);
+  expect(await startWidth(page)).toBeLessThanOrEqual(640);
 });
