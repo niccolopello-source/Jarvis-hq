@@ -1,10 +1,10 @@
 /** Share text and helpers for the Career Card. Display only: never rewrites stored career data. */
 import { INSTAGRAM_HANDLE } from "@/config/social";
-import { fmtDec, lt, seasonsLabel } from "./legacy-i18n";
+import { lt, seasonsLabel } from "./legacy-i18n";
 import type { CardFace } from "./legacy-report";
 import type { Lang } from "./i18n";
 
-/** Public site to include in every share. Not the preview host. */
+/** Public site to include in every share. Not the preview host. Full URL so the link is tappable. */
 export const CAREER_SHARE_URL = "https://www.pivot23.com";
 
 export const CAREER_SHARE_TITLE = "PIVOT 23";
@@ -14,82 +14,54 @@ export function instagramHandle(): string {
 }
 
 export function instagramMention(): string {
-  return `@${INSTAGRAM_HANDLE}`;
+  return "@" + INSTAGRAM_HANDLE;
 }
 
 export type CareerShareInput = {
   name: string;
-  role: string;
-  span: string | null;
-  ages: string | null;
   seasons: number;
-  peak: number | null;
   titles: number;
-  /** Already localized honor labels, including a "n× " prefix when needed. */
-  honors: string[];
-  averages: { ppg: number; rpg: number; apg: number } | null;
-  /** Already unique team abbreviations, in career order. */
-  teams: string[];
+  /** Already localized verdict, or empty if the career has none. */
+  verdict: string;
   lang: Lang;
 };
 
-export function shareInputFromFace(face: CardFace, role: string, honors: string[], lang: Lang): CareerShareInput {
-  return {
-    name: face.name,
-    role,
-    span: face.span,
-    ages: face.ages,
-    seasons: face.seasons,
-    peak: face.peak,
-    titles: face.titles,
-    honors,
-    averages: face.averages,
-    teams: face.teams.map((t) => t.abbr),
-    lang,
-  };
+export function shareInputFromFace(face: CardFace, verdict: string, lang: Lang): CareerShareInput {
+  return { name: face.name, seasons: face.seasons, titles: face.titles, verdict, lang };
 }
 
-function line(...parts: Array<string | null | undefined | false>): string | null {
-  const kept = parts.map((p) => (typeof p === "string" ? p.trim() : "")).filter(Boolean);
-  return kept.length ? kept.join(" · ") : null;
+function detailsOf(input: CareerShareInput): string {
+  const parts: string[] = [];
+  if (input.seasons > 0) parts.push(seasonsLabel(input.seasons, input.lang));
+  if (input.titles > 0) {
+    parts.push(input.titles === 1 ? lt("shareTitlesOne", input.lang) : lt("shareTitlesMany", input.lang, { n: input.titles }));
+  }
+  return parts.join(input.lang === "zh" ? "，" : ", ");
 }
 
-/** Short, spoiler-free career summary. Stats and honors only: no story, no opponents, no diary. */
+/**
+ * Short career summary in Lucille's format: one sentence of facts, the official handle,
+ * the site link, and at most three hashtags. No story, no opponents, no diary.
+ * Empty facts are omitted instead of inventing zeros.
+ */
 export function buildCareerShareText(input: CareerShareInput): string {
-  const lang = input.lang;
-  const identity = line(input.name, input.role);
-  const span = line(
-    input.span,
-    input.ages,
-    input.seasons > 0 ? seasonsLabel(input.seasons, lang) : null,
-  );
-  const headline = line(
-    input.peak != null && Number.isFinite(input.peak) ? `📈 ${lt("sharePeakLine", lang, { n: input.peak })}` : null,
-    input.titles > 0
-      ? `🏆 ${input.titles === 1 ? lt("shareTitlesOne", lang) : lt("shareTitlesMany", lang, { n: input.titles })}`
-      : null,
-  );
-  const honors = input.honors.map((h) => h.trim()).filter(Boolean).join(" · ") || null;
-  const averages = input.averages
-    ? [fmtDec(input.averages.ppg, lang) + " PPG", fmtDec(input.averages.rpg, lang) + " RPG", fmtDec(input.averages.apg, lang) + " APG"].join(" · ")
-    : null;
-  const teams = input.teams.map((t) => t.trim()).filter(Boolean).join(" · ") || null;
-  const lines = [
-    `🏀 ${CAREER_SHARE_TITLE}`,
-    identity,
-    span,
-    headline,
-    honors,
-    averages,
-    teams,
-    CAREER_SHARE_URL,
-    instagramMention(),
-  ].filter((x): x is string => Boolean(x && x.trim()));
-  return lines.join("\n");
+  const details = detailsOf(input);
+  const verdict = input.verdict.trim();
+  const vars = { name: input.name, details, verdict };
+  let lead: string;
+  if (details && verdict) lead = lt("shareLine", input.lang, vars);
+  else if (details) lead = lt("shareLineNoVerdict", input.lang, vars);
+  else if (verdict) lead = lt("shareLineNoDetails", input.lang, vars);
+  else lead = lt("shareLineBare", input.lang, vars);
+  const tags = lt("shareTags", input.lang).trim();
+  return [lead, instagramMention(), CAREER_SHARE_URL, tags].filter((x) => x.length > 0).join("\n");
 }
 
-export function whatsAppShareUrl(text: string): string {
-  const u = new URL("https://wa.me/");
+export type WhatsAppTarget = "app" | "web";
+
+export function whatsAppShareUrl(text: string, target: WhatsAppTarget = "app"): string {
+  const base = target === "web" ? "https://web.whatsapp.com/send" : "https://wa.me/";
+  const u = new URL(base);
   u.search = ["text", encodeURIComponent(text)].join("=");
   return u.toString();
 }

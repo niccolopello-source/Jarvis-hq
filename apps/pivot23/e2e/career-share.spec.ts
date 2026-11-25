@@ -73,13 +73,7 @@ async function simulateCareer(page: Page, lang: "it" | "en" = "it", name = "Shar
   return card;
 }
 
-function decodeWhatsApp(href: string | null): string {
-  expect(href).toBeTruthy();
-  expect(href!.startsWith("https://wa.me/?text=")).toBe(true);
-  return decodeURIComponent(href!.slice("https://wa.me/?text=".length));
-}
-
-test("share bar sits next to the card, not on it, with WhatsApp, copy, Instagram and PNG", async ({ page, context }) => {
+test("share bar sits under the card, not on it, with Condividi and Scarica PNG", async ({ page, context }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
@@ -87,58 +81,100 @@ test("share bar sits next to the card, not on it, with WhatsApp, copy, Instagram
   const card = await simulateCareer(page, "it", "Luca Condivisione");
   const bar = page.locator("[data-career-share]");
   await expect(bar).toBeVisible();
+  await expect(bar).toHaveAttribute("data-share-layout", "mobile");
   await expect(card.locator("[data-career-share]")).toHaveCount(0);
   await expect(card.getByRole("button")).toHaveCount(0);
-  await expect(bar.getByText("Condividi la tua carriera")).toBeVisible();
-  await expect(bar.locator("[data-share-whatsapp]")).toBeVisible();
-  await expect(bar.locator("[data-share-instagram]")).toBeVisible();
-  await expect(bar.locator("[data-share-copy]")).toBeVisible();
+  await expect(bar.getByText("Condividi la carriera")).toBeVisible();
+  await expect(bar.locator("[data-share-open]")).toBeVisible();
   await expect(bar.locator("[data-export-png]")).toBeVisible();
+  await expect(page.locator("[data-share-picker]")).toHaveCount(0);
 
-  const text = decodeWhatsApp(await bar.locator("[data-share-whatsapp]").getAttribute("href"));
-  expect(text).toContain("Luca Condivisione");
-  expect(text).toContain("https://www.pivot23.com");
-  expect(text).toContain("@pivot23poweredbytotem");
-  expect(text).toMatch(/^🏀 PIVOT 23/m);
-  expect(text).not.toMatch(/undefined|NaN|null|\{\w+\}/);
-  expect(text).not.toMatch(/diario|contro i |sui |Mavericks|verdict/i);
+  await bar.locator("[data-share-open]").click();
+  const picker = page.locator("[data-share-picker]");
+  await expect(picker).toBeVisible();
+  await expect(picker.locator("[data-share=story]")).toBeVisible();
+  await expect(picker.locator("[data-share=feed]")).toBeVisible();
+  await expect(picker.locator("[data-share=whatsapp]")).toBeVisible();
+  await expect(picker.locator("[data-share=copy]")).toBeVisible();
 
-  await bar.locator("[data-share-copy]").click();
-  await expect(page.locator("[data-share-status]")).toHaveText("Testo copiato.");
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(text);
+  const preview = (await picker.locator("[data-share-preview]").innerText()).trim();
+  expect(preview).toContain("Ho chiuso la carriera di Luca Condivisione su PIVOT 23:");
+  expect(preview).toContain("https://www.pivot23.com");
+  expect(preview).toContain("@pivot23poweredbytotem");
+  expect(preview).toContain("#PIVOT23");
+  expect(preview).not.toMatch(/undefined|NaN|null|\{\w+\}/);
+  expect(preview).not.toMatch(/diario|contro i |sui |Mavericks|gratis/i);
+
+  await picker.locator("[data-share=copy]").click();
+  await expect(page.locator("[data-share-status]")).toHaveText("Link copiato.");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(preview);
 
   await page.waitForTimeout(400);
   await shot(page, "share-mobile-390");
   expect(errors).toEqual([]);
 });
 
-test("English share labels and text are not leftover Italian", async ({ page }) => {
+test("desktop picker offers copy, 4:5, 9:16 and WhatsApp Web", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await simulateCareer(page, "en", "Share Card EN");
   const bar = page.locator("[data-career-share]");
-  await expect(bar.getByText("Share your career")).toBeVisible();
-  await expect(bar.locator("[data-share-copy]")).toHaveText("Copy text");
-  await expect(bar.locator("[data-export-png]")).toHaveText("Download PNG");
-  const text = decodeWhatsApp(await bar.locator("[data-share-whatsapp]").getAttribute("href"));
-  expect(text).toContain("Share Card EN");
-  expect(text).toContain("https://www.pivot23.com");
-  expect(text).not.toMatch(/\b(stagion[ei]|titoli|Picco|Condividi|tua carriera)\b/);
+  await expect(bar).toHaveAttribute("data-share-layout", "desktop");
+  await expect(bar.getByText("Share the career")).toBeVisible();
+  await bar.locator("[data-share-open]").click();
+  const picker = page.locator("[data-share-picker]");
+  await expect(picker.locator("[data-share=copy]")).toHaveText(/Copy link/);
+  await expect(picker.locator("[data-share=download-45]")).toBeVisible();
+  await expect(picker.locator("[data-share=download-916]")).toBeVisible();
+  await expect(picker.locator("[data-share=whatsapp-web]")).toHaveAttribute("href", /https:\/\/web\.whatsapp\.com\/send\?text=/);
+  await expect(picker.locator("[data-share=story]")).toHaveCount(0);
+  const preview = (await picker.locator("[data-share-preview]").innerText()).trim();
+  expect(preview).toContain("I finished Share Card EN's career on PIVOT 23:");
+  expect(preview).toContain("https://www.pivot23.com");
+  expect(preview).not.toMatch(/\b(stagion[ei]|titoli|carriera|Condividi|Pallacanestro)\b/);
   await shot(page, "share-desktop-1280");
 });
 
-test("Instagram prepares the image and shows the official handle hint", async ({ page }) => {
+test("Instagram Story prepares a 9:16 image and shows the official handle hint", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await retireFromSave(page);
+  await page.locator("[data-share-open]").click();
   const download = page.waitForEvent("download");
-  await page.locator("[data-share-instagram]").click();
+  await page.locator("[data-share=story]").click();
   const file = await download;
-  expect(file.suggestedFilename()).toMatch(/^pivot23-.+\.png$/);
+  expect(file.suggestedFilename()).toMatch(/^pivot23-.+-story\.png$/);
+  const path = SHOTS ? join(SHOTS, "export-story-916.png") : await file.path();
+  if (SHOTS) await file.saveAs(path!);
+  const bytes = readFileSync(path!);
+  expect(bytes.subarray(1, 4).toString()).toBe("PNG");
+  expect([bytes.readUInt32BE(16), bytes.readUInt32BE(20)]).toEqual([1080, 1920]);
   await expect(page.locator("[data-share-status]")).toContainText("@pivot23poweredbytotem");
-  await expect(page.locator("[data-share-status]")).toContainText("Instagram");
   await shot(page, "share-instagram-hint-390");
 });
 
-test("native Web Share receives the PNG, the summary and the site link when the API exists", async ({ page }) => {
+test("desktop Download 9:16 is 1080×1920 and Download 4:5 stays 1080×1350", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await simulateCareer(page, "it", "Formati E2E");
+  await page.locator("[data-share-open]").click();
+  const d45 = page.waitForEvent("download");
+  await page.locator("[data-share=download-45]").click();
+  const feed = await d45;
+  expect(feed.suggestedFilename()).toMatch(/^pivot23-formati-e2e\.png$/);
+  const p45 = SHOTS ? join(SHOTS, "export-feed-45.png") : await feed.path();
+  if (SHOTS) await feed.saveAs(p45!);
+  const b45 = readFileSync(p45!);
+  expect([b45.readUInt32BE(16), b45.readUInt32BE(20)]).toEqual([1080, 1350]);
+
+  const d916 = page.waitForEvent("download");
+  await page.locator("[data-share=download-916]").click();
+  const story = await d916;
+  expect(story.suggestedFilename()).toMatch(/^pivot23-formati-e2e-story\.png$/);
+  const p916 = SHOTS ? join(SHOTS, "export-story-916-desktop.png") : await story.path();
+  if (SHOTS) await story.saveAs(p916!);
+  const b916 = readFileSync(p916!);
+  expect([b916.readUInt32BE(16), b916.readUInt32BE(20)]).toEqual([1080, 1920]);
+});
+
+test("Altro opens the native sheet with the PNG, the summary and the site link", async ({ page }) => {
   await page.addInitScript(() => {
     const calls: ShareData[] = [];
     Object.defineProperty(window, "__pivotShareCalls", { value: calls, writable: false });
@@ -154,10 +190,11 @@ test("native Web Share receives the PNG, the summary and the site link when the 
   });
   await page.setViewportSize({ width: 390, height: 844 });
   await simulateCareer(page, "it", "Native Share E2E");
-  const native = page.locator("[data-share-native]");
-  await expect(native).toBeVisible();
+  await page.locator("[data-share-open]").click();
+  const more = page.locator("[data-share=more]");
+  await expect(more).toBeVisible();
   await shot(page, "share-native-390");
-  await native.click();
+  await more.click();
   await expect.poll(async () => page.evaluate(() => (window as unknown as { __pivotShareCalls: ShareData[] }).__pivotShareCalls.length)).toBe(1);
   const call = await page.evaluate(() => (window as unknown as { __pivotShareCalls: Array<{ title?: string; text?: string; url?: string; files?: Array<{ name: string; type: string; size: number }> }> }).__pivotShareCalls[0]);
   expect(call.title).toBe("PIVOT 23");
@@ -176,8 +213,9 @@ test("share bar adds no third-party requests of its own", async ({ page }) => {
     const u = new URL(r.url());
     if (!["127.0.0.1", "localhost"].includes(u.hostname) && !u.protocol.startsWith("blob") && !u.protocol.startsWith("data")) external.push(r.url());
   });
-  await page.setViewportSize({ width: 390, height: 844 });
+  await page.setViewportSize({ width: 1280, height: 900 });
   await retireFromSave(page);
-  await expect(page.locator("[data-share-whatsapp]")).toHaveAttribute("href", /https:\/\/wa\.me\/\?text=/);
+  await page.locator("[data-share-open]").click();
+  await expect(page.locator("[data-share=whatsapp-web]")).toHaveAttribute("href", /https:\/\/web\.whatsapp\.com\/send\?text=/);
   expect(external).toEqual([]);
 });

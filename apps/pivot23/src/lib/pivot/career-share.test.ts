@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { INSTAGRAM_HANDLE } from "@/config/social";
+import { storyCardOffset, PNG_H, PNG_STORY_H, PNG_STORY_W, PNG_W } from "@/components/pivot/legacy/exportPng";
 import {
   CAREER_SHARE_TITLE,
   CAREER_SHARE_URL,
@@ -14,97 +15,78 @@ import {
 } from "./career-share";
 
 const rich: CareerShareInput = {
-  name: "Luca Bianchi",
-  role: "Guardia",
-  span: "2019–2033",
-  ages: "19–33",
-  seasons: 14,
-  peak: 88,
-  titles: 2,
-  honors: ["4× All-Star", "MVP"],
-  averages: { ppg: 18.6, rpg: 4.2, apg: 6.1 },
-  teams: ["BOS", "NYK"],
+  name: "Nico Ferrante",
+  seasons: 17,
+  titles: 5,
+  verdict: "Il fenomeno.",
   lang: "it",
 };
 
-test("share text is a short spoiler-free summary built only from the provided career data", () => {
-  const text = buildCareerShareText(rich);
+test("share text follows Lucille's format and uses only the provided career data", () => {
+  const text = buildCareerShareText({ ...rich, verdict: "Il fenomeno." });
   assert.equal(text, [
-    "🏀 PIVOT 23",
-    "Luca Bianchi · Guardia",
-    "2019–2033 · 19–33 · 14 stagioni",
-    "📈 Picco 88 · 🏆 2 titoli",
-    "4× All-Star · MVP",
-    "18,6 PPG · 4,2 RPG · 6,1 APG",
-    "BOS · NYK",
+    "Ho chiuso la carriera di Nico Ferrante su PIVOT 23: 17 stagioni, 5 titoli. Il fenomeno.",
+    "@" + INSTAGRAM_HANDLE,
     CAREER_SHARE_URL,
-    `@${INSTAGRAM_HANDLE}`,
+    "#PIVOT23 #Basketball #Pallacanestro",
   ].join("\n"));
+  assert.equal(instagramMention(), "@pivot23poweredbytotem");
   assert.doesNotMatch(text, /undefined|NaN|null|\{\w+\}/);
-  // No story, diary, playoff opponents or narrative verdict.
-  assert.doesNotMatch(text, /storia|diario|playoff|contro|sui |over the|Mavericks|verdict|spoiler/i);
-  assert.equal(text.includes(CAREER_SHARE_URL), true);
-  assert.equal(instagramMention(), `@${INSTAGRAM_HANDLE}`);
-  assert.equal(INSTAGRAM_HANDLE, "pivot23poweredbytotem");
+  assert.doesNotMatch(text, /diario|contro i |sui |Mavericks|gratis|\bapp\b/i);
+  assert.equal((text.match(/#/g) || []).length, 3);
 });
 
 test("sparse careers omit empty facts instead of inventing zeros", () => {
-  const text = buildCareerShareText({
-    name: "Ritiro Test",
-    role: "Playmaker",
-    span: null,
-    ages: "34–34",
-    seasons: 0,
-    peak: null,
-    titles: 0,
-    honors: [],
-    averages: null,
-    teams: [],
-    lang: "it",
-  });
+  const text = buildCareerShareText({ name: "Ritiro Test", seasons: 0, titles: 0, verdict: "", lang: "it" });
   assert.equal(text, [
-    "🏀 PIVOT 23",
-    "Ritiro Test · Playmaker",
-    "34–34",
+    "Ho chiuso la carriera di Ritiro Test su PIVOT 23.",
+    "@" + INSTAGRAM_HANDLE,
     CAREER_SHARE_URL,
-    `@${INSTAGRAM_HANDLE}`,
+    "#PIVOT23 #Basketball #Pallacanestro",
   ].join("\n"));
-  assert.doesNotMatch(text, /0 titol|Picco|PPG|🏆|📈|stagion/);
+  assert.doesNotMatch(text, /0 titol|0 stagion/);
+});
+
+test("a verdict without seasons or titles still appears, and titles without a verdict are kept", () => {
+  const withVerdict = buildCareerShareText({ name: "Ritiro Test", seasons: 0, titles: 0, verdict: "Carriera in ombra", lang: "it" });
+  assert.equal(withVerdict.split("\n")[0], "Ho chiuso la carriera di Ritiro Test su PIVOT 23. Carriera in ombra");
+  const noVerdict = buildCareerShareText({ name: "Nico Ferrante", seasons: 17, titles: 5, verdict: "", lang: "it" });
+  assert.equal(noVerdict.split("\n")[0], "Ho chiuso la carriera di Nico Ferrante su PIVOT 23: 17 stagioni, 5 titoli.");
 });
 
 test("English, Spanish and Chinese share texts are not leftover Italian", () => {
-  const base = { ...rich, role: "Guard", honors: ["4× All-Star", "MVP"] };
+  const base = { name: "Nico Ferrante", seasons: 17, titles: 5, verdict: "The phenomenon." };
   const en = buildCareerShareText({ ...base, lang: "en" });
-  const es = buildCareerShareText({ ...base, role: "Escolta", lang: "es" });
-  const zh = buildCareerShareText({ ...base, role: "得分后卫", lang: "zh" });
-  assert.match(en, /14 seasons/);
-  assert.match(en, /Peak 88/);
-  assert.match(en, /2 titles/);
-  assert.match(en, /18\.6 PPG/);
-  assert.doesNotMatch(en, /stagion|titol|Picco|Guardia/);
-  assert.match(es, /14 temporadas/);
-  assert.match(es, /Pico 88/);
-  assert.match(es, /2 títulos/);
-  assert.match(es, /18,6 PPG/);
-  assert.doesNotMatch(es, /stagion|titoli|Picco/);
-  assert.match(zh, /14个赛季/);
-  assert.match(zh, /巅峰 88/);
-  assert.match(zh, /2个总冠军/);
-  assert.match(zh, /18\.6 PPG/);
-  assert.doesNotMatch(zh, /stagion|titol|Picco/);
+  const es = buildCareerShareText({ ...base, verdict: "El fenómeno.", lang: "es" });
+  const zh = buildCareerShareText({ ...base, verdict: "现象级球员。", lang: "zh" });
+  assert.equal(en.split("\n")[0], "I finished Nico Ferrante's career on PIVOT 23: 17 seasons, 5 titles. The phenomenon.");
+  assert.equal(en.split("\n")[3], "#PIVOT23 #Basketball");
+  assert.doesNotMatch(en, /stagion|titol|carriera|Pallacanestro/);
+  assert.equal(es.split("\n")[0], "Cerré la carrera de Nico Ferrante en PIVOT 23: 17 temporadas, 5 títulos. El fenómeno.");
+  assert.equal(es.split("\n")[3], "#PIVOT23 #Basketball #Baloncesto");
+  assert.doesNotMatch(es, /stagion|titoli|carriera/);
+  assert.match(zh, /17个赛季/);
+  assert.match(zh, /5个总冠军/);
+  assert.match(zh, /现象级球员/);
+  assert.equal(zh.split("\n")[3], "#PIVOT23 #篮球");
+  assert.doesNotMatch(zh, /stagion|titol|carriera|Pallacanestro/);
   for (const text of [en, es, zh]) {
     assert.ok(text.includes(CAREER_SHARE_URL));
-    assert.ok(text.includes(`@${INSTAGRAM_HANDLE}`));
-    assert.ok(text.startsWith(`🏀 ${CAREER_SHARE_TITLE}`));
+    assert.ok(text.includes("@" + INSTAGRAM_HANDLE));
+    assert.ok(((text.match(/#/g) || []).length) <= 3);
   }
 });
 
-test("WhatsApp url carries the share text and does not hit any other host", () => {
+test("WhatsApp app and web urls carry the share text", () => {
   const text = buildCareerShareText(rich);
-  const url = whatsAppShareUrl(text);
-  assert.equal(url.startsWith("https://wa.me/?text="), true);
-  assert.equal(decodeURIComponent(url.slice("https://wa.me/?text=".length)), text);
-  assert.doesNotMatch(url, /api\.|pixel|analytics|doubleclick/i);
+  const app = whatsAppShareUrl(text, "app");
+  const web = whatsAppShareUrl(text, "web");
+  assert.equal(app.startsWith("https://wa.me/?text="), true);
+  assert.equal(web.startsWith("https://web.whatsapp.com/send?text="), true);
+  assert.equal(decodeURIComponent(app.slice(app.indexOf("=") + 1)), text);
+  assert.equal(decodeURIComponent(web.slice(web.indexOf("=") + 1)), text);
+  assert.doesNotMatch(app, /api\.|pixel|analytics|doubleclick/i);
+  assert.doesNotMatch(web, /api\.|pixel|analytics|doubleclick/i);
 });
 
 test("native share feature detection: none, text, or files", () => {
@@ -112,18 +94,9 @@ test("native share feature detection: none, text, or files", () => {
   assert.equal(nativeShareLevel({}), "none");
   assert.equal(nativeShareLevel({ share: async () => undefined }), "text");
   assert.equal(nativeShareLevel({ share: async () => undefined, canShare: () => false }), "none");
-  const file = new File(["png"], "pivot23-luca-bianchi.png", { type: "image/png" });
+  const file = new File(["png"], "pivot23-nico-ferrante.png", { type: "image/png" });
   assert.equal(nativeShareLevel({ share: async () => undefined, canShare: (d) => !d.files }, file), "text");
   assert.equal(nativeShareLevel({ share: async () => undefined, canShare: () => true }, file), "files");
-  assert.equal(
-    nativeShareLevel({
-      share: async () => undefined,
-      canShare: () => {
-        throw new Error("no");
-      },
-    }),
-    "none",
-  );
 });
 
 test("tryNativeShare reports shared, aborted, unavailable and failed without throwing", async () => {
@@ -134,18 +107,6 @@ test("tryNativeShare reports shared, aborted, unavailable and failed without thr
   assert.equal(shared[0]?.title, CAREER_SHARE_TITLE);
   assert.equal(shared[0]?.text, text);
   assert.equal(shared[0]?.url, CAREER_SHARE_URL);
-  assert.equal(shared[0]?.files, undefined);
-  const file = new File(["png"], "pivot23-luca.png", { type: "image/png" });
-  const withFile: ShareData[] = [];
-  assert.equal(
-    await tryNativeShare({
-      text,
-      file,
-      nav: { share: async (d) => { withFile.push(d); }, canShare: () => true },
-    }),
-    "shared",
-  );
-  assert.equal(withFile[0]?.files?.[0], file);
   const abort = Object.assign(new Error("nope"), { name: "AbortError" });
   assert.equal(await tryNativeShare({ text, nav: { share: async () => { throw abort; } } }), "aborted");
   assert.equal(await tryNativeShare({ text, nav: { share: async () => { throw new Error("boom"); } } }), "failed");
@@ -156,4 +117,12 @@ test("copyText uses the clipboard api when provided", async () => {
   assert.equal(await copyText("hello", { writeText: async (v) => { seen.push(v); } }), true);
   assert.deepEqual(seen, ["hello"]);
   assert.equal(await copyText("x", { writeText: async () => { throw new Error("denied"); } }), false);
+});
+
+test("the 9:16 story canvas is 1080×1920 and centers the 4:5 card", () => {
+  assert.equal(PNG_W, 1080);
+  assert.equal(PNG_H, 1350);
+  assert.equal(PNG_STORY_W, 1080);
+  assert.equal(PNG_STORY_H, 1920);
+  assert.equal(storyCardOffset(), 285);
 });

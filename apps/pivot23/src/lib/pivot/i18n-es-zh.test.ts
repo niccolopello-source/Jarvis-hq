@@ -58,7 +58,7 @@ test("chrome placeholders: es and zh use exactly the Italian slots", () => {
 
 test("legacy card key parity across the four languages", () => {
   const k = legacyKeys();
-  assert.equal(k.it.length, 91);
+  assert.equal(k.it.length, 111);
   for (const l of ["en", "es", "zh"] as const) assert.deepEqual([...k[l]].sort(), [...k.it].sort(), l);
   for (const l of EXTRA) for (const key of k.it) assert.ok(lt(key as never, l).trim(), `${l}.${key}`);
 });
