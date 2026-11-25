@@ -5,6 +5,8 @@ export const FLAGS = {
   account: false,
   tokens: false,
   nft: false,
+  /** Collect reviews on a server. Off: reviews stay on this device; no network call. */
+  feedbackSubmit: false,
 } as const;
 
 /** Costi futuri. Non entrano nel motore cestistico. */

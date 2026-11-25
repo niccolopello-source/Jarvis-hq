@@ -2660,3 +2660,59 @@ img.court-mark-photo {
   overflow-wrap: anywhere;
   hyphens: auto;
 }
+
+/* Feedback page: Lucille will restyle. Keep the existing tokens and sizes. */
+.feedback-page { padding-bottom: 24px; }
+.feedback-form { margin-top: 8px; }
+.feedback-stars {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+  margin: 4px 0 8px;
+}
+.feedback-star {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  border: 1px solid var(--color-line);
+  border-radius: 980px;
+  background: var(--color-panel);
+  color: var(--color-muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+.feedback-star.on {
+  color: var(--color-wood);
+  border-color: var(--color-wood-dark);
+}
+.feedback-star:disabled {
+  cursor: default;
+}
+.feedback-star:disabled:not(.on) {
+  opacity: 0.55;
+}
+.feedback-review {
+  resize: vertical;
+  min-height: 8rem;
+  line-height: 1.45;
+}
+.feedback-note {
+  font-size: 12.5px;
+  color: var(--color-muted);
+  margin: 6px 0 0;
+  line-height: 1.45;
+}
+.feedback-form .group-label[for="feedback-review"] {
+  display: block;
+  margin-top: 16px;
+}
+.feedback-honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
