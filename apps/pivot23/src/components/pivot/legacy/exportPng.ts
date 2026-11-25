@@ -15,6 +15,8 @@ export interface PngLabels {
   verdict: string;
   footer: string;
   peak: string;
+  grade?: string;
+  themeName?: string;
 }
 
 export const PNG_W = 1080;
@@ -75,6 +77,36 @@ function drawLogo(ctx: CanvasRenderingContext2D, x: number, y: number, size: num
   ctx.restore();
 }
 
+function drawFoil(ctx: CanvasRenderingContext2D, theme: CardTheme, W: number, H: number) {
+  if (theme.foil === "none") return;
+  ctx.save();
+  if (theme.foil === "holo") {
+    const g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0.2, "rgba(225,6,0,0)");
+    g.addColorStop(0.35, "rgba(255,80,40,0.18)");
+    g.addColorStop(0.45, "rgba(255,210,120,0.22)");
+    g.addColorStop(0.55, "rgba(120,220,255,0.16)");
+    g.addColorStop(0.65, "rgba(200,140,255,0.14)");
+    g.addColorStop(0.8, "rgba(225,6,0,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+  } else {
+    const g = typeof ctx.createConicGradient === "function"
+      ? ctx.createConicGradient(2.2, W * 0.5, H * 0.4)
+      : ctx.createLinearGradient(0, 0, W, H);
+    if ("addColorStop" in g) {
+      g.addColorStop(0, "rgba(225,6,0,0.2)");
+      g.addColorStop(0.25, "rgba(240,162,74,0.16)");
+      g.addColorStop(0.5, "rgba(126,224,255,0.16)");
+      g.addColorStop(0.75, "rgba(201,160,255,0.16)");
+      g.addColorStop(1, "rgba(225,6,0,0.2)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+  }
+  ctx.restore();
+}
+
 export function drawCard(ctx: CanvasRenderingContext2D, face: CardFace, theme: CardTheme, l: PngLabels) {
   const p = theme.palette;
   const W = PNG_W, H = PNG_H, pad = 84, inner = W - pad * 2;
@@ -83,6 +115,7 @@ export function drawCard(ctx: CanvasRenderingContext2D, face: CardFace, theme: C
   g.addColorStop(1, p.bg2);
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
+  drawFoil(ctx, theme, W, H);
   ctx.strokeStyle = p.frame;
   ctx.lineWidth = 6;
   ctx.strokeRect(30, 30, W - 60, H - 60);
@@ -90,58 +123,88 @@ export function drawCard(ctx: CanvasRenderingContext2D, face: CardFace, theme: C
   ctx.lineWidth = 2;
   ctx.strokeRect(46, 46, W - 92, H - 92);
 
-  drawLogo(ctx, pad, pad, 120, p.ink);
+  drawLogo(ctx, pad, pad, 100, p.ink);
   ctx.textAlign = "right";
   ctx.textBaseline = "alphabetic";
-  if (face.number !== null) {
-    ctx.fillStyle = p.accent;
-    ctx.font = `800 170px ${FONT}`;
-    ctx.fillText(String(face.number), W - pad, pad + 150);
+  if (l.themeName) {
+    ctx.fillStyle = p.ink;
+    ctx.font = `700 32px ${FONT}`;
+    ctx.fillText(clampText(ctx, l.themeName, inner / 2), W - pad, pad + 64);
   }
-  ctx.textAlign = "left";
-  ctx.fillStyle = p.muted;
-  ctx.font = `600 34px ${FONT}`;
-  ctx.fillText(clampText(ctx, [l.role, l.nation].filter(Boolean).join(" · "), inner), pad, 340);
 
+  const artTop = 210, artH = 300;
+  ctx.fillStyle = "rgba(0,0,0,0.28)";
+  ctx.fillRect(pad, artTop, inner, artH);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
   ctx.fillStyle = p.ink;
-  fitText(ctx, face.name, 800, 110, 52, inner);
-  ctx.fillText(clampText(ctx, face.name, inner), pad, 460);
+  if (face.number !== null) {
+    ctx.font = `800 260px ${FONT}`;
+    ctx.fillText(String(face.number), W / 2, artTop + artH / 2);
+  } else {
+    drawLogo(ctx, W / 2 - 70, artTop + artH / 2 - 70, 140, p.ink);
+  }
+
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillStyle = p.muted;
+  ctx.font = `600 30px ${FONT}`;
+  ctx.fillText(clampText(ctx, [l.role, l.nation].filter(Boolean).join(" · "), inner), pad, 560);
+
+  const nameWidth = face.number !== null ? inner - 160 : inner;
+  ctx.fillStyle = p.ink;
+  fitText(ctx, face.name, 800, 92, 48, nameWidth);
+  ctx.fillText(clampText(ctx, face.name, nameWidth), pad, 655);
+  if (face.number !== null) {
+    ctx.textAlign = "right";
+    ctx.fillStyle = p.accent;
+    ctx.font = `800 96px ${FONT}`;
+    ctx.fillText(String(face.number), W - pad, 655);
+    ctx.textAlign = "left";
+  }
 
   ctx.fillStyle = p.muted;
-  ctx.font = `500 34px ${FONT}`;
-  ctx.fillText(clampText(ctx, [face.span, l.ages, l.seasons, l.peak].filter(Boolean).join(" · "), inner), pad, 520);
+  ctx.font = `500 28px ${FONT}`;
+  ctx.fillText(clampText(ctx, [face.span, l.ages, l.seasons, l.peak].filter(Boolean).join(" · "), inner), pad, 710);
 
   ctx.fillStyle = p.accent;
-  ctx.fillRect(pad, 570, 120, 4);
+  ctx.fillRect(pad, 740, 120, 4);
 
   const colW = inner / Math.max(1, l.stats.length);
   l.stats.forEach(([value, label], i) => {
     const x = pad + colW * i;
     ctx.fillStyle = p.ink;
-    fitText(ctx, value, 800, 110, 48, colW - 20);
-    ctx.fillText(value, x, 720);
+    fitText(ctx, value, 800, 84, 40, colW - 20);
+    ctx.fillText(value, x, 840);
     ctx.fillStyle = p.muted;
-    ctx.font = `600 30px ${FONT}`;
-    ctx.fillText(clampText(ctx, label.toUpperCase(), colW - 20), x, 770);
+    ctx.font = `600 26px ${FONT}`;
+    ctx.fillText(clampText(ctx, label.toUpperCase(), colW - 20), x, 884);
   });
 
-  let y = 870;
-  ctx.font = `700 40px ${FONT}`;
+  let y = 950;
+  ctx.font = `700 32px ${FONT}`;
   for (const h of l.honors.slice(0, 3)) {
     ctx.fillStyle = p.accent;
-    ctx.fillRect(pad, y - 28, 10, 30);
+    ctx.fillRect(pad, y - 24, 10, 26);
     ctx.fillStyle = p.ink;
-    ctx.font = `700 40px ${FONT}`;
-    ctx.fillText(clampText(ctx, h, inner - 30), pad + 30, y);
-    y += 62;
+    ctx.font = `700 32px ${FONT}`;
+    ctx.fillText(clampText(ctx, h, inner - 30), pad + 28, y);
+    y += 50;
   }
 
   ctx.fillStyle = p.muted;
-  ctx.font = `600 32px ${FONT}`;
-  ctx.fillText(clampText(ctx, face.teams.map((t) => t.abbr).join(" · "), inner), pad, 1110);
+  ctx.font = `600 28px ${FONT}`;
+  ctx.fillText(clampText(ctx, face.teams.map((t) => t.abbr).join(" · "), inner * 0.62), pad, 1140);
   ctx.fillStyle = p.ink;
-  fitText(ctx, l.verdict, 700, 46, 30, inner);
-  ctx.fillText(clampText(ctx, l.verdict, inner), pad, 1180);
+  fitText(ctx, l.verdict, 700, 40, 26, inner * 0.62);
+  ctx.fillText(clampText(ctx, l.verdict, inner * 0.62), pad, 1200);
+  if (l.grade) {
+    ctx.textAlign = "right";
+    ctx.fillStyle = p.accent;
+    ctx.font = `700 26px ${FONT}`;
+    ctx.fillText(clampText(ctx, l.grade.toUpperCase(), inner * 0.34), W - pad, 1200);
+    ctx.textAlign = "left";
+  }
   ctx.fillStyle = p.muted;
   ctx.font = `500 24px ${FONT}`;
   ctx.fillText(clampText(ctx, l.footer, inner), pad, H - pad + 10);

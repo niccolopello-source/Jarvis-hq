@@ -153,25 +153,27 @@ test("no theme alters the simulation: same seed, same state hash, same fingerpri
 });
 
 test("cosmetic modules never import the engine, RNG or sporting state writers", () => {
-  for (const file of ["cosmetics.ts", "legacy-report.ts", "legacy-i18n.ts"]) {
+  for (const file of ["cosmetics.ts", "card-frames.ts", "legacy-report.ts", "legacy-i18n.ts"]) {
     const src = readFileSync(new URL(`./${file}`, import.meta.url), "utf8");
     assert.doesNotMatch(src, /from "\.\/(engine|rng|world|tuning|config|summer|league)"/, file);
   }
-  const ui = readFileSync(new URL("../../components/pivot/legacy/LegacyExperience.tsx", import.meta.url), "utf8");
-  assert.doesNotMatch(ui, /lib\/pivot\/(engine|rng|world|tuning|config)"/);
+  for (const file of ["LegacyExperience.tsx", "CeremonyView.tsx", "exportPng.ts", "CareerShareBar.tsx"]) {
+    const ui = readFileSync(new URL(`../../components/pivot/legacy/${file}`, import.meta.url), "utf8");
+    assert.doesNotMatch(ui, /lib\/pivot\/(engine|rng|world|tuning|config)"/, file);
+  }
 });
 
-test("catalog: standard is free, prototypes are hidden and cannot be bought or kept", () => {
+test("catalog: five frames are free cosmetics, prototypes stay hidden and nothing can be bought", () => {
   assert.equal(COSMETIC_FLAGS.previewCatalog, false);
   assert.equal(COSMETIC_FLAGS.storefront, false);
+  assert.deepEqual(visibleThemes().map((t) => t.id), ["standard", "bronze-frame", "obsidian", "holo-red", "prisma"]);
   assert.deepEqual(visibleThemes().map((t) => t.availability), visibleThemes().map(() => "free"));
-  assert.ok(visibleThemes().some((t) => t.id === "standard"));
-  assert.ok(visibleThemes({ previewCatalog: true, storefront: false }).some((t) => t.availability === "prototype"));
+  assert.ok(visibleThemes({ previewCatalog: true, storefront: false }).some((t) => t.id === "parquet" && t.availability === "prototype"));
   for (const t of CARD_THEMES) {
     const r = checkout(t.id);
     assert.equal(r.ok, false);
     assert.equal(isUsableTheme(t.id), t.availability === "free");
-    // No price or provider fields anywhere in the catalog.
+    // No price, provider or "rarity" commercial fields anywhere in the catalog.
     assert.doesNotMatch(JSON.stringify(t), /price|eur|usd|stripe|paypal|sku|rarity|unique|authentic/i);
   }
   const mem = new Map<string, string>();
@@ -181,8 +183,10 @@ test("catalog: standard is free, prototypes are hidden and cannot be bought or k
   assert.equal(saveCardTheme("obsidian", store), true);
   assert.equal(mem.get(CARD_THEME_KEY), "obsidian");
   assert.equal(loadCardTheme(store), "obsidian");
+  assert.equal(saveCardTheme("prisma", store), true);
+  assert.equal(loadCardTheme(store), "prisma");
   mem.set(CARD_THEME_KEY, "bronze-frame");
-  assert.equal(loadCardTheme(store), "standard");
+  assert.equal(loadCardTheme(store), "bronze-frame");
   assert.equal(loadCardTheme({ getItem: () => { throw new Error("blocked"); } }), "standard");
 });
 

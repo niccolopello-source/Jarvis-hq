@@ -17,7 +17,15 @@ import type { CardTheme } from "@/lib/pivot/cosmetics";
 import type { CardFace } from "@/lib/pivot/legacy-report";
 import { pngFileName, renderCardPngBlob, triggerBlobDownload, type ExportOutcome, type PngLabels, type PngVariant } from "./exportPng";
 
-export function cardLabels(face: CardFace, lang: Lang): PngLabels {
+const GRADE_KEY = {
+  common: "gradeCommon",
+  rare: "gradeRare",
+  epic: "gradeEpic",
+  legendary: "gradeLegendary",
+  mythic: "gradeMythic",
+} as const;
+
+export function cardLabels(face: CardFace, lang: Lang, theme?: CardTheme): PngLabels {
   const role = face.roleCode ? roleLabel(face.roleCode, lang) : roleLabel(face.roleLabel, lang);
   const stats: [string, string][] = face.averages
     ? [[fmtDec(face.averages.ppg, lang), "PPG"], [fmtDec(face.averages.rpg, lang), "RPG"], [fmtDec(face.averages.apg, lang), "APG"]]
@@ -36,6 +44,8 @@ export function cardLabels(face: CardFace, lang: Lang): PngLabels {
     verdict: nx(face.verdict, lang),
     footer: lt("footer", lang),
     peak: `${lt("peak", lang)} ${face.peak}`,
+    grade: theme ? lt(GRADE_KEY[theme.grade], lang) : "",
+    themeName: theme ? (theme.name[lang] ?? theme.name.en) : "",
   };
 }
 
@@ -93,7 +103,7 @@ function ChannelButton({
 /** Share controls next to the Career Card, never drawn on the PNG itself. */
 export function CareerShareBar({ face, theme }: { face: CardFace; theme: CardTheme }) {
   const lang = useLang();
-  const labels = cardLabels(face, lang);
+  const labels = cardLabels(face, lang, theme);
   const text = buildCareerShareText(shareInputFromFace(face, labels.verdict, lang));
   const feedName = pngFileName(face.name, "feed");
   const storyName = pngFileName(face.name, "story");

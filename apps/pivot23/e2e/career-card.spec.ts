@@ -58,6 +58,15 @@ async function simulateCareer(page: Page, lang: "it" | "en" = "it", name = "Lega
 
 const noOverflow = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
 
+/** Career facts only: frame name and grade may change when a lower unlocked frame is picked. */
+async function careerFacts(card: ReturnType<Page["locator"]>) {
+  const name = (await card.locator(".lc-name").textContent())?.trim() ?? "";
+  const stats = (await card.locator(".lc-stats").textContent().catch(() => ""))?.trim() ?? "";
+  const verdict = (await card.locator(".lc-verdict").textContent())?.trim() ?? "";
+  return `${name}\n${stats}\n${verdict}`;
+}
+
+
 test("end of a full career: report and card, archive, reload, reopen — identical data", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -73,48 +82,55 @@ test("end of a full career: report and card, archive, reload, reopen — identic
   // No placeholders, no invented claims.
   const text = `${await card.textContent()} ${await report.textContent()}`;
   expect(text).not.toMatch(/undefined|NaN|null|\{\w+\}/);
-  expect(text).not.toMatch(/autenticat|unic[ao]\b|ufficialmente|rarit|authenticated|officially verified|legendary|epic/i);
+  expect(text).not.toMatch(/autenticat|unic[ao]\b|ufficialmente|authenticated|officially verified/i);
   expect(await noOverflow(page)).toBe(true);
-  // Free themes carry no "Gratis" tag; the season table keeps its first column in view while scrolling.
-  await expect(page.locator(".lc-theme-tag")).toHaveCount(0);
+  // Frames carry no "Gratis" tag; the season table keeps its first column in view while scrolling.
+  const tags = await page.locator(".lc-theme-tag").allTextContents();
+  expect(tags.join(" ")).not.toMatch(/Gratis|Free/);
   const sticky = await page.locator(".lr-table tbody tr > :first-child").first().evaluate((el) => getComputedStyle(el).position);
   expect(sticky).toBe("sticky");
   await page.waitForTimeout(800);
   await shot(page, "card-mobile-390", card);
   await shot(page, "result-mobile-390-full");
 
-  const cardBefore = await card.innerText();
+  const factsBefore = await careerFacts(card);
   const reportBefore = await report.innerText();
   const careerId = await card.getAttribute("data-career-id");
   expect(careerId).toBeTruthy();
+  await expect(page.locator("[data-theme-option]")).toHaveCount(5);
+  const themeTags = await page.locator(".lc-theme-tag").allTextContents();
+  expect(themeTags.join(" ")).not.toMatch(/Prototipo|Prototype/);
 
-  // Pick a free theme: persisted separately, the career data stay identical.
-  await page.locator("[data-theme-option=obsidian]").click();
-  await expect(card).toHaveAttribute("data-theme", "obsidian");
-  expect(await card.innerText()).toBe(cardBefore);
+  // Pick the highest unlocked frame (may be Grafite on a short career). Career facts stay identical.
+  const pick = page.locator("[data-theme-option]:not([data-locked])").last();
+  const picked = await pick.getAttribute("data-theme-option");
+  expect(picked).toBeTruthy();
+  await pick.click();
+  await expect(card).toHaveAttribute("data-theme", picked!);
+  expect(await careerFacts(card)).toBe(factsBefore);
 
   await page.locator(".result-view").getByRole("button", { name: "Archivio", exact: true }).click();
   await page.locator(`.archive-card[data-career-id="${careerId}"]`).click();
   await expect(page.getByRole("region", { name: "Career Card" })).toBeVisible();
-  expect(await page.getByRole("region", { name: "Career Card" }).innerText()).toBe(cardBefore);
+  expect(await careerFacts(page.getByRole("region", { name: "Career Card" }))).toBe(factsBefore);
 
   await page.reload();
   await page.getByRole("button", { name: /Archivio/ }).click();
   await page.locator(`.archive-card[data-career-id="${careerId}"]`).click();
   const again = page.getByRole("region", { name: "Career Card" });
   await expect(again).toBeVisible();
-  await expect(again).toHaveAttribute("data-theme", "obsidian");
-  expect(await again.innerText()).toBe(cardBefore);
+  await expect(again).toHaveAttribute("data-theme", picked!);
+  expect(await careerFacts(again)).toBe(factsBefore);
   expect(await page.locator("[data-legacy-report]").innerText()).toBe(reportBefore);
   // A second refresh: still stable.
   await page.reload();
   await page.getByRole("button", { name: /Archivio/ }).click();
   await page.locator(`.archive-card[data-career-id="${careerId}"]`).click();
-  expect(await page.getByRole("region", { name: "Career Card" }).innerText()).toBe(cardBefore);
+  expect(await careerFacts(page.getByRole("region", { name: "Career Card" }))).toBe(factsBefore);
   // Theme lives outside the archive entry and outside the live save.
   const stored = await page.evaluate(() => ({ archive: localStorage.getItem("pivot-v2-archive") ?? "", theme: localStorage.getItem("pivot-v2-card-theme") }));
-  expect(stored.theme).toBe("obsidian");
-  expect(stored.archive).not.toContain("obsidian");
+  expect(stored.theme).toBe(picked);
+  expect(stored.archive).not.toContain(`"theme":"${picked}"`);
   expect(stored.archive).toContain("\"legacy\"");
   expect(errors).toEqual([]);
 });
@@ -153,7 +169,7 @@ for (const width of [320, 375, 390, 430, 768, 1280]) {
     expect(await noOverflow(page)).toBe(true);
     const clipped = await card.evaluate((el) => {
       const box = el.getBoundingClientRect();
-      return [...el.querySelectorAll<HTMLElement>(".lc-name, .lc-meta, .lc-stat, .lc-honors li, .lc-verdict, .lc-number")].filter((n) => {
+      return [...el.querySelectorAll<HTMLElement>(".lc-name, .lc-meta, .lc-stat, .lc-honors li, .lc-verdict, .lc-number, .lc-art-num, .lc-seal")].filter((n) => {
         const r = n.getBoundingClientRect();
         return r.right > box.right + 0.5 || r.left < box.left - 0.5 || n.scrollWidth > n.clientWidth + 1;
       }).map((n) => n.className);
@@ -184,19 +200,18 @@ for (const lang of ["it", "en"] as const) {
   });
 }
 
-test("keyboard: theme buttons and export are reachable and work with Enter", async ({ page }) => {
+test("keyboard: unlocked frame buttons work with Enter; a locked frame does not apply", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await retireFromSave(page);
-  const btn = page.locator("[data-theme-option=obsidian]");
+  const locked = page.locator("[data-theme-option=obsidian]");
+  await expect(locked).toHaveAttribute("data-locked", "1");
+  await locked.click({ force: true });
+  await expect(page.getByRole("region", { name: "Career Card" })).toHaveAttribute("data-theme", "standard");
+  const btn = page.locator("[data-theme-option=standard]");
   await btn.focus();
   await expect(btn).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(btn).toHaveAttribute("aria-pressed", "true");
-  await settle(page);
-  await page.keyboard.press("Shift+Tab");
-  await expect(page.locator("[data-theme-option=standard]")).toBeFocused();
-  await settle(page);
-  await page.keyboard.press("Space");
   await expect(page.getByRole("region", { name: "Career Card" })).toHaveAttribute("data-theme", "standard");
 });
 
@@ -208,11 +223,13 @@ test("reduced motion: the card does not animate", async ({ page }) => {
   expect(running).toBe(0);
 });
 
-test("prototype themes are not offered in the default build", async ({ page }) => {
+test("five career frames are listed and leftover prototypes are not offered", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await retireFromSave(page);
-  await expect(page.locator("[data-theme-option]")).toHaveCount(2);
-  await expect(page.getByText(/Prototipo/)).toHaveCount(0);
+  await expect(page.locator("[data-theme-option]")).toHaveCount(5);
+  await expect(page.locator("[data-theme-option]:not([data-locked])")).toHaveCount(1);
+  await expect(page.locator("[data-theme-option=standard]")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText(/Prototipo|Parquet/)).toHaveCount(0);
 });
 
 test("played career closed from the retirement screen: sparse data are omitted, not invented", async ({ page }) => {
