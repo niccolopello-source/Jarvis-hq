@@ -338,6 +338,7 @@ export function PivotApp() {
   const gestureToken = useRef("");
   const consumedDraftRound = useRef<number | null>(null);
   const finishedCareerKey = useRef<string | null>(null);
+  const homeHeroRef = useRef<HTMLElement>(null);
   const simTimer = useRef(0);
   const [archive, setArchive] = useState<ArchiveCareer[]>(() => {
     try {
@@ -399,6 +400,26 @@ export function PivotApp() {
   useLayoutEffect(() => {
     if (recoveryAtBoot) signalBootAttention("recovery");
   }, [recoveryAtBoot]);
+
+  // Fallback without :has(): mark the home hero (and the app) when 5 CTAs are present.
+  useLayoutEffect(() => {
+    const el = homeHeroRef.current;
+    if (!el) return;
+    const sync = () => {
+      const n = el.querySelectorAll(":scope > .primary-btn, :scope > .ghost-btn").length;
+      const five = n >= 5;
+      el.classList.toggle("home-five-cta", five);
+      el.closest(".pivot-app")?.classList.toggle("home-five-cta", five);
+    };
+    sync();
+    const mo = new MutationObserver(sync);
+    mo.observe(el, { childList: true });
+    return () => {
+      mo.disconnect();
+      el.classList.remove("home-five-cta");
+      el.closest(".pivot-app")?.classList.remove("home-five-cta");
+    };
+  }, [screen]);
 
   useEffect(() => {
     const lean =
@@ -1193,7 +1214,7 @@ export function PivotApp() {
         {archiveNote && (screen === "result" || screen === "intro") ? <p className="app-notice">{archiveNote}</p> : null}
       </div>
       {screen === "intro" && (
-        <section className="intro-hero home-screen">
+        <section ref={homeHeroRef} className="intro-hero home-screen">
           <SoundToggle />
           {premiere ? (
             <button type="button" className="cine-skip" onClick={() => setPremiere(false)}>

@@ -342,6 +342,11 @@ test("desktop footer and mobile home show Instagram plus X, TikTok and YouTube a
     await expect(items.nth(1)).toContainText("TikTok");
     await expect(items.nth(2)).toContainText("YouTube");
     await expect(items.nth(0)).toContainText(/presto|soon|pronto|即将推出/i);
+    for (let i = 0; i < 3; i++) {
+      const raw = await items.nth(i).evaluate((el) => (el as HTMLElement).textContent || "");
+      expect(raw).toMatch(/^[A-Za-z]+\s+\S/);
+      expect(raw.replace(/\s+/g, "")).not.toBe(raw);
+    }
     expect(await soon.locator("a").count()).toBe(0);
     expect(await soon.locator("button").count()).toBe(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);

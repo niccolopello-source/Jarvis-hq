@@ -9,6 +9,7 @@ export function SoonSocials({ lang }: { lang: Lang }) {
       {NETWORKS.map((name) => (
         <span key={name} className="social-soon-item">
           <span className="social-soon-name">{name}</span>
+          {" "}
           <span className="social-soon-tag">{t("socialSoon", lang)}</span>
         </span>
       ))}

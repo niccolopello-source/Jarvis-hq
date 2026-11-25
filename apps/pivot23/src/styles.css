@@ -2282,7 +2282,7 @@ img.court-mark-photo {
   letter-spacing: 0.02em;
 }
 .social-soon-tag {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -2448,10 +2448,14 @@ img.court-mark-photo {
  * all visible. 4-CTA homes at 800 stay on the 168px mark.
  * Selector: a direct .primary-btn followed by four .ghost-btn siblings.
  * :nth-of-type(5) would be wrong here because SoundToggle and .cine-skip are
- * also <button> siblings. No #168 class required; :has() is Chrome/Safari 15.4+.
+ * also <button> siblings. .home-five-cta is a markup fallback for browsers without :has().
  */
 @media (min-width: 1180px) and (max-height: 860px) {
-  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) {
+  /* :has() for current Chromium/Safari; .home-five-cta is the no-:has() fallback
+   * (class set on the hero and .pivot-app from the home markup).
+   */
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn),
+  .intro-hero.home-screen.home-five-cta {
     min-height: 0;
     justify-content: flex-start;
     padding-top: 0;
@@ -2460,22 +2464,28 @@ img.court-mark-photo {
    * so the previous selector never applied and padding stayed 32/28. One :has()
    * on the app, same sibling count as the typography rule.
    */
-  .pivot-stage > .pivot-app:not(.career-mode):has(.intro-hero.home-screen > .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) {
+  .pivot-stage > .pivot-app:not(.career-mode):has(.intro-hero.home-screen > .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn),
+  .pivot-stage > .pivot-app:not(.career-mode).home-five-cta {
     padding-top: 16px;
     padding-bottom: 16px;
   }
-  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .court-mark {
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .court-mark,
+  .intro-hero.home-screen.home-five-cta .court-mark {
     width: 112px;
     height: 112px;
     margin: 0 auto 8px;
   }
-  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .display-title {
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .display-title,
+  .intro-hero.home-screen.home-five-cta .display-title {
     font-size: clamp(44px, 7vh, 64px);
     margin-bottom: 4px;
   }
-  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .lede { margin-bottom: 8px; }
-  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .lang-row { margin-bottom: 8px; }
-  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) > .ghost-btn { margin-top: 6px; }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .lede,
+  .intro-hero.home-screen.home-five-cta .lede { margin-bottom: 8px; }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .lang-row,
+  .intro-hero.home-screen.home-five-cta .lang-row { margin-bottom: 8px; }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) > .ghost-btn,
+  .intro-hero.home-screen.home-five-cta > .ghost-btn { margin-top: 6px; }
 }
 
 .hud-meta,
