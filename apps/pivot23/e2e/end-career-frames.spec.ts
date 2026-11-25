@@ -7,11 +7,13 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const savePath = join(here, "fixtures", "retire-save.json");
 const hofPath = join(here, "fixtures", "hof-archive.json");
+const titlePath = join(here, "fixtures", "title-archive.json");
 const SHOTS = process.env.HOLO_SHOTS || process.env.CARD_SHOTS || "";
 
 test.beforeAll(() => {
   execFileSync("node", ["--import=tsx", join(here, "fixtures", "make-retire-save.ts")], { cwd: join(here, ".."), stdio: "inherit" });
   execFileSync("node", ["--import=tsx", join(here, "fixtures", "make-hof-archive.ts")], { cwd: join(here, ".."), stdio: "inherit" });
+  execFileSync("node", ["--import=tsx", join(here, "fixtures", "make-title-archive.ts")], { cwd: join(here, ".."), stdio: "inherit" });
   if (SHOTS) mkdirSync(SHOTS, { recursive: true });
 });
 
@@ -37,19 +39,22 @@ async function retireFromSave(page: Page) {
   await expect(page.getByRole("region", { name: "Career Card" })).toBeVisible({ timeout: 15_000 });
 }
 
-async function openHofArchive(page: Page) {
-  const entry = readFileSync(hofPath, "utf8");
+async function openArchive(page: Page, path: string, lang = "it") {
+  const entry = readFileSync(path, "utf8");
   await page.goto("/");
-  await page.evaluate((raw) => {
-    localStorage.setItem("pivot-lang", "it");
+  await page.evaluate(([raw, loc]) => {
+    localStorage.setItem("pivot-lang", loc);
     localStorage.removeItem("pivot-v2-save");
     localStorage.setItem("pivot-v2-archive", raw.startsWith("[") ? raw : `[${raw}]`);
-  }, entry);
+  }, [entry, lang] as const);
   await page.reload();
-  await page.getByRole("button", { name: /Archivio/ }).click();
+  await page.getByRole("button", { name: lang === "en" ? /Archive|Archivio/ : /Archivio/ }).click();
   await page.locator(".archive-card").first().click();
-  await expect(page.getByRole("region", { name: "Career Card" })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole("region", { name: lang === "en" ? "Career Card" : "Career Card" })).toBeVisible({ timeout: 15_000 });
 }
+
+const openHofArchive = (page: Page) => openArchive(page, hofPath);
+const openTitleArchive = (page: Page) => openArchive(page, titlePath);
 
 test("just-retired career opens the ceremony first, then the figurine", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -113,6 +118,15 @@ test("desktop 1440: ceremony, then figurine with the frame collection beside it"
   expect(sideBySide).toBe(true);
   await page.locator("[data-ceremony-replay]").click();
   await expect(page.locator("[data-ceremony]")).toBeVisible();
+  const ceremonyCols = await page.evaluate(() => {
+    const grid = document.querySelector(".lc-ceremony-grid") as HTMLElement | null;
+    const jersey = document.querySelector(".lc-jersey-wrap") as HTMLElement | null;
+    const plaque = document.querySelector("[data-plaque]") as HTMLElement | null;
+    if (!grid || !jersey || !plaque) return false;
+    const cols = getComputedStyle(grid).gridTemplateColumns.split(" ").filter(Boolean).length;
+    return cols >= 2 && jersey.getBoundingClientRect().right <= plaque.getBoundingClientRect().left + 1;
+  });
+  expect(ceremonyCols).toBe(true);
   await shot(page, "ceremony-desktop-1440", page.locator("[data-ceremony]"));
   await page.locator("[data-ceremony-continue]").click();
   await shot(page, "card-prisma-1440", card);
@@ -156,3 +170,40 @@ test("English ceremony and frames have no leftover Italian", async ({ page }) =>
   const text = await page.locator(".legacy-experience").innerText();
   expect(text).not.toMatch(/\b(stagion[ei]|squadr[ae]|scelt[ao]|Nessun|In bacheca|La storia|Cornice|Maglia ritirata|Sala delle)\b/);
 });
+
+test("real titled career shows rings on the plaque and averages on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openTitleArchive(page);
+  const card = page.getByRole("region", { name: "Career Card" });
+  await expect(card).toContainText("Nico Anelli");
+  await expect(card).toHaveAttribute("data-theme", "obsidian");
+  await expect(card.locator("[data-card-seal]")).toHaveText("Epica");
+  await page.locator("[data-ceremony-replay]").click();
+  const plaque = page.locator("[data-plaque]");
+  await expect(plaque).toBeVisible();
+  await expect(plaque).toContainText("Nico Anelli");
+  await expect(plaque.locator(".lc-plaque-stats")).toBeVisible();
+  await expect(plaque.locator(".lc-ring")).toHaveCount(2);
+  await shot(page, "ceremony-rings-390", page.locator("[data-ceremony]"));
+  await page.locator("[data-ceremony-skip]").click();
+  await shot(page, "card-epica-390", card);
+});
+
+test("frame grades Comune, Rara and Epica render on the card and in the collection", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openHofArchive(page);
+  const card = page.getByRole("region", { name: "Career Card" });
+  for (const [id, grade, shotName] of [
+    ["standard", "Comune", "card-comune-390"],
+    ["bronze-frame", "Rara", "card-rara-390"],
+    ["obsidian", "Epica", "card-epica-prisma-career-390"],
+  ] as const) {
+    await page.locator(`[data-theme-option=${id}]`).click();
+    await expect(card).toHaveAttribute("data-theme", id);
+    await expect(card.locator("[data-card-seal]")).toHaveText(grade);
+    await expect(page.locator(`[data-theme-option=${id}] .lc-theme-tag`)).toHaveText(grade);
+    await shot(page, shotName, card);
+  }
+  await shot(page, "frames-collection-390", page.locator("[data-frame-collection]"));
+});
+

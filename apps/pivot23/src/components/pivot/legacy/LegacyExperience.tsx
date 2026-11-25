@@ -37,6 +37,16 @@ function gradeLabel(theme: CardTheme, lang: Parameters<typeof lt>[1]) {
   return lt(GRADE_KEY[theme.grade], lang);
 }
 
+function MetaLine({ parts }: { parts: Array<string | null | undefined> }) {
+  const bits = parts.filter((p): p is string => Boolean(p));
+  if (bits.length === 0) return null;
+  return (
+    <p className="lc-meta">
+      {bits.map((bit, i) => <span key={`${i}-${bit}`} className="lc-meta-bit">{bit}</span>)}
+    </p>
+  );
+}
+
 /** The collectible. Presentation only: it reads the face, never the engine. */
 export function LegacyCardView({ face, theme, careerId }: { face: CardFace; theme: CardTheme; careerId?: string }) {
   const lang = useLang();
@@ -65,11 +75,11 @@ export function LegacyCardView({ face, theme, careerId }: { face: CardFace; them
           <div className="lc-court"><i className="lc-circle" /><i className="lc-half" /></div>
           {artNumber !== null ? <span className="lc-art-num">{artNumber}</span> : <CourtMark number={23} size={120} brand />}
         </div>
-        <p className="lc-meta">{[l.role, l.nation].filter(Boolean).join(" · ")}</p>
+        <MetaLine parts={[l.role, l.nation]} />
         <div className="lc-who">
           <div>
             <h3 className="lc-name">{face.name}</h3>
-            <p className="lc-meta">{[face.span, l.ages, l.seasons, l.peak].filter(Boolean).join(" · ")}</p>
+            <MetaLine parts={[face.span, l.ages, l.seasons, l.peak]} />
           </div>
           {face.number !== null ? <span className="lc-number" aria-label={`${lt("jersey", lang)} ${face.number}`}>{face.number}</span> : null}
         </div>
@@ -140,7 +150,7 @@ function FrameCollection({
               data-locked={unlocked ? undefined : "1"}
               onClick={() => { if (unlocked) onPick(id); }}
             >
-              <span className="lc-swatch" style={themeStyle(t)} data-foil={t.foil} aria-hidden />
+              <span className="lc-swatch" style={themeStyle(t)} data-foil={t.foil} data-frame={t.id} aria-hidden />
               <span className="lc-theme-name">{t.name[lang] ?? t.name.en}</span>
               <span className="lc-theme-tag">{unlocked ? gradeLabel(t, lang) : lt("frameLocked", lang)}</span>
               <span className="lc-theme-rule">{lt(RULE_KEY[id], lang)}</span>

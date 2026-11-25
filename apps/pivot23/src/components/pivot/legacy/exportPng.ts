@@ -92,7 +92,7 @@ function drawFoil(ctx: CanvasRenderingContext2D, theme: CardTheme, W: number, H:
     ctx.fillRect(0, 0, W, H);
   } else {
     const g = typeof ctx.createConicGradient === "function"
-      ? ctx.createConicGradient(2.2, W * 0.5, H * 0.4)
+      ? ctx.createConicGradient(2.2, W * 1.2, -H * 0.1)
       : ctx.createLinearGradient(0, 0, W, H);
     if ("addColorStop" in g) {
       g.addColorStop(0, "rgba(225,6,0,0.2)");
@@ -103,8 +103,112 @@ function drawFoil(ctx: CanvasRenderingContext2D, theme: CardTheme, W: number, H:
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
     }
+    const fade = ctx.createRadialGradient(W * 0.5, H * 0.42, 20, W * 0.5, H * 0.42, W * 0.72);
+    fade.addColorStop(0, "rgba(16,12,10,0.7)");
+    fade.addColorStop(1, "rgba(16,12,10,0)");
+    ctx.fillStyle = fade;
+    ctx.fillRect(0, 0, W, H);
   }
   ctx.restore();
+}
+
+function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  const rad = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + rad, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rad);
+  ctx.arcTo(x + w, y + h, x, y + h, rad);
+  ctx.arcTo(x, y + h, x, y, rad);
+  ctx.arcTo(x, y, x + w, y, rad);
+  ctx.closePath();
+}
+
+function drawCourt(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, ink: string) {
+  ctx.save();
+  ctx.strokeStyle = ink;
+  ctx.globalAlpha = 0.18;
+  ctx.lineWidth = 3;
+  roundRect(ctx, x + w * 0.1, y + h * 0.1, w * 0.8, h * 0.8, 8);
+  ctx.stroke();
+  const cx = x + w / 2, cy = y + h * 0.58, rr = w * 0.23;
+  ctx.beginPath();
+  ctx.arc(cx, cy, rr, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x + w * 0.12, cy);
+  ctx.lineTo(x + w * 0.88, cy);
+  ctx.stroke();
+  ctx.restore();
+}
+
+const SEAL_STYLE: Record<string, { colors: [string, string]; ink: string; prism?: boolean }> = {
+  standard: { colors: ["#3f3f44", "#5c5c62"], ink: "#ffffff" },
+  "bronze-frame": { colors: ["#d7a25a", "#f0d7a0"], ink: "#1a0f06" },
+  obsidian: { colors: ["#1a1614", "#3a3228"], ink: "#ffffff" },
+  "holo-red": { colors: ["#9a0400", "#C10600"], ink: "#ffffff" },
+  prisma: { colors: ["#E10600", "#F0A24A"], ink: "#0e0e0f", prism: true },
+};
+
+function drawSealPill(ctx: CanvasRenderingContext2D, grade: string, themeId: string, right: number, cy: number) {
+  const style = SEAL_STYLE[themeId] ?? SEAL_STYLE["holo-red"]!;
+  ctx.save();
+  ctx.font = `700 22px ${FONT}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const label = grade.toUpperCase();
+  const tw = ctx.measureText(label).width;
+  const bw = tw + 28, bh = 36;
+  const x = right - bw, y = cy - bh / 2;
+  if (style.prism && typeof ctx.createConicGradient === "function") {
+    const g = ctx.createConicGradient(2.2, x + bw * 1.2, y - 8);
+    g.addColorStop(0, "#F04030");
+    g.addColorStop(0.25, "#F0A24A");
+    g.addColorStop(0.5, "#7ee0ff");
+    g.addColorStop(0.75, "#c9a0ff");
+    g.addColorStop(1, "#F04030");
+    ctx.fillStyle = g;
+  } else {
+    const g = ctx.createLinearGradient(x, y, x + bw, y);
+    g.addColorStop(0, style.colors[0]);
+    g.addColorStop(1, style.colors[1]);
+    ctx.fillStyle = g;
+  }
+  roundRect(ctx, x, y, bw, bh, bh / 2);
+  ctx.fill();
+  ctx.fillStyle = style.ink;
+  ctx.fillText(label, x + bw / 2, cy + 1);
+  ctx.restore();
+}
+
+function drawHonorChips(ctx: CanvasRenderingContext2D, honors: string[], x: number, y: number, maxW: number, ink: string): number {
+  ctx.save();
+  ctx.font = `700 22px ${FONT}`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  const padX = 14, rowH = 40, gap = 10;
+  let cx = x, cy = y;
+  for (const honor of honors) {
+    const label = honor;
+    const bw = Math.min(maxW, ctx.measureText(label).width + padX * 2);
+    if (cx > x && cx + bw > x + maxW) {
+      cx = x;
+      cy += rowH + gap;
+    }
+    ctx.globalAlpha = 0.1;
+    ctx.fillStyle = ink;
+    roundRect(ctx, cx, cy, bw, rowH, 8);
+    ctx.fill();
+    ctx.globalAlpha = 0.22;
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = ink;
+    ctx.fillText(clampText(ctx, label, bw - padX * 2), cx + padX, cy + rowH / 2);
+    cx += bw + gap;
+  }
+  ctx.restore();
+  return honors.length ? cy + rowH : y;
 }
 
 export function drawCard(ctx: CanvasRenderingContext2D, face: CardFace, theme: CardTheme, l: PngLabels) {
@@ -135,6 +239,7 @@ export function drawCard(ctx: CanvasRenderingContext2D, face: CardFace, theme: C
   const artTop = 210, artH = 300;
   ctx.fillStyle = "rgba(0,0,0,0.28)";
   ctx.fillRect(pad, artTop, inner, artH);
+  drawCourt(ctx, pad, artTop, inner, artH, p.ink);
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillStyle = p.ink;
@@ -181,30 +286,16 @@ export function drawCard(ctx: CanvasRenderingContext2D, face: CardFace, theme: C
     ctx.fillText(clampText(ctx, label.toUpperCase(), colW - 20), x, 884);
   });
 
-  let y = 950;
-  ctx.font = `700 32px ${FONT}`;
-  for (const h of l.honors.slice(0, 3)) {
-    ctx.fillStyle = p.accent;
-    ctx.fillRect(pad, y - 24, 10, 26);
-    ctx.fillStyle = p.ink;
-    ctx.font = `700 32px ${FONT}`;
-    ctx.fillText(clampText(ctx, h, inner - 30), pad + 28, y);
-    y += 50;
-  }
+  const honorsEnd = drawHonorChips(ctx, l.honors, pad, 950, inner, p.ink);
+  const footY = Math.max(1140, honorsEnd + 48);
 
   ctx.fillStyle = p.muted;
   ctx.font = `600 28px ${FONT}`;
-  ctx.fillText(clampText(ctx, face.teams.map((t) => t.abbr).join(" · "), inner * 0.62), pad, 1140);
+  ctx.fillText(clampText(ctx, face.teams.map((t) => t.abbr).join(" · "), inner * 0.62), pad, footY);
   ctx.fillStyle = p.ink;
   fitText(ctx, l.verdict, 700, 40, 26, inner * 0.62);
-  ctx.fillText(clampText(ctx, l.verdict, inner * 0.62), pad, 1200);
-  if (l.grade) {
-    ctx.textAlign = "right";
-    ctx.fillStyle = p.accent;
-    ctx.font = `700 26px ${FONT}`;
-    ctx.fillText(clampText(ctx, l.grade.toUpperCase(), inner * 0.34), W - pad, 1200);
-    ctx.textAlign = "left";
-  }
+  ctx.fillText(clampText(ctx, l.verdict, inner * 0.62), pad, footY + 60);
+  if (l.grade) drawSealPill(ctx, l.grade, theme.id, W - pad, footY + 52);
   ctx.fillStyle = p.muted;
   ctx.font = `500 24px ${FONT}`;
   ctx.fillText(clampText(ctx, l.footer, inner), pad, H - pad + 10);

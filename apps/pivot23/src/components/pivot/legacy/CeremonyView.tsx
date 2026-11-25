@@ -89,13 +89,22 @@ export function CeremonyView({
         <i className="lc-spot lc-spot-1" />
         <i className="lc-spot lc-spot-2" />
         <i className="lc-spot lc-spot-3" />
-        <div className="lc-rafters" />
+        <div className="lc-rafters">
+          <i className="lc-banner" />
+          <i className="lc-banner" />
+          <i className="lc-banner" />
+          <i className="lc-banner" />
+        </div>
       </div>
+      <div className="lc-ceremony-grid">
+      <div className="lc-ceremony-left">
       <p className="lc-ceremony-kicker">{lt("ceremonyKicker", lang)}</p>
       <h3 className="lc-ceremony-title">{title}</h3>
       <div className="lc-jersey-wrap">
         <Jersey color={color} number={face.number} name={face.name} />
       </div>
+      </div>
+      <div className="lc-ceremony-right">
       <article className="lc-plaque" data-plaque>
         <i className="lc-rivet tl" aria-hidden="true" />
         <i className="lc-rivet tr" aria-hidden="true" />
@@ -131,6 +140,8 @@ export function CeremonyView({
         <button type="button" className="ghost-btn" data-ceremony-skip onClick={onContinue}>
           {lt("ceremonySkip", lang)}
         </button>
+      </div>
+      </div>
       </div>
     </section>
   );
