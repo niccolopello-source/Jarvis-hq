@@ -16,6 +16,12 @@ type Template = {
   out: string;
   /** False only for a one-sentence key that ends on a slot ("la piazza di {0}"): that slot must stay inside its sentence. */
   multi?: boolean;
+  /**
+   * True for a sentence split out of a multi-sentence entry ("Hai lasciato {OLD}." from
+   * "Hai lasciato {OLD}. Il corridoio nuovo…"): its slots must not carry the next sentences,
+   * or a short Italian line caught inside one is shown untranslated as if it were a name.
+   */
+  derived?: boolean;
   /** Longest literal chunk, used as a cheap pre-filter. */
   needle: string;
   weight: number;
@@ -72,7 +78,9 @@ export function buildCatalog(pairs: Pairs): Catalog {
   const byHead = new Map<string, Template[]>();
   const floating: Template[] = [];
   const seen = new Set<string>();
-  for (const [rawKey, out] of [...Object.entries(pairs), ...sentencePairs(pairs)]) {
+  const own = Object.entries(pairs);
+  const derivedFrom = own.length;
+  for (const [idx, [rawKey, out]] of [...own, ...sentencePairs(pairs)].entries()) {
     const key = normText(rawKey);
     if (!key || typeof out !== "string" || seen.has(key)) continue;
     seen.add(key);
@@ -98,7 +106,7 @@ export function buildCatalog(pairs: Pairs): Catalog {
     });
     src += "$";
     if (weight < 2) continue;
-    const tpl: Template = { re: new RegExp(src, "s"), slots, out, needle, weight, multi: SENTENCE_BREAK.test(key) || parts[parts.length - 1] !== "" };
+    const tpl: Template = { re: new RegExp(src, "s"), slots, out, needle, weight, multi: SENTENCE_BREAK.test(key) || parts[parts.length - 1] !== "", derived: idx >= derivedFrom };
     const head = parts[0]!;
     if (head.length >= HEAD) {
       const k = head.slice(0, HEAD).toLowerCase();
@@ -198,6 +206,7 @@ function whole(n: string, ctx: Ctx): Result | null {
       // A one-sentence template ("la piazza di {0}") must not swallow the next sentences into a
       // slot: "La piazza di Memphis ha una voce. …" would become "The Memphis has a voice. … crowd".
       if (!tpl.multi && /[.!?…]\s+\p{Lu}/u.test(m[m.length - 1] ?? "")) continue;
+      if (tpl.derived && m.slice(1).some((c) => SENTENCE_BREAK.test(c))) continue;
       let ok = true;
       const values = m.slice(1).map((c) => {
         const r = segment(c, { ...ctx, depth: ctx.depth + 1 });
