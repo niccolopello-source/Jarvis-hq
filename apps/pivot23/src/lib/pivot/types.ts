@@ -1,3 +1,4 @@
+import type { CareerState226 } from "./career-state";
 
 export type AttrKey =
   | "shooting"
@@ -433,6 +434,8 @@ export interface PlayerState {
   expOvr?: number;
   /** 2.25+: experience applied at each age, so the next season can strip it. */
   expByAge?: Record<number, number>;
+  /** 2.26+ (TUNING.engine226 on only): Career State model. Optional, additive; missing = fresh state. */
+  cs?: CareerState226;
   season: number;
   extraSeason: boolean;
   international: boolean;

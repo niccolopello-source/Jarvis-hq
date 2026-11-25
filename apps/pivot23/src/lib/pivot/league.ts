@@ -8,7 +8,7 @@ import { royProductionScore } from "./awards-helpers";
 import { freshPlayer, playIsolatedDraft } from "./engine";
 import { createRng, runWithRng } from "./rng";
 import { isolatedRookieBox, roySubSeed, ROY_ROLES } from "./rookie-box";
-import { PRE_STATS_OVR_ENGINE, TUNING, usesAwardsV2, usesDecisions, usesStatsOvr } from "./tuning";
+import { PRE_STATS_OVR_ENGINE, TUNING, usesAwardsV2, usesDecisions, usesEngine226, usesStatsOvr } from "./tuning";
 import { AWARD_MIN_GAMES, PLAYER_KEY, lotteryLiftV2, mvpFatigueV2, mvpHistoryV2, rookieClassPlanV2, royScoreV2 } from "./awards-v2";
 import { EURO_GAMES, NBA_GAMES, PLAYOFF_SEEDS, awardNoteIt } from "./data";
 import type {
@@ -559,7 +559,7 @@ function buildAwards(
   const pScore =
     mvpScore(playerProd, box.wins, playerEff, playerImpact, box.gp, games, s.hidden.consistency, playerNar) +
     (rand() - 0.5) * SIM.awards.noise +
-    mvpHelpOf(s, d.mvpHelp) -
+    mvpHelpOf(s, usesEngine226(s) && d.id === "leggenda" ? TUNING.awards226.mvpHelpLeggenda : d.mvpHelp) -
     repeatCost -
     careerCost;
 
@@ -702,6 +702,7 @@ function buildAwards(
     });
   }
 
+  const aw226 = usesEngine226(s);
   if (s.league === "NBA") {
     const sixthPlayer =
       box.gp >= (v2 ? AWARD_MIN_GAMES : 52) &&
@@ -710,7 +711,9 @@ function buildAwards(
       box.ppg >= 12.2 &&
       box.per >= 15 &&
       !alreadyStar &&
-      !box.awards.includes("All-NBA Second Team");
+      !box.awards.includes("All-NBA Second Team") &&
+      // 2.26: a sixth man is not an All-Star nor an All-NBA Third Team player in the same season.
+      !(aw226 && (box.awards.includes("All-Star") || box.awards.includes("All-NBA Third Team")));
     if (sixthPlayer) {
       out.push({
         title: "6MOY",

@@ -1,5 +1,6 @@
 
-import { A1_BARS_SINCE, TUNING, usesStatsOvr, usesOvrCurve, usesOvrCurve225, seedUnit, scriptSlotFor, scriptWindowsOf, seedHash, versionAtLeast, worldOf } from "./tuning";
+import { A1_BARS_SINCE, TUNING, usesStatsOvr, usesOvrCurve, usesOvrCurve225, usesDepthMood225, usesCareerState, seedUnit, scriptSlotFor, scriptWindowsOf, seedHash, versionAtLeast, worldOf } from "./tuning";
+import { careerStateSummer, choiceMorale } from "./career-state";
 import { INJURY_KINDS, INJURY_SEVERITY, loadInjuryAt, usesInjuryEvents, type InjuryKind } from "./injuries";
 import {
   ATTR_LABELS,
@@ -180,7 +181,12 @@ export function contextualPulse(s: PlayerState, fx: Fx): number {
   const formHit = (fx.form || 0) * 0.16 * (dp ? dp.formGain : 1);
   const devHit = (fx.development || 0) * 0.26;
   const injuryHit = -((fx.injuryDrag || 0) * 0.2 + (fx.injuryRisk || 0) * 0.012);
-  const soft = (dp ? dp.softGain : 1) * (
+  // P1: with Career State on (dp set but mood owned by the state model), morale/coachTrust keep the 2.24 weight (gain 1).
+  // The original expression is kept verbatim on every other path, so float results stay bit-identical.
+  const soft = dp && !usesDepthMood225(s)
+    ? dp.softGain * ((fx.publicImage || 0) * 0.007 + (fx.rivalry || 0) * 0.004 - (fx.gamesPenalty || 0) * 0.004) +
+      ((fx.coachTrust || 0) * 0.009 + (fx.morale || 0) * 0.008)
+    : (dp ? dp.softGain : 1) * (
     (fx.publicImage || 0) * 0.007 +
     (fx.coachTrust || 0) * 0.009 +
     (fx.morale || 0) * 0.008 +
@@ -326,7 +332,7 @@ export function fillTemplate(text: string, s: PlayerState) {
 export function applyFx(s: PlayerState, fx: Fx) {
   const d = diffOf(s);
   // 2.25: how a choice lands on mood and the coach also sticks as experience.
-  if (usesOvrCurve225(s)) addExperience(s, finiteNum(fx.morale, 0) * TUNING.depth225.expMoraleFx + finiteNum(fx.coachTrust, 0) * TUNING.depth225.expTrustFx);
+  if (usesDepthMood225(s)) addExperience(s, finiteNum(fx.morale, 0) * TUNING.depth225.expMoraleFx + finiteNum(fx.coachTrust, 0) * TUNING.depth225.expTrustFx);
   if (fx.attrs) {
     const ageS = s.age <= 23 ? 1.22 : s.age <= 27 ? 1 : s.age <= 31 ? 0.7 : 0.45;
     (Object.keys(fx.attrs) as AttrKey[]).forEach((k) => {
@@ -353,15 +359,23 @@ export function applyFx(s: PlayerState, fx: Fx) {
   if (fx.publicImage) s.publicImage = clamp(s.publicImage + fx.publicImage, 0, 100);
   if (fx.coachTrust) s.coachTrust = clamp(s.coachTrust + fx.coachTrust, 0, 100);
   if (fx.rivalry) s.rivalry = clamp(s.rivalry + fx.rivalry, 0, 100);
-  if (fx.morale) s.morale = clamp(s.morale + fx.morale, 0, 100);
-  if (usesOvrCurve225(s) && (fx.morale || fx.coachTrust)) {
+  if (usesCareerState(s)) {
+    // 2.26: every choice lands on morale (declared or implied), capped per event.
+    const dm = choiceMorale(fx);
+    if (dm) s.morale = clamp(s.morale + dm, 0, 100);
+  } else if (fx.morale) s.morale = clamp(s.morale + fx.morale, 0, 100);
+  if (usesDepthMood225(s) && (fx.morale || fx.coachTrust)) {
     // 2.25: mood and trust carry into the next games (moderate).
     const dp = TUNING.depth225;
     s.form = clamp(s.form + (fx.morale || 0) * dp.moraleToForm + (fx.coachTrust || 0) * dp.trustToForm, -12, 12);
   }
   if (fx.gamesPenalty) s.gamesPenalty += Math.round(fx.gamesPenalty * d.injury);
   const pulse = usesStatsOvr(s) ? statsPulse(s, fx) : contextualPulse(s, fx);
-  if (usesOvrCurve225(s)) addExperience(s, pulse * TUNING.depth225.expPulse);
+  if (usesOvrCurve225(s)) {
+    // P4: with Career State on, the experience share leaves out the morale/coachTrust part of the pulse.
+    const expPulseSrc = usesDepthMood225(s) ? pulse : (usesStatsOvr(s) ? statsPulse : contextualPulse)(s, { ...fx, morale: undefined, coachTrust: undefined });
+    addExperience(s, expPulseSrc * TUNING.depth225.expPulse);
+  }
   imprint(s, pulse);
 }
 
@@ -395,11 +409,12 @@ export function settleCareerMemory(s: PlayerState, n: number): string[] {
   if (usesOvrCurve225(s) && n > 1) {
     // 2.25: how the last months felt (mood, trust, form) feeds this season's growth. Moderate, capped, no RNG.
     const dp = TUNING.depth225;
-    const st = (finiteNum(s.morale, 55) - 55) * dp.stateMorale + (finiteNum(s.coachTrust, 55) - 55) * dp.stateTrust + finiteNum(s.form, 0) * dp.stateForm;
+    const mood = usesDepthMood225(s) ? 1 : 0; // P5: Career State owns morale/coachTrust
+    const st = mood * ((finiteNum(s.morale, 55) - 55) * dp.stateMorale + (finiteNum(s.coachTrust, 55) - 55) * dp.stateTrust) + finiteNum(s.form, 0) * dp.stateForm;
     const d = round2(clamp(st, -dp.stateCap, dp.stateCap));
     // Experience: the season's mood, trust, form and work ethic, capped per season.
     const hw = finiteNum(s.hidden?.workEthic, 50) - 50;
-    const ex = (finiteNum(s.morale, 55) - dp.expCenter) * dp.expMorale + (finiteNum(s.coachTrust, 55) - dp.expCenter) * dp.expTrust + finiteNum(s.form, 0) * dp.expForm + hw * dp.expTrait;
+    const ex = mood * ((finiteNum(s.morale, 55) - dp.expCenter) * dp.expMorale + (finiteNum(s.coachTrust, 55) - dp.expCenter) * dp.expTrust) + finiteNum(s.form, 0) * dp.expForm + hw * dp.expTrait;
     addExperience(s, clamp(ex - dp.expBias, -dp.expSeasonCap, dp.expSeasonCap));
     if (d) imprint(s, d); else refreshOverall(s);
   }
@@ -408,6 +423,8 @@ export function settleCareerMemory(s: PlayerState, n: number): string[] {
 
 export function applyAging(s: PlayerState) {
   lockExperimentEthic(s);
+  // 2.26: close the season in the Career State model before the age moves (no RNG).
+  if (usesCareerState(s)) careerStateSummer(s, leagueGames(s));
   const stats = usesStatsOvr(s);
   const skillBefore = stats ? weightedSkillOf(s) : 0;
   s.age += 1;
@@ -1927,7 +1944,7 @@ function simulateRegularSeasonInner(s: PlayerState, n: number): SeasonRow {
   const vetCut = s.age >= 33 ? Math.max(0.74, 1 - (s.age - 32) * 0.052) : 1;
   const trust = 1 + (s.coachTrust - 50) * 0.003;
   // 2.25: morale moves minutes and the box score a little (older careers: 1 and 0).
-  const mood = usesOvrCurve225(s) ? clamp(finiteNum(s.morale, 55) - 55, -45, 45) : 0;
+  const mood = usesDepthMood225(s) ? clamp(finiteNum(s.morale, 55) - 55, -45, 45) : 0; // P6/P7
   const moodMin = 1 + mood * TUNING.depth225.moraleMinutes;
   let min = round1(
     clamp(

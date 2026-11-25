@@ -194,6 +194,13 @@ export const TUNING = {
   },
   /** P1-ROLE: role-fit term on the realised peak. */
   rolePeak: "current" as "current" | "fit" | "fit-strong",
+  /** ENGINE 2.26 (25 Nov 2026), OFF. Only 2.26.0+ careers read it, and only when "on": Career State model
+   *  (career-state.ts, Dallak proposal v3, preset "medio" + moderate cap overshoot), Sixth Man exclusion of
+   *  All-Star / All-NBA Third Team seasons, Leggenda MVP help -2.5. When on, Career State owns morale/coachTrust,
+   *  so the depth225 morale/coachTrust terms switch off (no double counting). Live careers (2.24) never read it. */
+  engine226: "off" as "off" | "on",
+  /** 2.26 award levers (only with engine226 "on" on a 2.26.0+ career). */
+  awards226: { mvpHelpLeggenda: -2.5 },
 };
 
 export type Tuning = typeof TUNING;
@@ -282,6 +289,24 @@ export const OVR_CURVE_225_SINCE = "2.25.0";
 
 export function usesOvrCurve225(career: { engineVersion?: string }): boolean {
   return versionAtLeast(career.engineVersion, OVR_CURVE_225_SINCE);
+}
+
+/** First engine version that can carry the 2.26 rules (still behind TUNING.engine226). */
+export const ENGINE_226_SINCE = "2.26.0";
+
+/** ENGINE 2.26: TUNING.engine226 === "on" AND a 2.26.0+ career. Live careers (2.24.0-beta) never match. */
+export function usesEngine226(career: { engineVersion?: string }): boolean {
+  return TUNING.engine226 === "on" && versionAtLeast(career.engineVersion, ENGINE_226_SINCE);
+}
+
+/** Career State model (career-state.ts): part of ENGINE 2.26. */
+export function usesCareerState(career: { engineVersion?: string }): boolean {
+  return usesEngine226(career);
+}
+
+/** depth225 morale/coachTrust terms: on for 2.25 careers unless Career State owns them. */
+export function usesDepthMood225(career: { engineVersion?: string }): boolean {
+  return usesOvrCurve225(career) && !usesCareerState(career);
 }
 
 /** Effective OVR-curve levers for a career: 2.24 values, overridden by TUNING.ovrCurve225 on 2.25+ careers. */
