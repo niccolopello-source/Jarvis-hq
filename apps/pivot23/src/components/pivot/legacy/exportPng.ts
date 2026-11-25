@@ -19,6 +19,14 @@ export interface PngLabels {
 
 export const PNG_W = 1080;
 export const PNG_H = 1350;
+/** Instagram Story canvas: the 4:5 card is centered, with free margins above and below. */
+export const PNG_STORY_W = 1080;
+export const PNG_STORY_H = 1920;
+export type PngVariant = "feed" | "story";
+
+export function storyCardOffset(cardH = PNG_H, storyH = PNG_STORY_H): number {
+  return Math.round((storyH - cardH) / 2);
+}
 const FONT = "Figtree, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif";
 
 /** Largest font size (down to min) at which text fits maxWidth. Returns the size used. */
@@ -141,33 +149,68 @@ export function drawCard(ctx: CanvasRenderingContext2D, face: CardFace, theme: C
 
 export type ExportOutcome = "done" | "unsupported" | "failed";
 
-export async function exportCardPng(face: CardFace, theme: CardTheme, labels: PngLabels, fileName: string): Promise<ExportOutcome> {
-  if (typeof document === "undefined") return "unsupported";
+/** Renders the Career Card to a PNG blob in memory. No download, no network.
+ *  `feed` is the 1080×1350 figurine (4:5). `story` places that same figurine on a 1080×1920
+ *  canvas (9:16), centered, so Instagram Stories keep UI margins. */
+export async function renderCardPngBlob(face: CardFace, theme: CardTheme, labels: PngLabels, variant: PngVariant = "feed"): Promise<{ ok: true; blob: Blob } | { ok: false; outcome: Exclude<ExportOutcome, "done"> }> {
+  if (typeof document === "undefined") return { ok: false, outcome: "unsupported" };
   const canvas = document.createElement("canvas");
   canvas.width = PNG_W;
   canvas.height = PNG_H;
   const ctx = canvas.getContext("2d");
-  if (!ctx || typeof canvas.toBlob !== "function") return "unsupported";
+  if (!ctx || typeof canvas.toBlob !== "function") return { ok: false, outcome: "unsupported" };
   try {
     await document.fonts?.ready;
     drawCard(ctx, face, theme, labels);
-    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
-    if (!blob) return "failed";
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    const source = variant === "story" ? storyCanvas(canvas, theme) : canvas;
+    if (!source) return { ok: false, outcome: "unsupported" };
+    const blob = await new Promise<Blob | null>((resolve) => source.toBlob(resolve, "image/png"));
+    if (!blob) return { ok: false, outcome: "failed" };
+    return { ok: true, blob };
+  } catch {
+    return { ok: false, outcome: "failed" };
+  }
+}
+
+function storyCanvas(card: HTMLCanvasElement, theme: CardTheme): HTMLCanvasElement | null {
+  const story = document.createElement("canvas");
+  story.width = PNG_STORY_W;
+  story.height = PNG_STORY_H;
+  const ctx = story.getContext("2d");
+  if (!ctx) return null;
+  const p = theme.palette;
+  const g = ctx.createLinearGradient(0, 0, story.width * 0.4, story.height);
+  g.addColorStop(0, p.bg1);
+  g.addColorStop(1, p.bg2);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, story.width, story.height);
+  ctx.drawImage(card, 0, storyCardOffset());
+  return story;
+}
+
+export function triggerBlobDownload(blob: Blob, fileName: string): void {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+export async function exportCardPng(face: CardFace, theme: CardTheme, labels: PngLabels, fileName: string): Promise<ExportOutcome> {
+  const rendered = await renderCardPngBlob(face, theme, labels);
+  if (!rendered.ok) return rendered.outcome;
+  try {
+    triggerBlobDownload(rendered.blob, fileName);
     return "done";
   } catch {
     return "failed";
   }
 }
 
-export function pngFileName(name: string): string {
+export function pngFileName(name: string, variant: PngVariant = "feed"): string {
   const slug = name.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "career";
-  return `pivot23-${slug}.png`;
+  return variant === "story" ? `pivot23-${slug}-story.png` : `pivot23-${slug}.png`;
 }
