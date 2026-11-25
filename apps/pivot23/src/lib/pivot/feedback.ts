@@ -13,7 +13,7 @@ export const FEEDBACK_UNLOCK_KEY = "pivot-v2-feedback-unlocked";
 export const FEEDBACK_STATE_KEY = "pivot-v2-feedback";
 export const FEEDBACK_STATE_VERSION = 1;
 export const STAR_EDIT_MS = 30 * 24 * 60 * 60 * 1000;
-export const REVIEW_MAX = 2000;
+export const REVIEW_MAX = 500;
 export const FEEDBACK_STARS = [1, 2, 3, 4, 5] as const;
 
 export type FeedbackStars = (typeof FEEDBACK_STARS)[number];

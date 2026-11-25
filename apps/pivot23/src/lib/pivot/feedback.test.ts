@@ -232,3 +232,26 @@ test("the remote adapter posts the minimum payload and is not used unless enable
   });
   assert.equal(bodies.length, 1);
 });
+
+test("REVIEW_MAX is 500 characters: 500 is kept and 501 is rejected", () => {
+  assert.equal(REVIEW_MAX, 500);
+  const store = memoryFeedbackStore();
+  const ok = applyFeedbackDraft(store, {
+    stars: 4,
+    review: "a".repeat(500),
+    lang: "it",
+    engineVersion: "2.24.0-beta",
+    careerSummary: null,
+  }, T0);
+  assert.equal(ok.ok, true);
+  if (ok.ok) assert.equal(ok.record.review.length, 500);
+  const tooLong = applyFeedbackDraft(store, {
+    stars: 4,
+    review: "a".repeat(501),
+    lang: "it",
+    engineVersion: "2.24.0-beta",
+    careerSummary: null,
+  }, T0);
+  assert.deepEqual(tooLong, { ok: false, reason: "invalid" });
+  assert.equal(readFeedback(store)?.review.length, 500);
+});

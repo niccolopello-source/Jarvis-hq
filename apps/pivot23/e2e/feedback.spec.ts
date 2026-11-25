@@ -105,3 +105,24 @@ test("the English chrome uses Feedback, and the unlock flag alone is enough", as
   await expect(page.getByRole("heading", { name: "Feedback" })).toBeVisible();
   await expect(page.getByText("For now your feedback stays in your browser only.")).toBeVisible();
 });
+
+test("the review is capped at 500 characters, and the counter shows the limit", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openHome(page, { "pivot-v2-archive": JSON.stringify(ARCHIVE) });
+  await page.locator("[data-feedback=open]").click();
+  const box = page.locator("#feedback-review");
+  await expect(box).toHaveAttribute("maxLength", "500");
+  await expect(page.locator("[data-feedback=count]")).toHaveText("0 su 500");
+  const text = "a".repeat(500);
+  await box.fill(text);
+  await expect(box).toHaveValue(text);
+  await expect(page.locator("[data-feedback=count]")).toHaveText("500 su 500");
+  await box.focus();
+  await page.keyboard.type("xyz");
+  await expect(box).toHaveValue(text);
+  await page.locator("[data-star='3']").click();
+  await page.locator("[data-feedback=submit]").click();
+  await expect(page.locator("[data-feedback=saved]")).toBeVisible();
+  const rec = JSON.parse(await page.evaluate(() => localStorage.getItem("pivot-v2-feedback")) as string) as { review: string };
+  expect(rec.review.length).toBe(500);
+});

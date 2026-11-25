@@ -61,7 +61,7 @@ Il flag e lo stato del parere stanno in chiavi **nuove**, separate dal live save
 Sul dispositivo, in `pivot-v2-feedback`:
 
 - stelle (1–5);
-- testo della recensione (massimo 2.000 caratteri, facoltativa);
+- testo della recensione (massimo 500 caratteri (scelta di Pello, 25 novembre 2026), facoltativa);
 - lingua dell’interfaccia;
 - versione del motore (`engineVersion`);
 - riassunto aggregato dell’ultima carriera in archivio: stagioni, titoli, picco, difficoltà, ruolo, se è una simulazione, versione motore della scheda;

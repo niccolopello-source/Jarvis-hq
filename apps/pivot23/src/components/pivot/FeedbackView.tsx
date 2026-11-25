@@ -20,6 +20,14 @@ function submittedAt() {
   return Date.now();
 }
 
+function FeedbackStarIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2.8l2.62 6.28 6.88.62-5.22 4.52 1.58 6.7L12 17.9 6.14 20.92l1.58-6.7L2.5 9.7l6.88-.62z" />
+    </svg>
+  );
+}
+
 export function FeedbackView({
   archive,
   onBack,
@@ -119,24 +127,24 @@ export function FeedbackView({
                 key={n}
                 type="button"
                 role="radio"
-                className={`feedback-star${on ? " on" : ""}`}
+                className={`feedback-star${on ? " on" : ""}${starsLocked ? " is-locked" : ""}`}
                 aria-checked={stars === n}
                 aria-label={tf("feedbackStarN", { n }, lang)}
                 data-star={n}
-                disabled={starsLocked && n !== stored?.stars}
+                disabled={starsLocked}
                 onClick={() => {
                   if (starsLocked) return;
                   setStars(n);
                   if (notice === "needStars" || notice === "saved") setNotice(null);
                 }}
               >
-                <span aria-hidden="true">{on ? "★" : "☆"}</span>
+                <FeedbackStarIcon />
               </button>
             );
           })}
         </div>
         <p className="feedback-note">{t("feedbackStarsHint", lang)}</p>
-        {starsLocked ? <p className="feedback-note" role="status">{tf("feedbackStarsLocked", { date: lockedDate }, lang)}</p> : null}
+        {starsLocked ? <p className="feedback-note fb-locked-msg" role="status">{tf("feedbackStarsLocked", { date: lockedDate }, lang)}</p> : null}
         <label className="group-label" htmlFor="feedback-review">{t("feedbackReview", lang)}</label>
         <textarea
           id="feedback-review"
@@ -145,15 +153,22 @@ export function FeedbackView({
           maxLength={REVIEW_MAX}
           value={review}
           placeholder={t("feedbackReviewPlaceholder", lang)}
-          onChange={(e) => setReview(e.target.value)}
+          onChange={(e) => {
+            setReview(e.target.value.slice(0, REVIEW_MAX));
+            if (notice === "tooLong") setNotice(null);
+          }}
         />
-        <p className="feedback-note">{t("feedbackReviewHint", lang)}</p>
-        <p className="feedback-note" aria-live="polite">{tf("feedbackChars", { n: review.length, max: REVIEW_MAX }, lang)}</p>
+        <div className="fb-meta">
+          <p className="feedback-note">{t("feedbackReviewHint", lang)}</p>
+          <p className="fb-count" data-feedback="count" aria-live="polite">
+            {tf("feedbackChars", { n: Math.min(review.length, REVIEW_MAX), max: REVIEW_MAX }, lang)}
+          </p>
+        </div>
         {notice === "needStars" ? <p className="confirm-error" role="alert">{t("feedbackNeedStars", lang)}</p> : null}
         {notice === "tooLong" ? <p className="confirm-error" role="alert">{t("feedbackTooLong", lang)}</p> : null}
         {notice === "miss" ? <p className="confirm-error" role="alert">{t("feedbackSaveMiss", lang)}</p> : null}
-        {notice === "saved" ? <p className="feedback-note" role="status" data-feedback="saved">{t("feedbackSavedLocal", lang)}</p> : null}
-        <p className="feedback-note">{t("feedbackPrivacyLocal", lang)}</p>
+        {notice === "saved" ? <p className="fb-thanks" role="status" data-feedback="saved">{t("feedbackSavedLocal", lang)}</p> : null}
+        <p className="fb-privacy">{t("feedbackPrivacyLocal", lang)}</p>
         <button type="submit" className="primary-btn mt-4" data-feedback="submit">
           {t("feedbackSubmit", lang)}
         </button>

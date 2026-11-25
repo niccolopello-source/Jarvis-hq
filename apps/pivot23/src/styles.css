@@ -2661,7 +2661,7 @@ img.court-mark-photo {
   hyphens: auto;
 }
 
-/* Feedback page: Lucille will restyle. Keep the existing tokens and sizes. */
+/* Feedback page (Lucille delta v2, 25 Nov 2026). Tokens already in the app. */
 .feedback-page { padding-bottom: 24px; }
 .feedback-form { margin-top: 8px; }
 .feedback-stars {
@@ -2679,20 +2679,40 @@ img.court-mark-photo {
   border-radius: 980px;
   background: var(--color-panel);
   color: var(--color-muted);
-  font-size: 22px;
-  line-height: 1;
   cursor: pointer;
   padding: 0;
+  display: grid;
+  place-items: center;
+}
+.feedback-star svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linejoin: round;
 }
 .feedback-star.on {
-  color: var(--color-wood);
-  border-color: var(--color-wood-dark);
+  color: var(--color-court);
+  border-color: color-mix(in oklab, var(--color-court) 55%, var(--color-line));
+  background: color-mix(in oklab, var(--color-court) 8%, var(--color-panel));
 }
+.feedback-star.on svg {
+  fill: currentColor;
+  stroke: currentColor;
+}
+.feedback-star.is-locked,
 .feedback-star:disabled {
   cursor: default;
 }
+.feedback-star.is-locked.on,
+.feedback-star:disabled.on {
+  color: color-mix(in oklab, var(--color-court) 75%, var(--color-muted));
+}
+.feedback-star.is-locked:not(.on),
 .feedback-star:disabled:not(.on) {
-  opacity: 0.55;
+  opacity: 0.45;
 }
 .feedback-review {
   resize: vertical;
@@ -2700,14 +2720,53 @@ img.court-mark-photo {
   line-height: 1.45;
 }
 .feedback-note {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--color-muted);
   margin: 6px 0 0;
   line-height: 1.45;
+  font-weight: 500;
 }
-.feedback-form .group-label[for="feedback-review"] {
+.fb-locked-msg { margin-top: 4px; }
+.feedback-form .group-label[for="feedback-review"],
+.fb-locked-msg + .group-label {
   display: block;
-  margin-top: 16px;
+  margin-top: 22px;
+}
+.fb-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  margin-top: 8px;
+}
+.fb-meta .feedback-note { margin: 0; }
+.fb-count {
+  align-self: flex-end;
+  font-size: 12px;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  margin: 0;
+}
+.fb-thanks {
+  margin: 14px 0 0;
+  padding: 10px 14px;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--color-line);
+  background: color-mix(in oklab, var(--color-court-soft) 70%, var(--color-panel));
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+.fb-privacy {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--color-muted);
+  line-height: 1.45;
+  font-weight: 500;
 }
 .feedback-honeypot {
   position: absolute;
@@ -2715,4 +2774,10 @@ img.court-mark-photo {
   width: 1px;
   height: 1px;
   overflow: hidden;
+}
+@media (min-width: 1180px) {
+  .feedback-page .primary-btn,
+  .feedback-page .feedback-review {
+    max-width: 640px;
+  }
 }
