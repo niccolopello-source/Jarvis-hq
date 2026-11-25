@@ -367,3 +367,27 @@ test("playoff display: opponent name never appears twice in a rendered line, all
   assert.ok(scanned.zh >= IT_PLAYOFF_TEMPLATES.length, `zh scanned ${scanned.zh}`);
   assert.ok(named.it > 0 && named.en > 0 && named.es > 0 && named.zh > 0);
 });
+
+test("a sentence split from a multi-sentence entry does not swallow the next Italian line (2026-11-25)", () => {
+  // "Hai lasciato {OLD}." is registered on its own from a two-sentence entry. Its slot used to
+  // carry the following sentences, and a short Italian line inside it ("I filmati restano corti.")
+  // was kept as if it were a name in English, Spanish and Chinese.
+  const cases = [
+    ["Hai lasciato Phoenix Suns. Il corridoio nuovo puzza di vernice e di attesa. I filmati restano corti. I verbali di allenamento, no.", /I filmati restano corti/],
+    ["Hai lasciato LA Clippers. Il corridoio nuovo puzza di vernice e di attesa. I fischi arrivano. I canestri degli altri, no. È questo il mestiere, qui.", /I fischi arrivano|I canestri degli altri/],
+    ["Hai lasciato Memphis Grizzlies. Il corridoio nuovo puzza di vernice e di attesa. I giovani partono. Tu arrivi dopo, e spesso arrivi meglio.", /I giovani partono/],
+  ] as const;
+  for (const [src, leak] of cases) {
+    for (const lang of ["en", "es", "zh"] as const) {
+      const out = nx(src, lang);
+      assert.doesNotMatch(out, leak, `${lang}: ${out}`);
+      assert.doesNotMatch(out, /Il corridoio|Hai lasciato/, `${lang}: ${out}`);
+    }
+  }
+  assert.equal(
+    nx(cases[0][0], "en"),
+    "You left Phoenix Suns. The new hallway smells of paint and of waiting. The film sessions stay short. The practice reports don't.",
+  );
+  // Italian is shown as stored.
+  assert.equal(nx(cases[0][0], "it"), cases[0][0]);
+});
