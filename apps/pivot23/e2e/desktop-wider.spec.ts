@@ -204,20 +204,37 @@ test("1366x768: short-height home stays compact, no column overflow, last CTA ab
   expect(fold.lastBottom).toBeLessThanOrEqual(fold.footTop + 1);
 });
 
-async function addHomeCtas(page: import("@playwright/test").Page, total: number) {
-  await page.evaluate((want) => {
+/** Simulate the finished-career home with the real Italian labels:
+ *  "Rivedi il finale", "Nuova vita", "Come si gioca", "Archivio", and
+ *  "Pareri" when a 5th CTA is needed (Pareri lands with #168).
+ */
+async function simulateFinishedCareerHome(
+  page: import("@playwright/test").Page,
+  options: { pareri?: boolean } = {},
+) {
+  await page.evaluate((pareri) => {
     const hero = document.querySelector(".intro-hero.home-screen");
     const start = hero?.querySelector(":scope > .primary-btn");
     if (!hero || !start) return;
-    const count = () => hero.querySelectorAll(":scope > .primary-btn, :scope > .ghost-btn").length;
-    let i = 0;
-    while (count() < want) {
+    start.textContent = "Rivedi il finale";
+    const wanted = ["Nuova vita", "Come si gioca", "Archivio", ...(pareri ? ["Pareri"] : [])];
+    for (const btn of [...hero.querySelectorAll(":scope > .ghost-btn")]) btn.remove();
+    let after: Element = start;
+    for (const label of wanted) {
       const b = document.createElement("button");
       b.className = "ghost-btn mt-2.5";
-      b.textContent = `Prova ${++i}`;
-      start.insertAdjacentElement("afterend", b);
+      b.textContent = label;
+      after.insertAdjacentElement("afterend", b);
+      after = b;
     }
-  }, total);
+  }, options.pareri === true);
+}
+
+async function appPadding(page: import("@playwright/test").Page) {
+  return page.evaluate(() => {
+    const cs = getComputedStyle(document.querySelector(".pivot-app")!);
+    return { top: cs.paddingTop, bottom: cs.paddingBottom };
+  });
 }
 
 // 5-CTA compact (Lucille): :has() of primary + four ghost siblings, up to 860px tall.
@@ -226,13 +243,36 @@ test("1280x800 with 5 home CTAs: compact typography, no column overflow, last CT
   await page.setViewportSize({ width: 1280, height: 800 });
   await openHome(page);
   await settleHome(page);
-  await addHomeCtas(page, 5);
+  await simulateFinishedCareerHome(page, { pareri: true });
   const fold = await homeFold(page);
   expect(fold.markW).toBeGreaterThanOrEqual(106);
   expect(fold.markW).toBeLessThanOrEqual(118);
   expect(fold.overflow).toBe(0);
   expect(fold.lastBottom).toBeLessThanOrEqual(fold.footTop + 1);
+  const pad = await appPadding(page);
+  expect(pad.top).toBe("16px");
+  expect(pad.bottom).toBe("16px");
   const m = await metrics(page);
+  expect(m.foot?.height).toBeGreaterThanOrEqual(70);
+  expect(m.foot?.height).toBeLessThanOrEqual(74);
+  expect(m.liveAds).toBe(0);
+});
+
+test("1280x720 with 5 home CTAs: compact typography, no column overflow, last CTA above the foot", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await openHome(page);
+  await settleHome(page);
+  await simulateFinishedCareerHome(page, { pareri: true });
+  const fold = await homeFold(page);
+  expect(fold.markW).toBeGreaterThanOrEqual(106);
+  expect(fold.markW).toBeLessThanOrEqual(118);
+  expect(fold.overflow).toBe(0);
+  expect(fold.lastBottom).toBeLessThanOrEqual(fold.footTop + 1);
+  const pad = await appPadding(page);
+  expect(pad.top).toBe("16px");
+  expect(pad.bottom).toBe("16px");
+  const m = await metrics(page);
+  expect(m.foot?.visible).toBe(true);
   expect(m.foot?.height).toBeGreaterThanOrEqual(70);
   expect(m.foot?.height).toBeLessThanOrEqual(74);
   expect(m.liveAds).toBe(0);
@@ -242,7 +282,7 @@ test("1440x900 with 5 home CTAs: compact 860 threshold does not apply, mark stay
   await page.setViewportSize({ width: 1440, height: 900 });
   await openHome(page);
   await settleHome(page);
-  await addHomeCtas(page, 5);
+  await simulateFinishedCareerHome(page, { pareri: true });
   const fold = await homeFold(page);
   expect(fold.markW).toBeGreaterThanOrEqual(160);
   expect(fold.markW).toBeLessThanOrEqual(176);

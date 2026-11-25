@@ -2410,7 +2410,11 @@ img.court-mark-photo {
     justify-content: flex-start;
     padding-top: 0;
   }
-  .pivot-stage:has(.intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn)) > .pivot-app:not(.career-mode) {
+  /* Nested :has(:has()) is invalid in current Chromium (Element.matches throws),
+   * so the previous selector never applied and padding stayed 32/28. One :has()
+   * on the app, same sibling count as the typography rule.
+   */
+  .pivot-stage > .pivot-app:not(.career-mode):has(.intro-hero.home-screen > .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) {
     padding-top: 16px;
     padding-bottom: 16px;
   }
