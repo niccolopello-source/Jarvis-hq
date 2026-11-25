@@ -2421,13 +2421,13 @@ function AttrBars({ attrs }: { attrs: Record<AttrKey, number> }) {
   );
 }
 
-function LegacyBlock({ entry }: { entry: ArchiveCareer }) {
+function LegacyBlock({ entry, reveal = false }: { entry: ArchiveCareer; reveal?: boolean }) {
   const lang = useLang();
   return (
     <LazyChunk
       load={loadLegacy}
       pick={pickLegacy}
-      props={{ entry }}
+      props={{ entry, reveal }}
       label={t("careerCardChunk", lang)}
       fallback={<div className="legacy-experience" aria-busy="true" style={{ minHeight: 520 }} />}
     />
@@ -2502,7 +2502,7 @@ function ResultView({
         </div>
         <p className="feel-line">{nx(comment, lang)}</p>
       </div>
-      <LegacyBlock entry={shown} />
+      <LegacyBlock entry={shown} reveal />
       <h4 className="stats-heading">{t("traitsRevealed", lang)}</h4>
       {(Object.keys(HIDDEN_LABELS) as HiddenKey[]).map((k) => (
         <div key={k} className="mb-2">

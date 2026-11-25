@@ -39,7 +39,8 @@ for (const width of [360, 390, 1280]) for (const lang of ["it", "en"] as const) 
     if (out) { mkdirSync(out, { recursive: true }); await card.screenshot({ path: join(out, `${width}-${lang}-card.png`), animations: "disabled" }); }
     await expect(card.locator(".lc-honors")).toContainText(award);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await expect(page.locator(".lc-theme-tag")).toHaveCount(0);
+    await expect(page.locator(".lc-theme-tag")).toHaveCount(5);
+    expect((await page.locator(".lc-theme-tag").allTextContents()).join(" ")).not.toMatch(/Gratis|Free|Prototipo|Prototype/);
     for (const rail of await page.locator(".ad-rail").all()) {
       await expect(rail).toHaveAttribute("aria-hidden", "true");
       expect((await rail.textContent())?.trim()).toBe("");
@@ -47,15 +48,19 @@ for (const width of [360, 390, 1280]) for (const lang of ["it", "en"] as const) 
     await expect(page.locator("[data-legacy-report]")).not.toContainText("ªª");
     for (const button of await page.locator(".lc-theme").all()) expect((await button.boundingBox())!.height).toBeGreaterThanOrEqual(44);
     const archiveBefore = await page.evaluate(() => localStorage.getItem("pivot-v2-archive"));
-    const beforeCardText = await card.innerText();
-    await expect(card).toHaveAttribute("data-theme", "standard");
-    await expect(page.locator("[data-theme-option=standard]")).toHaveAttribute("aria-pressed", "true");
+    // Career facts only: the frame name and seal change with the frame, the career does not.
+    const facts = () => card.evaluate(el => [".lc-name", ".lc-stats", ".lc-honors", ".lc-verdict"].map(s => el.querySelector(s)?.textContent ?? "").join("\n"));
+    const beforeCardText = await facts();
+    // Default is the highest frame this career unlocked (concept D), never a locked one.
+    const top = await page.locator("[data-theme-option]:not([data-locked])").last().getAttribute("data-theme-option");
+    await expect(card).toHaveAttribute("data-theme", top!);
+    await expect(page.locator(`[data-theme-option=${top}]`)).toHaveAttribute("aria-pressed", "true");
     if (out) { await page.locator(".lc-themes").evaluate(el=>el.scrollIntoView({block:"end"})); await page.screenshot({path:join(out,`${width}-${lang}-grafite.png`),animations:"disabled"}); }
-    const obsidian = page.locator("[data-theme-option=obsidian]");
-    await obsidian.focus(); await page.keyboard.press("Enter");
-    await expect(obsidian).toHaveAttribute("aria-pressed", "true");
-    await expect(card).toHaveAttribute("data-theme", "obsidian");
-    expect(await card.innerText()).toBe(beforeCardText);
+    const graphite = page.locator("[data-theme-option=standard]");
+    await graphite.focus(); await page.keyboard.press("Enter");
+    await expect(graphite).toHaveAttribute("aria-pressed", "true");
+    await expect(card).toHaveAttribute("data-theme", "standard");
+    expect(await facts()).toBe(beforeCardText);
     expect(await page.evaluate(() => localStorage.getItem("pivot-v2-archive"))).toBe(archiveBefore);
     if (width === 360) {
       await page.evaluate(() => {
@@ -135,8 +140,8 @@ for (const width of [360, 390, 1280]) for (const lang of ["it", "en"] as const) 
     const axe = await new AxeBuilder({ page }).include(".legacy-experience").withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
     expect(axe.violations.map(v => `${v.id}: ${v.nodes[0]?.target.join(" ")}`)).toEqual([]);
     await page.reload(); await page.getByRole("button", { name: lang === "it" ? /Archivio/ : /Archive/ }).click();
-    await page.locator(".archive-card").first().click(); await expect(card).toHaveAttribute("data-theme", "obsidian");
-    expect(await card.innerText()).toBe(beforeCardText);
+    await page.locator(".archive-card").first().click(); await expect(card).toHaveAttribute("data-theme", "standard");
+    expect(await facts()).toBe(beforeCardText);
     expect(await page.evaluate(() => localStorage.getItem("pivot-v2-archive"))).toBe(archiveBefore);
     expect(errors).toEqual([]);
   });
