@@ -406,14 +406,27 @@ function spanishTeamArticle(name: string): string {
   return "";
 }
 
+function countOccurrences(text: string, token: string): number {
+  let n = 0;
+  let i = 0;
+  while ((i = text.indexOf(token, i)) !== -1) {
+    n += 1;
+    i += token.length;
+  }
+  return n;
+}
+
 /**
  * Playoff score line as the player reads it. Display only: the stored
  * `playoffLineScore()` parenthetical is unchanged.
  * A won series uses "sui/sugli" / "over the" / "ante"; otherwise "contro i/gli" / "against the" / "contra".
+ * If `context` (the full line being rewritten) already names the opponent twice,
+ * the score stays bare so the name is not written a third time, or twice after expansion.
  */
-export function formatPlayoffScoreLine(score: string, team: string, kind: string, lang: UiLang): string {
-  const won = seriesWon(score, kind);
+export function formatPlayoffScoreLine(score: string, team: string, kind: string, lang: UiLang, context?: string): string {
   const teamName = team.trim();
+  if (context && teamName && countOccurrences(context, teamName) >= 2) return score;
+  const won = seriesWon(score, kind);
   if (lang === "it") {
     const art = italianTeamArticle(teamName);
     if (won) {

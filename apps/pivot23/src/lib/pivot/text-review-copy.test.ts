@@ -10,13 +10,29 @@ import { clubLine, contractLine } from "./copy-display.ts";
 import { playCareerSim, type SimOpts } from "./engine.ts";
 import { t } from "./i18n.ts";
 import { formatPlayoffScoreLine, italianTeamArticle, nbaNeedsGli, playoffResultLabel } from "./labels.ts";
-import { loadNarrativeEn, nx } from "./narrative/index.ts";
+import {
+  EURO_TITLE_LINES,
+  SERIES_LOSS_LINES,
+  SERIES_WIN_LINES,
+  SINGLE_GAME_LOSS_LINES,
+  SINGLE_GAME_WIN_LINES,
+  TITLE_LINES,
+  playoffLineScore,
+} from "./league.ts";
+import { EN_LEAGUE } from "./narrative/en/league.ts";
+import { ES_LEAGUE } from "./narrative/es/league.ts";
+import { ZH_LEAGUE } from "./narrative/zh/league.ts";
+import { loadNarrativeEn, loadNarrativeEs, loadNarrativeZh, nx, proseTidy, zhTidy } from "./narrative/index.ts";
 import { playCareerTexts } from "./narrative/harness.ts";
 import { resetRules } from "./rules.ts";
 import { NBA_TEAMS, UNSIGNED_TEAM } from "./teams.ts";
 import type { Contract, PlayerState, Team } from "./types.ts";
+import { fillVars } from "./voice.ts";
+import type { Lang } from "./i18n.ts";
 
 await loadNarrativeEn();
+await loadNarrativeEs();
+await loadNarrativeZh();
 
 const RAW = /\$[A-Z][A-Z0-9_]*|__[A-Z0-9_]+__|\{[a-zA-Z][a-zA-Z0-9_.]*\}|\bundefined\b|\bNaN\b|\[object Object\]/;
 const IT_LEAK = /\b(Fuori Elim\.|in sette, o meno|\(noi–)/;
@@ -205,4 +221,149 @@ test("same seed still yields the engine-invariants GOLDEN career fingerprints", 
   resetRules();
   const hash = (o: SimOpts) => createHash("sha256").update(fingerprint(playCareerSim(o))).digest("hex").slice(0, 16);
   assert.deepEqual([invariantOpts(1), invariantOpts(2), invariantOpts(3)].map(hash), INVARIANT_GOLDEN);
+});
+
+/* Engine fallbacks used by sayOr when a pool line is missing. Not in the *_LINES arrays. */
+const PLAYOFF_FALLBACKS = [
+  "Titolo, $SCORE su $OPP.",
+  "Partita vinta $SCORE contro $OPP.",
+  "Serie vinta $SCORE su $OPP.",
+  "Sconfitta $SCORE contro $OPP. Stagione finita.",
+  "Eliminati $SCORE da $OPP.",
+] as const;
+
+type PlayoffTemplate = { source: string; template: string; kind: "serie" | "partita" };
+
+const IT_PLAYOFF_TEMPLATES: PlayoffTemplate[] = [
+  ...SERIES_WIN_LINES.map((template) => ({ source: "SERIES_WIN_LINES", template, kind: "serie" as const })),
+  ...SERIES_LOSS_LINES.map((template) => ({ source: "SERIES_LOSS_LINES", template, kind: "serie" as const })),
+  ...SINGLE_GAME_WIN_LINES.map((template) => ({ source: "SINGLE_GAME_WIN_LINES", template, kind: "partita" as const })),
+  ...SINGLE_GAME_LOSS_LINES.map((template) => ({ source: "SINGLE_GAME_LOSS_LINES", template, kind: "partita" as const })),
+  ...TITLE_LINES.map((template) => ({ source: "TITLE_LINES", template, kind: "serie" as const })),
+  ...EURO_TITLE_LINES.map((template) => ({ source: "EURO_TITLE_LINES", template, kind: "partita" as const })),
+  ...PLAYOFF_FALLBACKS.map((template) => ({
+    source: "fallback",
+    template,
+    kind: template.includes("Partita") || template.includes("Sconfitta") ? ("partita" as const) : ("serie" as const),
+  })),
+];
+
+function countName(text: string, name: string): number {
+  if (!name) return 0;
+  let n = 0;
+  let i = 0;
+  while ((i = text.indexOf(name, i)) !== -1) {
+    n += 1;
+    i += name.length;
+  }
+  return n;
+}
+
+function storedPlayoffLine(template: string, team: string, playerPoints: number, opponentPoints: number, oneGame: boolean): string {
+  const SCORE = playoffLineScore({ oneGame, playerPoints, opponentPoints, opponent: team });
+  return fillVars(template, { SCORE, OPP: team });
+}
+
+test("playoff display: keep the #165 phrasing when the line does not already name the opponent", () => {
+  assert.equal(
+    nx("Los Angeles Lakers esce 4-2 (noi–Los Angeles Lakers, serie). Tu resti, e questo basta come discorso.", "it"),
+    "Los Angeles Lakers esce 4-2. Tu resti, e questo basta come discorso.",
+  );
+  assert.equal(
+    nx("Titolo, 4-2 (noi–Los Angeles Lakers, serie) su Los Angeles Lakers. Il parquet, stanotte, ha un altro suono.", "it"),
+    "Titolo, 4-2 su Los Angeles Lakers. Il parquet, stanotte, ha un altro suono.",
+  );
+  assert.equal(
+    nx("4-2 (noi–Dallas Mavericks, serie). Hai letto i loro tempi morti meglio di loro.", "it"),
+    "4-2 sui Dallas Mavericks. Hai letto i loro tempi morti meglio di loro.",
+  );
+  assert.equal(
+    nx("Los Angeles Lakers esce 4-2 (noi–Los Angeles Lakers, serie). Tu resti, e questo basta come discorso.", "en"),
+    "Los Angeles Lakers go out 4-2. You stay, and that's speech enough.",
+  );
+  assert.equal(
+    nx("Titolo, 4-2 (noi–Los Angeles Lakers, serie) su Los Angeles Lakers. Il parquet, stanotte, ha un altro suono.", "en"),
+    "Title, 4-2 over Los Angeles Lakers. Tonight the floor sounds different.",
+  );
+});
+
+test("playoff display: opponent name never appears twice in a rendered line, all templates IT/EN/ES/ZH", () => {
+  const teams = ["Los Angeles Lakers", "Atlanta Hawks", "Olympiacos", "Virtus Bologna"];
+  const scores: Array<{ player: number; opp: number; oneGame: boolean }> = [
+    { player: 4, opp: 2, oneGame: false },
+    { player: 2, opp: 4, oneGame: false },
+    { player: 86, opp: 79, oneGame: true },
+  ];
+  const langs: Lang[] = ["it", "en", "es", "zh"];
+  const bad: string[] = [];
+  const named = { it: 0, en: 0, es: 0, zh: 0 };
+  const scanned = { it: 0, en: 0, es: 0, zh: 0 };
+
+  for (const row of IT_PLAYOFF_TEMPLATES) {
+    const templateNamesOpp = row.template.includes("$OPP");
+    for (const lang of langs) {
+      scanned[lang] += 1;
+      if (templateNamesOpp) named[lang] += 1;
+    }
+    for (const team of teams) {
+      for (const sc of scores) {
+        const stored = storedPlayoffLine(row.template, team, sc.player, sc.opp, sc.oneGame);
+        // Stored text always keeps the parenthetical; display must not rewrite the save.
+        if (row.template.includes("$SCORE")) assert.match(stored, /\(noi–/);
+        assert.equal(playoffLineScore({
+          oneGame: sc.oneGame,
+          playerPoints: sc.player,
+          opponentPoints: sc.opp,
+          opponent: team,
+        }), `${sc.player}-${sc.opp} (noi–${team}, ${sc.oneGame ? "partita" : "serie"})`);
+        for (const lang of langs) {
+          const rendered = nx(stored, lang);
+          const count = countName(rendered, team);
+          if (count > 1) bad.push(`${lang} ${row.source} ${team} ${sc.player}-${sc.opp}: ${rendered}`);
+        }
+      }
+    }
+  }
+
+  const catalogs: Array<{ lang: Lang; pairs: Readonly<Record<string, string>> }> = [
+    { lang: "en", pairs: EN_LEAGUE },
+    { lang: "es", pairs: ES_LEAGUE },
+    { lang: "zh", pairs: ZH_LEAGUE },
+  ];
+  for (const { lang, pairs } of catalogs) {
+    for (const [key, value] of Object.entries(pairs)) {
+      if (!/\{SCORE\}|\{OPP\}|\(noi–\{/.test(`${key}\n${value}`)) continue;
+      scanned[lang] += 1;
+      const namesOpp = /\{OPP\}|\{2\}/.test(value) || /\{OPP\}|\{2\}/.test(key);
+      if (namesOpp) named[lang] += 1;
+      for (const team of teams) {
+        for (const sc of scores) {
+          const score = playoffLineScore({
+            oneGame: sc.oneGame,
+            playerPoints: sc.player,
+            opponentPoints: sc.opp,
+            opponent: team,
+          });
+          const filled = value
+            .replaceAll("{SCORE}", score)
+            .replaceAll("{OPP}", team)
+            .replaceAll("{0}", String(sc.player))
+            .replaceAll("{1}", String(sc.opp))
+            .replaceAll("{2}", team)
+            .replaceAll("{3}", sc.oneGame ? "partita" : "serie");
+          const rendered = lang === "zh" ? zhTidy(proseTidy(filled, lang)) : proseTidy(filled, lang);
+          const count = countName(rendered, team);
+          if (count > 1) bad.push(`catalog ${lang} ${team} ${sc.player}-${sc.opp} ${value} => ${rendered}`);
+        }
+      }
+    }
+  }
+
+  assert.deepEqual(bad.slice(0, 20), []);
+  // Named-template counts are recorded for the PR report; every language must scan the Italian pool.
+  assert.ok(scanned.it >= IT_PLAYOFF_TEMPLATES.length, `it scanned ${scanned.it}`);
+  assert.ok(scanned.en >= IT_PLAYOFF_TEMPLATES.length, `en scanned ${scanned.en}`);
+  assert.ok(scanned.es >= IT_PLAYOFF_TEMPLATES.length, `es scanned ${scanned.es}`);
+  assert.ok(scanned.zh >= IT_PLAYOFF_TEMPLATES.length, `zh scanned ${scanned.zh}`);
+  assert.ok(named.it > 0 && named.en > 0 && named.es > 0 && named.zh > 0);
 });
