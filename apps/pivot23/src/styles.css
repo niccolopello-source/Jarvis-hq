@@ -2286,6 +2286,58 @@ img.court-mark-photo {
   }
 }
 
+/*
+ * Wider desktop stage (2026-11-25 concept).
+ * 1180–1439 px keeps the 880 px game column, so 1280 px still leaves ~200 px
+ * per side rail (a 160x600 ad fits). Ads stay OFF: the rails are empty reserved
+ * space only. Do not use zoom or transform: scale (keeps images sharp).
+ * Mobile and tablet (< 1180 px) are unchanged.
+ * Bottom band: "Powered by Totem" plus the only official social URL in the repo
+ * (Instagram, .ig-link). The empty third column of .totem-row is reserved for
+ * future official socials; no handles are invented here.
+ * FLAG: social-placeholder — no URL in repo yet for any network other than Instagram.
+ */
+@media (min-width: 1440px) {
+  .pivot-stage {
+    grid-template-columns: minmax(200px, 1fr) minmax(0, min(1040px, calc(100vw - 400px))) minmax(200px, 1fr);
+    grid-template-rows: minmax(0, 1fr) 80px;
+  }
+  .pivot-stage > .pivot-app:not(.career-mode) {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+  .display-title {
+    font-size: clamp(56px, 6vw, 88px);
+  }
+  .page-title {
+    font-size: clamp(36px, 3.2vw, 48px);
+  }
+  .lede {
+    font-size: 18px;
+  }
+  .log-card {
+    padding: 26px 24px;
+  }
+  .totem-credit {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .pivot-stage {
+    grid-template-columns: minmax(200px, 1fr) minmax(0, min(1200px, calc(100vw - 400px))) minmax(200px, 1fr);
+  }
+  .display-title {
+    font-size: clamp(60px, 5vw, 96px);
+  }
+  .page-title {
+    font-size: clamp(38px, 2.4vw, 52px);
+  }
+  .log-card {
+    padding: 28px 26px;
+  }
+}
+
 .hud-meta,
 .hud-club,
 .hud-line,
