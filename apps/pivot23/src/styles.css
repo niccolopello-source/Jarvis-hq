@@ -2314,6 +2314,21 @@ img.court-mark-photo {
     max-width: 640px;
     margin-inline: auto;
   }
+  /* P2 polish (Lucille): title, lede and languages share the same centred 640px
+   * axis as the home CTAs, instead of sitting on the full column while the
+   * buttons are centred at 640. Sound and skip stay in the corners.
+   */
+  .intro-hero.home-screen > .eyebrow,
+  .intro-hero.home-screen > .display-title,
+  .intro-hero.home-screen > .lede,
+  .intro-hero.home-screen > .lang-row {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 640px;
+    margin-inline: auto;
+    text-align: left;
+  }
 }
 
 @media (min-width: 1440px) {
@@ -2379,6 +2394,38 @@ img.court-mark-photo {
   .intro-hero.home-screen .lede { margin-bottom: 8px; }
   .intro-hero.home-screen .lang-row { margin-bottom: 8px; }
   .intro-hero.home-screen > .ghost-btn { margin-top: 6px; }
+}
+
+/* 5 home CTAs on a common laptop height (Lucille review of 4e4f346): compact
+ * typography up to max-height 860px so Pareri stays above the 72px foot at
+ * 1280x800 when Rivedi + Nuova vita + Come si gioca + Archivio + Pareri are
+ * all visible. 4-CTA homes at 800 stay on the 168px mark.
+ * Selector: a direct .primary-btn followed by four .ghost-btn siblings.
+ * :nth-of-type(5) would be wrong here because SoundToggle and .cine-skip are
+ * also <button> siblings. No #168 class required; :has() is Chrome/Safari 15.4+.
+ */
+@media (min-width: 1180px) and (max-height: 860px) {
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) {
+    min-height: 0;
+    justify-content: flex-start;
+    padding-top: 0;
+  }
+  .pivot-stage:has(.intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn)) > .pivot-app:not(.career-mode) {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .court-mark {
+    width: 112px;
+    height: 112px;
+    margin: 0 auto 8px;
+  }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .display-title {
+    font-size: clamp(44px, 7vh, 64px);
+    margin-bottom: 4px;
+  }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .lede { margin-bottom: 8px; }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) .lang-row { margin-bottom: 8px; }
+  .intro-hero.home-screen:has(> .primary-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn ~ .ghost-btn) > .ghost-btn { margin-top: 6px; }
 }
 
 .hud-meta,

@@ -203,3 +203,76 @@ test("1366x768: short-height home stays compact, no column overflow, last CTA ab
   expect(fold.overflow).toBe(0);
   expect(fold.lastBottom).toBeLessThanOrEqual(fold.footTop + 1);
 });
+
+async function addHomeCtas(page: import("@playwright/test").Page, total: number) {
+  await page.evaluate((want) => {
+    const hero = document.querySelector(".intro-hero.home-screen");
+    const start = hero?.querySelector(":scope > .primary-btn");
+    if (!hero || !start) return;
+    const count = () => hero.querySelectorAll(":scope > .primary-btn, :scope > .ghost-btn").length;
+    let i = 0;
+    while (count() < want) {
+      const b = document.createElement("button");
+      b.className = "ghost-btn mt-2.5";
+      b.textContent = `Prova ${++i}`;
+      start.insertAdjacentElement("afterend", b);
+    }
+  }, total);
+}
+
+// 5-CTA compact (Lucille): :has() of primary + four ghost siblings, up to 860px tall.
+// Injected on this branch so the assertion does not depend on #168.
+test("1280x800 with 5 home CTAs: compact typography, no column overflow, last CTA above the foot", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await openHome(page);
+  await settleHome(page);
+  await addHomeCtas(page, 5);
+  const fold = await homeFold(page);
+  expect(fold.markW).toBeGreaterThanOrEqual(106);
+  expect(fold.markW).toBeLessThanOrEqual(118);
+  expect(fold.overflow).toBe(0);
+  expect(fold.lastBottom).toBeLessThanOrEqual(fold.footTop + 1);
+  const m = await metrics(page);
+  expect(m.foot?.height).toBeGreaterThanOrEqual(70);
+  expect(m.foot?.height).toBeLessThanOrEqual(74);
+  expect(m.liveAds).toBe(0);
+});
+
+test("1440x900 with 5 home CTAs: compact 860 threshold does not apply, mark stays ~168", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openHome(page);
+  await settleHome(page);
+  await addHomeCtas(page, 5);
+  const fold = await homeFold(page);
+  expect(fold.markW).toBeGreaterThanOrEqual(160);
+  expect(fold.markW).toBeLessThanOrEqual(176);
+  expect(fold.overflow).toBe(0);
+});
+
+// P2 polish: from 1180px, title/lede/languages share the centred 640px axis of the CTAs.
+test("1280x800: title and Inizia share the centred 640 px axis", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await openHome(page);
+  await settleHome(page);
+  const axis = await page.evaluate(() => {
+    const title = document.querySelector(".intro-hero.home-screen > .display-title")?.getBoundingClientRect();
+    const lede = document.querySelector(".intro-hero.home-screen > .lede")?.getBoundingClientRect();
+    const lang = document.querySelector(".intro-hero.home-screen > .lang-row")?.getBoundingClientRect();
+    const start = document.querySelector(".intro-hero.home-screen > .primary-btn")?.getBoundingClientRect();
+    return {
+      titleX: title && Math.round(title.x),
+      ledeX: lede && Math.round(lede.x),
+      langX: lang && Math.round(lang.x),
+      startX: start && Math.round(start.x),
+      startW: start && Math.round(start.width),
+      titleW: title && Math.round(title.width),
+      langW: lang && Math.round(lang.width),
+    };
+  });
+  expect(axis.startW).toBeLessThanOrEqual(640);
+  expect(axis.titleW).toBe(640);
+  expect(axis.langW).toBe(640);
+  expect(axis.titleX).toBe(axis.startX);
+  expect(axis.langX).toBe(axis.startX);
+  expect(axis.ledeX).toBe(axis.startX);
+});
