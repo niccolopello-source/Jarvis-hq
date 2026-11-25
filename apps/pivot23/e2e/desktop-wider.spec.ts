@@ -338,9 +338,10 @@ test("desktop footer and mobile home show Instagram plus X, TikTok and YouTube a
     await expect(soon).toHaveAttribute("aria-label", /presto|soon|pronto|即将推出/i);
     const items = soon.locator(".social-soon-item");
     await expect(items).toHaveCount(3);
-    await expect(items.nth(0)).toHaveAttribute("aria-label", /X/i);
-    await expect(items.nth(1)).toHaveAttribute("aria-label", /TikTok/i);
-    await expect(items.nth(2)).toHaveAttribute("aria-label", /YouTube/i);
+    await expect(items.nth(0)).toContainText("X");
+    await expect(items.nth(1)).toContainText("TikTok");
+    await expect(items.nth(2)).toContainText("YouTube");
+    await expect(items.nth(0)).toContainText(/presto|soon|pronto|即将推出/i);
     expect(await soon.locator("a").count()).toBe(0);
     expect(await soon.locator("button").count()).toBe(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
