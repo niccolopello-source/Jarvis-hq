@@ -1,7 +1,8 @@
 
 /** Curva d'età, picco osservato 26–28, overall intero in display. */
 import { SIM } from "./config";
-import { TUNING, usesStatsOvr, injuryRetireBarsOf, minutesRetireBarOf, retireBarScaleOf, twilightBaseWearOf, usesBustB, usesBustB81, usesDecisions, usesRetireSpread, usesOvrCurve, usesOvrCurve225, ovrCurveOf, seedUnit } from "./tuning";
+import { TUNING, usesStatsOvr, injuryRetireBarsOf, minutesRetireBarOf, retireBarScaleOf, twilightBaseWearOf, usesBustB, usesBustB81, usesDecisions, usesRetireSpread, usesOvrCurve, usesOvrCurve225, usesCareerState, ovrCurveOf, seedUnit } from "./tuning";
+import { careerStateOvr, stateAddAt } from "./career-state";
 import { ROLES } from "./data";
 import { NAT_ORIGIN } from "./teams";
 import { rand } from "./rng";
@@ -439,7 +440,11 @@ export function refreshOverall(s: PlayerState) {
   const last0 = Array.isArray(s.seasonHistory) ? s.seasonHistory[s.seasonHistory.length - 1] : undefined;
   // 2.25: the experience term rides on top of the curve. Strip last season's share so it never compounds.
   const exp225 = usesOvrCurve225(s);
-  const last = last0 && exp225 ? { ...last0, overall: last0.overall - finite(s.expByAge?.[last0.age], 0) } : last0;
+  const cs226 = usesCareerState(s);
+  // 2.26: the Career State share is stripped the same way (transient + persistent + potential shift).
+  const last = last0 && (exp225 || cs226)
+    ? { ...last0, overall: last0.overall - (exp225 ? finite(s.expByAge?.[last0.age], 0) : 0) - (cs226 ? stateAddAt(s, last0.age) : 0) }
+    : last0;
   if (last && Number.isFinite(last.overall)) {
     const cap = yoyCap(s.age);
     o = clamp(o, last.overall - cap, last.overall + cap);
@@ -495,6 +500,16 @@ export function refreshOverall(s: PlayerState) {
     o += e;
     // Low-potential careers keep the downside but cannot climb over their talent ceiling.
     potCeil += Math.max(0, e) * (1 - weakW);
+  }
+  if (cs226) {
+    // 2.26: Career State (choices, morale, trust, chemistry, momentum, rivalry) after every clamp, with its own caps.
+    // The talent ceiling moves with the dynamic potential and may be passed a little (moderate overshoot).
+    const start = startOverallOf(s);
+    const pot = finite(s.potential, 76);
+    const progress = pot > start + 0.5 ? (o - start) / (pot - start) : 1;
+    const { add, ceilLift } = careerStateOvr(s, progress);
+    o += add;
+    potCeil += ceilLift;
   }
   let shown = displayOverall(Number.isFinite(o) ? o : startOverallOf(s));
   if (shown > potCeil) shown = Math.floor(potCeil);
